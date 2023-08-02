@@ -1,4 +1,4 @@
-package app.myzel394.locationtest
+package app.myzel394.locationtest.services
 
 import android.app.Service
 import android.content.Context
@@ -12,9 +12,9 @@ import android.os.Looper
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
+import app.myzel394.locationtest.R
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
-import kotlinx.coroutines.NonCancellable.start
 import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -30,7 +30,7 @@ class RecorderService: Service() {
 
     private var mediaRecorder: MediaRecorder? = null
     private var onError: MediaRecorder.OnErrorListener? = null
-    private var onStateChange: (RecorderService.RecorderState) -> Unit = {}
+    private var onStateChange: (RecorderState) -> Unit = {}
 
     private var counter = 0
 
@@ -66,7 +66,7 @@ class RecorderService: Service() {
         this.onError = onError
     }
 
-    fun setOnStateChangeListener(onStateChange: (RecorderService.RecorderState) -> Unit) {
+    fun setOnStateChangeListener(onStateChange: (RecorderState) -> Unit) {
         this.onStateChange = onStateChange
     }
 
