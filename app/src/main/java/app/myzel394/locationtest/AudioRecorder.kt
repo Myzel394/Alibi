@@ -79,24 +79,19 @@ fun AudioRecorder() {
             Text(text = if (isRecording) "Stop" else "Start")
         }
         if (!isRecording && service != null)
-            LazyColumn() {
-                val items = service!!.getRecordingFilePaths().toList()
+            Button(
+                onClick = {
+                  val path = service!!.concatenateAudios()
 
-                items(items.size) {
-                    val path = items[it]
-
-                    Button(
-                        onClick = {
-                            val player = MediaPlayer().apply {
-                                setDataSource(path)
-                                prepare()
-                                start()
-                            }
-                        }
-                    ) {
-                        Text(text = "Play $it")
+                    val player = MediaPlayer().apply {
+                        setDataSource(path)
+                        prepare()
                     }
-                }
+
+                    player.start()
+                },
+            ) {
+                Text(text = "Convert")
             }
     }
 }

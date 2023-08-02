@@ -9,8 +9,11 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
+import com.arthenica.ffmpegkit.FFmpegKit
+import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.coroutines.NonCancellable.start
 import java.io.File
 import java.time.LocalDateTime
@@ -19,7 +22,7 @@ import java.util.Date
 
 import java.util.UUID;
 
-const val INTERVAL_DURATION = 30000L
+const val INTERVAL_DURATION = 10000L
 
 class RecorderService: Service() {
     private val binder = LocalBinder()
@@ -72,6 +75,30 @@ class RecorderService: Service() {
         for (i in 0 until counter) {
             yield("$fileFolder/$i.${getFileExtensions()}")
         }
+    }
+
+    fun concatenateAudios(): String {
+        val paths = getRecordingFilePaths().joinToString("|")
+        val outputFile = "$fileFolder/concatenated.${getFileExtensions()}"
+        val command = "-i \"concat:$paths\" -acodec copy $outputFile"
+
+        val session = FFmpegKit.execute(command)
+
+        if (!ReturnCode.isSuccess(session.returnCode)) {
+            Log.d(
+                "Audio Concatenation",
+                String.format(
+                    "Command failed with state %s and rc %s.%s",
+                    session.getState(),
+                    session.getReturnCode(),
+                    session.getFailStackTrace()
+                )
+            );
+
+            throw Exception("Failed to concatenate audios")
+        }
+
+        return outputFile
     }
 
     private fun startNewRecording() {

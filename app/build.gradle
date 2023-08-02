@@ -71,5 +71,7 @@ dependencies {
     annotationProcessor 'com.google.dagger:hilt-compiler:2.46.1'
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
 
+    implementation 'com.arthenica:ffmpeg-kit-full:5.1'
+
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 }
