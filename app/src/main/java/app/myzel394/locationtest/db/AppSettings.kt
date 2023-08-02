@@ -2,11 +2,25 @@ package app.myzel394.locationtest.db
 
 import android.media.MediaRecorder
 import android.os.Build
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 
+@Serializable
 data class AppSettings(
     val audioRecorderSettings: AudioRecorderSettings = AudioRecorderSettings(),
-)
+    val showAdvancedSettings: Boolean = false,
+) {
+    fun setShowAdvancedSettings(showAdvancedSettings: Boolean): AppSettings {
+        return copy(showAdvancedSettings = showAdvancedSettings)
+    }
 
+    companion object {
+        fun getDefaultInstance(): AppSettings = AppSettings()
+    }
+}
+
+@Serializable
 data class AudioRecorderSettings(
     // 60 seconds
     val intervalDuration: Long = 60 * 1000L,
