@@ -15,6 +15,10 @@ data class AppSettings(
         return copy(showAdvancedSettings = showAdvancedSettings)
     }
 
+    fun setAudioRecorderSettings(audioRecorderSettings: AudioRecorderSettings): AppSettings {
+        return copy(audioRecorderSettings = audioRecorderSettings)
+    }
+
     companion object {
         fun getDefaultInstance(): AppSettings = AppSettings()
     }

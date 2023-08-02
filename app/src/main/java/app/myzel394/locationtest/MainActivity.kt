@@ -1,47 +1,27 @@
 package app.myzel394.locationtest
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import app.myzel394.locationtest.ui.screens.AudioRecorder
+import androidx.datastore.dataStore
+import app.myzel394.locationtest.db.AppSettingsSerializer
+import app.myzel394.locationtest.ui.Navigation
 import app.myzel394.locationtest.ui.theme.LocationTestTheme
+
+const val SETTINGS_FILE = "settings.json"
+val Context.dataStore by dataStore(
+    fileName = SETTINGS_FILE,
+    serializer = AppSettingsSerializer()
+)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             LocationTestTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    AudioRecorder()
-                }
+                Navigation()
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    LocationTestTheme {
-        Greeting("Android")
     }
 }
