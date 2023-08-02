@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -50,6 +51,7 @@ import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.ui.components.GlobalSwitch
 import app.myzel394.locationtest.ui.utils.formatDuration
+import com.maxkeppeker.sheets.core.icons.LibIcons
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.duration.DurationDialog
 import com.maxkeppeler.sheets.duration.models.DurationConfig
@@ -123,7 +125,7 @@ fun SettingsScreen(
                             text = "Batch duration",
                             style = MaterialTheme.typography.labelLarge,
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "Record a single batch for this duration. Alibi records multiple batches and deletes the oldest one. When exporting the audio, all batches will be merged together",
                             style = MaterialTheme.typography.bodySmall,
@@ -145,8 +147,10 @@ fun SettingsScreen(
                             }
                         },
                         config = DurationConfig(
-                            timeFormat = DurationFormat.HH_MM_SS,
+                            timeFormat = DurationFormat.MM_SS,
                             currentTime = settings.audioRecorderSettings.intervalDuration / 1000,
+                            minTime = 10,
+                            maxTime = 60 * 60,
                         )
                     )
                     Button(

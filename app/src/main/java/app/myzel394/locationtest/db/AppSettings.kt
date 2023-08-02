@@ -60,8 +60,8 @@ data class AudioRecorderSettings(
         }
 
     fun setIntervalDuration(duration: Long): AudioRecorderSettings {
-        if (duration < 10 * 1000L) {
-            throw Exception("Interval duration must be at least 10 seconds")
+        if (duration < 30 * 1000L || duration > 60 * 60 * 1000L) {
+            throw Exception("Interval duration must be between 30 seconds and 1 hour")
         }
 
         return copy(intervalDuration = duration)
