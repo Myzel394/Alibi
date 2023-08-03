@@ -68,8 +68,9 @@ data class AudioRecorderSettings(
     }
 
     fun setBitRate(bitRate: Int): AudioRecorderSettings {
-        if (bitRate < 1000) {
-            throw Exception("Bit rate must be at least 1000")
+        println("bitRate: $bitRate")
+        if (bitRate !in 1000..320000) {
+            throw Exception("Bit rate must be between 1000 and 320000")
         }
 
         return copy(bitRate = bitRate)
@@ -107,6 +108,14 @@ data class AudioRecorderSettings(
             60 * 15 * 1000L,
             60 * 30 * 1000L,
             60 * 60 * 1000L,
+        )
+        val EXAMPLE_BITRATE_VALUES = listOf(
+            96 * 1000,
+            128 * 1000,
+            160 * 1000,
+            192 * 1000,
+            256 * 1000,
+            320 * 1000,
         )
     }
 }

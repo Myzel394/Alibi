@@ -83,4 +83,5 @@ dependencies {
 
     implementation 'com.maxkeppeler.sheets-compose-dialogs:core:1.2.0'
     implementation 'com.maxkeppeler.sheets-compose-dialogs:duration:1.2.0'
+    implementation 'com.maxkeppeler.sheets-compose-dialogs:input:1.2.0'
 }

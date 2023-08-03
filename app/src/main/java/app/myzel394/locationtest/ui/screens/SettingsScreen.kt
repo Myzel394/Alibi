@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
+import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.IntervalDurationTile
 import app.myzel394.locationtest.ui.components.atoms.GlobalSwitch
 import app.myzel394.locationtest.ui.components.atoms.SettingsTile
@@ -91,6 +92,7 @@ fun SettingsScreen(
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
                 Column {
                     IntervalDurationTile()
+                    BitrateTile()
                 }
             }
         }
