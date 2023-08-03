@@ -105,8 +105,8 @@ data class AudioRecorderSettings(
         return copy(outputFormat = outputFormat)
     }
 
-    fun setEncoder(encoder: Int): AudioRecorderSettings {
-        if (encoder < 0 || encoder > 7) {
+    fun setEncoder(encoder: Int?): AudioRecorderSettings {
+        if (encoder != null && (encoder < 0 || encoder > 7)) {
             throw Exception("Encoder is not a MediaRecorder.AudioEncoder constant")
         }
 
@@ -152,6 +152,16 @@ data class AudioRecorderSettings(
             9 to "WEBM",
             10 to "HEIF",
             11 to "OGG",
+        )
+        val ENCODER_INDEX_TEXT_MAP = mapOf(
+            0 to "Default",
+            1 to "AMR_NB",
+            2 to "AMR_WB",
+            3 to "AAC",
+            4 to "HE_AAC",
+            5 to "AAC_ELD",
+            6 to "VORBIS",
+            7 to "OPUS",
         )
     }
 }
