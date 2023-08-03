@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Mic
@@ -49,7 +51,9 @@ import androidx.datastore.dataStore
 import androidx.navigation.NavController
 import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AppSettings
+import app.myzel394.locationtest.db.AudioRecorderSettings
 import app.myzel394.locationtest.ui.components.GlobalSwitch
+import app.myzel394.locationtest.ui.components.SettingsTile
 import app.myzel394.locationtest.ui.utils.formatDuration
 import com.maxkeppeker.sheets.core.icons.LibIcons
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
@@ -107,32 +111,7 @@ fun SettingsScreen(
                 }
             )
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Icon(
-                        Icons.Default.Mic,
-                        contentDescription = null,
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            text = "Batch duration",
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Record a single batch for this duration. Alibi records multiple batches and deletes the oldest one. When exporting the audio, all batches will be merged together",
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-
+                Column {
                     val showDurationPicker = rememberUseCaseState()
 
                     DurationDialog(
@@ -153,17 +132,62 @@ fun SettingsScreen(
                             maxTime = 60 * 60,
                         )
                     )
-                    Button(
-                        onClick = showDurationPicker::show,
-                        colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        ),
-                            shape = MaterialTheme.shapes.medium,
-                    ) {
-                        Text(
-                            text = formatDuration(settings.audioRecorderSettings.intervalDuration),
-                        )
-                    }
+                    SettingsTile(
+                        title = "Batch duration",
+                        description = "Record a single batch for this duration. Alibi records multiple batches and deletes the oldest one. When exporting the audio, all batches will be merged together",
+                        leading = {
+                            Icon(
+                                Icons.Default.Mic,
+                                contentDescription = null,
+                            )
+                        },
+                        trailing = {
+                            Button(
+                                onClick = showDurationPicker::show,
+                                colors = ButtonDefaults.filledTonalButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                ),
+                                shape = MaterialTheme.shapes.medium,
+                            ) {
+                                Text(
+                                    text = formatDuration(settings.audioRecorderSettings.intervalDuration),
+                                )
+                            }
+                        },
+                        extra = {
+                            LazyRow(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                contentPadding = PaddingValues(
+                                    horizontal = 32.dp,
+                                ),
+                            ) {
+                                items(AudioRecorderSettings.EXAMPLE_DURATION_TIMES.size) {
+                                    val duration = AudioRecorderSettings.EXAMPLE_DURATION_TIMES[it]
+
+                                    Button(
+                                        onClick = {
+                                            scope.launch {
+                                                dataStore.updateData {
+                                                    it.setAudioRecorderSettings(
+                                                        it.audioRecorderSettings.setIntervalDuration(duration)
+                                                    )
+                                                }
+                                            }
+                                        },
+                                        colors = ButtonDefaults.textButtonColors(),
+                                        shape = ButtonDefaults.textShape,
+                                        contentPadding = ButtonDefaults.TextButtonContentPadding,
+                                    ) {
+                                        Text(
+                                            text = formatDuration(duration),
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }
