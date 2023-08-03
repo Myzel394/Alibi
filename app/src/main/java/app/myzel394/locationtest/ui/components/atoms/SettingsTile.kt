@@ -1,4 +1,4 @@
-package app.myzel394.locationtest.ui.components
+package app.myzel394.locationtest.ui.components.atoms
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,7 +29,7 @@ import kotlinx.serialization.json.JsonNull.content
 @Composable
 fun SettingsTile(
     title: String,
-    description: String,
+    description: String? = null,
     leading: @Composable () -> Unit = {},
     trailing: @Composable () -> Unit = {},
     extra: (@Composable () -> Unit)? = null,
@@ -51,10 +51,11 @@ fun SettingsTile(
                     style = MaterialTheme.typography.labelLarge,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodySmall,
-                )
+                if (description != null)
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
             }
             Spacer(modifier = Modifier.width(16.dp))
             trailing()

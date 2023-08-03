@@ -1,4 +1,4 @@
-package app.myzel394.locationtest.ui.components
+package app.myzel394.locationtest.ui.components.atoms
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
