@@ -45,6 +45,16 @@ fun BitrateTile() {
         .collectAsState(initial = AppSettings.getDefaultInstance())
         .value
 
+    fun updateValue(bitRate: Int) {
+        scope.launch {
+            dataStore.updateData {
+                it.setAudioRecorderSettings(
+                    it.audioRecorderSettings.setBitRate(bitRate)
+                )
+            }
+        }
+    }
+
     InputDialog(
         state = showDialog,
         selection = InputSelection(
@@ -78,13 +88,7 @@ fun BitrateTile() {
         ) { result ->
             val bitRate = result.getString("bitrate")?.toIntOrNull() ?: throw IllegalStateException("Bitrate is null")
 
-            scope.launch {
-                dataStore.updateData {
-                    it.setAudioRecorderSettings(
-                        it.audioRecorderSettings.setBitRate(bitRate * 1000)
-                    )
-                }
-            }
+            updateValue(bitRate * 1000)
         }
     )
     SettingsTile(
@@ -112,15 +116,7 @@ fun BitrateTile() {
         extra = {
             ExampleListRoulette(
                 items = AudioRecorderSettings.EXAMPLE_BITRATE_VALUES,
-                onItemSelected = { bitRate ->
-                    scope.launch {
-                        dataStore.updateData {
-                            it.setAudioRecorderSettings(
-                                it.audioRecorderSettings.setBitRate(bitRate)
-                            )
-                        }
-                    }
-                }
+                onItemSelected = ::updateValue,
             ) {bitRate ->
                 Text(
                     text = "${bitRate / 1000} KB/s",

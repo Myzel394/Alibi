@@ -43,16 +43,20 @@ fun IntervalDurationTile() {
         .collectAsState(initial = AppSettings.getDefaultInstance())
         .value
 
+    fun updateValue(intervalDuration: Long) {
+        scope.launch {
+            dataStore.updateData {
+                it.setAudioRecorderSettings(
+                    it.audioRecorderSettings.setIntervalDuration(intervalDuration)
+                )
+            }
+        }
+    }
+
     DurationDialog(
         state = showDialog,
         selection = DurationSelection { newTimeInSeconds ->
-            scope.launch {
-                dataStore.updateData {
-                    it.setAudioRecorderSettings(
-                        it.audioRecorderSettings.setIntervalDuration(newTimeInSeconds * 1000L)
-                    )
-                }
-            }
+            updateValue(newTimeInSeconds * 1000L)
         },
         config = DurationConfig(
             timeFormat = DurationFormat.MM_SS,
@@ -86,15 +90,7 @@ fun IntervalDurationTile() {
         extra = {
             ExampleListRoulette(
                 items = AudioRecorderSettings.EXAMPLE_DURATION_TIMES,
-                onItemSelected = {duration ->
-                    scope.launch {
-                        dataStore.updateData {
-                            it.setAudioRecorderSettings(
-                                it.audioRecorderSettings.setIntervalDuration(duration)
-                            )
-                        }
-                    }
-                }
+                onItemSelected = ::updateValue,
             ) {duration ->
                 Text(
                     text = formatDuration(duration),
