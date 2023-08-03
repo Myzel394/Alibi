@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
+import app.myzel394.locationtest.ui.components.atoms.ExampleListRoulette
 import app.myzel394.locationtest.ui.components.atoms.SettingsTile
 import app.myzel394.locationtest.ui.utils.formatDuration
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
@@ -35,7 +36,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun IntervalDurationTile() {
     val scope = rememberCoroutineScope()
-    val showDurationPicker = rememberUseCaseState()
+    val showDialog = rememberUseCaseState()
     val dataStore = LocalContext.current.dataStore
     val settings = dataStore
         .data
@@ -43,7 +44,7 @@ fun IntervalDurationTile() {
         .value
 
     DurationDialog(
-        state = showDurationPicker,
+        state = showDialog,
         selection = DurationSelection { newTimeInSeconds ->
             scope.launch {
                 dataStore.updateData {
@@ -71,7 +72,7 @@ fun IntervalDurationTile() {
         },
         trailing = {
             Button(
-                onClick = showDurationPicker::show,
+                onClick = showDialog::show,
                 colors = ButtonDefaults.filledTonalButtonColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 ),
@@ -83,36 +84,21 @@ fun IntervalDurationTile() {
             }
         },
         extra = {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(
-                    horizontal = 32.dp,
-                ),
-            ) {
-                items(AudioRecorderSettings.EXAMPLE_DURATION_TIMES.size) {
-                    val duration = AudioRecorderSettings.EXAMPLE_DURATION_TIMES[it]
-
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                dataStore.updateData {
-                                    it.setAudioRecorderSettings(
-                                        it.audioRecorderSettings.setIntervalDuration(duration)
-                                    )
-                                }
-                            }
-                        },
-                        colors = ButtonDefaults.textButtonColors(),
-                        shape = ButtonDefaults.textShape,
-                        contentPadding = ButtonDefaults.TextButtonContentPadding,
-                    ) {
-                        Text(
-                            text = formatDuration(duration),
-                        )
+            ExampleListRoulette(
+                items = AudioRecorderSettings.EXAMPLE_DURATION_TIMES,
+                onItemSelected = {duration ->
+                    scope.launch {
+                        dataStore.updateData {
+                            it.setAudioRecorderSettings(
+                                it.audioRecorderSettings.setIntervalDuration(duration)
+                            )
+                        }
                     }
                 }
+            ) {duration ->
+                Text(
+                    text = formatDuration(duration),
+                )
             }
         }
     )
