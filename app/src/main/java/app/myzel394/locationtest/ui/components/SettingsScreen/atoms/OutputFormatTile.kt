@@ -71,7 +71,6 @@ fun OutputFormatTile() {
     )
     SettingsTile(
         title = "Output Format",
-        description = "Define the output format of the audio file.",
         leading = {
             Icon(
                 Icons.Default.AudioFile,

@@ -61,7 +61,6 @@ fun EncoderTile() {
     )
     SettingsTile(
         title = "Encoder",
-        description = "Define the audio encoder.",
         leading = {
             Icon(
                 Icons.Default.Memory,

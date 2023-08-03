@@ -107,11 +107,16 @@ fun SettingsScreen(
                     }
                 }
             )
+            IntervalDurationTile()
+            BitrateTile()
+            SamplingRateTile()
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
                 Column {
-                    IntervalDurationTile()
-                    BitrateTile()
-                    SamplingRateTile()
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 32.dp)
+                    )
                     OutputFormatTile()
                     EncoderTile()
                 }
