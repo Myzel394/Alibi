@@ -63,7 +63,7 @@ fun SamplingRateTile() {
                         keyboardType = KeyboardType.Number,
                     ),
                     type = InputTextFieldType.OUTLINED,
-                    text = (settings.audioRecorderSettings.bitRate / 1000).toString(),
+                    text = settings.audioRecorderSettings.getSamplingRate().toString(),
                     validationListener = { text ->
                         val samplingRate = text?.toIntOrNull()
 
