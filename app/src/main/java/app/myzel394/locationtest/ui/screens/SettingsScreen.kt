@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +34,7 @@ import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.IntervalDurationTile
+import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.OutputFormatTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.SamplingRateTile
 import app.myzel394.locationtest.ui.components.atoms.GlobalSwitch
 import app.myzel394.locationtest.ui.components.atoms.SettingsTile
@@ -95,6 +97,7 @@ fun SettingsScreen(
                     IntervalDurationTile()
                     BitrateTile()
                     SamplingRateTile()
+                    OutputFormatTile()
                 }
             }
         }

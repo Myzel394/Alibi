@@ -2,6 +2,7 @@ package app.myzel394.locationtest.db
 
 import android.media.MediaRecorder
 import android.os.Build
+import com.maxkeppeler.sheets.list.models.ListOption
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -43,7 +44,13 @@ data class AudioRecorderSettings(
     fun getSamplingRate(): Int = samplingRate ?: when(getOutputFormat()) {
         MediaRecorder.OutputFormat.AAC_ADTS -> 96000
         MediaRecorder.OutputFormat.THREE_GPP -> 44100
-        else -> throw Exception("Unknown output format")
+        MediaRecorder.OutputFormat.MPEG_4 -> 44100
+        MediaRecorder.OutputFormat.MPEG_2_TS -> 48000
+        MediaRecorder.OutputFormat.WEBM -> 48000
+        MediaRecorder.OutputFormat.AMR_NB -> 8000
+        MediaRecorder.OutputFormat.AMR_WB -> 16000
+        MediaRecorder.OutputFormat.OGG -> 48000
+        else -> 48000
     }
 
     fun getEncoder(): Int = encoder ?:
@@ -56,7 +63,13 @@ data class AudioRecorderSettings(
         when(getOutputFormat()) {
             MediaRecorder.OutputFormat.AAC_ADTS -> "aac"
             MediaRecorder.OutputFormat.THREE_GPP -> "3gp"
-            else -> throw Exception("Unknown output format")
+            MediaRecorder.OutputFormat.MPEG_4 -> "mp4"
+            MediaRecorder.OutputFormat.MPEG_2_TS -> "ts"
+            MediaRecorder.OutputFormat.WEBM -> "webm"
+            MediaRecorder.OutputFormat.AMR_NB -> "amr"
+            MediaRecorder.OutputFormat.AMR_WB -> "awb"
+            MediaRecorder.OutputFormat.OGG -> "ogg"
+            else -> "raw"
         }
 
     fun setIntervalDuration(duration: Long): AudioRecorderSettings {
@@ -84,8 +97,8 @@ data class AudioRecorderSettings(
         return copy(samplingRate = samplingRate)
     }
 
-    fun setOutputFormat(outputFormat: Int): AudioRecorderSettings {
-        if (outputFormat < 0 || outputFormat > 11) {
+    fun setOutputFormat(outputFormat: Int?): AudioRecorderSettings {
+        if (outputFormat != null && (outputFormat < 0 || outputFormat > 11)) {
             throw Exception("OutputFormat is not a MediaRecorder.OutputFormat constant")
         }
 
@@ -125,6 +138,20 @@ data class AudioRecorderSettings(
             44100,
             48000,
             96000,
+        )
+        val OUTPUT_FORMAT_INDEX_TEXT_MAP = mapOf(
+            0 to "Default",
+            1 to "THREE_GPP",
+            2 to "MPEG_4",
+            3 to "AMR_NB",
+            4 to "AMR_WB",
+            5 to "AAC_ADIF",
+            6 to "AAC_ADTS",
+            7 to "OUTPUT_FORMAT_RTP_AVP",
+            8 to "MPEG_2_TS",
+            9 to "WEBM",
+            10 to "HEIF",
+            11 to "OGG",
         )
     }
 }
