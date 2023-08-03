@@ -33,6 +33,7 @@ import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.IntervalDurationTile
+import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.SamplingRateTile
 import app.myzel394.locationtest.ui.components.atoms.GlobalSwitch
 import app.myzel394.locationtest.ui.components.atoms.SettingsTile
 import app.myzel394.locationtest.ui.utils.formatDuration
@@ -93,6 +94,7 @@ fun SettingsScreen(
                 Column {
                     IntervalDurationTile()
                     BitrateTile()
+                    SamplingRateTile()
                 }
             }
         }

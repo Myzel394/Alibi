@@ -76,8 +76,8 @@ data class AudioRecorderSettings(
         return copy(bitRate = bitRate)
     }
 
-    fun setSamplingRate(samplingRate: Int): AudioRecorderSettings {
-        if (samplingRate < 1000) {
+    fun setSamplingRate(samplingRate: Int?): AudioRecorderSettings {
+        if (samplingRate != null && samplingRate < 1000) {
             throw Exception("Sampling rate must be at least 1000")
         }
 
@@ -116,6 +116,15 @@ data class AudioRecorderSettings(
             192 * 1000,
             256 * 1000,
             320 * 1000,
+        )
+        val EXAMPLE_SAMPLING_RATE = listOf(
+            null,
+            8000,
+            16000,
+            22050,
+            44100,
+            48000,
+            96000,
         )
     }
 }
