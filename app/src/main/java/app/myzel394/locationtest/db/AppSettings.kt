@@ -98,4 +98,15 @@ data class AudioRecorderSettings(
 
         return copy(encoder = encoder)
     }
+
+    companion object {
+        val EXAMPLE_DURATION_TIMES = listOf(
+            60 * 1000L,
+            60 * 5 * 1000L,
+            60 * 10 * 1000L,
+            60 * 15 * 1000L,
+            60 * 30 * 1000L,
+            60 * 60 * 1000L,
+        )
+    }
 }
