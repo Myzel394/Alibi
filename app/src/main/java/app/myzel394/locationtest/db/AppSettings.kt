@@ -27,6 +27,7 @@ data class AppSettings(
 
 @Serializable
 data class AudioRecorderSettings(
+    val maxDuration: Long = 30 * 60 * 1000L,
     // 60 seconds
     val intervalDuration: Long = 60 * 1000L,
     // 320 Kbps
@@ -59,22 +60,13 @@ data class AudioRecorderSettings(
         else
             MediaRecorder.AudioEncoder.AMR_NB
 
-    fun getFileExtensions(): String =
-        when(getOutputFormat()) {
-            MediaRecorder.OutputFormat.AAC_ADTS -> "aac"
-            MediaRecorder.OutputFormat.THREE_GPP -> "3gp"
-            MediaRecorder.OutputFormat.MPEG_4 -> "mp4"
-            MediaRecorder.OutputFormat.MPEG_2_TS -> "ts"
-            MediaRecorder.OutputFormat.WEBM -> "webm"
-            MediaRecorder.OutputFormat.AMR_NB -> "amr"
-            MediaRecorder.OutputFormat.AMR_WB -> "awb"
-            MediaRecorder.OutputFormat.OGG -> "ogg"
-            else -> "raw"
-        }
-
     fun setIntervalDuration(duration: Long): AudioRecorderSettings {
         if (duration < 30 * 1000L || duration > 60 * 60 * 1000L) {
             throw Exception("Interval duration must be between 30 seconds and 1 hour")
+        }
+
+        if (duration > maxDuration) {
+            throw Exception("Interval duration must be less than max duration")
         }
 
         return copy(intervalDuration = duration)
@@ -113,7 +105,27 @@ data class AudioRecorderSettings(
         return copy(encoder = encoder)
     }
 
+    fun setMaxDuration(duration: Long): AudioRecorderSettings {
+        if (duration < 60 * 1000L || duration > 60 * 60 * 1000L) {
+            throw Exception("Max duration must be between 1 minute and 1 hour")
+        }
+
+        if (duration < intervalDuration) {
+            throw Exception("Max duration must be greater than interval duration")
+        }
+
+        return copy(maxDuration = duration)
+    }
+
     companion object {
+        fun getDefaultInstance(): AudioRecorderSettings = AudioRecorderSettings()
+        val EXAMPLE_MAX_DURATIONS = listOf(
+            15 * 60 * 1000L,
+            30 * 60 * 1000L,
+            60 * 60 * 1000L,
+            2 * 60 * 60 * 1000L,
+            3 * 60 * 60 * 1000L,
+        )
         val EXAMPLE_DURATION_TIMES = listOf(
             60 * 1000L,
             60 * 5 * 1000L,
