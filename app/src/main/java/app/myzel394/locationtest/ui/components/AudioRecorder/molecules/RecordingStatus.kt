@@ -1,4 +1,4 @@
-package app.myzel394.locationtest.ui.components.AudioRecorder.atoms
+package app.myzel394.locationtest.ui.components.AudioRecorder.molecules
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,10 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -40,9 +38,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import app.myzel394.locationtest.services.RecorderService
 import app.myzel394.locationtest.ui.BIG_PRIMARY_BUTTON_SIZE
+import app.myzel394.locationtest.ui.components.AudioRecorder.atoms.ConfirmDeletionDialog
+import app.myzel394.locationtest.ui.components.AudioRecorder.atoms.RealtimeAudioVisualizer
 import app.myzel394.locationtest.ui.components.atoms.Pulsating
 import app.myzel394.locationtest.ui.utils.formatDuration
-import app.myzel394.locationtest.ui.utils.rememberFileSaverDialog
 import kotlinx.coroutines.delay
 import java.io.File
 import java.time.Duration
@@ -111,63 +110,15 @@ fun RecordingStatus(
             var showDeleteDialog by remember { mutableStateOf(false) }
 
             if (showDeleteDialog) {
-                AlertDialog(
-                    onDismissRequest = {
+                ConfirmDeletionDialog(
+                    onDismiss = {
                         showDeleteDialog = false
                     },
-                    title = {
-                        Text("Delete Recording?")
+                    onConfirm = {
+                        showDeleteDialog = false
+                        RecorderService.stopService(context)
+                        service.reset()
                     },
-                    text = {
-                        Text("Are you sure you want to delete this recording?")
-                    },
-                    icon = {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = null,
-                        )
-                    },
-                    confirmButton = {
-                        Button(
-                            modifier = Modifier
-                                .semantics {
-                                    contentDescription = "Confirm Recording Deletion"
-                                },
-                            onClick = {
-                                showDeleteDialog = false
-                                RecorderService.stopService(context)
-                                service.reset()
-                            },
-                        ) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = null,
-                                modifier = Modifier.size(ButtonDefaults.IconSize),
-                            )
-                            Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                            Text("Delete")
-                        }
-                    },
-                    dismissButton = {
-                        Button(
-                            modifier = Modifier
-                                .semantics {
-                                    contentDescription = "Cancel Recording Deletion"
-                                },
-                            onClick = {
-                                showDeleteDialog = false
-                            },
-                            colors = ButtonDefaults.textButtonColors(),
-                        ) {
-                            Icon(
-                                Icons.Default.Cancel,
-                                contentDescription = null,
-                                modifier = Modifier.size(ButtonDefaults.IconSize),
-                            )
-                            Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                            Text("Cancel")
-                        }
-                    }
                 )
             }
             Button(
