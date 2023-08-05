@@ -41,6 +41,7 @@ import app.myzel394.locationtest.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.locationtest.ui.components.AudioRecorder.atoms.ConfirmDeletionDialog
 import app.myzel394.locationtest.ui.components.AudioRecorder.atoms.RealtimeAudioVisualizer
 import app.myzel394.locationtest.ui.components.atoms.Pulsating
+import app.myzel394.locationtest.ui.utils.KeepScreenOn
 import app.myzel394.locationtest.ui.utils.formatDuration
 import kotlinx.coroutines.delay
 import java.io.File
@@ -67,6 +68,8 @@ fun RecordingStatus(
             delay(1000)
         }
     }
+
+    KeepScreenOn()
 
     Column(
         modifier = Modifier
