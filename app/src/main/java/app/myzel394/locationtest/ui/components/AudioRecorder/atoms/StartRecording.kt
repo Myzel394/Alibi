@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,6 +28,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import app.myzel394.locationtest.services.RecorderService
+import app.myzel394.locationtest.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.locationtest.ui.utils.rememberFileSaverDialog
 import java.time.format.DateTimeFormatter
 
@@ -45,6 +47,9 @@ fun StartRecording(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box {}
+        if (service != null && service.amplitudes.isNotEmpty()) {
+            Box {}
+        }
         Button(
             onClick = {
                 RecorderService.startService(context, connection)
@@ -73,8 +78,14 @@ fun StartRecording(
                 )
             }
         }
+        if (service != null && service.amplitudes.isNotEmpty()) {
+            AudioVisualizer(amplitudes = service.amplitudes, showAll = true)
+        }
         if (service?.originalRecordingStart != null)
             Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(BIG_PRIMARY_BUTTON_SIZE),
                 onClick = {
                     saveFile(service.concatenateFiles())
                 }

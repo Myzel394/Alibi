@@ -1,6 +1,7 @@
 package app.myzel394.locationtest.ui.components.AudioRecorder.atoms
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -19,12 +20,15 @@ private const val MAX_AMPLITUDE = 10000
 @Composable
 fun AudioVisualizer(
     amplitudes: List<Int>,
+    showAll: Boolean = false
 ) {
     val primary = MaterialTheme.colorScheme.primary
     val primaryMuted = primary.copy(alpha = 0.3f)
 
     Canvas(
-        modifier = Modifier.width(300.dp).height(300.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp),
     ) {
         val height = this.size.height / 2f
         val width = this.size.width
@@ -32,14 +36,17 @@ fun AudioVisualizer(
         translate(width, height) {
             amplitudes.forEachIndexed { index, amplitude ->
                 val amplitudePercentage = (amplitude.toFloat() / MAX_AMPLITUDE).coerceAtMost(1f)
+                val boxWidth = if (showAll) width / amplitudes.size else 15f
                 val boxHeight = height * amplitudePercentage
+
                 drawRoundRect(
                     color = if (amplitudePercentage > 0.05f) primary else primaryMuted,
                     topLeft = Offset(
-                        30f * (index - amplitudes.size),
+                        if (showAll) -width / amplitudes.size * index
+                        else 30f * (index - amplitudes.size),
                         -boxHeight / 2f
                     ),
-                    size = Size(15f, boxHeight),
+                    size = Size(boxWidth, boxHeight),
                     cornerRadius = CornerRadius(3f, 3f)
                 )
             }

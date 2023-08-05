@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import app.myzel394.locationtest.services.RecorderService
+import app.myzel394.locationtest.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.locationtest.ui.components.atoms.Pulsating
 import app.myzel394.locationtest.ui.utils.formatDuration
 import app.myzel394.locationtest.ui.utils.rememberFileSaverDialog
@@ -63,38 +65,53 @@ fun RecordingStatus(
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
+        Box {}
         AudioVisualizer(amplitudes = service.amplitudes)
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val distance = Duration.between(service.recordingStart.value, now).toMillis()
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                val distance = Duration.between(service.recordingStart.value, now).toMillis()
 
-            Pulsating {
-                Box(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .clip(CircleShape)
-                        .background(Color.Red)
+                Pulsating {
+                    Box(
+                        modifier = Modifier
+                            .size(16.dp)
+                            .clip(CircleShape)
+                            .background(Color.Red)
+                    )
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = formatDuration(distance),
+                    style = MaterialTheme.typography.headlineLarge,
                 )
             }
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = formatDuration(distance),
-                style = MaterialTheme.typography.headlineLarge,
+            Spacer(modifier = Modifier.height(16.dp))
+            LinearProgressIndicator(
+                progress = progress,
+                modifier = Modifier
+                    .width(300.dp)
             )
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                onClick = {
+                    RecorderService.stopService(context)
+                },
+                colors = ButtonDefaults.textButtonColors(),
+            ) {
+                Text("Cancel")
+            }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        LinearProgressIndicator(
-            progress = progress,
-            modifier = Modifier
-                .width(300.dp)
-        )
-        Spacer(modifier = Modifier.height(32.dp))
         Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(BIG_PRIMARY_BUTTON_SIZE),
             onClick = {
                 RecorderService.stopService(context)
 
@@ -106,14 +123,6 @@ fun RecordingStatus(
                 contentDescription = null,
             )
             Text("Save Recording")
-        }
-        Button(
-            onClick = {
-                RecorderService.stopService(context)
-            },
-            colors = ButtonDefaults.textButtonColors(),
-        ) {
-            Text("Cancel")
         }
     }
 }
