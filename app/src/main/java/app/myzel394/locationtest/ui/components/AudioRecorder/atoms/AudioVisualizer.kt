@@ -3,7 +3,6 @@ package app.myzel394.locationtest.ui.components.AudioRecorder.atoms
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,13 +11,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
+import app.myzel394.locationtest.ui.MAX_AMPLITUDE
 
 // Inspired by https://github.com/Bnyro/RecordYou/blob/main/app/src/main/java/com/bnyro/recorder/ui/components/AudioVisualizer.kt
 
-private const val MAX_AMPLITUDE = 10000
-
 @Composable
 fun AudioVisualizer(
+    modifier: Modifier = Modifier,
     amplitudes: List<Int>,
 ) {
     val primary = MaterialTheme.colorScheme.primary
@@ -27,26 +26,23 @@ fun AudioVisualizer(
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp),
+            .then(modifier)
     ) {
         val height = this.size.height / 2f
         val width = this.size.width
+        val boxWidth = width / amplitudes.size
 
-        translate(width, height) {
-            amplitudes.forEachIndexed { index, amplitude ->
-                val amplitudePercentage = (amplitude.toFloat() / MAX_AMPLITUDE).coerceAtMost(1f)
-                val boxHeight = height * amplitudePercentage
+        amplitudes.forEachIndexed {index, amplitude ->
+            val x = boxWidth * index
+            val amplitudePercentage = (amplitude.toFloat() / MAX_AMPLITUDE).coerceAtMost(1f)
+            val boxHeight = height * amplitudePercentage
 
-                drawRoundRect(
-                    color = if (amplitudePercentage > 0.05f) primary else primaryMuted,
-                    topLeft = Offset(
-                        -width / amplitudes.size * index,
-                        -boxHeight / 2f
-                    ),
-                    size = Size(width, boxHeight),
-                    cornerRadius = CornerRadius(3f, 3f)
-                )
-            }
+            drawRoundRect(
+                color = if (amplitudePercentage > 0.05f) primary else primaryMuted,
+                topLeft = Offset(x, -boxHeight / 2f),
+                size = Size(boxWidth, boxHeight),
+                cornerRadius = CornerRadius(3f, 3f)
+            )
         }
     }
 }

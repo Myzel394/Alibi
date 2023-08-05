@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -35,6 +36,8 @@ import app.myzel394.locationtest.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.locationtest.ui.utils.rememberFileSaverDialog
 import java.time.format.DateTimeFormatter
 
+val VISUALIZER_HEIGHT = 200.dp
+
 @Composable
 fun StartRecording(
     connection: ServiceConnection,
@@ -44,17 +47,14 @@ fun StartRecording(
 
     val saveFile = rememberFileSaverDialog("audio/*")
 
+    val hasAmplitudes = service?.amplitudes?.isNotEmpty() ?: false
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box {}
-        if (service != null && service.amplitudes.isNotEmpty()) {
-            Box {}
-        }
-
-        val primary = MaterialTheme.colorScheme.primary
+        Spacer(modifier = Modifier.weight(1f))
         Button(
             onClick = {
                 RecorderService.startService(context, connection)
@@ -83,28 +83,39 @@ fun StartRecording(
                 )
             }
         }
-        if (service != null && service.amplitudes.isNotEmpty()) {
-            AudioVisualizer(amplitudes = service.amplitudes)
-        }
         if (service?.originalRecordingStart != null)
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(BIG_PRIMARY_BUTTON_SIZE),
-                onClick = {
-                    saveFile(service.concatenateFiles())
-                }
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Bottom,
             ) {
-                Icon(
-                    Icons.Default.Save,
-                    contentDescription = null,
+                if (hasAmplitudes)
+                    AudioVisualizer(
+                        modifier = Modifier
+                            .height(100.dp)
+                            .padding(bottom = 32.dp),
+                        amplitudes = service.amplitudes,
+                    )
+                Button(
                     modifier = Modifier
-                        .size(ButtonDefaults.IconSize),
-                )
-                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                Text("Save Recording from ${service.originalRecordingStart!!.format(DateTimeFormatter.ISO_DATE_TIME)}")
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .height(BIG_PRIMARY_BUTTON_SIZE),
+                    onClick = {
+                        saveFile(service.concatenateFiles())
+                    }
+                ) {
+                    Icon(
+                        Icons.Default.Save,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(ButtonDefaults.IconSize),
+                    )
+                    Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                    Text("Save Recording from ${service.originalRecordingStart!!.format(DateTimeFormatter.ISO_DATE_TIME)}")
+                }
             }
         else
-            Box {}
+            Spacer(modifier = Modifier.weight(1f))
     }
 }

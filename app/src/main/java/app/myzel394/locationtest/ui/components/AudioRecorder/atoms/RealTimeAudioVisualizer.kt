@@ -1,23 +1,14 @@
 package app.myzel394.locationtest.ui.components.AudioRecorder.atoms
 
-import android.inputmethodservice.Keyboard
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -26,13 +17,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
-import androidx.core.math.MathUtils
 import app.myzel394.locationtest.services.RecorderService
+import app.myzel394.locationtest.ui.MAX_AMPLITUDE
 import app.myzel394.locationtest.ui.utils.clamp
-import app.myzel394.locationtest.ui.utils.interpolate
 import kotlinx.coroutines.launch
 
-private const val MAX_AMPLITUDE = 10000
 private const val BOX_WIDTH = 15f
 private const val BOX_GAP = 15f
 private const val BOX_DIFF = BOX_WIDTH + BOX_GAP

@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import app.myzel394.locationtest.services.RecorderService
 import app.myzel394.locationtest.ui.BIG_PRIMARY_BUTTON_SIZE
@@ -63,7 +67,8 @@ fun RecordingStatus(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -100,18 +105,32 @@ fun RecordingStatus(
             )
             Spacer(modifier = Modifier.height(32.dp))
             Button(
+                modifier = Modifier
+                    .semantics {
+                        contentDescription = "Delete Recording"
+                    },
                 onClick = {
                     RecorderService.stopService(context)
                 },
                 colors = ButtonDefaults.textButtonColors(),
             ) {
-                Text("Cancel")
+                Icon(
+                    Icons.Default.Cancel,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
+                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                Text("Delete")
             }
         }
         Button(
             modifier = Modifier
+                .padding(16.dp)
                 .fillMaxWidth()
-                .height(BIG_PRIMARY_BUTTON_SIZE),
+                .height(BIG_PRIMARY_BUTTON_SIZE)
+                .semantics {
+                    contentDescription = "Save Recording"
+                },
             onClick = {
                 RecorderService.stopService(context)
 
@@ -121,7 +140,9 @@ fun RecordingStatus(
             Icon(
                 Icons.Default.Save,
                 contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize),
             )
+            Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
             Text("Save Recording")
         }
     }
