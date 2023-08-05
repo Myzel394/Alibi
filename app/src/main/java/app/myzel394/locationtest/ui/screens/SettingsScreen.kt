@@ -40,6 +40,7 @@ import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.EncoderTile
+import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.ForceExactMaxDurationTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.IntervalDurationTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.MaxDurationTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.OutputFormatTile
@@ -110,6 +111,7 @@ fun SettingsScreen(
             )
             MaxDurationTile()
             IntervalDurationTile()
+            ForceExactMaxDurationTile()
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
                 Column {
                     Divider(

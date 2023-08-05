@@ -35,6 +35,7 @@ data class AudioRecorderSettings(
     val maxDuration: Long = 30 * 60 * 1000L,
     // 60 seconds
     val intervalDuration: Long = 60 * 1000L,
+    val forceExactMaxDuration: Boolean = true,
     // 320 Kbps
     val bitRate: Int = 320000,
     val samplingRate: Int? = null,
@@ -120,6 +121,10 @@ data class AudioRecorderSettings(
         }
 
         return copy(maxDuration = duration)
+    }
+
+    fun setForceExactMaxDuration(forceExactMaxDuration: Boolean): AudioRecorderSettings {
+        return copy(forceExactMaxDuration = forceExactMaxDuration)
     }
 
     companion object {
