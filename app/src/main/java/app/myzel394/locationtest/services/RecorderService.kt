@@ -11,6 +11,9 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
@@ -23,6 +26,7 @@ import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.File
@@ -44,6 +48,7 @@ class RecorderService: Service() {
     private var mediaRecorder: MediaRecorder? = null
     private var onError: MediaRecorder.OnErrorListener? = null
     private var onStateChange: (RecorderState) -> Unit = {}
+    private var onAmplitudeUpdate: () -> Unit = {}
 
     private var counter = 0
 
@@ -79,17 +84,18 @@ class RecorderService: Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    val progress: Float
-        get() {
-            val start = recordingStart.value ?: return 0f
-            val now = LocalDateTime.now()
-            val duration = now.toEpochSecond(ZoneId.systemDefault().rules.getOffset(now)) - start.toEpochSecond(ZoneId.systemDefault().rules.getOffset(start))
+    override fun onDestroy() {
+        super.onDestroy()
 
-            return duration / (settings.maxDuration / 1000f)
-        }
+        scope.cancel()
+    }
 
     fun setOnErrorListener(onError: MediaRecorder.OnErrorListener) {
         this.onError = onError
+    }
+
+    fun setOnAmplitudeUpdateListener(onAmplitudeUpdate: () -> Unit) {
+        this.onAmplitudeUpdate = onAmplitudeUpdate
     }
 
     fun setOnStateChangeListener(onStateChange: (RecorderState) -> Unit) {
@@ -133,6 +139,7 @@ class RecorderService: Service() {
         val amplitude = mediaRecorder!!.maxAmplitude
         amplitudes.add(amplitude)
 
+        onAmplitudeUpdate()
         handler.postDelayed(::updateAmplitude, AMPLITUDE_UPDATE_INTERVAL)
     }
 

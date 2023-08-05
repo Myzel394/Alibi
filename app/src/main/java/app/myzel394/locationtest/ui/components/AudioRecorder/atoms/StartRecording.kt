@@ -1,6 +1,7 @@
 package app.myzel394.locationtest.ui.components.AudioRecorder.atoms
 
 import android.content.ServiceConnection
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -50,6 +53,8 @@ fun StartRecording(
         if (service != null && service.amplitudes.isNotEmpty()) {
             Box {}
         }
+
+        val primary = MaterialTheme.colorScheme.primary
         Button(
             onClick = {
                 RecorderService.startService(context, connection)
@@ -79,7 +84,7 @@ fun StartRecording(
             }
         }
         if (service != null && service.amplitudes.isNotEmpty()) {
-            AudioVisualizer(amplitudes = service.amplitudes, showAll = true)
+            AudioVisualizer(amplitudes = service.amplitudes)
         }
         if (service?.originalRecordingStart != null)
             Button(

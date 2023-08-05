@@ -20,7 +20,6 @@ private const val MAX_AMPLITUDE = 10000
 @Composable
 fun AudioVisualizer(
     amplitudes: List<Int>,
-    showAll: Boolean = false
 ) {
     val primary = MaterialTheme.colorScheme.primary
     val primaryMuted = primary.copy(alpha = 0.3f)
@@ -36,17 +35,15 @@ fun AudioVisualizer(
         translate(width, height) {
             amplitudes.forEachIndexed { index, amplitude ->
                 val amplitudePercentage = (amplitude.toFloat() / MAX_AMPLITUDE).coerceAtMost(1f)
-                val boxWidth = if (showAll) width / amplitudes.size else 15f
                 val boxHeight = height * amplitudePercentage
 
                 drawRoundRect(
                     color = if (amplitudePercentage > 0.05f) primary else primaryMuted,
                     topLeft = Offset(
-                        if (showAll) -width / amplitudes.size * index
-                        else 30f * (index - amplitudes.size),
+                        -width / amplitudes.size * index,
                         -boxHeight / 2f
                     ),
-                    size = Size(boxWidth, boxHeight),
+                    size = Size(width, boxHeight),
                     cornerRadius = CornerRadius(3f, 3f)
                 )
             }

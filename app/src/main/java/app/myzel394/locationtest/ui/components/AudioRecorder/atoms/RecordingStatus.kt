@@ -68,7 +68,7 @@ fun RecordingStatus(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Box {}
-        AudioVisualizer(amplitudes = service.amplitudes)
+        RealtimeAudioVisualizer(service = service)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
