@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import app.myzel394.locationtest.R
 import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AudioRecorderSettings
+import app.myzel394.locationtest.ui.utils.formatDuration
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.coroutines.CoroutineScope
@@ -109,9 +110,34 @@ class RecorderService: Service() {
         }
     }
 
+    private fun stripConcatenatedFileToExactDuration(
+        outputFile: File
+    ) {
+        // Move the concatenated file to a temporary file
+        val rawFile = File("$fileFolder/${outputFile.nameWithoutExtension}-raw.${settings.fileExtension}")
+        outputFile.renameTo(rawFile)
+
+        val command = "-sseof ${settings.maxDuration / -1000} -i $rawFile -y $outputFile"
+
+        val session = FFmpegKit.execute(command)
+
+        if (!ReturnCode.isSuccess(session.returnCode)) {
+            Log.d(
+                "Audio Concatenation",
+                String.format(
+                    "Command failed with state %s and rc %s.%s",
+                    session.getState(),
+                    session.getReturnCode(),
+                    session.getFailStackTrace()
+                )
+            )
+
+            throw Exception("Failed to strip concatenated audio")
+        }
+    }
+
     fun concatenateFiles(forceConcatenation: Boolean = false): File {
         val paths = filePaths.joinToString("|")
-        println("Concatenating files: $paths")
         val fileName = recordingStart!!
             .format(ISO_DATE_TIME)
             .toString()
@@ -123,7 +149,7 @@ class RecorderService: Service() {
             return outputFile
         }
 
-        val command = "-i 'concat:$paths'" +
+        val command = "-i 'concat:$paths' -y" +
                 " -acodec copy" +
                 " -metadata title='$fileName' " +
                 " -metadata date='${recordingStart!!.format(ISO_DATE_TIME)}'" +
@@ -146,6 +172,11 @@ class RecorderService: Service() {
             )
 
             throw Exception("Failed to concatenate audios")
+        }
+
+        val minRequiredForPossibleInExactMaxDuration = settings.maxDuration / settings.intervalDuration
+        if (settings.forceExactMaxDuration && filePaths.size > minRequiredForPossibleInExactMaxDuration) {
+            stripConcatenatedFileToExactDuration(outputFile)
         }
 
         return outputFile
@@ -332,6 +363,7 @@ class RecorderService: Service() {
 data class Settings(
     val maxDuration: Long,
     val intervalDuration: Long,
+    val forceExactMaxDuration: Boolean,
     val bitRate: Int,
     val samplingRate: Int,
     val outputFormat: Int,
@@ -359,6 +391,7 @@ data class Settings(
                 outputFormat = audioRecorderSettings.getOutputFormat(),
                 encoder = audioRecorderSettings.getEncoder(),
                 maxDuration = audioRecorderSettings.maxDuration,
+                forceExactMaxDuration = audioRecorderSettings.forceExactMaxDuration,
             )
         }
     }
