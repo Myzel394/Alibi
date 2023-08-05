@@ -106,7 +106,7 @@ data class AudioRecorderSettings(
     }
 
     fun setMaxDuration(duration: Long): AudioRecorderSettings {
-        if (duration < 60 * 1000L || duration > 60 * 60 * 1000L) {
+        if (duration < 60 * 1000L || duration > 24 * 60 * 60 * 1000L) {
             throw Exception("Max duration must be between 1 minute and 1 hour")
         }
 

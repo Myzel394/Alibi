@@ -9,6 +9,7 @@ android {
     compileSdk 33
 
     defaultConfig {
+        multiDexEnabled true
         applicationId "app.myzel394.locationtest"
         minSdk 24
         targetSdk 33

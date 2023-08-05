@@ -9,24 +9,41 @@ import android.media.MediaPlayer
 import android.os.IBinder
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import app.myzel394.locationtest.services.RecorderService
+import app.myzel394.locationtest.ui.components.AudioRecorder.atoms.RecordingStatus
+import app.myzel394.locationtest.ui.components.AudioRecorder.atoms.StartRecording
 import app.myzel394.locationtest.ui.enums.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,10 +52,6 @@ fun AudioRecorder(
     navController: NavController,
 ) {
     val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { isGranted ->
-    }
 
     var service by remember { mutableStateOf<RecorderService?>(null) }
     val connection = remember {
@@ -85,51 +98,15 @@ fun AudioRecorder(
             )
         },
     ) {padding ->
-        Row(
-            modifier = Modifier.padding(padding),
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
         ) {
-            Button(
-                onClick = {
-                    // Check audio recording permission
-                    if (context.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                        launcher.launch(Manifest.permission.RECORD_AUDIO)
-
-                        return@Button
-                    }
-
-                    if (isRecording) {
-                        Intent(context, RecorderService::class.java).also { intent ->
-                            intent.action = RecorderService.Actions.STOP.toString()
-
-                            context.startService(intent)
-                        }
-                    } else {
-                        Intent(context, RecorderService::class.java).also { intent ->
-                            intent.action = RecorderService.Actions.START.toString()
-
-                            ContextCompat.startForegroundService(context, intent)
-                            context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
-                        }
-                    }
-                },
-            ) {
-                Text(text = if (isRecording) "Stop" else "Start")
-            }
-            if (!isRecording && service != null)
-                Button(
-                    onClick = {
-                        val path = service!!.concatenateAudios()
-
-                        val player = MediaPlayer().apply {
-                            setDataSource(path)
-                            prepare()
-                        }
-
-                        player.start()
-                    },
-                ) {
-                    Text(text = "Convert")
-                }
+            if (isRecording && service != null)
+                RecordingStatus(service = service!!)
+            else
+                StartRecording(connection = connection, service = service)
         }
     }
 }

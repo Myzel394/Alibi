@@ -41,6 +41,7 @@ import app.myzel394.locationtest.db.AudioRecorderSettings
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.EncoderTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.IntervalDurationTile
+import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.MaxDurationTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.OutputFormatTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.SamplingRateTile
 import app.myzel394.locationtest.ui.components.atoms.GlobalSwitch
@@ -107,9 +108,8 @@ fun SettingsScreen(
                     }
                 }
             )
+            MaxDurationTile()
             IntervalDurationTile()
-            BitrateTile()
-            SamplingRateTile()
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
                 Column {
                     Divider(
@@ -117,6 +117,8 @@ fun SettingsScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 32.dp)
                     )
+                    BitrateTile()
+                    SamplingRateTile()
                     OutputFormatTile()
                     EncoderTile()
                 }
