@@ -28,6 +28,10 @@ import app.myzel394.locationtest.ui.components.atoms.SettingsTile
 import app.myzel394.locationtest.ui.utils.formatDuration
 import com.maxkeppeker.sheets.core.models.base.IconSource
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
+import com.maxkeppeler.sheets.duration.DurationDialog
+import com.maxkeppeler.sheets.duration.models.DurationConfig
+import com.maxkeppeler.sheets.duration.models.DurationFormat
+import com.maxkeppeler.sheets.duration.models.DurationSelection
 import com.maxkeppeler.sheets.input.InputDialog
 import com.maxkeppeler.sheets.input.models.InputHeader
 import com.maxkeppeler.sheets.input.models.InputSelection
@@ -57,41 +61,17 @@ fun MaxDurationTile() {
         }
     }
 
-    InputDialog(
+    DurationDialog(
         state = showDialog,
-        selection = InputSelection(
-            input = listOf(
-                InputTextField(
-                    header = InputHeader(
-                        title = "Set the maximum duration",
-                        icon = IconSource(Icons.Default.Timer),
-                    ),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                    ),
-                    type = InputTextFieldType.OUTLINED,
-                    text = settings.audioRecorderSettings.maxDuration.toString(),
-                    validationListener = { text ->
-                        val maxDuration = text?.toLongOrNull()
-
-                        if (maxDuration == null) {
-                            ValidationResult.Invalid("Please enter a valid number")
-                        }
-
-                        if (maxDuration !in (60 * 1000L)..(60 * 60 * 1000L)) {
-                            ValidationResult.Invalid("Please enter a number between 1 minute and 1 hour")
-                        }
-
-                        ValidationResult.Valid
-                    },
-                    key = "maxDuration",
-                )
-            ),
-        ) { result ->
-            val maxDuration = result.getString("maxDuration")?.toLongOrNull() ?: throw IllegalStateException("Invalid maxDuration")
-
-            updateValue(maxDuration)
-        }
+        selection = DurationSelection { newTimeInSeconds ->
+            updateValue(newTimeInSeconds * 1000L)
+        },
+        config = DurationConfig(
+            timeFormat = DurationFormat.MM_SS,
+            currentTime = settings.audioRecorderSettings.maxDuration / 1000,
+            minTime = 60,
+            maxTime = 24 * 60 * 60,
+        )
     )
     SettingsTile(
         title = "Max duration",
