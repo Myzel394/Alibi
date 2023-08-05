@@ -11,6 +11,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -31,6 +32,8 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 
 import java.util.UUID;
+
+const val AMPLITUDE_UPDATE_INTERVAL = 100L
 
 class RecorderService: Service() {
     private val binder = LocalBinder()
@@ -56,6 +59,7 @@ class RecorderService: Service() {
         get() = recordingStart.value != null
 
     val filePaths = mutableListOf<String>()
+    val amplitudes = mutableStateListOf<Int>()
 
     var originalRecordingStart: LocalDateTime? = null
         private set
@@ -121,6 +125,17 @@ class RecorderService: Service() {
         return File(outputFile)
     }
 
+    private fun updateAmplitude() {
+        if (!isRecording || mediaRecorder == null) {
+            return
+        }
+
+        val amplitude = mediaRecorder!!.maxAmplitude
+        amplitudes.add(amplitude)
+
+        handler.postDelayed(::updateAmplitude, AMPLITUDE_UPDATE_INTERVAL)
+    }
+
     private fun startNewRecording() {
         if (!isRecording) {
             return
@@ -183,6 +198,7 @@ class RecorderService: Service() {
 
 
     private fun start() {
+        amplitudes.clear()
         filePaths.clear()
         // Create folder
         File(this.fileFolder!!).mkdirs()
@@ -196,6 +212,7 @@ class RecorderService: Service() {
 
                 showNotification()
                 startNewRecording()
+                updateAmplitude()
             }
         }
     }

@@ -1,12 +1,5 @@
 package app.myzel394.locationtest.ui.components.AudioRecorder.atoms
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,10 +20,13 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -39,38 +35,43 @@ import app.myzel394.locationtest.services.RecorderService
 import app.myzel394.locationtest.ui.components.atoms.Pulsating
 import app.myzel394.locationtest.ui.utils.formatDuration
 import app.myzel394.locationtest.ui.utils.rememberFileSaverDialog
+import kotlinx.coroutines.delay
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Composable
 fun RecordingStatus(
     service: RecorderService,
 ) {
     val context = LocalContext.current
-
     val saveFile = rememberFileSaverDialog("audio/*")
+
+    var now by remember { mutableStateOf(LocalDateTime.now()) }
+
+    val start = service.recordingStart.value!!
+    val duration = now.toEpochSecond(ZoneId.systemDefault().rules.getOffset(now)) - start.toEpochSecond(ZoneId.systemDefault().rules.getOffset(start))
+    val progress = duration / (service.settings.maxDuration / 1000f)
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            now = LocalDateTime.now()
+            delay(1000)
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        // Forces real time update for the text
-        val transition = rememberInfiniteTransition()
-        val forceUpdateValue by transition.animateFloat(
-            initialValue = .999999f,
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1000),
-                repeatMode = RepeatMode.Reverse
-            )
-        )
+        AudioVisualizer(amplitudes = service.amplitudes)
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
-            val distance = Duration.between(service.recordingStart.value, LocalDateTime.now()).toMillis()
+            val distance = Duration.between(service.recordingStart.value, now).toMillis()
 
             Pulsating {
                 Box(
@@ -84,15 +85,13 @@ fun RecordingStatus(
             Text(
                 text = formatDuration(distance),
                 style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.alpha(forceUpdateValue)
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
         LinearProgressIndicator(
-            progress = service.progress,
+            progress = progress,
             modifier = Modifier
                 .width(300.dp)
-                .alpha(forceUpdateValue)
         )
         Spacer(modifier = Modifier.height(32.dp))
         Button(
