@@ -45,6 +45,7 @@ import app.myzel394.locationtest.services.RecorderService
 import app.myzel394.locationtest.ui.components.AudioRecorder.atoms.RecordingStatus
 import app.myzel394.locationtest.ui.components.AudioRecorder.atoms.StartRecording
 import app.myzel394.locationtest.ui.enums.Screen
+import app.myzel394.locationtest.ui.utils.rememberFileSaverDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,6 +54,7 @@ fun AudioRecorder(
 ) {
     val context = LocalContext.current
 
+    val saveFile = rememberFileSaverDialog("audio/aac")
     var service by remember { mutableStateOf<RecorderService?>(null) }
     val connection = remember {
         object : ServiceConnection {
@@ -78,7 +80,7 @@ fun AudioRecorder(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Audio Recorder")
+                    Text("Alibi")
                 },
                 actions = {
                     IconButton(
@@ -101,7 +103,7 @@ fun AudioRecorder(
                 .padding(padding),
         ) {
             if (isRecording && service != null)
-                RecordingStatus(service = service!!)
+                RecordingStatus(service = service!!, saveFile = saveFile)
             else
                 StartRecording(connection = connection, service = service)
         }

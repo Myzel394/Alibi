@@ -30,6 +30,7 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ISO_DATE_TIME
 import java.util.Date
 
 import java.util.UUID
@@ -100,10 +101,15 @@ class RecorderService: Service() {
 
     fun concatenateFiles(forceConcatenation: Boolean = false): File {
         val paths = filePaths.joinToString("|")
-        val outputFile = "$fileFolder/${recordingStart!!.format(DateTimeFormatter.ISO_DATE_TIME)}.${settings.fileExtension}"
+        val fileName = recordingStart!!
+            .format(DateTimeFormatter.ISO_DATE_TIME)
+            .toString()
+            .replace(":", "-")
+            .replace(".", "_")
+        val outputFile = File("$fileFolder/$fileName.${settings.fileExtension}")
 
-        if (File(outputFile).exists() && !forceConcatenation) {
-            return File(outputFile)
+        if (outputFile.exists() && !forceConcatenation) {
+            return outputFile
         }
 
         val command = "-i \"concat:$paths\" -acodec copy $outputFile"
@@ -124,7 +130,7 @@ class RecorderService: Service() {
             throw Exception("Failed to concatenate audios")
         }
 
-        return File(outputFile)
+        return outputFile
     }
 
     private fun updateAmplitude() {

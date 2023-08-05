@@ -44,6 +44,7 @@ import app.myzel394.locationtest.ui.components.atoms.Pulsating
 import app.myzel394.locationtest.ui.utils.formatDuration
 import app.myzel394.locationtest.ui.utils.rememberFileSaverDialog
 import kotlinx.coroutines.delay
+import java.io.File
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -51,9 +52,9 @@ import java.time.ZoneId
 @Composable
 fun RecordingStatus(
     service: RecorderService,
+    saveFile: (File) -> Unit,
 ) {
     val context = LocalContext.current
-    val saveFile = rememberFileSaverDialog("audio/*")
 
     var now by remember { mutableStateOf(LocalDateTime.now()) }
 
