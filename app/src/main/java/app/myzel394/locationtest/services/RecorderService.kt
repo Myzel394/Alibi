@@ -55,11 +55,23 @@ class RecorderService: Service() {
         private set
     val isRecording = mutableStateOf(false)
 
-    val filePaths = mutableListOf<String>()
     val amplitudes = mutableStateListOf<Int>()
 
     var recordingStart: LocalDateTime? = null
         private set
+
+    val filePaths: List<File>
+        get() = File(fileFolder!!).listFiles()?.filter {
+            val name = it.nameWithoutExtension
+
+            if (name.toIntOrNull() == null) {
+                return@filter false
+            }
+
+            val extension = it.extension
+
+            extension == settings.fileExtension
+        }?.toList() ?: emptyList()
 
     override fun onBind(p0: Intent?): IBinder = binder
 
@@ -92,17 +104,16 @@ class RecorderService: Service() {
         amplitudes.clear()
         isRecording.value = false
 
-        filePaths.forEach {
-            File(it).delete()
+        File(fileFolder!!).listFiles()?.forEach {
+            it.delete()
         }
-
-        filePaths.clear()
     }
 
     fun concatenateFiles(forceConcatenation: Boolean = false): File {
         val paths = filePaths.joinToString("|")
+        println("Concatenating files: $paths")
         val fileName = recordingStart!!
-            .format(DateTimeFormatter.ISO_DATE_TIME)
+            .format(ISO_DATE_TIME)
             .toString()
             .replace(":", "-")
             .replace(".", "_")
@@ -132,7 +143,7 @@ class RecorderService: Service() {
                     session.getReturnCode(),
                     session.getFailStackTrace()
                 )
-            );
+            )
 
             throw Exception("Failed to concatenate audios")
         }
@@ -159,7 +170,7 @@ class RecorderService: Service() {
 
         deleteOldRecordings()
 
-        val newRecorder = createRecorder();
+        val newRecorder = createRecorder()
 
         newRecorder.prepare()
 
@@ -174,6 +185,8 @@ class RecorderService: Service() {
         mediaRecorder = newRecorder
 
         counter++
+
+        handler.postDelayed(this::startNewRecording, settings.intervalDuration)
     }
 
     private fun deleteOldRecordings() {
@@ -190,8 +203,6 @@ class RecorderService: Service() {
     }
 
     private fun createRecorder(): MediaRecorder {
-        filePaths.add(getFilePath())
-
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MediaRecorder(this)
         } else {
@@ -265,9 +276,6 @@ class RecorderService: Service() {
 
         // show notification
         startForeground(getNotificationId(), notification)
-
-        // call function 1 sec later
-        handler.postDelayed(this::showNotification, 1000L)
     }
 
     // To avoid int overflow, we'll use the number of seconds since 2023-01-01 01:01:01
