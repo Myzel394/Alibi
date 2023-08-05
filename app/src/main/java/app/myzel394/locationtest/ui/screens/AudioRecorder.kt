@@ -58,9 +58,6 @@ fun AudioRecorder(
         object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
                 service = (binder as RecorderService.LocalBinder).getService().also { service ->
-                    service.setOnStateChangeListener {
-                        println("asd")
-                    }
                 }
             }
 
@@ -69,7 +66,7 @@ fun AudioRecorder(
         }
     }
 
-    val isRecording = service?.isRecording ?: false
+    val isRecording = service?.isRecording?.value ?: false
 
     LaunchedEffect(Unit) {
         Intent(context, RecorderService::class.java).also { intent ->

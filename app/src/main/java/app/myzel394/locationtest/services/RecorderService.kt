@@ -11,9 +11,6 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
@@ -35,7 +32,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
 
-import java.util.UUID;
+import java.util.UUID
 
 const val AMPLITUDE_UPDATE_INTERVAL = 100L
 
@@ -47,26 +44,20 @@ class RecorderService: Service() {
 
     private var mediaRecorder: MediaRecorder? = null
     private var onError: MediaRecorder.OnErrorListener? = null
-    private var onStateChange: (RecorderState) -> Unit = {}
     private var onAmplitudeUpdate: () -> Unit = {}
 
     private var counter = 0
 
     lateinit var settings: Settings
 
-    var recordingStart = mutableStateOf<LocalDateTime?>(null)
-        private set
     var fileFolder: String? = null
         private set
-    var recordingState: RecorderState = RecorderState.IDLE
-        private set
-    val isRecording: Boolean
-        get() = recordingStart.value != null
+    val isRecording = mutableStateOf(false)
 
     val filePaths = mutableListOf<String>()
     val amplitudes = mutableStateListOf<Int>()
 
-    var originalRecordingStart: LocalDateTime? = null
+    var recordingStart: LocalDateTime? = null
         private set
 
     override fun onBind(p0: Intent?): IBinder = binder
@@ -90,21 +81,26 @@ class RecorderService: Service() {
         scope.cancel()
     }
 
-    fun setOnErrorListener(onError: MediaRecorder.OnErrorListener) {
-        this.onError = onError
-    }
-
     fun setOnAmplitudeUpdateListener(onAmplitudeUpdate: () -> Unit) {
         this.onAmplitudeUpdate = onAmplitudeUpdate
     }
 
-    fun setOnStateChangeListener(onStateChange: (RecorderState) -> Unit) {
-        this.onStateChange = onStateChange
+    fun reset() {
+        recordingStart = null
+        counter = 0
+        amplitudes.clear()
+        isRecording.value = false
+
+        filePaths.forEach {
+            File(it).delete()
+        }
+
+        filePaths.clear()
     }
 
     fun concatenateFiles(forceConcatenation: Boolean = false): File {
         val paths = filePaths.joinToString("|")
-        val outputFile = "$fileFolder/${originalRecordingStart!!.format(DateTimeFormatter.ISO_DATE_TIME)}.${settings.fileExtension}"
+        val outputFile = "$fileFolder/${recordingStart!!.format(DateTimeFormatter.ISO_DATE_TIME)}.${settings.fileExtension}"
 
         if (File(outputFile).exists() && !forceConcatenation) {
             return File(outputFile)
@@ -132,7 +128,7 @@ class RecorderService: Service() {
     }
 
     private fun updateAmplitude() {
-        if (!isRecording || mediaRecorder == null) {
+        if (!isRecording.value || mediaRecorder == null) {
             return
         }
 
@@ -144,7 +140,7 @@ class RecorderService: Service() {
     }
 
     private fun startNewRecording() {
-        if (!isRecording) {
+        if (!isRecording.value) {
             return
         }
 
@@ -205,17 +201,15 @@ class RecorderService: Service() {
 
 
     private fun start() {
-        amplitudes.clear()
-        filePaths.clear()
+        reset()
         // Create folder
         File(this.fileFolder!!).mkdirs()
 
         scope.launch {
             dataStore.data.collectLatest { preferenceSettings ->
                 settings = Settings.from(preferenceSettings.audioRecorderSettings)
-                recordingState = RecorderState.RECORDING
-                recordingStart.value = LocalDateTime.now()
-                originalRecordingStart = recordingStart.value
+                recordingStart = LocalDateTime.now()
+                isRecording.value = true
 
                 showNotification()
                 startNewRecording()
@@ -225,22 +219,20 @@ class RecorderService: Service() {
     }
 
     private fun stop() {
-        recordingState = RecorderState.IDLE
-
         mediaRecorder?.apply {
             runCatching {
                 stop()
                 release()
             }
         }
-        recordingStart.value = null
+        isRecording.value = false
 
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
     private fun showNotification() {
-        if (recordingStart.value == null) {
+        if (!isRecording.value) {
             return
         }
 
@@ -254,7 +246,7 @@ class RecorderService: Service() {
             .setOnlyAlertOnce(true)
             .setUsesChronometer(true)
             .setChronometerCountDown(false)
-            .setWhen(Date.from(recordingStart.value!!.atZone(ZoneId.systemDefault()).toInstant()).time)
+            .setWhen(Date.from(recordingStart!!.atZone(ZoneId.systemDefault()).toInstant()).time)
             .setShowWhen(true)
             .build()
 
@@ -267,10 +259,10 @@ class RecorderService: Service() {
 
     // To avoid int overflow, we'll use the number of seconds since 2023-01-01 01:01:01
     private fun getNotificationId(): Int {
-        val offset = ZoneId.of("UTC").rules.getOffset(recordingStart.value)
+        val offset = ZoneId.of("UTC").rules.getOffset(recordingStart!!)
 
         return (
-                recordingStart.value!!.toEpochSecond(offset) -
+                recordingStart!!.toEpochSecond(offset) -
                         LocalDateTime.of(2023, 1, 1, 1, 1).toEpochSecond(offset)
                 ).toInt()
     }
@@ -286,12 +278,6 @@ class RecorderService: Service() {
         STOP,
     }
 
-    enum class RecorderState {
-        IDLE,
-        RECORDING,
-        PAUSED,
-    }
-
     companion object {
         fun getRandomFileFolder(context: Context): String {
             // uuid
@@ -302,7 +288,7 @@ class RecorderService: Service() {
 
         fun startService(context: Context, connection: ServiceConnection?) {
             Intent(context, RecorderService::class.java).also { intent ->
-                intent.action = RecorderService.Actions.START.toString()
+                intent.action = Actions.START.toString()
 
                 ContextCompat.startForegroundService(context, intent)
 
@@ -314,7 +300,7 @@ class RecorderService: Service() {
 
         fun stopService(context: Context) {
             Intent(context, RecorderService::class.java).also { intent ->
-                intent.action = RecorderService.Actions.STOP.toString()
+                intent.action = Actions.STOP.toString()
 
                 context.startService(intent)
             }

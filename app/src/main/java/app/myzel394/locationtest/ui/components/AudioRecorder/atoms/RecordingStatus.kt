@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -55,7 +57,7 @@ fun RecordingStatus(
 
     var now by remember { mutableStateOf(LocalDateTime.now()) }
 
-    val start = service.recordingStart.value!!
+    val start = service.recordingStart!!
     val duration = now.toEpochSecond(ZoneId.systemDefault().rules.getOffset(now)) - start.toEpochSecond(ZoneId.systemDefault().rules.getOffset(start))
     val progress = duration / (service.settings.maxDuration / 1000f)
 
@@ -81,7 +83,7 @@ fun RecordingStatus(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
             ) {
-                val distance = Duration.between(service.recordingStart.value, now).toMillis()
+                val distance = Duration.between(service.recordingStart, now).toMillis()
 
                 Pulsating {
                     Box(
@@ -104,18 +106,81 @@ fun RecordingStatus(
                     .width(300.dp)
             )
             Spacer(modifier = Modifier.height(32.dp))
+
+            var showDeleteDialog by remember { mutableStateOf(false) }
+
+            if (showDeleteDialog) {
+                AlertDialog(
+                    onDismissRequest = {
+                        showDeleteDialog = false
+                    },
+                    title = {
+                        Text("Delete Recording?")
+                    },
+                    text = {
+                        Text("Are you sure you want to delete this recording?")
+                    },
+                    icon = {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = null,
+                        )
+                    },
+                    confirmButton = {
+                        Button(
+                            modifier = Modifier
+                                .semantics {
+                                    contentDescription = "Confirm Recording Deletion"
+                                },
+                            onClick = {
+                                showDeleteDialog = false
+                                RecorderService.stopService(context)
+                                service.reset()
+                            },
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = null,
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                            )
+                            Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                            Text("Delete")
+                        }
+                    },
+                    dismissButton = {
+                        Button(
+                            modifier = Modifier
+                                .semantics {
+                                    contentDescription = "Cancel Recording Deletion"
+                                },
+                            onClick = {
+                                showDeleteDialog = false
+                            },
+                            colors = ButtonDefaults.textButtonColors(),
+                        ) {
+                            Icon(
+                                Icons.Default.Cancel,
+                                contentDescription = null,
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                            )
+                            Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                            Text("Cancel")
+                        }
+                    }
+                )
+            }
             Button(
                 modifier = Modifier
                     .semantics {
                         contentDescription = "Delete Recording"
                     },
                 onClick = {
-                    RecorderService.stopService(context)
+                    showDeleteDialog = true
                 },
                 colors = ButtonDefaults.textButtonColors(),
             ) {
                 Icon(
-                    Icons.Default.Cancel,
+                    Icons.Default.Delete,
                     contentDescription = null,
                     modifier = Modifier.size(ButtonDefaults.IconSize),
                 )
