@@ -1,5 +1,6 @@
-package app.myzel394.locationtest.ui.components.AudioRecorder.atoms
+package app.myzel394.locationtest.ui.components.AudioRecorder.molecules
 
+import android.Manifest
 import android.content.ServiceConnection
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import app.myzel394.locationtest.services.RecorderService
 import app.myzel394.locationtest.ui.BIG_PRIMARY_BUTTON_SIZE
+import app.myzel394.locationtest.ui.components.AudioRecorder.atoms.AudioVisualizer
+import app.myzel394.locationtest.ui.components.atoms.PermissionRequester
 import app.myzel394.locationtest.ui.utils.rememberFileSaverDialog
 import java.time.format.DateTimeFormatter
 
@@ -51,32 +54,45 @@ fun StartRecording(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.weight(1f))
-        Button(
-            onClick = {
-                RecorderService.startService(context, connection)
-            },
-            modifier = Modifier
-                .semantics {
-                    contentDescription = "Start recording"
-                }
-                .size(200.dp)
-                .clip(shape = CircleShape),
-            colors = ButtonDefaults.outlinedButtonColors(),
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
+        PermissionRequester(
+            permission = arrayOf(Manifest.permission.RECORD_AUDIO),
+            icon = {
                 Icon(
                     Icons.Default.Mic,
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(80.dp),
                 )
-                Spacer(modifier = Modifier.height(ButtonDefaults.IconSpacing))
-                Text(
-                    "Start Recording",
-                    style = MaterialTheme.typography.titleSmall,
-                )
+            },
+            onPermissionAvailable = {
+                RecorderService.startService(context, connection)
+            },
+        ) { trigger ->
+            Button(
+                onClick = {
+                    trigger()
+                },
+                modifier = Modifier
+                    .semantics {
+                        contentDescription = "Start recording"
+                    }
+                    .size(200.dp)
+                    .clip(shape = CircleShape),
+                colors = ButtonDefaults.outlinedButtonColors(),
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Icon(
+                        Icons.Default.Mic,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(80.dp),
+                    )
+                    Spacer(modifier = Modifier.height(ButtonDefaults.IconSpacing))
+                    Text(
+                        "Start Recording",
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                }
             }
         }
         if (service?.recordingStart != null)

@@ -2,8 +2,18 @@ package app.myzel394.locationtest.ui.utils
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
 import androidx.core.app.ActivityCompat
+
+fun Context.openAppSystemSettings() {
+    startActivity(Intent().apply {
+        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        data = Uri.fromParts("package", packageName, null)
+    })
+}
 
 // From @Bnyro
 object PermissionHelper {

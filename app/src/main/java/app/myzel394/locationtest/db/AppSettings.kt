@@ -10,6 +10,7 @@ import kotlinx.serialization.json.decodeFromStream
 @Serializable
 data class AppSettings(
     val audioRecorderSettings: AudioRecorderSettings = AudioRecorderSettings(),
+    val hasSeenOnboarding: Boolean = false,
     val showAdvancedSettings: Boolean = false,
 ) {
     fun setShowAdvancedSettings(showAdvancedSettings: Boolean): AppSettings {
@@ -18,6 +19,10 @@ data class AppSettings(
 
     fun setAudioRecorderSettings(audioRecorderSettings: AudioRecorderSettings): AppSettings {
         return copy(audioRecorderSettings = audioRecorderSettings)
+    }
+
+    fun setHasSeenOnboarding(hasSeenOnboarding: Boolean): AppSettings {
+        return copy(hasSeenOnboarding = hasSeenOnboarding)
     }
 
     companion object {
