@@ -2,8 +2,10 @@ package app.myzel394.locationtest.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -38,6 +40,7 @@ import androidx.navigation.NavController
 import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
+import app.myzel394.locationtest.services.bindToRecorderService
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.EncoderTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.ForceExactMaxDurationTile
@@ -46,6 +49,8 @@ import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.MaxDurationT
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.OutputFormatTile
 import app.myzel394.locationtest.ui.components.SettingsScreen.atoms.SamplingRateTile
 import app.myzel394.locationtest.ui.components.atoms.GlobalSwitch
+import app.myzel394.locationtest.ui.components.atoms.MessageBox
+import app.myzel394.locationtest.ui.components.atoms.MessageType
 import app.myzel394.locationtest.ui.components.atoms.SettingsTile
 import app.myzel394.locationtest.ui.utils.formatDuration
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
@@ -60,6 +65,8 @@ import kotlinx.coroutines.launch
 fun SettingsScreen(
     navController: NavController
 ) {
+    val (connection, service) = bindToRecorderService()
+    val isRecording = service?.isRecording?.value ?: false
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         rememberTopAppBarState()
     )
@@ -98,6 +105,18 @@ fun SettingsScreen(
                 .collectAsState(initial = AppSettings.getDefaultInstance())
                 .value
 
+            // Show alert
+            if (isRecording)
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                ) {
+                    MessageBox(
+                        type = MessageType.WARNING,
+                        title = "You are recording",
+                        message = "Your changes will be applied the next time you start recording",
+                    )
+                }
             GlobalSwitch(
                 label = "Advanced Settings",
                 checked = settings.showAdvancedSettings,

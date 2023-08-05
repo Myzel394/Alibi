@@ -1,6 +1,7 @@
 package app.myzel394.locationtest.services
 
 import android.app.Service
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
@@ -11,8 +12,14 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import app.myzel394.locationtest.R
@@ -397,3 +404,27 @@ data class Settings(
     }
 }
 
+@Composable
+fun bindToRecorderService(): Pair<ServiceConnection, RecorderService?> {
+    val context = LocalContext.current
+    var service by remember { mutableStateOf<RecorderService?>(null) }
+
+    val connection = remember {
+        object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+                service = (binder as RecorderService.LocalBinder).getService()
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        Intent(context, RecorderService::class.java).also { intent ->
+            context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    return connection to service
+}

@@ -22,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import app.myzel394.locationtest.services.RecorderService
+import app.myzel394.locationtest.services.bindToRecorderService
 import app.myzel394.locationtest.ui.components.AudioRecorder.molecules.RecordingStatus
 import app.myzel394.locationtest.ui.components.AudioRecorder.molecules.StartRecording
 import app.myzel394.locationtest.ui.enums.Screen
@@ -33,21 +34,8 @@ fun AudioRecorder(
     navController: NavController,
 ) {
     val context = LocalContext.current
-
     val saveFile = rememberFileSaverDialog("audio/aac")
-    var service by remember { mutableStateOf<RecorderService?>(null) }
-    val connection = remember {
-        object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-                service = (binder as RecorderService.LocalBinder).getService().also { service ->
-                }
-            }
-
-            override fun onServiceDisconnected(name: ComponentName?) {
-            }
-        }
-    }
-
+    val (connection, service) = bindToRecorderService()
     val isRecording = service?.isRecording?.value ?: false
 
     LaunchedEffect(Unit) {
