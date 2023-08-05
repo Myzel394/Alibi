@@ -112,7 +112,14 @@ class RecorderService: Service() {
             return outputFile
         }
 
-        val command = "-i \"concat:$paths\" -acodec copy $outputFile"
+        val command = "-i 'concat:$paths'" +
+                " -acodec copy" +
+                " -metadata title='$fileName' " +
+                " -metadata date='${recordingStart!!.format(ISO_DATE_TIME)}'" +
+                " -metadata batch_count='${filePaths.size}'" +
+                " -metadata batch_duration='${settings.intervalDuration}'" +
+                " -metadata max_duration='${settings.maxDuration}'" +
+                " $outputFile"
 
         val session = FFmpegKit.execute(command)
 
