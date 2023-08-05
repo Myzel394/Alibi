@@ -10,7 +10,7 @@ import androidx.core.app.ActivityCompat
 
 fun Context.openAppSystemSettings() {
     startActivity(Intent().apply {
-        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
         data = Uri.fromParts("package", packageName, null)
     })
 }

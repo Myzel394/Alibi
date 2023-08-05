@@ -66,8 +66,8 @@ data class AudioRecorderSettings(
             MediaRecorder.AudioEncoder.AMR_NB
 
     fun setIntervalDuration(duration: Long): AudioRecorderSettings {
-        if (duration < 30 * 1000L || duration > 60 * 60 * 1000L) {
-            throw Exception("Interval duration must be between 30 seconds and 1 hour")
+        if (duration < 10 * 1000L || duration > 60 * 60 * 1000L) {
+            throw Exception("Interval duration must be between 10 seconds and 1 hour")
         }
 
         if (duration > maxDuration) {

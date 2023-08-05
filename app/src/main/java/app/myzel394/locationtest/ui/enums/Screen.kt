@@ -3,6 +3,7 @@ package app.myzel394.locationtest.ui.enums
 sealed class Screen(val route: String) {
     object AudioRecorder : Screen("audio-recorder")
     object Settings : Screen("settings")
+    object Welcome : Screen("welcome")
 
     fun withArgs(vararg args: String): String {
         return buildString {
