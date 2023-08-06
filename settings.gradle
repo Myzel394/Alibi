@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "LocationTest"
+rootProject.name = "Alibi"
 include ':app'
