@@ -62,7 +62,7 @@ fun RecordingStatus(
 
     val start = service.recordingStart!!
     val duration = now.toEpochSecond(ZoneId.systemDefault().rules.getOffset(now)) - start.toEpochSecond(ZoneId.systemDefault().rules.getOffset(start))
-    val progress = duration / (service.settings.maxDuration / 1000f)
+    val progress = duration / (service.settings!!.maxDuration / 1000f)
 
     LaunchedEffect(Unit) {
         while (true) {
