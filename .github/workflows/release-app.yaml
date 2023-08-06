@@ -21,10 +21,10 @@ jobs:
 
       - name: Write Keystore properties 🗝️
         run: |
-          echo "storeFile=${{ steps.android_keystore.outputs.filePath }}" > android/key.properties
-          echo "storePassword=${{ secrets.SIGNING_STORE_PASSWORD }}" >> android/key.properties
-          echo "keyPassword=${{ secrets.SIGNING_KEY_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.SIGNING_KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=${{ steps.android_keystore.outputs.filePath }}" > key.properties
+          echo "storePassword=${{ secrets.SIGNING_STORE_PASSWORD }}" >> key.properties
+          echo "keyPassword=${{ secrets.SIGNING_KEY_PASSWORD }}" >> key.properties
+          echo "keyAlias=${{ secrets.SIGNING_KEY_ALIAS }}" >> key.properties
 
       - name: Setup Java
         uses: actions/setup-java@v3
