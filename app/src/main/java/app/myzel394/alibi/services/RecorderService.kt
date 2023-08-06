@@ -56,6 +56,7 @@ class RecorderService: Service() {
     private var onAmplitudeUpdate: () -> Unit = {}
 
     private var counter = 0
+    var maxAmplitudes = 1000
 
     var settings: Settings? = null
         private set
@@ -240,6 +241,11 @@ class RecorderService: Service() {
 
         val amplitude = mediaRecorder!!.maxAmplitude
         amplitudes.add(amplitude)
+
+        // Delete old amplitudes
+        if (amplitudes.size > maxAmplitudes) {
+            amplitudes.removeRange(0, amplitudes.size - maxAmplitudes)
+        }
 
         onAmplitudeUpdate()
         handler.postDelayed(::updateAmplitude, AMPLITUDE_UPDATE_INTERVAL)

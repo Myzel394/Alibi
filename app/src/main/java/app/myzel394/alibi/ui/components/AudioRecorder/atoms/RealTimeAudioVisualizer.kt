@@ -16,11 +16,14 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.services.RecorderService
 import app.myzel394.alibi.ui.MAX_AMPLITUDE
 import app.myzel394.alibi.ui.utils.clamp
 import kotlinx.coroutines.launch
+import kotlin.math.ceil
 
 private const val BOX_WIDTH = 15f
 private const val BOX_GAP = 15f
@@ -56,6 +59,13 @@ fun RealtimeAudioVisualizer(
                 )
             }
         }
+    }
+
+    val configuration = LocalConfiguration.current
+    val screenWidth = with (LocalDensity.current) {configuration.screenWidthDp.dp.toPx()}
+
+    LaunchedEffect(screenWidth) {
+        service.maxAmplitudes =  ceil(screenWidth.toInt() / BOX_DIFF).toInt()
     }
 
     Canvas(
