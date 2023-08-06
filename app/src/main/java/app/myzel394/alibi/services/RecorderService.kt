@@ -144,10 +144,11 @@ class RecorderService: Service() {
 
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
-        resetCoroutineScope()
     }
 
     fun reset() {
+        resetCoroutineScope()
+        settings = null
         recordingStart = null
         counter = 0
         amplitudes.clear()
