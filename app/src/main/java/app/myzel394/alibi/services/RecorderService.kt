@@ -1,5 +1,6 @@
 package app.myzel394.alibi.services
 
+import android.app.PendingIntent
 import android.app.Service
 import android.content.ComponentName
 import android.content.Context
@@ -22,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import app.myzel394.alibi.MainActivity
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AudioRecorderSettings
@@ -308,6 +310,14 @@ class RecorderService: Service() {
             .setChronometerCountDown(false)
             .setWhen(Date.from(recordingStart!!.atZone(ZoneId.systemDefault()).toInstant()).time)
             .setShowWhen(true)
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    this,
+                    0,
+                    Intent(this, MainActivity::class.java),
+                    PendingIntent.FLAG_UPDATE_CURRENT,
+                )
+            )
             .build()
 
         // show notification
