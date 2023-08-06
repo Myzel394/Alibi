@@ -2,6 +2,11 @@ package app.myzel394.alibi.ui.components.AudioRecorder.molecules
 
 import android.Manifest
 import android.content.ServiceConnection
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,7 +27,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -105,6 +116,7 @@ fun StartRecording(
             .data
             .collectAsState(initial = AppSettings.getDefaultInstance())
             .value
+
         Text(
             stringResource(R.string.ui_audioRecorder_action_start_description, settings.audioRecorderSettings.maxDuration / 1000 / 60),
             style = MaterialTheme.typography.bodySmall.copy(

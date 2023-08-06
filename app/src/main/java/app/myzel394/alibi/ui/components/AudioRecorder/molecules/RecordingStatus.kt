@@ -1,5 +1,10 @@
 package app.myzel394.alibi.ui.components.AudioRecorder.molecules
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -71,6 +77,14 @@ fun RecordingStatus(
         }
     }
 
+    // Only show animation when the recording has just started
+    val recordingJustStarted = duration < 1
+    var progressVisible by remember { mutableStateOf(!recordingJustStarted) }
+    LaunchedEffect(Unit) {
+        progressVisible = true
+    }
+
+
     KeepScreenOn()
 
     Column(
@@ -105,11 +119,18 @@ fun RecordingStatus(
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            LinearProgressIndicator(
-                progress = progress,
-                modifier = Modifier
-                    .width(300.dp)
-            )
+            AnimatedVisibility(
+                visible = progressVisible,
+                enter = expandHorizontally(
+                    tween(1000)
+                )
+            ) {
+                LinearProgressIndicator(
+                    progress = progress,
+                    modifier = Modifier
+                        .width(300.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(32.dp))
 
             var showDeleteDialog by remember { mutableStateOf(false) }
@@ -147,11 +168,14 @@ fun RecordingStatus(
             }
         }
         val label = stringResource(R.string.ui_audioRecorder_action_save_label)
+        
+        val alpha by animateFloatAsState(if (progressVisible) 1f else 0f, tween(1000))
         Button(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
                 .height(BIG_PRIMARY_BUTTON_SIZE)
+                .graphicsLayer(alpha = alpha)
                 .semantics {
                     contentDescription = label
                 },
