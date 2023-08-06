@@ -37,7 +37,7 @@ jobs:
         run: ./gradlew assembleRelease
 
       - name: Upload APKs 🚀
-        uses: actions/upload-artifact@v3
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
