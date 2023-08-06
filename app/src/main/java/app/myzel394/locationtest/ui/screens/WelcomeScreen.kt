@@ -33,7 +33,11 @@ fun WelcomeScreen(
         .collectAsState(initial = null)
         .value ?: return
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = {2}
+    )
 
     Scaffold() {padding ->
         Column(
@@ -42,7 +46,7 @@ fun WelcomeScreen(
                 .padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            HorizontalPager(pageCount = 2, state = pagerState) {position ->
+            HorizontalPager(state = pagerState) {position ->
                 when (position) {
                     0 -> ExplanationPage(
                         onContinue = {
