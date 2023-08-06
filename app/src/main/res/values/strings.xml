@@ -11,6 +11,9 @@
     <string name="form_error_value_notInRange">Please enter a number between <xliff:g name="min">%s</xliff:g> and <xliff:g name="max">%s</xliff:g></string>
     <string name="form_error_value_mustBeGreaterThan">Please enter a number greater than <xliff:g name="min">%s</xliff:g></string>
 
+    <string name="notificationChannels_recorder_name">Recorder</string>
+    <string name="notificationChannels_recorder_description">Shows the current recording status</string>
+
     <string name="ui_permissions_request_title">Permission denied</string>
     <string name="ui_permissions_request_message">Please grant the permission to continue. You will be redirected to the app settings to grant the permission there.</string>
 
