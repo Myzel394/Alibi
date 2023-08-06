@@ -8,6 +8,12 @@ android {
     namespace 'app.myzel394.alibi'
     compileSdk 34
 
+    def keystoreProperties = new Properties()
+    def keystorePropertiesFile = rootProject.file('key.properties')
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
+
     defaultConfig {
         multiDexEnabled true
         applicationId "app.myzel394.alibi"
@@ -22,10 +28,27 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            signingConfig signingConfigs.release
+
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
         }
     }
     compileOptions {
@@ -75,7 +98,7 @@ dependencies {
     annotationProcessor 'com.google.dagger:hilt-compiler:2.46.1'
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
 
-    implementation 'com.arthenica:ffmpeg-kit-full:5.1'
+    implementation 'com.arthenica:ffmpeg-kit-min:5.1'
 
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
