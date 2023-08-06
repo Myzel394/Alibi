@@ -1,0 +1,28 @@
+name: Build and push debug app
+
+on:
+  pull_request:
+
+jobs:
+  debug-builds:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: gradle/wrapper-validation-action@v1
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: "adopt"
+          java-version: 19
+          cache: "gradle"
+
+      - name: Compile
+        run: |
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          path: app/build/outputs/apk/debug/app-debug.apk
