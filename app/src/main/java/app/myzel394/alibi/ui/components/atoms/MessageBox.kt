@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import app.myzel394.alibi.ui.utils.rememberIsInDarkMode
 
 
 @Composable
@@ -27,18 +28,21 @@ fun MessageBox(
     message: String,
     title: String? = null,
 ) {
-    val backgroundColor = when(type) {
+    val isDark = rememberIsInDarkMode()
+    val containerColor = when(type) {
         MessageType.ERROR -> MaterialTheme.colorScheme.errorContainer
         MessageType.INFO -> MaterialTheme.colorScheme.tertiaryContainer
         MessageType.SUCCESS -> Color.Green.copy(alpha = 0.3f)
         MessageType.WARNING -> Color.Yellow.copy(alpha = 0.3f)
     }
-    val textColor = when(type) {
+    val onContainerColor = when(type) {
         MessageType.ERROR -> MaterialTheme.colorScheme.onError
         MessageType.INFO -> MaterialTheme.colorScheme.onTertiary
         MessageType.SUCCESS -> Color.Green
         MessageType.WARNING -> Color.Yellow
     }
+    val textColor = if (isDark) onContainerColor else MaterialTheme.colorScheme.onSurface
+    val backgroundColor = if (isDark) containerColor else onContainerColor
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
