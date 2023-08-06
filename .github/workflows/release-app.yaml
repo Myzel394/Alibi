@@ -42,4 +42,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           name: app
-          path: app/build/outputs/apk/release/*.apk
+          files: app/build/outputs/apk/release/*.apk
