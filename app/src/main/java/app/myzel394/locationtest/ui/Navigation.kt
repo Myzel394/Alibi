@@ -1,6 +1,7 @@
 package app.myzel394.locationtest.ui
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -51,7 +52,7 @@ fun Navigation() {
                 }
             },
             exitTransition = {
-                scaleOut(targetScale = SCALE_IN) + fadeOut()
+                scaleOut(targetScale = SCALE_IN) + fadeOut(tween(durationMillis = 150))
             }
         ) {
             AudioRecorder(navController = navController)
@@ -62,7 +63,7 @@ fun Navigation() {
                 scaleIn(initialScale = 1 / SCALE_IN) + fadeIn()
             },
             exitTransition = {
-                scaleOut(targetScale = 1 / SCALE_IN) + fadeOut()
+                scaleOut(targetScale = 1 / SCALE_IN) + fadeOut(tween(durationMillis = 150))
             }
         ) {
             SettingsScreen(navController = navController)
