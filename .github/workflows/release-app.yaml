@@ -1,0 +1,45 @@
+name: Build and publish app
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build-app:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Write Keystore file 🗄️
+        id: android_keystore
+        uses: timheuer/base64-to-file@v1.0.3
+        with:
+          fileName: key.jks
+          encodedString: ${{ secrets.KEYSTORE }}
+
+      - name: Write Keystore properties 🗝️
+        run: |
+          echo "storeFile=${{ steps.android_keystore.outputs.filePath }}" > android/key.properties
+          echo "storePassword=${{ secrets.SIGNING_STORE_PASSWORD }}" >> android/key.properties
+          echo "keyPassword=${{ secrets.SIGNING_KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.SIGNING_KEY_ALIAS }}" >> android/key.properties
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: "17.x"
+          cache: 'gradle'
+
+      - name: Build APKs 📱
+        run: ./gradlew assembleRelease
+
+      - name: Upload APKs 🚀
+        uses: actions/upload-artifact@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          name: app
+          path: app/build/outputs/apk/debug/*.apk
