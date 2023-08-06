@@ -48,8 +48,8 @@ const val AMPLITUDE_UPDATE_INTERVAL = 100L
 class RecorderService: Service() {
     private val binder = LocalBinder()
     private val handler = Handler(Looper.getMainLooper())
-    private val job = SupervisorJob()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
+    private var job = SupervisorJob()
+    private var scope = CoroutineScope(Dispatchers.IO + job)
 
     private var mediaRecorder: MediaRecorder? = null
     private var onError: MediaRecorder.OnErrorListener? = null
@@ -57,7 +57,8 @@ class RecorderService: Service() {
 
     private var counter = 0
 
-    lateinit var settings: Settings
+    var settings: Settings? = null
+        private set
 
     var fileFolder: String? = null
         private set
@@ -78,18 +79,14 @@ class RecorderService: Service() {
 
             val extension = it.extension
 
-            extension == settings.fileExtension
+            extension == settings!!.fileExtension
         }?.toList() ?: emptyList()
 
     override fun onBind(p0: Intent?): IBinder = binder
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            Actions.START.toString() -> {
-                fileFolder = getRandomFileFolder(this)
-
-                start()
-            }
+            Actions.START.toString() -> start()
             Actions.STOP.toString() -> stop()
         }
 
@@ -106,14 +103,61 @@ class RecorderService: Service() {
         this.onAmplitudeUpdate = onAmplitudeUpdate
     }
 
+    private fun start() {
+        reset()
+        fileFolder = getRandomFileFolder(this)
+
+        // Create folder
+        File(this.fileFolder!!).mkdirs()
+
+        scope.launch {
+            dataStore.data.collectLatest { preferenceSettings ->
+                if (settings == null) {
+                    settings = Settings.from(preferenceSettings.audioRecorderSettings)
+                    recordingStart = LocalDateTime.now()
+                    isRecording.value = true
+
+                    showNotification()
+                    startNewRecording()
+                    updateAmplitude()
+                }
+            }
+        }
+    }
+
+    private fun resetCoroutineScope() {
+        // Reset `scope`
+        scope.cancel()
+        job = SupervisorJob()
+        scope = CoroutineScope(Dispatchers.IO + job)
+    }
+
+    private fun stop() {
+        isRecording.value = false
+        mediaRecorder?.apply {
+            runCatching {
+                stop()
+                release()
+            }
+        }
+
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+        resetCoroutineScope()
+    }
+
     fun reset() {
         recordingStart = null
         counter = 0
         amplitudes.clear()
         isRecording.value = false
 
-        File(fileFolder!!).listFiles()?.forEach {
-            it.delete()
+        if (fileFolder != null) {
+            File(fileFolder!!).listFiles()?.forEach {
+                it.delete()
+            }
+
+            fileFolder = null
         }
     }
 
@@ -121,10 +165,10 @@ class RecorderService: Service() {
         outputFile: File
     ) {
         // Move the concatenated file to a temporary file
-        val rawFile = File("$fileFolder/${outputFile.nameWithoutExtension}-raw.${settings.fileExtension}")
+        val rawFile = File("$fileFolder/${outputFile.nameWithoutExtension}-raw.${settings!!.fileExtension}")
         outputFile.renameTo(rawFile)
 
-        val command = "-sseof ${settings.maxDuration / -1000} -i $rawFile -y $outputFile"
+        val command = "-sseof ${settings!!.maxDuration / -1000} -i $rawFile -y $outputFile"
 
         val session = FFmpegKit.execute(command)
 
@@ -150,7 +194,7 @@ class RecorderService: Service() {
             .toString()
             .replace(":", "-")
             .replace(".", "_")
-        val outputFile = File("$fileFolder/$fileName.${settings.fileExtension}")
+        val outputFile = File("$fileFolder/$fileName.${settings!!.fileExtension}")
 
         if (outputFile.exists() && !forceConcatenation) {
             return outputFile
@@ -161,8 +205,8 @@ class RecorderService: Service() {
                 " -metadata title='$fileName' " +
                 " -metadata date='${recordingStart!!.format(ISO_DATE_TIME)}'" +
                 " -metadata batch_count='${filePaths.size}'" +
-                " -metadata batch_duration='${settings.intervalDuration}'" +
-                " -metadata max_duration='${settings.maxDuration}'" +
+                " -metadata batch_duration='${settings!!.intervalDuration}'" +
+                " -metadata max_duration='${settings!!.maxDuration}'" +
                 " $outputFile"
 
         val session = FFmpegKit.execute(command)
@@ -181,8 +225,8 @@ class RecorderService: Service() {
             throw Exception("Failed to concatenate audios")
         }
 
-        val minRequiredForPossibleInExactMaxDuration = settings.maxDuration / settings.intervalDuration
-        if (settings.forceExactMaxDuration && filePaths.size > minRequiredForPossibleInExactMaxDuration) {
+        val minRequiredForPossibleInExactMaxDuration = settings!!.maxDuration / settings!!.intervalDuration
+        if (settings!!.forceExactMaxDuration && filePaths.size > minRequiredForPossibleInExactMaxDuration) {
             stripConcatenatedFileToExactDuration(outputFile)
         }
 
@@ -224,11 +268,11 @@ class RecorderService: Service() {
 
         counter++
 
-        handler.postDelayed(this::startNewRecording, settings.intervalDuration)
+        handler.postDelayed(this::startNewRecording, settings!!.intervalDuration)
     }
 
     private fun deleteOldRecordings() {
-        val timeMultiplier = settings.maxDuration / settings.intervalDuration
+        val timeMultiplier = settings!!.maxDuration / settings!!.intervalDuration
         val earliestCounter = counter - timeMultiplier
 
         File(fileFolder!!).listFiles()?.forEach { file ->
@@ -248,10 +292,10 @@ class RecorderService: Service() {
         }.apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFile(getFilePath())
-            setOutputFormat(settings.outputFormat)
-            setAudioEncoder(settings.encoder)
-            setAudioEncodingBitRate(settings.bitRate)
-            setAudioSamplingRate(settings.samplingRate)
+            setOutputFormat(settings!!.outputFormat)
+            setAudioEncoder(settings!!.encoder)
+            setAudioEncodingBitRate(settings!!.bitRate)
+            setAudioSamplingRate(settings!!.samplingRate)
 
             setOnErrorListener { mr, what, extra ->
                 onError?.onError(mr, what, extra)
@@ -259,38 +303,6 @@ class RecorderService: Service() {
                 this@RecorderService.stop()
             }
         }
-    }
-
-
-    private fun start() {
-        reset()
-        // Create folder
-        File(this.fileFolder!!).mkdirs()
-
-        scope.launch {
-            dataStore.data.collectLatest { preferenceSettings ->
-                settings = Settings.from(preferenceSettings.audioRecorderSettings)
-                recordingStart = LocalDateTime.now()
-                isRecording.value = true
-
-                showNotification()
-                startNewRecording()
-                updateAmplitude()
-            }
-        }
-    }
-
-    private fun stop() {
-        mediaRecorder?.apply {
-            runCatching {
-                stop()
-                release()
-            }
-        }
-        isRecording.value = false
-
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
     }
 
     private fun showNotification() {
@@ -334,7 +346,7 @@ class RecorderService: Service() {
                 ).toInt()
     }
 
-    private fun getFilePath(): String = "$fileFolder/$counter.${settings.fileExtension}"
+    private fun getFilePath(): String = "$fileFolder/$counter.${settings!!.fileExtension}"
 
     inner class LocalBinder: Binder() {
         fun getService(): RecorderService = this@RecorderService
