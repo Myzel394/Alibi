@@ -92,9 +92,7 @@ fun MaxDurationTile() {
                 ),
                 shape = MaterialTheme.shapes.medium,
             ) {
-                Text(
-                    text = formatDuration(settings.audioRecorderSettings.maxDuration),
-                )
+                Text(formatDuration(settings.audioRecorderSettings.maxDuration))
             }
         },
         extra = {
@@ -102,9 +100,7 @@ fun MaxDurationTile() {
                 items = AudioRecorderSettings.EXAMPLE_MAX_DURATIONS,
                 onItemSelected = ::updateValue,
             ) {maxDuration ->
-                Text(
-                    text = formatDuration(maxDuration),
-                )
+                Text(formatDuration(maxDuration))
             }
         }
     )

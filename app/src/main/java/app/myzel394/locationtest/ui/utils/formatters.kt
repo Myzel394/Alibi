@@ -11,7 +11,7 @@ fun formatDuration(
 
     val hours = floor(totalSeconds / 3600.0).toInt()
     val minutes = floor(totalSeconds / 60.0).toInt() % 60
-    val seconds = totalSeconds - (minutes * 60)
+    val seconds = totalSeconds - (minutes * 60) - (hours * 3600)
 
     if (formatFull) {
         return "" +
@@ -29,5 +29,12 @@ fun formatDuration(
         return "00:${totalSeconds.toString().padStart(2, '0')}"
     }
 
-    return "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
+    if (hours <= 0) {
+        return "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
+    }
+
+    return "" +
+            hours.toString().padStart(2, '0') +
+        ":" + minutes.toString().padStart(2, '0') +
+        ":" + seconds.toString().padStart(2, '0')
 }
