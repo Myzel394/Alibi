@@ -103,13 +103,6 @@ fun StartRecording(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom,
             ) {
-                if (hasAmplitudes)
-                    AudioVisualizer(
-                        modifier = Modifier
-                            .height(100.dp)
-                            .padding(bottom = 32.dp),
-                        amplitudes = service.amplitudes,
-                    )
                 Button(
                     modifier = Modifier
                         .padding(16.dp)
@@ -117,7 +110,8 @@ fun StartRecording(
                         .height(BIG_PRIMARY_BUTTON_SIZE),
                     onClick = {
                         saveFile(service.concatenateFiles())
-                    }
+                    },
+                    colors = ButtonDefaults.textButtonColors(),
                 ) {
                     Icon(
                         Icons.Default.Save,
