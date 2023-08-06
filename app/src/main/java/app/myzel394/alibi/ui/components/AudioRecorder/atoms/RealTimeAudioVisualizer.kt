@@ -65,7 +65,8 @@ fun RealtimeAudioVisualizer(
     val screenWidth = with (LocalDensity.current) {configuration.screenWidthDp.dp.toPx()}
 
     LaunchedEffect(screenWidth) {
-        service.maxAmplitudes =  ceil(screenWidth.toInt() / BOX_DIFF).toInt()
+        // Add 1 to allow the visualizer to overflow the screen
+        service.maxAmplitudes =  ceil(screenWidth.toInt() / BOX_DIFF).toInt() + 1
     }
 
     Canvas(
@@ -76,7 +77,7 @@ fun RealtimeAudioVisualizer(
         val height = this.size.height / 2f
         val width = this.size.width
 
-        translate(width, height) {
+        translate(width + BOX_DIFF, height) {
             translate(-animationProgress.value * (BOX_WIDTH + BOX_GAP), 0f) {
                 amplitudes.forEachIndexed { index, amplitude ->
                     val offset = amplitudes.size - index
