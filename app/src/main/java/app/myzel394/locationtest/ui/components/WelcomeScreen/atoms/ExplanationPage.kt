@@ -23,7 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.myzel394.locationtest.R
 import app.myzel394.locationtest.ui.BIG_PRIMARY_BUTTON_SIZE
 
 @Composable
@@ -50,12 +52,12 @@ fun ExplanationPage(
             )
             Spacer(modifier = Modifier.height(32.dp))
             Text(
-                "Welcome to Alibi!",
+                stringResource(R.string.ui_welcome_explanation_title),
                 style = MaterialTheme.typography.titleLarge,
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                "Alibi is like a dashcam for your phone. It allows you to record your audio continuously and save the last 30 minutes when you need it.",
+                stringResource(R.string.ui_welcome_explanation_message),
             )
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -72,7 +74,7 @@ fun ExplanationPage(
                 modifier = Modifier.size(ButtonDefaults.IconSize)
             )
             Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-            Text("Continue")
+            Text(stringResource(R.string.continue_label))
         }
     }
 }

@@ -13,8 +13,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import app.myzel394.locationtest.R
 import app.myzel394.locationtest.services.RecorderService
 
 @Composable
@@ -27,10 +29,10 @@ fun ConfirmDeletionDialog(
             onDismiss()
         },
         title = {
-            Text("Delete Recording?")
+            Text(stringResource(R.string.ui_audioRecorder_action_delete_confirm_title))
         },
         text = {
-            Text("Are you sure you want to delete this recording?")
+            Text(stringResource(R.string.ui_audioRecorder_action_delete_confirm_message))
         },
         icon = {
             Icon(
@@ -39,10 +41,11 @@ fun ConfirmDeletionDialog(
             )
         },
         confirmButton = {
+            val label = stringResource(R.string.ui_audioRecorder_action_delete_label)
             Button(
                 modifier = Modifier
                     .semantics {
-                        contentDescription = "Confirm Recording Deletion"
+                        contentDescription = label
                     },
                 onClick = {
                     onConfirm()
@@ -54,14 +57,15 @@ fun ConfirmDeletionDialog(
                     modifier = Modifier.size(ButtonDefaults.IconSize),
                 )
                 Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                Text("Delete")
+                Text(label)
             }
         },
         dismissButton = {
+            val label = stringResource(R.string.dialog_close_cancel_label)
             Button(
                 modifier = Modifier
                     .semantics {
-                        contentDescription = "Cancel Recording Deletion"
+                        contentDescription = label
                     },
                 onClick = {
                     onDismiss()
@@ -74,7 +78,7 @@ fun ConfirmDeletionDialog(
                     modifier = Modifier.size(ButtonDefaults.IconSize),
                 )
                 Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                Text("Cancel")
+                Text(label)
             }
         }
     )

@@ -17,7 +17,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.myzel394.locationtest.R
 import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
@@ -66,8 +68,8 @@ fun IntervalDurationTile() {
         )
     )
     SettingsTile(
-        title = "Batch duration",
-        description = "Record a single batch for this duration. Alibi records multiple batches and deletes the oldest one. When exporting the audio, all batches will be merged together",
+        title = stringResource(R.string.ui_settings_option_intervalDuration_title),
+        description = stringResource(R.string.ui_settings_option_intervalDuration_description),
         leading = {
             Icon(
                 Icons.Default.Mic,

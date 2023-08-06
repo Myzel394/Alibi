@@ -25,17 +25,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import app.myzel394.locationtest.R
 import app.myzel394.locationtest.services.RecorderService
 import app.myzel394.locationtest.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.locationtest.ui.components.AudioRecorder.atoms.AudioVisualizer
 import app.myzel394.locationtest.ui.components.atoms.PermissionRequester
 import app.myzel394.locationtest.ui.utils.rememberFileSaverDialog
 import java.time.format.DateTimeFormatter
-
-val VISUALIZER_HEIGHT = 200.dp
+import java.time.format.FormatStyle
 
 @Composable
 fun StartRecording(
@@ -66,13 +67,14 @@ fun StartRecording(
                 RecorderService.startService(context, connection)
             },
         ) { trigger ->
+            val label = stringResource(R.string.ui_audioRecorder_action_start_label)
             Button(
                 onClick = {
                     trigger()
                 },
                 modifier = Modifier
                     .semantics {
-                        contentDescription = "Start recording"
+                        contentDescription = label
                     }
                     .size(200.dp)
                     .clip(shape = CircleShape),
@@ -89,7 +91,7 @@ fun StartRecording(
                     )
                     Spacer(modifier = Modifier.height(ButtonDefaults.IconSpacing))
                     Text(
-                        "Start Recording",
+                        label,
                         style = MaterialTheme.typography.titleSmall,
                     )
                 }
@@ -124,7 +126,12 @@ fun StartRecording(
                             .size(ButtonDefaults.IconSize),
                     )
                     Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                    Text("Save Recording from ${service.recordingStart!!.format(DateTimeFormatter.ISO_DATE_TIME)}")
+                    Text(
+                        stringResource(
+                            R.string.ui_audioRecorder_action_saveOldRecording_label,
+                            DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(service.recordingStart!!),
+                        ),
+                    )
                 }
             }
         else

@@ -21,7 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.myzel394.locationtest.R
 import app.myzel394.locationtest.ui.BIG_PRIMARY_BUTTON_SIZE
 
 @Composable
@@ -48,12 +50,12 @@ fun ResponsibilityPage(
             )
             Spacer(modifier = Modifier.height(32.dp))
             Text(
-                "You are solely responsible for the use of this app",
+                stringResource(R.string.ui_welcome_responsibility_title),
                 style = MaterialTheme.typography.titleLarge,
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                "Alibi does not take any responsibility for the use of this app. You are solely responsible. Use it at your own risk.",
+                stringResource(R.string.ui_welcome_responsibility_message),
             )
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -70,7 +72,7 @@ fun ResponsibilityPage(
                 modifier = Modifier.size(ButtonDefaults.IconSize)
             )
             Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-            Text("Start Alibi")
+            Text(stringResource(R.string.ui_welcome_start_label))
         }
     }
 }

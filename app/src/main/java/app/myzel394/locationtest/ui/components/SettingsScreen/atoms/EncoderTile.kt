@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import app.myzel394.locationtest.R
 import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
@@ -60,7 +62,7 @@ fun EncoderTile() {
         },
     )
     SettingsTile(
-        title = "Encoder",
+        title = stringResource(R.string.ui_settings_option_encoder_title),
         leading = {
             Icon(
                 Icons.Default.Memory,
@@ -77,7 +79,7 @@ fun EncoderTile() {
             ) {
                 Text(
                     text = if (settings.audioRecorderSettings.encoder == null) {
-                        "Auto"
+                        stringResource(R.string.ui_settings_value_auto_label)
                     } else {
                         AudioRecorderSettings.ENCODER_INDEX_TEXT_MAP[settings.audioRecorderSettings.encoder]!!
                     }
@@ -89,9 +91,7 @@ fun EncoderTile() {
                 items = listOf(null),
                 onItemSelected = ::updateValue,
             ) {
-                Text(
-                    text = "Auto"
-                )
+                Text(stringResource(R.string.ui_settings_value_auto_label))
             }
         }
     )

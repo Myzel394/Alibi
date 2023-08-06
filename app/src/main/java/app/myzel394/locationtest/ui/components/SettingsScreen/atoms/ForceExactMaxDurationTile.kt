@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import app.myzel394.locationtest.R
 import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
@@ -42,8 +44,8 @@ fun ForceExactMaxDurationTile() {
 
 
     SettingsTile(
-        title = "Force exact duration",
-        description = "Force to strip the output file to be the exactly specified duration. If this is disabled, the output file may be a bit longer due to batches of audio samples being encoded together.",
+        title = stringResource(R.string.ui_settings_option_forceExactDuration_title),
+        description = stringResource(R.string.ui_settings_option_forceExactDuration_description),
         leading = {
             Icon(
                 Icons.Default.GraphicEq,

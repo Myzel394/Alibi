@@ -14,12 +14,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import app.myzel394.locationtest.services.bindToRecorderService
 import app.myzel394.locationtest.ui.components.AudioRecorder.molecules.RecordingStatus
 import app.myzel394.locationtest.ui.components.AudioRecorder.molecules.StartRecording
 import app.myzel394.locationtest.ui.enums.Screen
 import app.myzel394.locationtest.ui.utils.rememberFileSaverDialog
+import app.myzel394.locationtest.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +36,7 @@ fun AudioRecorder(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Alibi")
+                    Text(stringResource(R.string.app_name))
                 },
                 actions = {
                     IconButton(

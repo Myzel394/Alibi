@@ -33,9 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import app.myzel394.locationtest.R
 import app.myzel394.locationtest.services.RecorderService
 import app.myzel394.locationtest.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.locationtest.ui.components.AudioRecorder.atoms.ConfirmDeletionDialog
@@ -124,10 +126,11 @@ fun RecordingStatus(
                     },
                 )
             }
+            val label = stringResource(R.string.ui_audioRecorder_action_delete_label)
             Button(
                 modifier = Modifier
                     .semantics {
-                        contentDescription = "Delete Recording"
+                        contentDescription = label
                     },
                 onClick = {
                     showDeleteDialog = true
@@ -140,16 +143,17 @@ fun RecordingStatus(
                     modifier = Modifier.size(ButtonDefaults.IconSize),
                 )
                 Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                Text("Delete")
+                Text(label)
             }
         }
+        val label = stringResource(R.string.ui_audioRecorder_action_save_label)
         Button(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
                 .height(BIG_PRIMARY_BUTTON_SIZE)
                 .semantics {
-                    contentDescription = "Save Recording"
+                    contentDescription = label
                 },
             onClick = {
                 RecorderService.stopService(context)
@@ -163,7 +167,7 @@ fun RecordingStatus(
                 modifier = Modifier.size(ButtonDefaults.IconSize),
             )
             Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-            Text("Save Recording")
+            Text(label)
         }
     }
 }

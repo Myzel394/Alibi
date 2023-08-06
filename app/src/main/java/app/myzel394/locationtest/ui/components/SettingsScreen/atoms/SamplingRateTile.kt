@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import app.myzel394.locationtest.R
 import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
@@ -50,13 +52,15 @@ fun SamplingRateTile() {
         }
     }
 
+    val notNumberLabel = stringResource(R.string.form_error_type_notNumber)
+    val mustBeGreaterThanLabel = stringResource(R.string.form_error_value_mustBeGreaterThan, 1000)
     InputDialog(
         state = showDialog,
         selection = InputSelection(
             input = listOf(
                 InputTextField(
                     header = InputHeader(
-                        title = "Set the sampling rate",
+                        title = stringResource(R.string.ui_settings_option_samplingRate_explanation),
                         icon = IconSource(Icons.Default.RadioButtonChecked),
                     ),
                     keyboardOptions = KeyboardOptions(
@@ -68,11 +72,11 @@ fun SamplingRateTile() {
                         val samplingRate = text?.toIntOrNull()
 
                         if (samplingRate == null) {
-                            ValidationResult.Invalid("Please enter a valid number")
+                            ValidationResult.Invalid(notNumberLabel)
                         }
 
                         if (samplingRate!! <= 1000) {
-                            ValidationResult.Invalid("Sampling rate must be greater than 1000")
+                            ValidationResult.Invalid(mustBeGreaterThanLabel)
                         }
 
                         ValidationResult.Valid
@@ -87,8 +91,8 @@ fun SamplingRateTile() {
         }
     )
     SettingsTile(
-        title = "Sampling rate",
-        description = "Define how many samples per second are taken from the audio signal",
+        title = stringResource(R.string.ui_settings_option_samplingRate_title),
+        description = stringResource(R.string.ui_settings_option_samplingRate_description),
         leading = {
             Icon(
                 Icons.Default.RadioButtonChecked,
@@ -104,7 +108,7 @@ fun SamplingRateTile() {
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Text(
-                    text = (settings.audioRecorderSettings.samplingRate ?: "Auto").toString()
+                    (settings.audioRecorderSettings.samplingRate ?: stringResource(R.string.ui_settings_value_auto_label)).toString()
                 )
             }
         },
@@ -114,7 +118,7 @@ fun SamplingRateTile() {
                 onItemSelected = ::updateValue,
             ) {samplingRate ->
                 Text(
-                    text = (samplingRate ?: "Auto").toString()
+                    (samplingRate ?: stringResource(R.string.ui_settings_value_auto_label)).toString()
                 )
             }
         }

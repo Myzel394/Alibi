@@ -18,8 +18,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import app.myzel394.locationtest.R
 import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
@@ -74,8 +76,8 @@ fun MaxDurationTile() {
         )
     )
     SettingsTile(
-        title = "Max duration",
-        description = "Set the maximum duration of the recording",
+        title = stringResource(R.string.ui_settings_option_maxDuration_title),
+        description = stringResource(R.string.ui_settings_option_maxDuration_description),
         leading = {
             Icon(
                 Icons.Default.Timer,

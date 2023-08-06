@@ -35,8 +35,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import app.myzel394.locationtest.R
 import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
@@ -75,7 +77,7 @@ fun SettingsScreen(
         topBar = {
             LargeTopAppBar(
                 title = {
-                    Text(text = "Settings")
+                    Text(stringResource(R.string.ui_settings_title))
                 },
                 navigationIcon = {
                     IconButton(onClick = navController::popBackStack) {
@@ -113,12 +115,12 @@ fun SettingsScreen(
                 ) {
                     MessageBox(
                         type = MessageType.WARNING,
-                        title = "You are recording",
-                        message = "Your changes will be applied the next time you start recording",
+                        title = stringResource(R.string.ui_settings_hint_recordingActive_title),
+                        message = stringResource(R.string.ui_settings_hint_recordingActive_message),
                     )
                 }
             GlobalSwitch(
-                label = "Advanced Settings",
+                label = stringResource(R.string.ui_settings_advancedSettings_label),
                 checked = settings.showAdvancedSettings,
                 onCheckedChange = {
                     scope.launch {

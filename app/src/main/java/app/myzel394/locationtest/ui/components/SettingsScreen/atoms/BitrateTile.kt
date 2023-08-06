@@ -17,8 +17,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import app.myzel394.locationtest.R
 import app.myzel394.locationtest.dataStore
 import app.myzel394.locationtest.db.AppSettings
 import app.myzel394.locationtest.db.AudioRecorderSettings
@@ -55,13 +57,15 @@ fun BitrateTile() {
         }
     }
 
+    val notNumberLabel = stringResource(R.string.form_error_type_notNumber)
+    val notInRangeLabel = stringResource(R.string.form_error_value_notInRange, 1, 320)
     InputDialog(
         state = showDialog,
         selection = InputSelection(
             input = listOf(
                 InputTextField(
                     header = InputHeader(
-                        title = "Set the bitrate for the audio recording",
+                        title = stringResource(id = R.string.ui_settings_option_bitrate_explanation),
                         icon = IconSource(Icons.Default.Tune),
                     ),
                     keyboardOptions = KeyboardOptions(
@@ -73,14 +77,14 @@ fun BitrateTile() {
                         val bitRate = text?.toIntOrNull()
 
                         if (bitRate == null) {
-                            ValidationResult.Invalid("Please enter a valid number")
+                            ValidationResult.Invalid(notNumberLabel)
                         }
 
-                        if (bitRate in 1..320) {
-                            ValidationResult.Valid
-                        } else {
-                            ValidationResult.Invalid("Please enter a number between 1 and 320")
+                        if (bitRate !in 1..320) {
+                            ValidationResult.Invalid(notInRangeLabel)
                         }
+
+                        ValidationResult.Valid
                     },
                     key = "bitrate",
                 )
@@ -92,8 +96,8 @@ fun BitrateTile() {
         }
     )
     SettingsTile(
-        title = "Bitrate",
-        description = "A higher bitrate means better quality but also larger file size",
+        title = stringResource(R.string.ui_settings_option_bitrate_title),
+        description = stringResource(R.string.ui_settings_option_bitrate_description),
         leading = {
             Icon(
                 Icons.Default.Tune,
@@ -109,7 +113,10 @@ fun BitrateTile() {
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Text(
-                    text = "${settings.audioRecorderSettings.bitRate / 1000} KB/s",
+                    stringResource(
+                        R.string.format_kbps,
+                        settings.audioRecorderSettings.bitRate / 1000,
+                    ),
                 )
             }
         },
@@ -119,7 +126,10 @@ fun BitrateTile() {
                 onItemSelected = ::updateValue,
             ) {bitRate ->
                 Text(
-                    text = "${bitRate / 1000} KB/s",
+                    stringResource(
+                        R.string.format_kbps,
+                        bitRate / 1000,
+                    ),
                 )
             }
         }
