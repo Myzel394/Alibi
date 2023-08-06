@@ -1,5 +1,6 @@
 package app.myzel394.locationtest.ui
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -44,7 +45,10 @@ fun Navigation() {
         composable(
             Screen.AudioRecorder.route,
             enterTransition = {
-                scaleIn(initialScale = SCALE_IN) + fadeIn()
+                when (initialState.destination.route) {
+                    Screen.Welcome.route -> null
+                    else -> scaleIn(initialScale = SCALE_IN) + fadeIn()
+                }
             },
             exitTransition = {
                 scaleOut(targetScale = SCALE_IN) + fadeOut()
