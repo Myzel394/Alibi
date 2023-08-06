@@ -320,7 +320,7 @@ class RecorderService: Service() {
         val notification = NotificationCompat.Builder(this, "recorder")
             .setContentTitle("Recording Audio")
             .setContentText("Recording audio in background")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.launcher_foreground)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setOngoing(true)
