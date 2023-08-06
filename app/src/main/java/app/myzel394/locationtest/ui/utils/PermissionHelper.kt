@@ -8,18 +8,11 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 
-fun Context.openAppSystemSettings() {
-    startActivity(Intent().apply {
-        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-        data = Uri.fromParts("package", packageName, null)
-    })
-}
-
 // From @Bnyro
 object PermissionHelper {
     fun checkPermissions(context: Context, permissions: Array<String>): Boolean {
         permissions.forEach {
-            if (!hasPermission(context, it)) {
+            if (!hasGranted(context, it)) {
                 ActivityCompat.requestPermissions(
                     context as Activity,
                     arrayOf(it),
@@ -31,10 +24,25 @@ object PermissionHelper {
         return true
     }
 
-    fun hasPermission(context: Context, permission: String): Boolean {
-        return ActivityCompat.checkSelfPermission(
-            context,
-            permission
-        ) == PackageManager.PERMISSION_GRANTED
+    fun hasGranted(context: Context, permission: String): Boolean =
+        ActivityCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+
+    fun hasPermanentlyDenied(context: Context, permission: String): Boolean =
+        !hasGranted(context, permission) &&
+        !ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, permission)
+
+    fun hasPermanentlyDenied(context: Context, permission: Array<String>): Boolean {
+        permission.forEach {
+            if (hasPermanentlyDenied(context, it))
+                return true
+        }
+        return false
     }
+}
+
+fun Context.openAppSystemSettings() {
+    startActivity(Intent().apply {
+        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+        data = Uri.fromParts("package", packageName, null)
+    })
 }
