@@ -14,6 +14,7 @@ import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -334,7 +335,7 @@ class RecorderService: Service() {
                     this,
                     0,
                     Intent(this, MainActivity::class.java),
-                    PendingIntent.FLAG_UPDATE_CURRENT,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                 )
             )
             .build()
@@ -447,9 +448,15 @@ fun bindToRecorderService(): Pair<ServiceConnection, RecorderService?> {
         }
     }
 
-    LaunchedEffect(Unit) {
+    DisposableEffect(Unit) {
         Intent(context, RecorderService::class.java).also { intent ->
             context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+
+        onDispose {
+            service?.let {
+                context.unbindService(connection)
+            }
         }
     }
 
