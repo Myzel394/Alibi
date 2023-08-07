@@ -1,10 +1,10 @@
 # Alibi
 
 <p float="left" align="center">
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width="20%" />
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width="20%" />
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.png" width="20%" />
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04.png" width="20%" />
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width="24%" />
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width="24%" />
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.png" width="24%" />
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04.png" width="24%" />
 </p>
 
 Alibi keeps recording in the background and saves the last 30 minutes at your request.
@@ -12,7 +12,7 @@ Everything is completely configurable. No internet connection required.
 
 # Download
 
-[<img src="readme_content/github-badge.png" alt="Get it on GitHub" height="80">](https://github.com/Myzel394/Alibi/releases)
+[<img src="readme_content/github-badge.webp" alt="Get it on GitHub" height="80">](https://github.com/Myzel394/Alibi/releases)
 
 # Supporting Alibi
 
