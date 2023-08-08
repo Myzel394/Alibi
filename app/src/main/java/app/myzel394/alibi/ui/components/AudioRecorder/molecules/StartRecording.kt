@@ -131,6 +131,7 @@ fun StartRecording(
                         .semantics {
                             contentDescription = label
                         },
+                    colors = ButtonDefaults.textButtonColors(),
                     onClick = {
                         audioRecorder.stopRecording(context)
                         audioRecorder.onRecordingSave()
