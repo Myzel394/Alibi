@@ -30,7 +30,10 @@ fun AudioRecorder(
 ) {
     val saveFile = rememberFileSaverDialog("audio/aac")
     val (connection, service) = bindToRecorderService()
-    val isRecording = service?.isRecording?.value ?: false
+
+    var showRecorderStatus by remember {
+        mutableStateOf(service?.isRecording ?: false)
+    }
 
     Scaffold(
         topBar = {
@@ -58,10 +61,22 @@ fun AudioRecorder(
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            if (isRecording)
-                RecordingStatus(service = service!!, saveFile = saveFile)
+            if (showRecorderStatus && service?.recordingTime?.value != null)
+                RecordingStatus(
+                    service = service,
+                    onSaveFile = {
+                        saveFile(it)
+                        showRecorderStatus = false
+                    }
+                )
             else
-                StartRecording(connection = connection, service = service)
+                StartRecording(
+                    connection = connection,
+                    service = service,
+                    onStart = {
+                        showRecorderStatus = true
+                    }
+                )
         }
     }
 }

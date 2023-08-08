@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,15 +13,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -35,9 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -45,9 +43,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 import app.myzel394.alibi.services.RecorderService
-import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.ConfirmDeletionDialog
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.RealtimeAudioVisualizer
+import app.myzel394.alibi.ui.components.AudioRecorder.atoms.SaveRecordingButton
 import app.myzel394.alibi.ui.components.atoms.Pulsating
 import app.myzel394.alibi.ui.utils.KeepScreenOn
 import app.myzel394.alibi.ui.utils.formatDuration
@@ -60,30 +58,27 @@ import java.time.ZoneId
 @Composable
 fun RecordingStatus(
     service: RecorderService,
-    saveFile: (File) -> Unit,
+    onSaveFile: (File) -> Unit,
 ) {
     val context = LocalContext.current
 
     var now by remember { mutableStateOf(LocalDateTime.now()) }
 
-    val start = service.recordingStart!!
-    val duration = now.toEpochSecond(ZoneId.systemDefault().rules.getOffset(now)) - start.toEpochSecond(ZoneId.systemDefault().rules.getOffset(start))
-    val progress = duration / (service.settings!!.maxDuration / 1000f)
+    val progress = service.recordingTime.value!! / (service.settings!!.maxDuration / 1000f)
 
     LaunchedEffect(Unit) {
         while (true) {
             now = LocalDateTime.now()
-            delay(1000)
+            delay(900)
         }
     }
 
     // Only show animation when the recording has just started
-    val recordingJustStarted = duration < 1
+    val recordingJustStarted = service.recordingTime.value!! < 1
     var progressVisible by remember { mutableStateOf(!recordingJustStarted) }
     LaunchedEffect(Unit) {
         progressVisible = true
     }
-
 
     KeepScreenOn()
 
@@ -102,7 +97,7 @@ fun RecordingStatus(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
             ) {
-                val distance = Duration.between(service.recordingStart, now).toMillis()
+                val distance = Duration.between(service.recordingStart!!, now).toMillis()
 
                 Pulsating {
                     Box(
@@ -167,31 +162,12 @@ fun RecordingStatus(
                 Text(label)
             }
         }
-        val label = stringResource(R.string.ui_audioRecorder_action_save_label)
-        
         val alpha by animateFloatAsState(if (progressVisible) 1f else 0f, tween(1000))
-        Button(
+        SaveRecordingButton(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-                .height(BIG_PRIMARY_BUTTON_SIZE)
-                .graphicsLayer(alpha = alpha)
-                .semantics {
-                    contentDescription = label
-                },
-            onClick = {
-                RecorderService.stopService(context)
-
-                saveFile(service.concatenateFiles())
-            },
-        ) {
-            Icon(
-                Icons.Default.Save,
-                contentDescription = null,
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-            )
-            Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-            Text(label)
-        }
+                .alpha(alpha),
+            service = service,
+            onSaveFile = onSaveFile,
+        )
     }
 }

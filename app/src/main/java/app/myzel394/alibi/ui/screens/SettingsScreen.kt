@@ -51,7 +51,7 @@ fun SettingsScreen(
     navController: NavController
 ) {
     val (_, service) = bindToRecorderService()
-    val isRecording = service?.isRecording?.value ?: false
+    val isRecording = service?.isRecording ?: false
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         rememberTopAppBarState()
     )

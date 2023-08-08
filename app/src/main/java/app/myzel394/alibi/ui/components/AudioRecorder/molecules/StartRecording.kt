@@ -8,6 +8,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,6 +50,7 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.services.RecorderService
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.AudioVisualizer
+import app.myzel394.alibi.ui.components.AudioRecorder.atoms.SaveRecordingButton
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import java.time.format.DateTimeFormatter
@@ -58,6 +60,7 @@ import java.time.format.FormatStyle
 fun StartRecording(
     connection: ServiceConnection,
     service: RecorderService? = null,
+    onStart: () -> Unit,
 ) {
     val context = LocalContext.current
     val saveFile = rememberFileSaverDialog("audio/*")
@@ -78,6 +81,16 @@ fun StartRecording(
             },
             onPermissionAvailable = {
                 RecorderService.startService(context, connection)
+
+                if (service == null) {
+                    onStart()
+                } else {
+                    // To avoid any leaks from the previous recording, we need to wait until it
+                    // fully started
+                    service.setOnStartedListener {
+                        onStart()
+                    }
+                }
             },
         ) { trigger ->
             val label = stringResource(R.string.ui_audioRecorder_action_start_label)
@@ -127,36 +140,21 @@ fun StartRecording(
                 .fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
-        if (service?.recordingStart != null)
+        if (service?.hasRecordingAvailable == true)
             Column(
                 modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom,
             ) {
-                Button(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .height(BIG_PRIMARY_BUTTON_SIZE),
-                    onClick = {
-                        saveFile(service.concatenateFiles())
-                    },
-                    colors = ButtonDefaults.textButtonColors(),
-                ) {
-                    Icon(
-                        Icons.Default.Save,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(ButtonDefaults.IconSize),
-                    )
-                    Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                    Text(
-                        stringResource(
-                            R.string.ui_audioRecorder_action_saveOldRecording_label,
-                            DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(service.recordingStart!!),
-                        ),
-                    )
-                }
+                SaveRecordingButton(
+                    service = service,
+                    onSaveFile = saveFile,
+                    label = stringResource(
+                        R.string.ui_audioRecorder_action_saveOldRecording_label,
+                        DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(service.recordingStart),
+                    ),
+
+                )
             }
         else
             Spacer(modifier = Modifier.weight(1f))
