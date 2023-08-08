@@ -1,3 +1,5 @@
+![Alibi, Witness every moment](readme_content/banner.webp)
+
 # Alibi
 
 <p float="left" align="center">
