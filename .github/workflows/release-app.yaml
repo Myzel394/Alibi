@@ -41,5 +41,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          name: app
           files: app/build/outputs/apk/release/*.apk
