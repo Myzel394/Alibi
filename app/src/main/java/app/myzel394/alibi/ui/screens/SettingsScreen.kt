@@ -32,7 +32,6 @@ import androidx.navigation.NavController
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.services.bindToRecorderService
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.EncoderTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ForceExactMaxDurationTile
@@ -43,15 +42,15 @@ import app.myzel394.alibi.ui.components.SettingsScreen.atoms.SamplingRateTile
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
+import app.myzel394.alibi.ui.models.AudioRecorderModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    navController: NavController
+    navController: NavController,
+    audioRecorder: AudioRecorderModel,
 ) {
-    val (_, service) = bindToRecorderService()
-    val isRecording = service?.isRecording?.value ?: false
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         rememberTopAppBarState()
     )
@@ -91,7 +90,7 @@ fun SettingsScreen(
                 .value
 
             // Show alert
-            if (isRecording)
+            if (audioRecorder.isInRecording)
                 Box(
                     modifier = Modifier
                         .padding(16.dp)
