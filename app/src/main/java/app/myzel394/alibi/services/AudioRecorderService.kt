@@ -49,6 +49,12 @@ class AudioRecorderService: IntervalRecorderService() {
         recorder = newRecorder
     }
 
+    override fun pause() {
+        super.pause()
+
+        resetRecorder()
+    }
+
     override fun stop() {
         super.stop()
 

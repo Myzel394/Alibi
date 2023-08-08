@@ -30,6 +30,9 @@ class AudioRecorderModel: ViewModel() {
     val isInRecording: Boolean
         get() = recorderState !== RecorderState.IDLE && recordingTime != null
 
+    val isPaused: Boolean
+        get() = recorderState === RecorderState.PAUSED
+
     val progress: Float
         get() = (recordingTime!! / recorderService!!.settings!!.maxDuration).toFloat()
 
@@ -94,6 +97,14 @@ class AudioRecorderModel: ViewModel() {
         }
 
         reset()
+    }
+
+    fun pauseRecording() {
+        recorderService!!.changeState(RecorderState.PAUSED)
+    }
+
+    fun resumeRecording() {
+        recorderService!!.changeState(RecorderState.RECORDING)
     }
 
     fun setMaxAmplitudesAmount(amount: Int) {

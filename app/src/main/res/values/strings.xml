@@ -22,6 +22,8 @@
     <string name="ui_audioRecorder_action_delete_label">Delete</string>
     <string name="ui_audioRecorder_action_delete_confirm_title">Delete Recording?</string>
     <string name="ui_audioRecorder_action_delete_confirm_message">Are you sure you want to delete this recording?</string>
+    <string name="ui_audioRecorder_action_pause_label">Pause Recording</string>
+    <string name="ui_audioRecorder_action_resume_label">Resume Recording</string>
     <string name="ui_audioRecorder_action_save_label">Save Recording</string>
     <string name="ui_audioRecorder_action_start_description">Alibi will continue recording in the background and store the last <xliff:g name="durationInMinutes">%s</xliff:g> minutes at your request</string>
     <string name="ui_audioRecorder_action_save_processing_dialog_title">Processing</string>

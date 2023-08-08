@@ -21,10 +21,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -99,8 +103,6 @@ fun RecordingStatus(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
             ) {
-                val distance = Duration.between(audioRecorder.recorderService!!.recordingStart, now).toMillis()
-
                 Pulsating {
                     Box(
                         modifier = Modifier
@@ -111,7 +113,7 @@ fun RecordingStatus(
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = formatDuration(distance),
+                    text = formatDuration(audioRecorder.recordingTime!!),
                     style = MaterialTheme.typography.headlineLarge,
                 )
             }
@@ -162,6 +164,27 @@ fun RecordingStatus(
                 Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
                 Text(label)
             }
+        }
+
+        val pauseLabel = stringResource(R.string.ui_audioRecorder_action_pause_label)
+        val resumeLabel = stringResource(R.string.ui_audioRecorder_action_resume_label)
+        LargeFloatingActionButton(
+            modifier = Modifier
+                .semantics {
+                    contentDescription = if (audioRecorder.isPaused) resumeLabel else pauseLabel
+                },
+            onClick = {
+                if (audioRecorder.isPaused) {
+                    audioRecorder.resumeRecording()
+                } else {
+                    audioRecorder.pauseRecording()
+                }
+            },
+        ) {
+            Icon(
+                if (audioRecorder.isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
+                contentDescription = null,
+            )
         }
 
         val alpha by animateFloatAsState(if (progressVisible) 1f else 0f, tween(1000))

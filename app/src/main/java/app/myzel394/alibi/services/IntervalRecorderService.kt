@@ -43,6 +43,7 @@ abstract class IntervalRecorderService: ExtraRecorderInformationService() {
 
     // Make overrideable
     open fun startNewCycle() {
+        counter += 1
         deleteOldRecordings()
     }
 
@@ -89,8 +90,11 @@ abstract class IntervalRecorderService: ExtraRecorderInformationService() {
     }
 
     override fun resume() {
-        super.resume()
         createTimer()
+
+        // We first want to start our timers, so the `ExtraRecorderInformationService` can fetch
+        // amplitudes
+        super.resume()
     }
 
     override fun stop() {
