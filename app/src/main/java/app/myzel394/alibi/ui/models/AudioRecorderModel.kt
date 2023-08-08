@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import app.myzel394.alibi.db.LastRecording
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.services.RecorderService
@@ -35,6 +36,11 @@ class AudioRecorderModel: ViewModel() {
     private var intent: Intent? = null
     var recorderService: AudioRecorderService? = null
         private set
+
+    var lastRecording: LastRecording? by mutableStateOf<LastRecording?>(null)
+        private set
+
+    var onRecordingSave: () -> Unit = {}
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -77,7 +83,11 @@ class AudioRecorderModel: ViewModel() {
         context.bindService(intent!!, connection, Context.BIND_AUTO_CREATE)
     }
 
-    fun stopRecording(context: Context) {
+    fun stopRecording(context: Context, saveAsLastRecording: Boolean = true) {
+        if (saveAsLastRecording) {
+            lastRecording = recorderService!!.createLastRecording()
+        }
+
         runCatching {
             context.unbindService(connection)
             context.stopService(intent)

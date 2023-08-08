@@ -13,12 +13,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -43,6 +46,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 import app.myzel394.alibi.services.RecorderService
+import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.ConfirmDeletionDialog
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.RealtimeAudioVisualizer
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.SaveRecordingButton
@@ -135,7 +139,7 @@ fun RecordingStatus(
                     },
                     onConfirm = {
                         showDeleteDialog = false
-                        audioRecorder.stopRecording(context)
+                        audioRecorder.stopRecording(context, saveAsLastRecording = false)
                     },
                 )
             }
@@ -159,6 +163,31 @@ fun RecordingStatus(
                 Text(label)
             }
         }
+
         val alpha by animateFloatAsState(if (progressVisible) 1f else 0f, tween(1000))
+        val label = stringResource(R.string.ui_audioRecorder_action_save_label)
+
+        Button(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .height(BIG_PRIMARY_BUTTON_SIZE)
+                .alpha(alpha)
+                .semantics {
+                    contentDescription = label
+                },
+            onClick = {
+                audioRecorder.stopRecording(context)
+                audioRecorder.onRecordingSave()
+            },
+        ) {
+            Icon(
+                Icons.Default.Save,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+            )
+            Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+            Text(stringResource(R.string.ui_audioRecorder_action_save_label))
+        }
     }
 }
