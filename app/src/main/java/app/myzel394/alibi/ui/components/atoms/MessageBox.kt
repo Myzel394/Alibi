@@ -37,7 +37,7 @@ fun MessageBox(
     }
     val onContainerColor = when(type) {
         MessageType.ERROR -> MaterialTheme.colorScheme.onError
-        MessageType.INFO -> MaterialTheme.colorScheme.onTertiary
+        MessageType.INFO -> MaterialTheme.colorScheme.onTertiaryContainer
         MessageType.SUCCESS -> Color.Green
         MessageType.WARNING -> Color.Yellow
     }

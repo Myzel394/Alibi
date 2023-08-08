@@ -15,7 +15,8 @@
     <string name="notificationChannels_recorder_description">Shows the current recording status</string>
 
     <string name="ui_permissions_request_title">Permission denied</string>
-    <string name="ui_permissions_request_message">Please grant the permission to continue. You will be redirected to the app settings to grant the permission there.</string>
+    <string name="ui_permissions_request">Please grant the permission to continue</string>
+    <string name="ui_permissions_permanentlyDenied_message">You will be redirected to the app settings to grant the permission there.</string>
 
     <string name="ui_audioRecorder_action_start_label">Start Recording</string>
     <string name="ui_audioRecorder_action_saveOldRecording_label">Save Recording from <xliff:g name="date">%s</xliff:g></string>

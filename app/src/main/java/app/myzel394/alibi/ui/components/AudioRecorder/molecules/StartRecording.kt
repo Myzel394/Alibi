@@ -69,13 +69,8 @@ fun StartRecording(
     ) {
         Spacer(modifier = Modifier.weight(1f))
         PermissionRequester(
-            permission = arrayOf(Manifest.permission.RECORD_AUDIO),
-            icon = {
-                Icon(
-                    Icons.Default.Mic,
-                    contentDescription = null,
-                )
-            },
+            permission = Manifest.permission.RECORD_AUDIO,
+            icon = Icons.Default.Mic,
             onPermissionAvailable = {
                 RecorderService.startService(context, connection)
             },

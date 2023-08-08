@@ -10,34 +10,20 @@ import androidx.core.app.ActivityCompat
 
 // From @Bnyro
 object PermissionHelper {
-    fun checkPermissions(context: Context, permissions: Array<String>): Boolean {
-        permissions.forEach {
-            if (!hasGranted(context, it)) {
-                ActivityCompat.requestPermissions(
-                    context as Activity,
-                    arrayOf(it),
-                    1
-                )
-                return false
-            }
+    fun checkPermission(context: Context, permission: String): Boolean {
+        if (!hasGranted(context, permission)) {
+            ActivityCompat.requestPermissions(
+                context as Activity,
+                arrayOf(permission),
+                1
+            )
+            return false
         }
         return true
     }
 
     fun hasGranted(context: Context, permission: String): Boolean =
         ActivityCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
-
-    fun hasPermanentlyDenied(context: Context, permission: String): Boolean =
-        !hasGranted(context, permission) &&
-        !ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, permission)
-
-    fun hasPermanentlyDenied(context: Context, permission: Array<String>): Boolean {
-        permission.forEach {
-            if (hasPermanentlyDenied(context, it))
-                return true
-        }
-        return false
-    }
 }
 
 fun Context.openAppSystemSettings() {
