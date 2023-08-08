@@ -85,7 +85,6 @@ abstract class IntervalRecorderService: ExtraRecorderInformationService() {
     }
 
     override fun pause() {
-        super.pause()
         cycleTimer.shutdown()
     }
 
@@ -98,7 +97,6 @@ abstract class IntervalRecorderService: ExtraRecorderInformationService() {
     }
 
     override fun stop() {
-        super.stop()
         cycleTimer.shutdown()
     }
 

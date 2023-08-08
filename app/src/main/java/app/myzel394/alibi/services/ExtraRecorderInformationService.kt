@@ -13,31 +13,12 @@ abstract class ExtraRecorderInformationService: RecorderService() {
     abstract fun getAmplitudeAmount(): Int
     abstract fun getAmplitude(): Int
 
-    var recordingTime = 0L
-        private set
-    private lateinit var recordingTimeTimer: ScheduledExecutorService
-
     var amplitudes = mutableListOf<Int>()
         private set
 
     private val handler = Handler(Looper.getMainLooper())
 
-    var onRecordingTimeChange: ((Long) -> Unit)? = null
     var onAmplitudeChange: ((List<Int>) -> Unit)? = null
-
-    private fun createRecordingTimeTimer() {
-        recordingTimeTimer = Executors.newSingleThreadScheduledExecutor().also {
-            it.scheduleAtFixedRate(
-                {
-                    recordingTime += 1000
-                    onRecordingTimeChange?.invoke(recordingTime)
-                },
-                0,
-                1000,
-                TimeUnit.MILLISECONDS
-            )
-        }
-    }
 
     private fun updateAmplitude() {
         if (state !== RecorderState.RECORDING) {
@@ -60,21 +41,11 @@ abstract class ExtraRecorderInformationService: RecorderService() {
     }
 
     override fun start() {
-        createRecordingTimeTimer()
         createAmplitudesTimer()
-    }
-
-    override fun pause() {
-        recordingTimeTimer.shutdown()
     }
 
     override fun resume() {
-        createRecordingTimeTimer()
         createAmplitudesTimer()
-    }
-
-    override fun stop() {
-        recordingTimeTimer.shutdown()
     }
 
 }
