@@ -1,21 +1,33 @@
 package app.myzel394.alibi.services
 
+import android.content.Context
 import android.media.MediaRecorder
+import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AudioRecorderSettings
 import app.myzel394.alibi.db.LastRecording
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.io.File
+import java.time.LocalDateTime
 import java.util.Timer
 import java.util.TimerTask
+import java.util.UUID
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 abstract class IntervalRecorderService: ExtraRecorderInformationService() {
+    private var job = SupervisorJob()
+    private var scope = CoroutineScope(Dispatchers.IO + job)
+
     protected var counter = 0
         private set
     protected lateinit var folder: File
-    lateinit var settings: Settings
+    var settings: Settings? = null
         protected set
 
     private lateinit var cycleTimer: ScheduledExecutorService
@@ -23,10 +35,10 @@ abstract class IntervalRecorderService: ExtraRecorderInformationService() {
     fun createLastRecording(): LastRecording = LastRecording(
         folderPath = folder.absolutePath,
         recordingStart = recordingStart,
-        maxDuration = settings.maxDuration,
-        fileExtension = settings.fileExtension,
-        intervalDuration = settings.intervalDuration,
-        forceExactMaxDuration = settings.forceExactMaxDuration,
+        maxDuration = settings!!.maxDuration,
+        fileExtension = settings!!.fileExtension,
+        intervalDuration = settings!!.intervalDuration,
+        forceExactMaxDuration = settings!!.forceExactMaxDuration,
     )
 
     // Make overrideable
@@ -41,32 +53,53 @@ abstract class IntervalRecorderService: ExtraRecorderInformationService() {
                     startNewCycle()
                 },
                 0,
-                settings.intervalDuration,
+                settings!!.intervalDuration,
                 TimeUnit.MILLISECONDS
             )
         }
     }
 
+    private fun getRandomFileFolder(): String {
+        // uuid
+        val folder = UUID.randomUUID().toString()
+
+        return "${externalCacheDir!!.absolutePath}/$folder"
+    }
+
     override fun start() {
+        super.start()
+
+        folder = File(getRandomFileFolder())
         folder.mkdirs()
 
-        createTimer()
+        scope.launch {
+            dataStore.data.collectLatest { preferenceSettings ->
+                if (settings == null) {
+                    settings = Settings.from(preferenceSettings.audioRecorderSettings)
+
+                    createTimer()
+                }
+            }
+        }
     }
 
     override fun pause() {
+        super.pause()
         cycleTimer.shutdown()
     }
 
     override fun resume() {
+        super.resume()
         createTimer()
     }
 
     override fun stop() {
+        super.stop()
         cycleTimer.shutdown()
     }
 
     private fun deleteOldRecordings() {
-        val timeMultiplier = settings.maxDuration / settings.intervalDuration
+        val timeMultiplier = settings!!.maxDuration / settings!!.intervalDuration
         val earliestCounter = counter - timeMultiplier
 
         folder.listFiles()?.forEach { file ->

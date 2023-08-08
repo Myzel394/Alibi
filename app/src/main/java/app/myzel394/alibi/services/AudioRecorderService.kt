@@ -4,11 +4,13 @@ import android.media.MediaRecorder
 import android.os.Build
 
 class AudioRecorderService: IntervalRecorderService() {
+    var amplitudesAmount = 1000
+
     var recorder: MediaRecorder? = null
         private set
 
     val filePath: String
-        get() = "$folder/$counter.${settings.fileExtension}"
+        get() = "$folder/$counter.${settings!!.fileExtension}"
 
     private fun createRecorder(): MediaRecorder {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -18,10 +20,10 @@ class AudioRecorderService: IntervalRecorderService() {
         }.apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFile(filePath)
-            setOutputFormat(settings.outputFormat)
-            setAudioEncoder(settings.encoder)
-            setAudioEncodingBitRate(settings.bitRate)
-            setAudioSamplingRate(settings.samplingRate)
+            setOutputFormat(settings!!.outputFormat)
+            setAudioEncoder(settings!!.encoder)
+            setAudioEncodingBitRate(settings!!.bitRate)
+            setAudioSamplingRate(settings!!.samplingRate)
         }
     }
 
@@ -47,9 +49,13 @@ class AudioRecorderService: IntervalRecorderService() {
         recorder = newRecorder
     }
 
-    override fun getAmplitudeAmount(): Int {
-        return 100
+    override fun stop() {
+        super.stop()
+
+        resetRecorder()
     }
+
+    override fun getAmplitudeAmount(): Int = amplitudesAmount
 
     override fun getAmplitude(): Int = recorder?.maxAmplitude ?: 0
 }

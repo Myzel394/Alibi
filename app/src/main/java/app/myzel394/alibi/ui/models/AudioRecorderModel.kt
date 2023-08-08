@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,11 +21,20 @@ class AudioRecorderModel: ViewModel() {
         private set
     var recordingTime by mutableStateOf<Long?>(null)
         private set
-    var amplitudes by mutableStateOf<List<Int>?>(null)
+    var amplitudes by mutableStateOf<List<Int>>(emptyList())
         private set
 
+    var onAmplitudeChange: () -> Unit = {}
+
+    val isInRecording: Boolean
+        get() = recorderState !== RecorderState.IDLE && recordingTime != null
+
+    val progress: Float
+        get() = (recordingTime!! / recorderService!!.settings!!.maxDuration).toFloat()
+
     private var intent: Intent? = null
-    private var recorderService: RecorderService? = null
+    var recorderService: AudioRecorderService? = null
+        private set
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -36,8 +47,12 @@ class AudioRecorderModel: ViewModel() {
                 }
                 recorder.onAmplitudeChange = { amps ->
                     amplitudes = amps
+                    onAmplitudeChange()
                 }
             }
+            recorderState = recorderService!!.state
+            recordingTime = recorderService!!.recordingTime
+            amplitudes = recorderService!!.amplitudes
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -49,7 +64,7 @@ class AudioRecorderModel: ViewModel() {
     fun reset() {
         recorderState = RecorderState.IDLE
         recordingTime = null
-        amplitudes = null
+        amplitudes = emptyList()
     }
 
     fun startRecording(context: Context) {
@@ -57,13 +72,30 @@ class AudioRecorderModel: ViewModel() {
             context.unbindService(connection)
         }
 
-        val intent = Intent(context, AudioRecorderService::class.java)
-        ContextCompat.startForegroundService(context, intent)
-        context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        intent = Intent(context, AudioRecorderService::class.java)
+        ContextCompat.startForegroundService(context, intent!!)
+        context.bindService(intent!!, connection, Context.BIND_AUTO_CREATE)
     }
 
     fun stopRecording(context: Context) {
-        context.stopService(intent)
-        context.unbindService(connection)
+        runCatching {
+            context.unbindService(connection)
+            context.stopService(intent)
+        }
+
+        reset()
+    }
+
+    fun setMaxAmplitudesAmount(amount: Int) {
+        recorderService?.amplitudesAmount = amount
+    }
+
+    @Composable
+    fun BindToService(context: Context) {
+        LaunchedEffect(Unit) {
+            Intent(context, AudioRecorderService::class.java).also { intent ->
+                context.bindService(intent, connection, 0)
+            }
+        }
     }
 }

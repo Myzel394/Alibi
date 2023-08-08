@@ -47,6 +47,7 @@ import app.myzel394.alibi.ui.components.AudioRecorder.atoms.ConfirmDeletionDialo
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.RealtimeAudioVisualizer
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.SaveRecordingButton
 import app.myzel394.alibi.ui.components.atoms.Pulsating
+import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.utils.KeepScreenOn
 import app.myzel394.alibi.ui.utils.formatDuration
 import kotlinx.coroutines.delay
@@ -57,14 +58,11 @@ import java.time.ZoneId
 
 @Composable
 fun RecordingStatus(
-    service: RecorderService,
-    onSaveFile: (File) -> Unit,
+    audioRecorder: AudioRecorderModel,
 ) {
     val context = LocalContext.current
 
     var now by remember { mutableStateOf(LocalDateTime.now()) }
-
-    val progress = service.recordingTime.value!! / (service.settings!!.maxDuration / 1000f)
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -74,7 +72,7 @@ fun RecordingStatus(
     }
 
     // Only show animation when the recording has just started
-    val recordingJustStarted = service.recordingTime.value!! < 1
+    val recordingJustStarted = audioRecorder.recordingTime!! <= 1000L
     var progressVisible by remember { mutableStateOf(!recordingJustStarted) }
     LaunchedEffect(Unit) {
         progressVisible = true
@@ -89,7 +87,7 @@ fun RecordingStatus(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Box {}
-        RealtimeAudioVisualizer(service = service)
+        RealtimeAudioVisualizer(audioRecorder = audioRecorder)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -97,7 +95,7 @@ fun RecordingStatus(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
             ) {
-                val distance = Duration.between(service.recordingStart!!, now).toMillis()
+                val distance = Duration.between(audioRecorder.recorderService!!.recordingStart, now).toMillis()
 
                 Pulsating {
                     Box(
@@ -121,7 +119,7 @@ fun RecordingStatus(
                 )
             ) {
                 LinearProgressIndicator(
-                    progress = progress,
+                    progress = audioRecorder.progress,
                     modifier = Modifier
                         .width(300.dp)
                 )
@@ -137,8 +135,7 @@ fun RecordingStatus(
                     },
                     onConfirm = {
                         showDeleteDialog = false
-                        RecorderService.stopService(context)
-                        service.reset()
+                        audioRecorder.stopRecording(context)
                     },
                 )
             }
@@ -163,11 +160,5 @@ fun RecordingStatus(
             }
         }
         val alpha by animateFloatAsState(if (progressVisible) 1f else 0f, tween(1000))
-        SaveRecordingButton(
-            modifier = Modifier
-                .alpha(alpha),
-            service = service,
-            onSaveFile = onSaveFile,
-        )
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.services.RecorderService
 import app.myzel394.alibi.ui.MAX_AMPLITUDE
+import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.utils.clamp
 import kotlinx.coroutines.launch
 import kotlin.math.ceil
@@ -34,10 +35,10 @@ private const val GROW_END = BOX_DIFF * 4
 
 @Composable
 fun RealtimeAudioVisualizer(
-    service: RecorderService,
+    audioRecorder: AudioRecorderModel,
 ) {
     val scope = rememberCoroutineScope()
-    val amplitudes = service.amplitudes
+    val amplitudes = audioRecorder.amplitudes!!
     val primary = MaterialTheme.colorScheme.primary
     val primaryMuted = primary.copy(alpha = 0.3f)
 
@@ -47,7 +48,7 @@ fun RealtimeAudioVisualizer(
     val animationProgress = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
-        service.setOnAmplitudeUpdateListener {
+        audioRecorder.onAmplitudeChange = {
             scope.launch {
                 animationProgress.snapTo(0f)
                 animationProgress.animateTo(
@@ -66,7 +67,7 @@ fun RealtimeAudioVisualizer(
 
     LaunchedEffect(screenWidth) {
         // Add 1 to allow the visualizer to overflow the screen
-        service.maxAmplitudes =  ceil(screenWidth.toInt() / BOX_DIFF).toInt() + 1
+        audioRecorder.setMaxAmplitudesAmount(ceil(screenWidth.toInt() / BOX_DIFF).toInt() + 1)
     }
 
     Canvas(

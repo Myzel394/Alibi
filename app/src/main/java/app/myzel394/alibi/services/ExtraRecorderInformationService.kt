@@ -2,6 +2,7 @@ package app.myzel394.alibi.services
 
 import android.os.Handler
 import android.os.Looper
+import app.myzel394.alibi.enums.RecorderState
 import java.util.Timer
 import java.util.TimerTask
 import java.util.concurrent.Executors
@@ -12,12 +13,12 @@ abstract class ExtraRecorderInformationService: RecorderService() {
     abstract fun getAmplitudeAmount(): Int
     abstract fun getAmplitude(): Int
 
-    private var recordingTime = 0L
+    var recordingTime = 0L
+        private set
     private lateinit var recordingTimeTimer: ScheduledExecutorService
 
     var amplitudes = mutableListOf<Int>()
         private set
-    private lateinit var amplitudesTimer: Timer
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -29,6 +30,7 @@ abstract class ExtraRecorderInformationService: RecorderService() {
             it.scheduleAtFixedRate(
                 {
                     recordingTime += 1000
+                    onRecordingTimeChange?.invoke(recordingTime)
                 },
                 0,
                 1000,
@@ -38,7 +40,12 @@ abstract class ExtraRecorderInformationService: RecorderService() {
     }
 
     private fun updateAmplitude() {
+        if (state !== RecorderState.RECORDING) {
+            return
+        }
+
         amplitudes.add(getAmplitude())
+        onAmplitudeChange?.invoke(amplitudes)
 
         // Delete old amplitudes
         if (amplitudes.size > getAmplitudeAmount()) {
@@ -49,17 +56,7 @@ abstract class ExtraRecorderInformationService: RecorderService() {
     }
 
     private fun createAmplitudesTimer() {
-        amplitudesTimer = Timer().also {
-            it.scheduleAtFixedRate(
-                object: TimerTask() {
-                    override fun run() {
-                        updateAmplitude()
-                    }
-                },
-                0,
-                100,
-            )
-        }
+        handler.postDelayed(::updateAmplitude, 100)
     }
 
     override fun start() {
@@ -69,7 +66,6 @@ abstract class ExtraRecorderInformationService: RecorderService() {
 
     override fun pause() {
         recordingTimeTimer.shutdown()
-        amplitudesTimer.cancel()
     }
 
     override fun resume() {
@@ -79,7 +75,6 @@ abstract class ExtraRecorderInformationService: RecorderService() {
 
     override fun stop() {
         recordingTimeTimer.shutdown()
-        amplitudesTimer.cancel()
     }
 
 }

@@ -88,13 +88,9 @@ fun SaveRecordingButton(
             .then(modifier),
         onClick = {
             isProcessingAudio = true
-            RecorderService.stopService(context)
 
             scope.launch {
                 try {
-                    val file = service.concatenateFiles()
-
-                    onSaveFile(file)
                 } catch (error: Exception) {
                     Log.getStackTraceString(error)
                 } finally {

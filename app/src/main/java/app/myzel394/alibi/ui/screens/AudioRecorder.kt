@@ -14,26 +14,25 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import app.myzel394.alibi.services.bindToRecorderService
 import app.myzel394.alibi.ui.components.AudioRecorder.molecules.RecordingStatus
 import app.myzel394.alibi.ui.components.AudioRecorder.molecules.StartRecording
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import app.myzel394.alibi.R
+import app.myzel394.alibi.ui.models.AudioRecorderModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AudioRecorder(
     navController: NavController,
+    audioRecorder: AudioRecorderModel
 ) {
+    val context = LocalContext.current
     val saveFile = rememberFileSaverDialog("audio/aac")
-    val (connection, service) = bindToRecorderService()
-
-    var showRecorderStatus by remember {
-        mutableStateOf(service?.isRecording ?: false)
-    }
 
     Scaffold(
         topBar = {
@@ -61,22 +60,12 @@ fun AudioRecorder(
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            if (showRecorderStatus && service?.recordingTime?.value != null)
+            if (audioRecorder.isInRecording)
                 RecordingStatus(
-                    service = service,
-                    onSaveFile = {
-                        saveFile(it)
-                        showRecorderStatus = false
-                    }
+                    audioRecorder = audioRecorder,
                 )
             else
-                StartRecording(
-                    connection = connection,
-                    service = service,
-                    onStart = {
-                        showRecorderStatus = true
-                    }
-                )
+                StartRecording(audioRecorder = audioRecorder)
         }
     }
 }

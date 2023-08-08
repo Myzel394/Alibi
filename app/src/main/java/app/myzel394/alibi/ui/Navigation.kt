@@ -11,11 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.enums.Screen
+import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.screens.AudioRecorder
 import app.myzel394.alibi.ui.screens.SettingsScreen
 import app.myzel394.alibi.ui.screens.WelcomeScreen
@@ -23,7 +25,9 @@ import app.myzel394.alibi.ui.screens.WelcomeScreen
 const val SCALE_IN = 1.25f
 
 @Composable
-fun Navigation() {
+fun Navigation(
+    audioRecorder: AudioRecorderModel = viewModel()
+) {
     val navController = rememberNavController()
     val context = LocalContext.current
     val settings = context
@@ -31,6 +35,8 @@ fun Navigation() {
         .data
         .collectAsState(initial = null)
         .value ?: return
+
+    audioRecorder.BindToService(context)
 
     NavHost(
         modifier = Modifier
@@ -53,7 +59,10 @@ fun Navigation() {
                 scaleOut(targetScale = SCALE_IN) + fadeOut(tween(durationMillis = 150))
             }
         ) {
-            AudioRecorder(navController = navController)
+            AudioRecorder(
+                navController = navController,
+                audioRecorder = audioRecorder,
+            )
         }
         composable(
             Screen.Settings.route,
@@ -64,7 +73,10 @@ fun Navigation() {
                 scaleOut(targetScale = 1 / SCALE_IN) + fadeOut(tween(durationMillis = 150))
             }
         ) {
-            SettingsScreen(navController = navController)
+            SettingsScreen(
+                navController = navController,
+                audioRecorder = audioRecorder,
+            )
         }
     }
 }

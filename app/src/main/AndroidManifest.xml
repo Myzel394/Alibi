@@ -37,7 +37,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-        <service android:name=".services.RecorderService" android:foregroundServiceType="microphone" />
+        <service android:name=".services.AudioRecorderService" android:foregroundServiceType="microphone|camera" />
     </application>
 
 </manifest>

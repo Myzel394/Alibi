@@ -26,7 +26,7 @@ abstract class RecorderService: Service() {
     lateinit var recordingStart: LocalDateTime
         private set
 
-    var state = RecorderState.RECORDING
+    var state = RecorderState.IDLE
         private set
 
     var onStateChange: ((RecorderState) -> Unit)? = null
@@ -60,28 +60,34 @@ abstract class RecorderService: Service() {
                 pause()
                 isPaused = true
             }
-            else -> throw IllegalStateException("$newState is not a valid state. Destroy or recreate the service instead.")
+            RecorderState.IDLE -> stop()
         }
 
         state = newState
         onStateChange?.invoke(newState)
     }
 
+    // Must be called immediately after the service is created
+    fun startRecording() {
+        recordingStart = LocalDateTime.now()
+
+        val notification = buildNotification()
+        startForeground(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID, notification)
+
+        // Start
+        changeState(RecorderState.RECORDING)
+    }
+
     override fun onCreate() {
         super.onCreate()
 
-        val notification = buildNotification()
-
-        startForeground(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID, notification)
-
-        recordingStart = LocalDateTime.now()
-        start()
+        startRecording()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        stop()
+        changeState(RecorderState.IDLE)
 
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
