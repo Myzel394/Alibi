@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,13 +48,15 @@ fun AudioRecorder(
     navController: NavController,
     audioRecorder: AudioRecorderModel,
 ) {
+    val context = LocalContext.current
     val settings = rememberSettings()
     val saveFile = rememberFileSaverDialog(settings.audioRecorderSettings.getMimeType())
     val scope = rememberCoroutineScope()
 
     var isProcessingAudio by remember { mutableStateOf(false) }
+    var showRecorderError by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
+    DisposableEffect(Unit) {
         audioRecorder.onRecordingSave = {
             scope.launch {
                 isProcessingAudio = true
@@ -66,6 +71,16 @@ fun AudioRecorder(
                     isProcessingAudio = false
                 }
             }
+        }
+        audioRecorder.onError = {
+            // No need to save last recording as it's done automatically on error
+            audioRecorder.stopRecording(context, saveAsLastRecording = false)
+            showRecorderError = true
+        }
+
+        onDispose {
+            audioRecorder.onRecordingSave = {}
+            audioRecorder.onError = {}
         }
     }
 
@@ -95,6 +110,40 @@ fun AudioRecorder(
                 }
             },
             confirmButton = {}
+        )
+    if (showRecorderError)
+        AlertDialog(
+            onDismissRequest = { showRecorderError = false },
+            icon = {
+                Icon(
+                    Icons.Default.Warning,
+                    contentDescription = null,
+                )
+            },
+            title = {
+                Text(stringResource(R.string.ui_audioRecorder_error_recording_title))
+            },
+            text = {
+                Text(stringResource(R.string.ui_audioRecorder_error_recording_description))
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showRecorderError = false },
+                    colors = ButtonDefaults.textButtonColors(),
+                ) {
+                    Text(stringResource(R.string.dialog_close_cancel_label))
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        audioRecorder.onRecordingSave()
+                    },
+                    colors = ButtonDefaults.textButtonColors(),
+                ) {
+                    Text(stringResource(R.string.ui_audioRecorder_action_save_label))
+                }
+            }
         )
     Scaffold(
         topBar = {

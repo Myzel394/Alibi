@@ -336,6 +336,9 @@ data class AudioRecorderSettings(
             7 to "OPUS",
         )
         val ENCODER_SUPPORTED_OUTPUT_FORMATS_MAP: Map<Int, Array<Int>> = mutableMapOf(
+            MediaRecorder.AudioEncoder.DEFAULT to arrayOf(
+                MediaRecorder.OutputFormat.DEFAULT,
+            ),
             MediaRecorder.AudioEncoder.AAC to arrayOf(
                 MediaRecorder.OutputFormat.THREE_GPP,
                 MediaRecorder.OutputFormat.MPEG_4,

@@ -33,6 +33,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -200,7 +201,9 @@ fun RecordingStatus(
                     contentDescription = label
                 },
             onClick = {
-                audioRecorder.stopRecording(context)
+                runCatching {
+                    audioRecorder.stopRecording(context)
+                }
                 audioRecorder.onRecordingSave()
             },
         ) {

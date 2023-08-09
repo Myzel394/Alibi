@@ -131,6 +131,7 @@ abstract class RecorderService: Service() {
         onStateChange?.invoke(newState)
     }
 
+    // Must be immediately called after creating the service!
     fun startRecording() {
         recordingStart = LocalDateTime.now()
 
@@ -139,12 +140,6 @@ abstract class RecorderService: Service() {
 
         // Start
         changeState(RecorderState.RECORDING)
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-
-        startRecording()
     }
 
     override fun onDestroy() {

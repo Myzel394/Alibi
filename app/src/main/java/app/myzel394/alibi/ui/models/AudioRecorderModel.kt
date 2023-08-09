@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.media.MediaRecorder
 import android.os.IBinder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +45,7 @@ class AudioRecorderModel: ViewModel() {
         private set
 
     var onRecordingSave: () -> Unit = {}
+    var onError: () -> Unit = {}
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -58,10 +60,17 @@ class AudioRecorderModel: ViewModel() {
                     amplitudes = amps
                     onAmplitudeChange()
                 }
+                recorder.onError = {
+                    recorderService!!.createLastRecording()
+                    onError()
+                }
+            }.also {
+                it.startRecording()
+
+                recorderState = it.state
+                recordingTime = it.recordingTime
+                amplitudes = it.amplitudes
             }
-            recorderState = recorderService!!.state
-            recordingTime = recorderService!!.recordingTime
-            amplitudes = recorderService!!.amplitudes
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {

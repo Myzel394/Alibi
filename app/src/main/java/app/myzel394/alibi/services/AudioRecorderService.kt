@@ -1,13 +1,16 @@
 package app.myzel394.alibi.services
 
 import android.media.MediaRecorder
+import android.media.MediaRecorder.OnErrorListener
 import android.os.Build
+import java.lang.IllegalStateException
 
 class AudioRecorderService: IntervalRecorderService() {
     var amplitudesAmount = 1000
 
     var recorder: MediaRecorder? = null
         private set
+    var onError: () -> Unit = {}
 
     val filePath: String
         get() = "$folder/$counter.${settings!!.fileExtension}"
@@ -24,6 +27,9 @@ class AudioRecorderService: IntervalRecorderService() {
             setAudioEncoder(settings!!.encoder)
             setAudioEncodingBitRate(settings!!.bitRate)
             setAudioSamplingRate(settings!!.samplingRate)
+            setOnErrorListener(OnErrorListener { _, _, _ ->
+                onError()
+            })
         }
     }
 
@@ -45,8 +51,12 @@ class AudioRecorderService: IntervalRecorderService() {
 
         resetRecorder()
 
-        newRecorder.start()
-        recorder = newRecorder
+        try {
+            recorder = newRecorder
+            newRecorder.start()
+        } catch (error: RuntimeException) {
+            onError()
+        }
     }
 
     override fun pause() {
