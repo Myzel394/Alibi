@@ -52,11 +52,12 @@
     <string name="ui_settings_option_bitrate_description">A higher bitrate means better quality but also larger file size</string>
     <string name="ui_settings_option_bitrate_explanation">Set the bitrate for the audio recording</string>
     <string name="ui_settings_option_outputFormat_title">Output Format</string>
-    <string name="ui_settings_value_auto_label">Auto</string>
+    <string name="ui_settings_option_outputFormat_extra_encoderChanged">Encoder has been changed because the current one was incompatible with this output format</string>
     <string name="ui_settings_option_samplingRate_title">Sampling rate</string>
     <string name="ui_settings_option_samplingRate_description">Define how many samples per second are taken from the audio signal</string>
     <string name="ui_settings_option_samplingRate_explanation">Set the sampling rate</string>
     <string name="ui_settings_option_encoder_title">Encoder</string>
+    <string name="ui_settings_value_auto_label">Auto</string>
     <string name="ui_audioRecorder_state_paused_title">Recording paused</string>
     <string name="ui_audioRecorder_state_paused_description">Audio Recording has been paused</string>
 </resources>

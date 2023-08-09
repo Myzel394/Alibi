@@ -228,6 +228,12 @@ data class AudioRecorderSettings(
         return copy(forceExactMaxDuration = forceExactMaxDuration)
     }
 
+    fun isOutputFormatCompatible(format: Int): Boolean {
+        val supportedFormats = ENCODER_SUPPORTED_OUTPUT_FORMATS_MAP[getEncoder()]!!
+
+        return supportedFormats.contains(format)
+    }
+
     companion object {
         fun getDefaultInstance(): AudioRecorderSettings = AudioRecorderSettings()
         val EXAMPLE_MAX_DURATIONS = listOf(
@@ -284,5 +290,41 @@ data class AudioRecorderSettings(
             6 to "VORBIS",
             7 to "OPUS",
         )
+        val ENCODER_SUPPORTED_OUTPUT_FORMATS_MAP: Map<Int, Array<Int>> = mutableMapOf(
+            MediaRecorder.AudioEncoder.AAC to arrayOf(
+                MediaRecorder.OutputFormat.THREE_GPP,
+                MediaRecorder.OutputFormat.MPEG_4,
+                MediaRecorder.OutputFormat.AAC_ADTS,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) MediaRecorder.OutputFormat.MPEG_2_TS else null,
+            ).filterNotNull().toTypedArray(),
+            MediaRecorder.AudioEncoder.AAC_ELD to arrayOf(
+                MediaRecorder.OutputFormat.THREE_GPP,
+                MediaRecorder.OutputFormat.MPEG_4,
+                MediaRecorder.OutputFormat.AAC_ADTS,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) MediaRecorder.OutputFormat.MPEG_2_TS else null,
+            ).filterNotNull().toTypedArray(),
+            MediaRecorder.AudioEncoder.AMR_NB to arrayOf(
+                MediaRecorder.OutputFormat.THREE_GPP,
+                MediaRecorder.OutputFormat.AMR_NB,
+            ),
+            MediaRecorder.AudioEncoder.AMR_WB to arrayOf(
+                MediaRecorder.OutputFormat.THREE_GPP,
+                MediaRecorder.OutputFormat.AMR_WB,
+            ),
+            MediaRecorder.AudioEncoder.HE_AAC to arrayOf(
+                MediaRecorder.OutputFormat.THREE_GPP,
+                MediaRecorder.OutputFormat.MPEG_4,
+                MediaRecorder.OutputFormat.AAC_ADTS,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) MediaRecorder.OutputFormat.MPEG_2_TS else null,
+            ).filterNotNull().toTypedArray(),
+            MediaRecorder.AudioEncoder.VORBIS to arrayOf(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) MediaRecorder.OutputFormat.OGG else null,
+                MediaRecorder.OutputFormat.MPEG_4
+            ).filterNotNull().toTypedArray(),
+        ).apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaRecorder.AudioEncoder.OPUS, arrayOf(MediaRecorder.OutputFormat.OGG))
+            }
+        }.toMap()
     }
 }
