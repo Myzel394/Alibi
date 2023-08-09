@@ -1,12 +1,16 @@
 package app.myzel394.alibi.ui.components.SettingsScreen.atoms
 
+import android.media.MediaRecorder
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AudioFile
 import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,6 +23,9 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.AudioRecorderSettings
 import app.myzel394.alibi.ui.components.atoms.ExampleListRoulette
 import app.myzel394.alibi.ui.components.atoms.SettingsTile
+import app.myzel394.alibi.ui.utils.IconResource
+import com.maxkeppeker.sheets.core.models.base.Header
+import com.maxkeppeker.sheets.core.models.base.IconSource
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.list.ListDialog
 import com.maxkeppeler.sheets.list.models.ListOption
@@ -27,7 +34,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EncoderTile() {
+fun EncoderTile(
+    snackbarHostState: SnackbarHostState
+) {
     val scope = rememberCoroutineScope()
     val showDialog = rememberUseCaseState()
     val dataStore = LocalContext.current.dataStore
@@ -36,11 +45,31 @@ fun EncoderTile() {
         .collectAsState(initial = AppSettings.getDefaultInstance())
         .value
 
+    val updatedOutputFormatLabel = stringResource(R.string.ui_settings_option_encoder_extra_outputFormatChanged)
+
     fun updateValue(encoder: Int?) {
         scope.launch {
+            val isCompatible = if (encoder == null || encoder == MediaRecorder.AudioEncoder.DEFAULT)
+                true
+            else settings.audioRecorderSettings.isEncoderCompatible(encoder)
+
             dataStore.updateData {
                 it.setAudioRecorderSettings(
                     it.audioRecorderSettings.setEncoder(encoder)
+                )
+            }
+
+            if (!isCompatible) {
+                dataStore.updateData {
+                    it.setAudioRecorderSettings(
+                        it.audioRecorderSettings.setOutputFormat(null)
+                    )
+                }
+
+                snackbarHostState.showSnackbar(
+                    message = updatedOutputFormatLabel,
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Long,
                 )
             }
         }
@@ -48,6 +77,13 @@ fun EncoderTile() {
 
     ListDialog(
         state = showDialog,
+        header = Header.Default(
+            title = stringResource(R.string.ui_settings_option_encoder_title),
+            icon = IconSource(
+                painter = IconResource.fromImageVector(Icons.Default.Memory).asPainterResource(),
+                contentDescription = null,
+            )
+        ),
         selection = ListSelection.Single(
             showRadioButtons = true,
             options = IntRange(0, 7).map { index ->

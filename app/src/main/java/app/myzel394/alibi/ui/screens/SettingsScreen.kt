@@ -129,7 +129,7 @@ fun SettingsScreen(
                     )
                     BitrateTile()
                     SamplingRateTile()
-                    EncoderTile()
+                    EncoderTile(snackbarHostState = snackbarHostState)
                     OutputFormatTile()
                 }
             }

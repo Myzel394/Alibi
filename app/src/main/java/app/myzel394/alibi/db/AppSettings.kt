@@ -228,10 +228,10 @@ data class AudioRecorderSettings(
         return copy(forceExactMaxDuration = forceExactMaxDuration)
     }
 
-    fun isOutputFormatCompatible(format: Int): Boolean {
-        val supportedFormats = ENCODER_SUPPORTED_OUTPUT_FORMATS_MAP[getEncoder()]!!
+    fun isEncoderCompatible(encoder: Int): Boolean {
+        val supportedFormats = ENCODER_SUPPORTED_OUTPUT_FORMATS_MAP[encoder]!!
 
-        return supportedFormats.contains(format)
+        return supportedFormats.contains(getOutputFormat())
     }
 
     companion object {
@@ -326,5 +326,16 @@ data class AudioRecorderSettings(
                 put(MediaRecorder.AudioEncoder.OPUS, arrayOf(MediaRecorder.OutputFormat.OGG))
             }
         }.toMap()
+        val OUTPUT_FORMATS_SUPPORTED_ENCODER_MAP = (mutableMapOf<Int, Array<Int>>().also { map ->
+            ENCODER_SUPPORTED_OUTPUT_FORMATS_MAP.forEach { (encoder, formats) ->
+                formats.forEach { format ->
+                    if (map.containsKey(format)) {
+                        map[format]!!.plus(encoder)
+                    } else {
+                        map[format] = arrayOf(encoder)
+                    }
+                }
+            }
+        }).toMap()
     }
 }
