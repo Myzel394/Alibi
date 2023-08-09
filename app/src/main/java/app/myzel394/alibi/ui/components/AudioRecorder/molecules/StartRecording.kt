@@ -46,7 +46,6 @@ fun StartRecording(
     audioRecorder: AudioRecorderModel,
 ) {
     val context = LocalContext.current
-    val saveFile = rememberFileSaverDialog("audio/*")
 
     Column(
         modifier = Modifier.fillMaxSize(),

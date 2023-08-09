@@ -45,7 +45,7 @@ fun OutputFormatTile() {
         .value
     val availableOptions = if (settings.audioRecorderSettings.encoder == null)
         AudioRecorderSettings.OUTPUT_FORMAT_INDEX_TEXT_MAP.keys.toTypedArray()
-    else arrayOf(MediaRecorder.OutputFormat.DEFAULT, *AudioRecorderSettings.ENCODER_SUPPORTED_OUTPUT_FORMATS_MAP[settings.audioRecorderSettings.encoder]!!)
+    else AudioRecorderSettings.ENCODER_SUPPORTED_OUTPUT_FORMATS_MAP[settings.audioRecorderSettings.encoder]!!
 
     fun updateValue(outputFormat: Int?) {
         scope.launch {

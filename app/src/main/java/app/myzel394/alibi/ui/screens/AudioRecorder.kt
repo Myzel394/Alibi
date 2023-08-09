@@ -32,7 +32,10 @@ import app.myzel394.alibi.ui.components.AudioRecorder.molecules.StartRecording
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import app.myzel394.alibi.R
+import app.myzel394.alibi.dataStore
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.LastRecording
+import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import kotlinx.coroutines.launch
 
@@ -42,7 +45,8 @@ fun AudioRecorder(
     navController: NavController,
     audioRecorder: AudioRecorderModel,
 ) {
-    val saveFile = rememberFileSaverDialog("audio/aac")
+    val settings = rememberSettings()
+    val saveFile = rememberFileSaverDialog(settings.audioRecorderSettings.getMimeType())
     val scope = rememberCoroutineScope()
 
     var isProcessingAudio by remember { mutableStateOf(false) }

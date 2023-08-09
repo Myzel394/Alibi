@@ -143,11 +143,52 @@ data class AudioRecorderSettings(
     val outputFormat: Int? = null,
     val encoder: Int? = null,
 ) {
-    fun getOutputFormat(): Int = outputFormat ?:
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            MediaRecorder.OutputFormat.AAC_ADTS
-        else
-            MediaRecorder.OutputFormat.THREE_GPP
+    fun getOutputFormat(): Int {
+        if (outputFormat != null) {
+            return outputFormat
+        }
+
+        if (encoder == null) {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                MediaRecorder.OutputFormat.AAC_ADTS
+            else MediaRecorder.OutputFormat.THREE_GPP
+        }
+
+        return when(encoder) {
+            MediaRecorder.AudioEncoder.AAC -> MediaRecorder.OutputFormat.AAC_ADTS
+            MediaRecorder.AudioEncoder.AAC_ELD -> MediaRecorder.OutputFormat.AAC_ADTS
+            MediaRecorder.AudioEncoder.AMR_NB -> MediaRecorder.OutputFormat.AMR_NB
+            MediaRecorder.AudioEncoder.AMR_WB -> MediaRecorder.OutputFormat.AMR_WB
+            MediaRecorder.AudioEncoder.HE_AAC -> MediaRecorder.OutputFormat.AAC_ADTS
+            MediaRecorder.AudioEncoder.VORBIS -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    MediaRecorder.OutputFormat.OGG
+                } else {
+                    MediaRecorder.OutputFormat.AAC_ADTS
+                }
+            }
+            MediaRecorder.AudioEncoder.OPUS -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    MediaRecorder.OutputFormat.OGG
+                } else {
+                    MediaRecorder.OutputFormat.AAC_ADTS
+                }
+            }
+            else -> MediaRecorder.OutputFormat.DEFAULT
+        }
+    }
+
+    fun getMimeType(): String = when(getOutputFormat()) {
+        MediaRecorder.OutputFormat.AAC_ADTS -> "audio/aac"
+        MediaRecorder.OutputFormat.THREE_GPP -> "audio/3gpp"
+        MediaRecorder.OutputFormat.MPEG_4 -> "audio/mp4"
+        MediaRecorder.OutputFormat.MPEG_2_TS -> "audio/ts"
+        MediaRecorder.OutputFormat.WEBM -> "audio/webm"
+        MediaRecorder.OutputFormat.AMR_NB -> "audio/amr"
+        MediaRecorder.OutputFormat.AMR_WB -> "audio/amr-wb"
+        MediaRecorder.OutputFormat.OGG -> "audio/ogg"
+        else -> "audio/3gpp"
+    }
 
     fun getSamplingRate(): Int = samplingRate ?: when(getOutputFormat()) {
         MediaRecorder.OutputFormat.AAC_ADTS -> 96000
@@ -229,9 +270,13 @@ data class AudioRecorderSettings(
     }
 
     fun isEncoderCompatible(encoder: Int): Boolean {
+        if (outputFormat == null || outputFormat == MediaRecorder.OutputFormat.DEFAULT) {
+            return true
+        }
+
         val supportedFormats = ENCODER_SUPPORTED_OUTPUT_FORMATS_MAP[encoder]!!
 
-        return supportedFormats.contains(getOutputFormat())
+        return supportedFormats.contains(outputFormat)
     }
 
     companion object {

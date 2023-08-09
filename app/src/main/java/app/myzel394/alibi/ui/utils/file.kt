@@ -15,8 +15,6 @@ fun rememberFileSaverDialog(mimeType: String): ((File) -> Unit) {
     var file = remember { mutableStateOf<File?>(null) }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(mimeType)) {
-        println("file")
-        println(file)
         it?.let {
             context.contentResolver.openOutputStream(it)?.use { outputStream ->
                 file.value!!.inputStream().use { inputStream ->
@@ -29,8 +27,6 @@ fun rememberFileSaverDialog(mimeType: String): ((File) -> Unit) {
     }
 
     return {
-        println("eich")
-        println(it)
         file.value = it
         launcher.launch(it.name)
     }
