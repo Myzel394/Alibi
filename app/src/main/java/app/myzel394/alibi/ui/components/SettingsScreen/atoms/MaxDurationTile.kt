@@ -1,6 +1,7 @@
 package app.myzel394.alibi.ui.components.SettingsScreen.atoms
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -19,7 +20,10 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.AudioRecorderSettings
 import app.myzel394.alibi.ui.components.atoms.ExampleListRoulette
 import app.myzel394.alibi.ui.components.atoms.SettingsTile
+import app.myzel394.alibi.ui.utils.IconResource
 import app.myzel394.alibi.ui.utils.formatDuration
+import com.maxkeppeker.sheets.core.models.base.Header
+import com.maxkeppeker.sheets.core.models.base.IconSource
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.duration.DurationDialog
 import com.maxkeppeler.sheets.duration.models.DurationConfig
@@ -50,6 +54,13 @@ fun MaxDurationTile() {
 
     DurationDialog(
         state = showDialog,
+        header = Header.Default(
+            title = stringResource(R.string.ui_settings_option_maxDuration_title),
+            icon = IconSource(
+                painter = IconResource.fromImageVector(Icons.Default.Timer).asPainterResource(),
+                contentDescription = null,
+            )
+        ),
         selection = DurationSelection { newTimeInSeconds ->
             updateValue(newTimeInSeconds * 1000L)
         },

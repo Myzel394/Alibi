@@ -2,6 +2,7 @@ package app.myzel394.alibi.ui.components.SettingsScreen.atoms
 
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,6 +22,8 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.AudioRecorderSettings
 import app.myzel394.alibi.ui.components.atoms.ExampleListRoulette
 import app.myzel394.alibi.ui.components.atoms.SettingsTile
+import app.myzel394.alibi.ui.utils.IconResource
+import com.maxkeppeker.sheets.core.models.base.Header
 import com.maxkeppeker.sheets.core.models.base.IconSource
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.input.InputDialog
@@ -56,12 +59,18 @@ fun BitrateTile() {
     val notInRangeLabel = stringResource(R.string.form_error_value_notInRange, 1, 320)
     InputDialog(
         state = showDialog,
+        header = Header.Default(
+            title = stringResource(R.string.ui_settings_option_bitrate_title),
+            icon = IconSource(
+                painter = IconResource.fromImageVector(Icons.Default.Tune).asPainterResource(),
+                contentDescription = null,
+            )
+        ),
         selection = InputSelection(
             input = listOf(
                 InputTextField(
                     header = InputHeader(
                         title = stringResource(id = R.string.ui_settings_option_bitrate_explanation),
-                        icon = IconSource(Icons.Default.Tune),
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
