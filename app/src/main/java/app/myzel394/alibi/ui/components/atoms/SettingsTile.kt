@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingsTile(
+    modifier: Modifier = Modifier,
+    firstModifier: Modifier = Modifier,
     title: String,
     description: String? = null,
     leading: @Composable () -> Unit = {},
@@ -27,8 +29,10 @@ fun SettingsTile(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
+                .then(firstModifier)
                 .fillMaxWidth()
                 .padding(16.dp)
+                .then(modifier),
         ) {
             leading()
             Spacer(modifier = Modifier.width(16.dp))

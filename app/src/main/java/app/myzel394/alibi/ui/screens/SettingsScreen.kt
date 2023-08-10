@@ -38,6 +38,7 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.EncoderTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ForceExactMaxDurationTile
+import app.myzel394.alibi.ui.components.SettingsScreen.atoms.InAppLanguagePicker
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.IntervalDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.MaxDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.OutputFormatTile
@@ -120,6 +121,7 @@ fun SettingsScreen(
             MaxDurationTile()
             IntervalDurationTile()
             ForceExactMaxDurationTile()
+            InAppLanguagePicker()
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
                 Column {
                     Divider(
