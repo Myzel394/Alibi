@@ -57,21 +57,13 @@ fun AlibiTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
 
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                window.navigationBarColor = colorScheme.background.toArgb()
-                window.statusBarColor = colorScheme.background.toArgb()
-                WindowCompat.getInsetsController(
-                    window,
-                    view
-                ).isAppearanceLightStatusBars = !darkTheme
-                WindowCompat.getInsetsController(
-                    window,
-                    view
-                ).isAppearanceLightNavigationBars = !darkTheme
-            }
+            window.navigationBarColor = colorScheme.background.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            WindowCompat.getInsetsController(
+                window,
+                view
+            ).isAppearanceLightNavigationBars = !darkTheme
         }
     }
 

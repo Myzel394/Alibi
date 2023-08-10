@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.Alibi" parent="@style/Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Required for transparent status bar -->
+        <!-- Taken from: https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/integration-tests/material-catalog/src/main/res/values/themes.xml -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+
         <item name="android:windowActionModeOverlay">true</item>
         <item name="android:windowContentOverlay">@color/windowBackground</item>
         <item name="android:windowBackground">@color/windowBackground</item>

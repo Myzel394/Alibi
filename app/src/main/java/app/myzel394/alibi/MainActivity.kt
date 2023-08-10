@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.datastore.dataStore
 import app.myzel394.alibi.db.AppSettingsSerializer
 import app.myzel394.alibi.ui.Navigation
@@ -16,9 +16,12 @@ val Context.dataStore by dataStore(
     serializer = AppSettingsSerializer()
 )
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             AlibiTheme {
                 Navigation()
