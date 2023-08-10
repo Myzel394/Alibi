@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Alibi" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.Alibi" parent="@style/Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowActionModeOverlay">true</item>
         <item name="android:windowContentOverlay">@color/windowBackground</item>
         <item name="android:windowBackground">@color/windowBackground</item>
