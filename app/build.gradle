@@ -14,6 +14,10 @@ android {
         keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
     }
 
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     splits {
         abi {
             enable true
