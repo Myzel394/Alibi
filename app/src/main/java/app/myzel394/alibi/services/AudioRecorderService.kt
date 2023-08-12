@@ -12,9 +12,6 @@ class AudioRecorderService: IntervalRecorderService() {
         private set
     var onError: () -> Unit = {}
 
-    val filePath: String
-        get() = "$folder/$counter.${settings!!.fileExtension}"
-
     private fun createRecorder(): MediaRecorder {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MediaRecorder(this)

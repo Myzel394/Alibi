@@ -30,6 +30,9 @@ abstract class IntervalRecorderService: ExtraRecorderInformationService() {
     var settings: Settings? = null
         protected set
 
+    val filePath: String
+        get() = "$folder/$counter.${settings!!.fileExtension}"
+
     private lateinit var cycleTimer: ScheduledExecutorService
 
     fun createLastRecording(): LastRecording = LastRecording(
