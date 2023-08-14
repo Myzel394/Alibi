@@ -9,10 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -20,10 +16,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.myzel394.alibi.dataStore
-import app.myzel394.alibi.db.LastRecording
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.models.AudioRecorderModel
+import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.screens.AudioRecorder
+import app.myzel394.alibi.ui.screens.RecorderScreen
 import app.myzel394.alibi.ui.screens.SettingsScreen
 import app.myzel394.alibi.ui.screens.WelcomeScreen
 
@@ -31,7 +28,8 @@ const val SCALE_IN = 1.25f
 
 @Composable
 fun Navigation(
-    audioRecorder: AudioRecorderModel = viewModel()
+    audioRecorder: AudioRecorderModel = viewModel(),
+    videoRecorder: VideoRecorderModel = viewModel(),
 ) {
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -47,13 +45,13 @@ fun Navigation(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background),
         navController = navController,
-        startDestination = if (settings.hasSeenOnboarding) Screen.AudioRecorder.route else Screen.Welcome.route,
+        startDestination = if (settings.hasSeenOnboarding) Screen.Recorder.route else Screen.Welcome.route,
     ) {
         composable(Screen.Welcome.route) {
             WelcomeScreen(navController = navController)
         }
         composable(
-            Screen.AudioRecorder.route,
+            Screen.Recorder.route,
             enterTransition = {
                 when (initialState.destination.route) {
                     Screen.Welcome.route -> null
@@ -64,9 +62,10 @@ fun Navigation(
                 scaleOut(targetScale = SCALE_IN) + fadeOut(tween(durationMillis = 150))
             }
         ) {
-            AudioRecorder(
+            RecorderScreen(
                 navController = navController,
                 audioRecorder = audioRecorder,
+                videoRecorder = videoRecorder,
             )
         }
         composable(

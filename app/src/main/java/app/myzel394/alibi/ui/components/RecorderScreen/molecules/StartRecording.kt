@@ -1,4 +1,4 @@
-package app.myzel394.alibi.ui.components.AudioRecorder.molecules
+package app.myzel394.alibi.ui.components.RecorderScreen.molecules
 
 import android.Manifest
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -37,13 +38,15 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.models.AudioRecorderModel
-import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
+import app.myzel394.alibi.ui.models.VideoRecorderModel
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable
+@androidx.annotation.OptIn(androidx.camera.view.video.ExperimentalVideo::class)
 fun StartRecording(
     audioRecorder: AudioRecorderModel,
+    videoRecorder: VideoRecorderModel
 ) {
     val context = LocalContext.current
 
@@ -90,6 +93,45 @@ fun StartRecording(
                 }
             }
         }
+        Spacer(modifier = Modifier.weight(1f))
+        PermissionRequester(
+            permission = Manifest.permission.CAMERA,
+            icon = Icons.Default.Videocam,
+            onPermissionAvailable = {
+            },
+        ) { trigger ->
+            val label = stringResource(R.string.ui_videoRecorder_action_start_label)
+            Button(
+                onClick = {
+                    trigger()
+                },
+                modifier = Modifier
+                    .semantics {
+                        contentDescription = label
+                    }
+                    .size(200.dp)
+                    .clip(shape = CircleShape),
+                colors = ButtonDefaults.outlinedButtonColors(),
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Icon(
+                        Icons.Default.Videocam,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(80.dp),
+                    )
+                    Spacer(modifier = Modifier.height(ButtonDefaults.IconSpacing))
+                    Text(
+                        label,
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                }
+            }
+        }
+
+
         val settings = LocalContext
             .current
             .dataStore

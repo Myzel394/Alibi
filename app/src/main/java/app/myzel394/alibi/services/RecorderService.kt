@@ -9,6 +9,7 @@ import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.LifecycleService
 import app.myzel394.alibi.MainActivity
 import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.R
@@ -23,7 +24,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 
-abstract class RecorderService: Service() {
+abstract class RecorderService: LifecycleService() {
     private val binder = RecorderBinder()
 
     private var isPaused: Boolean = false
@@ -46,7 +47,10 @@ abstract class RecorderService: Service() {
     protected abstract fun resume()
     protected abstract fun stop()
 
-    override fun onBind(p0: Intent?): IBinder? = binder
+    override fun onBind(p0: Intent): IBinder? {
+        super.onBind(p0)
+        return binder
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
@@ -131,7 +135,7 @@ abstract class RecorderService: Service() {
         onStateChange?.invoke(newState)
     }
 
-    // Must be immediately called after creating the service!
+    // Must be called immediately after creating the service!
     fun startRecording() {
         recordingStart = LocalDateTime.now()
 

@@ -1,7 +1,7 @@
 package app.myzel394.alibi.ui.enums
 
 sealed class Screen(val route: String) {
-    object AudioRecorder : Screen("audio-recorder")
+    object Recorder : Screen("recorder")
     object Settings : Screen("settings")
     object Welcome : Screen("welcome")
 

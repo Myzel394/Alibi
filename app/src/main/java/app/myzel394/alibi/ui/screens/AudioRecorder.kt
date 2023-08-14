@@ -28,18 +28,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import app.myzel394.alibi.ui.components.AudioRecorder.molecules.RecordingStatus
-import app.myzel394.alibi.ui.components.AudioRecorder.molecules.StartRecording
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import app.myzel394.alibi.R
-import app.myzel394.alibi.dataStore
-import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.db.LastRecording
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
+import app.myzel394.alibi.ui.models.VideoRecorderModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +42,7 @@ import kotlinx.coroutines.launch
 fun AudioRecorder(
     navController: NavController,
     audioRecorder: AudioRecorderModel,
+    videoRecorder: VideoRecorderModel,
 ) {
     val context = LocalContext.current
     val settings = rememberSettings()
@@ -171,10 +167,6 @@ fun AudioRecorder(
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            if (audioRecorder.isInRecording)
-                RecordingStatus(audioRecorder = audioRecorder)
-            else
-                StartRecording(audioRecorder = audioRecorder)
         }
     }
 }

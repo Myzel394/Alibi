@@ -1,4 +1,4 @@
-package app.myzel394.alibi.ui.components.AudioRecorder.atoms
+package app.myzel394.alibi.ui.components.RecorderScreen.atoms
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth

@@ -59,7 +59,7 @@ fun WelcomeScreen(
                             dataStore.updateData {
                                 settings.setHasSeenOnboarding(true)
                             }
-                            navController.navigate(Screen.AudioRecorder.route)
+                            navController.navigate(Screen.Recorder.route)
                         }
                     }
                 }
