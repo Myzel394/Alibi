@@ -20,7 +20,6 @@ import app.myzel394.alibi.services.RecorderService
 import app.myzel394.alibi.services.VideoRecorderService
 
 @ExperimentalVideo class VideoRecorderModel: ViewModel() {
-    /*
     var recorderState by mutableStateOf(RecorderState.IDLE)
         private set
     var recordingTime by mutableStateOf<Long?>(null)
@@ -37,7 +36,7 @@ import app.myzel394.alibi.services.VideoRecorderService
         get() = recorderState === RecorderState.PAUSED
 
     val progress: Float
-        get() = (recordingTime!! / recorderService!!.settings!!.maxDuration).toFloat()
+        get() = 0f
 
     private var intent: Intent? = null
     var recorderService: VideoRecorderService? = null
@@ -51,28 +50,6 @@ import app.myzel394.alibi.services.VideoRecorderService
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            recorderService = ((service as RecorderService.RecorderBinder).getService() as VideoRecorderService).also { recorder ->
-                recorder.onStateChange = { state ->
-                    recorderState = state
-                }
-                recorder.onRecordingTimeChange = { time ->
-                    recordingTime = time
-                }
-                recorder.onAmplitudeChange = { amps ->
-                    amplitudes = amps
-                    onAmplitudeChange()
-                }
-                recorder.onError = {
-                    recorderService!!.createLastRecording()
-                    onError()
-                }
-
-                recorderState = recorder.state
-                recordingTime = recorder.recordingTime
-                amplitudes = recorder.amplitudes
-
-                recorder.startRecording()
-            }
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -99,7 +76,6 @@ import app.myzel394.alibi.services.VideoRecorderService
 
     fun stopRecording(context: Context, saveAsLastRecording: Boolean = true) {
         if (saveAsLastRecording) {
-            lastRecording = recorderService!!.createLastRecording()
         }
 
         runCatching {
@@ -111,15 +87,12 @@ import app.myzel394.alibi.services.VideoRecorderService
     }
 
     fun pauseRecording() {
-        recorderService!!.changeState(RecorderState.PAUSED)
     }
 
     fun resumeRecording() {
-        recorderService!!.changeState(RecorderState.RECORDING)
     }
 
     fun setMaxAmplitudesAmount(amount: Int) {
-        recorderService?.amplitudesAmount = amount
     }
 
     @Composable
@@ -130,6 +103,4 @@ import app.myzel394.alibi.services.VideoRecorderService
             }
         }
     }
-
-     */
 }
