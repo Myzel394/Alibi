@@ -120,12 +120,15 @@ class AudioRecorderModel: ViewModel() {
         recorderService?.amplitudesAmount = amount
     }
 
-    @Composable
-    fun BindToService(context: Context) {
-        LaunchedEffect(Unit) {
-            Intent(context, AudioRecorderService::class.java).also { intent ->
-                context.bindService(intent, connection, 0)
-            }
+    fun bindToService(context: Context) {
+        Intent(context, AudioRecorderService::class.java).also { intent ->
+            context.bindService(intent, connection, 0)
+        }
+    }
+
+    fun unbindFromService(context: Context) {
+        runCatching {
+            context.unbindService(connection)
         }
     }
 }
