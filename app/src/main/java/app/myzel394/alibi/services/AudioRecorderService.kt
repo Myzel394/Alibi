@@ -73,5 +73,11 @@ class AudioRecorderService: IntervalRecorderService() {
 
     override fun getAmplitudeAmount(): Int = amplitudesAmount
 
-    override fun getAmplitude(): Int = recorder?.maxAmplitude ?: 0
+    override fun getAmplitude(): Int {
+        return try {
+            recorder!!.maxAmplitude
+        } catch (error: IllegalStateException) {
+            0
+        }
+    }
 }
