@@ -37,7 +37,6 @@ class AudioRecorderModel: ViewModel() {
     val progress: Float
         get() = (recordingTime!! / recorderService!!.settings!!.maxDuration).toFloat()
 
-    private var intent: Intent? = null
     var recorderService: AudioRecorderService? = null
         private set
 
@@ -86,15 +85,13 @@ class AudioRecorderModel: ViewModel() {
     }
 
     fun startRecording(context: Context) {
-        reset()
-
         runCatching {
             context.unbindService(connection)
         }
 
-        intent = Intent(context, AudioRecorderService::class.java)
-        ContextCompat.startForegroundService(context, intent!!)
-        context.bindService(intent!!, connection, Context.BIND_AUTO_CREATE)
+        val intent = Intent(context, AudioRecorderService::class.java)
+        ContextCompat.startForegroundService(context, intent)
+        context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
 
     fun stopRecording(context: Context, saveAsLastRecording: Boolean = true) {
@@ -104,8 +101,10 @@ class AudioRecorderModel: ViewModel() {
 
         runCatching {
             context.unbindService(connection)
-            context.stopService(intent)
         }
+
+        val intent = Intent(context, AudioRecorderService::class.java)
+        context.stopService(intent)
 
         reset()
     }
