@@ -13,6 +13,8 @@ import android.media.ImageReader
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
+import android.view.SurfaceHolder
+import android.view.SurfaceView
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.camera.core.ImageCapture
@@ -71,41 +73,61 @@ fun RecorderScreen(
 ) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
+
     val scope = rememberCoroutineScope()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(stringResource(R.string.app_name))
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            navController.navigate(Screen.Settings.route)
-                        },
-                    ) {
-                        Icon(
-                            Icons.Default.Settings,
-                            contentDescription = null
+    var camera by remember { mutableStateOf<CameraHandler?>(null) }
+
+
+    AndroidView(
+        factory = {context ->
+            val surfaceView = SurfaceView(context).apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                )
+            }
+
+            surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
+                override fun surfaceCreated(holder: SurfaceHolder) {
+                    scope.launch {
+                        camera = CameraHandler.openCamera(context)
+
+                        val previewSize = camera!!.getPreviewSize()
+
+                        holder.setFixedSize(
+                            1080,
+                            1920,
                         )
+
+                        camera!!.startPreview(holder.surface)
                     }
                 }
-            )
-        },
-    ) { padding ->
-        val scope = rememberCoroutineScope()
 
-        // Wait for `CameraHadler.openCamera`
-        var camera by remember { mutableStateOf<CameraHandler?>(null) }
+                override fun surfaceChanged(
+                    holder: SurfaceHolder,
+                    format: Int,
+                    width: Int,
+                    height: Int
+                ) {
+                }
 
+                override fun surfaceDestroyed(holder: SurfaceHolder) {
+                    scope.launch {
+                        camera!!.stopPreview()
+                    }
+                }
+            })
+
+            surfaceView
+        }
+
+    )
         Button(
-            modifier = Modifier
-                .padding(padding),
             onClick = {
             scope.launch {
                 if (camera == null) {
-                    camera = CameraHandler.Companion.openCamera(context)
+                    camera = CameraHandler.openCamera(context)
                 }
 
                 camera!!.takePhoto(
@@ -180,5 +202,4 @@ fun RecorderScreen(
             )
         }
          */
-    }
 }

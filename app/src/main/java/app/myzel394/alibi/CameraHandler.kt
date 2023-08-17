@@ -6,27 +6,18 @@ import android.graphics.ImageFormat
 import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraDevice
-import android.hardware.camera2.CameraDevice.StateCallback.ERROR_CAMERA_DEVICE
-import android.hardware.camera2.CameraDevice.StateCallback.ERROR_CAMERA_SERVICE
 import android.hardware.camera2.CameraManager
-import android.hardware.camera2.params.OutputConfiguration
-import android.hardware.camera2.params.SessionConfiguration
-import android.media.Image
 import android.media.ImageReader
 import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
+import android.util.Size
 import android.view.Surface
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.Executor
-import java.util.logging.Logger
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -60,7 +51,25 @@ class CameraHandler(
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    public suspend fun takePhoto(
+    suspend fun startPreview(
+        surface: Surface,
+    ) {
+        val outputs = listOf(surface)
+        val session = createCaptureSession(outputs)
+
+        val captureRequest = device.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
+        captureRequest.addTarget(surface)
+
+        session.setRepeatingRequest(captureRequest.build(), null, handler)
+    }
+
+    fun stopPreview() {
+        device.close()
+        thread.quitSafely()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    suspend fun takePhoto(
         outputFile: File,
     ) {
         Log.d("Alibi", "Taking photo")
@@ -106,6 +115,44 @@ class CameraHandler(
         Log.d("Alibi", "Capturing")
         session.capture(captureRequest.build(), null, handler)
         Log.d("Alibi", "Success!")
+    }
+
+    private fun getOptimalPreviewSize(sizes: List<Size>, w: Int, h: Int): Size {
+        val ASPECT_TOLERANCE = 0.1
+        val targetRatio = h.toDouble() / w
+        var optimalSize: Size? = null
+
+        var minDiff = Double.MAX_VALUE
+
+        for (size in sizes) {
+            val ratio: Double = size.width as Double / size.height
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue
+            if (Math.abs(size.height - h) < minDiff) {
+                optimalSize = size
+                minDiff = Math.abs(size.height - h).toDouble()
+            }
+        }
+
+
+        if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE
+            for (size in sizes) {
+                if (Math.abs(size.height - h) < minDiff) {
+                    optimalSize = size
+                    minDiff = Math.abs(size.height - h).toDouble()
+                }
+            }
+        }
+
+        return optimalSize!!
+    }
+
+    fun getPreviewSize(): Size {
+        val characteristics = manager.getCameraCharacteristics(CameraCharacteristics.LENS_FACING_BACK.toString())
+        return characteristics
+            .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)!!
+            .getOutputSizes(ImageFormat.JPEG)
+            .maxByOrNull { it.height * it.width }!!
     }
 
     companion object {
