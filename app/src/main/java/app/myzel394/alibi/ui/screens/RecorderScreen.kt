@@ -1,66 +1,25 @@
 package app.myzel394.alibi.ui.screens
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.ImageFormat
-import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraDevice
-import android.hardware.camera2.CameraManager
-import android.hardware.camera2.params.SessionConfiguration
-import android.media.Image
-import android.media.ImageReader
-import android.os.Handler
-import android.os.HandlerThread
-import android.util.Log
+import android.util.Size
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
-import androidx.camera.view.CameraController.VIDEO_CAPTURE
-import androidx.camera.view.LifecycleCameraController
-import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.NavController
 import app.myzel394.alibi.CameraHandler
-import app.myzel394.alibi.R
-import app.myzel394.alibi.ui.components.RecorderScreen.molecules.AudioRecordingStatus
-import app.myzel394.alibi.ui.components.RecorderScreen.molecules.StartRecording
-import app.myzel394.alibi.ui.components.RecorderScreen.molecules.VideoRecordingStatus
-import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
-import com.ujizin.camposer.CameraPreview
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import app.myzel394.alibi.ui.utils.getOptimalPreviewSize
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import androidx.compose.runtime.*
 import java.io.File
 
 @SuppressLint("MissingPermission", "NewApi")
@@ -72,74 +31,101 @@ fun RecorderScreen(
     videoRecorder: VideoRecorderModel,
 ) {
     val context = LocalContext.current
-    val lifecycle = LocalLifecycleOwner.current
 
     val scope = rememberCoroutineScope()
 
     var camera by remember { mutableStateOf<CameraHandler?>(null) }
 
+    LaunchedEffect(Unit) {
+        camera = CameraHandler.openCamera(context)
+    }
 
-    AndroidView(
-        factory = {context ->
-            val surfaceView = SurfaceView(context).apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                )
+    if (camera == null) {
+        return
+    } else {
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { context ->
+                val surface = object : SurfaceView(context) {
+                    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+                        val width = resolveSize(suggestedMinimumWidth, widthMeasureSpec);
+                        val height = resolveSize(suggestedMinimumHeight, heightMeasureSpec);
+                        setMeasuredDimension(width, height);
+
+                        val supportedPreviewSizes = camera!!
+                            .characteristics
+                            .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)!!
+                            .getOutputSizes(SurfaceHolder::class.java)
+
+                        if (supportedPreviewSizes != null) {
+                            val previewSize = getOptimalPreviewSize(supportedPreviewSizes, width, height);
+
+                            val ratio = if (previewSize.height >= previewSize.width)
+                                    (previewSize.height / previewSize.width).toFloat()
+                                else (previewSize.width / previewSize.height).toFloat()
+
+                            val optimalWidth = width
+                            val optimalHeight = (width * ratio).toInt()
+
+                            // Make sure the camera preview uses the whole screen
+
+                            val metrics = context.resources.displayMetrics
+                            layoutParams.width = metrics.widthPixels
+                            layoutParams.height = metrics.heightPixels
+
+                            setMeasuredDimension(optimalWidth, optimalHeight)
+
+                        }
+                    }
+                }
+
+                val surfaceView = surface.apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                    )
+                }
+
+                surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
+                    override fun surfaceCreated(holder: SurfaceHolder) {
+                        scope.launch {
+                            camera!!.startPreview(holder.surface)
+                        }
+                    }
+
+                    override fun surfaceChanged(
+                        holder: SurfaceHolder,
+                        format: Int,
+                        width: Int,
+                        height: Int
+                    ) {
+                    }
+
+                    override fun surfaceDestroyed(holder: SurfaceHolder) {
+                        scope.launch {
+                            camera!!.stopPreview()
+                        }
+                    }
+                })
+
+                surfaceView
             }
 
-            surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
-                override fun surfaceCreated(holder: SurfaceHolder) {
-                    scope.launch {
-                        camera = CameraHandler.openCamera(context)
-
-                        val previewSize = camera!!.getPreviewSize()
-
-                        holder.setFixedSize(
-                            1080,
-                            1920,
-                        )
-
-                        camera!!.startPreview(holder.surface)
-                    }
-                }
-
-                override fun surfaceChanged(
-                    holder: SurfaceHolder,
-                    format: Int,
-                    width: Int,
-                    height: Int
-                ) {
-                }
-
-                override fun surfaceDestroyed(holder: SurfaceHolder) {
-                    scope.launch {
-                        camera!!.stopPreview()
-                    }
-                }
-            })
-
-            surfaceView
-        }
-
-    )
+        )
         Button(
             onClick = {
-            scope.launch {
-                if (camera == null) {
-                    camera = CameraHandler.openCamera(context)
-                }
-
-                camera!!.takePhoto(
-                    File(
-                        context.externalCacheDir!!.absolutePath,
-                        "test.jpg"
+                scope.launch {
+                    camera!!.takePhoto(
+                        File(
+                            context.externalCacheDir!!.absolutePath,
+                            "test.jpg"
+                        )
                     )
-                )
-            }
-        }) {
+                }
+            }) {
             Text("Take photo")
         }
+    }
 
         /*
         LaunchedEffect(Unit) {

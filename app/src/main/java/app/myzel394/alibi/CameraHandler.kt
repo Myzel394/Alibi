@@ -8,6 +8,7 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
 import android.media.ImageReader
+import android.net.wifi.aware.Characteristics
 import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
@@ -26,8 +27,12 @@ class CameraHandler(
     private val device: CameraDevice,
     private val handler: Handler,
     private val thread: HandlerThread,
+    private val lens: Int = CameraCharacteristics.LENS_FACING_BACK,
 ) {
     private lateinit var imageReader: ImageReader
+
+    val characteristics: CameraCharacteristics
+        get() = manager.getCameraCharacteristics(lens.toString())
 
     @RequiresApi(Build.VERSION_CODES.P)
     private suspend fun createCaptureSession(
@@ -75,7 +80,7 @@ class CameraHandler(
         Log.d("Alibi", "Taking photo")
 
         Log.d("Alibi", "Creating Camera Characteristics")
-        val characteristics = manager.getCameraCharacteristics(CameraCharacteristics.LENS_FACING_BACK.toString())
+        val characteristics = manager.getCameraCharacteristics(lens.toString())
         Log.d("Alibi", "Creating size")
         val size = characteristics.get(
             CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)!!
@@ -148,7 +153,6 @@ class CameraHandler(
     }
 
     fun getPreviewSize(): Size {
-        val characteristics = manager.getCameraCharacteristics(CameraCharacteristics.LENS_FACING_BACK.toString())
         return characteristics
             .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)!!
             .getOutputSizes(ImageFormat.JPEG)
