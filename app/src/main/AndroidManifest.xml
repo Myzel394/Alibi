@@ -37,7 +37,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-        <service android:name=".services.AudioRecorderService" android:foregroundServiceType="microphone|camera" />
+        <service android:name=".services.AudioRecorderService" android:foregroundServiceType="microphone" />
 
         <!-- Change locale for Android <= 12 -->
         <service
