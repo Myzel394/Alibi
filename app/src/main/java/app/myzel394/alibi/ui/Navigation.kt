@@ -8,6 +8,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +42,13 @@ fun Navigation(
         .collectAsState(initial = null)
         .value ?: return
 
-    audioRecorder.BindToService(context)
+    DisposableEffect(Unit) {
+        audioRecorder.bindToService(context)
+
+        onDispose {
+            audioRecorder.unbindFromService(context)
+        }
+    }
 
     NavHost(
         modifier = Modifier
