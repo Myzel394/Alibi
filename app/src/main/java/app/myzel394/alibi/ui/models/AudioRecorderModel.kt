@@ -86,6 +86,8 @@ class AudioRecorderModel: ViewModel() {
     }
 
     fun startRecording(context: Context) {
+        reset()
+
         runCatching {
             context.unbindService(connection)
         }
