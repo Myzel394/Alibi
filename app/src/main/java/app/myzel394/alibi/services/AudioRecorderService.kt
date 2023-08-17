@@ -78,6 +78,8 @@ class AudioRecorderService: IntervalRecorderService() {
             recorder!!.maxAmplitude
         } catch (error: IllegalStateException) {
             0
+        } catch (error: RuntimeException) {
+            0
         }
     }
 }
