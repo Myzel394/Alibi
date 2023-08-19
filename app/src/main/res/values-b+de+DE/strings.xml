@@ -45,7 +45,7 @@
     <string name="ui_settings_option_maxDuration_title">Maximale Aufnahmezeit</string>
     <string name="ui_settings_option_maxDuration_description">Setze die maximale Aufnahmezeit fest</string>
     <string name="ui_settings_option_intervalDuration_title">Intervall-Länge</string>
-<string name="ui_settings_option_intervalDuration_description">Dauer eines einzelnen Intervalls. Alibi nimmt in Intervallen auf und speichert diese einzeln ab. Die Intervalle werden automatisch zusammengefügt, wenn du eine Aufnahme speicherst. Die ältesten Intervalle werden automatisch gelöscht, wenn die maximale Aufnahmezeit erreicht ist.</string>
+    <string name="ui_settings_option_intervalDuration_description">Dauer eines einzelnen Intervalls. Alibi nimmt in Intervallen auf und speichert diese einzeln ab. Die Intervalle werden automatisch zusammengefügt, wenn du eine Aufnahme speicherst. Die ältesten Intervalle werden automatisch gelöscht, wenn die maximale Aufnahmezeit erreicht ist.</string>
     <string name="ui_settings_option_forceExactDuration_title">Erzwinge exakte Länge</string>
     <string name="ui_settings_option_forceExactDuration_description">Erzwingt, dass die Ausgabedatei genau für die angegebene Dauer zugeschnitten wird. Wenn dies deaktiviert ist, kann die Ausgabedatei etwas länger sein, da mehrere Intervalle zusammengefasst werden.</string>
     <string name="ui_settings_option_bitrate_title">Bitrate</string>
