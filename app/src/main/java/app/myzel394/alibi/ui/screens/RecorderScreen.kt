@@ -21,6 +21,7 @@ import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.utils.getOptimalPreviewSize
 import kotlinx.coroutines.launch
 import java.io.File
+import java.lang.Float.max
 
 @SuppressLint("MissingPermission", "NewApi")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,31 +51,28 @@ fun RecorderScreen(
                     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
                         val width = resolveSize(suggestedMinimumWidth, widthMeasureSpec);
                         val height = resolveSize(suggestedMinimumHeight, heightMeasureSpec);
-                        setMeasuredDimension(width, height);
 
                         val supportedPreviewSizes = camera!!
                             .characteristics
                             .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)!!
                             .getOutputSizes(SurfaceHolder::class.java)
 
+                        // Make sure preview is in `cover` mode and not `contain` mode
+
                         if (supportedPreviewSizes != null) {
                             val previewSize = getOptimalPreviewSize(supportedPreviewSizes, width, height);
 
-                            val ratio = if (previewSize.height >= previewSize.width)
-                                    (previewSize.height / previewSize.width).toFloat()
-                                else (previewSize.width / previewSize.height).toFloat()
-
-                            val optimalWidth = width
-                            val optimalHeight = (width * ratio).toInt()
+                            val optimalWidth = previewSize.width
+                            val optimalHeight = previewSize.height
 
                             // Make sure the camera preview uses the whole screen
+                            val widthScaleRatio = 1f ?: width.toFloat() / optimalWidth
+                            val heightScaleUpRatio = 1f ?: height.toFloat() / optimalHeight
 
-                            val metrics = context.resources.displayMetrics
-                            layoutParams.width = metrics.widthPixels
-                            layoutParams.height = metrics.heightPixels
-
-                            setMeasuredDimension(optimalWidth, optimalHeight)
-
+                            setMeasuredDimension(
+                                (optimalWidth * widthScaleRatio).toInt(),
+                                (optimalHeight * heightScaleUpRatio).toInt()
+                            )
                         }
                     }
                 }
