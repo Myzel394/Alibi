@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -28,6 +29,7 @@ import androidx.navigation.NavController
 import app.myzel394.alibi.CameraHandler
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
+import app.myzel394.alibi.ui.utils.ChangeNavColors
 import app.myzel394.alibi.ui.utils.getOptimalPreviewSize
 import kotlinx.coroutines.launch
 import java.io.File
@@ -70,6 +72,8 @@ fun RecorderScreen(
 
             Size(size.x, size.y)
         }
+        
+        ChangeNavColors(color = Color.Transparent)
 
         AndroidView(
             modifier = Modifier
