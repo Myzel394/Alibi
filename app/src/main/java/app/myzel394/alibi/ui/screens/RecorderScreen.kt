@@ -62,16 +62,20 @@ fun RecorderScreen(
                         if (supportedPreviewSizes != null) {
                             val previewSize = getOptimalPreviewSize(supportedPreviewSizes, width, height);
 
-                            val optimalWidth = previewSize.width
-                            val optimalHeight = previewSize.height
+                            val ratio = if (previewSize.height >= previewSize.width)
+                                    (previewSize.height / previewSize.width).toFloat()
+                                else (previewSize.width / previewSize.height).toFloat()
+
+                            val optimalWidth = width
+                            val optimalHeight = (width * ratio).toInt()
 
                             // Make sure the camera preview uses the whole screen
-                            val widthScaleRatio = 1f ?: width.toFloat() / optimalWidth
-                            val heightScaleUpRatio = 1f ?: height.toFloat() / optimalHeight
+                            val widthScaleRatio = optimalWidth.toFloat() / previewSize.width
+                            val heightScaleUpRatio = optimalHeight.toFloat() / previewSize.height
 
                             setMeasuredDimension(
-                                (optimalWidth * widthScaleRatio).toInt(),
-                                (optimalHeight * heightScaleUpRatio).toInt()
+                                (previewSize.width * widthScaleRatio).toInt(),
+                                (previewSize.height * heightScaleUpRatio).toInt()
                             )
                         }
                     }
