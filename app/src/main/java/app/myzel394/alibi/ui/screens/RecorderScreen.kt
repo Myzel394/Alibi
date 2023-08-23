@@ -1,18 +1,28 @@
 package app.myzel394.alibi.ui.screens
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Point
 import android.hardware.camera2.CameraCharacteristics
+import android.hardware.display.DisplayManager
+import android.os.Build
 import android.util.Size
+import android.view.Display
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import app.myzel394.alibi.CameraHandler
@@ -44,8 +54,27 @@ fun RecorderScreen(
     if (camera == null) {
         return
     } else {
+        var scaleValue by remember { mutableFloatStateOf(1f) }
+
+        val screenSize = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val bounds = windowManager.currentWindowMetrics.bounds
+
+            Size(bounds.width(), bounds.height())
+        } else {
+            val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+            val display = displayManager.getDisplay(Display.DEFAULT_DISPLAY)
+
+            val size = Point()
+            display.getRealSize(size)
+
+            Size(size.x, size.y)
+        }
+
         AndroidView(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .scale(scaleValue),
             factory = { context ->
                 val surface = object : SurfaceView(context) {
                     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -76,6 +105,11 @@ fun RecorderScreen(
                             setMeasuredDimension(
                                 (previewSize.width * widthScaleRatio).toInt(),
                                 (previewSize.height * heightScaleUpRatio).toInt()
+                            )
+
+                            scaleValue = max(
+                                screenSize.width / optimalWidth.toFloat(),
+                                screenSize.height / optimalHeight.toFloat(),
                             )
                         }
                     }
