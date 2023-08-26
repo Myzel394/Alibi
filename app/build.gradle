@@ -126,4 +126,5 @@ dependencies {
     implementation 'com.maxkeppeler.sheets-compose-dialogs:input:1.2.0'
 
     implementation 'io.github.ujizin:camposer:0.1.0'
+    implementation "com.github.skydoves:cloudy:0.1.2"
 }

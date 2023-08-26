@@ -1,29 +1,23 @@
 package app.myzel394.alibi.ui.screens
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.Point
 import android.hardware.camera2.CameraCharacteristics
-import android.hardware.display.DisplayManager
-import android.os.Build
 import android.util.Size
-import android.view.Display
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.ViewGroup
-import android.view.WindowManager
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import app.myzel394.alibi.CameraHandler
@@ -31,6 +25,7 @@ import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.utils.ChangeNavColors
 import app.myzel394.alibi.ui.utils.getOptimalPreviewSize
+import app.myzel394.alibi.ui.utils.rememberScreenSize
 import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Float.max
@@ -58,64 +53,26 @@ fun RecorderScreen(
     } else {
         var scaleValue by remember { mutableFloatStateOf(1f) }
 
-        val screenSize = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            val bounds = windowManager.currentWindowMetrics.bounds
+        println("scaleValue: $scaleValue")
 
-            Size(bounds.width(), bounds.height())
-        } else {
-            val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
-            val display = displayManager.getDisplay(Display.DEFAULT_DISPLAY)
+        val screenSize = rememberScreenSize()
+        val previewSize = Size(
+            screenSize.width / 10,
+            screenSize.height / 10,
+        )
 
-            val size = Point()
-            display.getRealSize(size)
-
-            Size(size.x, size.y)
-        }
-        
         ChangeNavColors(color = Color.Transparent)
 
         AndroidView(
             modifier = Modifier
-                .fillMaxSize()
-                .scale(scaleValue),
+                .fillMaxSize(),
             factory = { context ->
                 val surface = object : SurfaceView(context) {
                     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-                        val width = resolveSize(suggestedMinimumWidth, widthMeasureSpec);
-                        val height = resolveSize(suggestedMinimumHeight, heightMeasureSpec);
-
-                        val supportedPreviewSizes = camera!!
-                            .characteristics
-                            .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)!!
-                            .getOutputSizes(SurfaceHolder::class.java)
-
-                        // Make sure preview is in `cover` mode and not `contain` mode
-
-                        if (supportedPreviewSizes != null) {
-                            val previewSize = getOptimalPreviewSize(supportedPreviewSizes, width, height);
-
-                            val ratio = if (previewSize.height >= previewSize.width)
-                                    (previewSize.height / previewSize.width).toFloat()
-                                else (previewSize.width / previewSize.height).toFloat()
-
-                            val optimalWidth = width
-                            val optimalHeight = (width * ratio).toInt()
-
-                            // Make sure the camera preview uses the whole screen
-                            val widthScaleRatio = optimalWidth.toFloat() / previewSize.width
-                            val heightScaleUpRatio = optimalHeight.toFloat() / previewSize.height
-
-                            setMeasuredDimension(
-                                (previewSize.width * widthScaleRatio).toInt(),
-                                (previewSize.height * heightScaleUpRatio).toInt()
-                            )
-
-                            scaleValue = max(
-                                screenSize.width / optimalWidth.toFloat(),
-                                screenSize.height / optimalHeight.toFloat(),
-                            )
-                        }
+                        setMeasuredDimension(
+                            screenSize.width,
+                            screenSize.height,
+                        )
                     }
                 }
 
@@ -126,27 +83,36 @@ fun RecorderScreen(
                     )
                 }
 
-                surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
-                    override fun surfaceCreated(holder: SurfaceHolder) {
-                        scope.launch {
-                            camera!!.startPreview(holder.surface)
+                surfaceView.holder.apply {
+                    addCallback(object : SurfaceHolder.Callback {
+                        override fun surfaceCreated(holder: SurfaceHolder) {
+                            scope.launch {
+                                camera!!.startBlurredPreview(
+                                    holder.surface,
+                                    context,
+                                    previewSize,
+                                )
+                            }
                         }
-                    }
 
-                    override fun surfaceChanged(
-                        holder: SurfaceHolder,
-                        format: Int,
-                        width: Int,
-                        height: Int
-                    ) {
-                    }
-
-                    override fun surfaceDestroyed(holder: SurfaceHolder) {
-                        scope.launch {
-                            camera!!.stopPreview()
+                        override fun surfaceChanged(
+                            holder: SurfaceHolder,
+                            format: Int,
+                            width: Int,
+                            height: Int
+                        ) {
+                            println("surfaceChanged")
+                            println("width: $width, height: $height")
                         }
-                    }
-                })
+
+                        override fun surfaceDestroyed(holder: SurfaceHolder) {
+                            scope.launch {
+                                camera!!.stopPreview()
+                            }
+                        }
+                    })
+                    setFixedSize(previewSize.width, previewSize.height)
+                }
 
                 surfaceView
             }
@@ -165,6 +131,13 @@ fun RecorderScreen(
             }) {
             Text("Take photo")
         }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
+                )
+        )
     }
 
         /*

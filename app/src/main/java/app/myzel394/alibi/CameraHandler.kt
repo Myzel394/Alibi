@@ -2,25 +2,34 @@ package app.myzel394.alibi
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.ImageFormat
 import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
 import android.media.ImageReader
-import android.net.wifi.aware.Characteristics
 import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
+import android.renderscript.Allocation
+import android.renderscript.Element
+import android.renderscript.RenderScript
+import android.renderscript.ScriptIntrinsicYuvToRGB
 import android.util.Log
 import android.util.Size
 import android.view.Surface
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.getSystemService
+import app.myzel394.alibi.ui.utils.fastblur
+import app.myzel394.alibi.ui.utils.getScreenSize
+import app.myzel394.alibi.ui.utils.imageToByteBuffer
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
+import java.nio.ByteBuffer
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+
 
 class CameraHandler(
     private val manager: CameraManager,
@@ -65,7 +74,87 @@ class CameraHandler(
         val captureRequest = device.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
         captureRequest.addTarget(surface)
 
-        session.setRepeatingRequest(captureRequest.build(), null, handler)
+        session.setRepeatingRequest(
+            captureRequest.build(),
+            null,
+            handler,
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    suspend fun startBlurredPreview(
+        surface: Surface,
+        context: Context,
+        size: Size? = null,
+    ) {
+        val readerSize = size ?: getScreenSize(context).let {
+            Size(
+                it.width / 10,
+                it.height / 10,
+            )
+        }
+        val imageReader = ImageReader.newInstance(
+            readerSize.width,
+            readerSize.height,
+            ImageFormat.YUV_420_888,
+            IMAGE_BUFFER_SIZE,
+        )
+        imageReader.setOnImageAvailableListener({ reader ->
+            val image = reader.acquireLatestImage() ?: return@setOnImageAvailableListener
+
+            val yuvBytes: ByteBuffer = imageToByteBuffer(image)
+
+            // Convert YUV to RGB
+            val rs = RenderScript.create(context)
+
+            val bitmap = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
+            val allocationRgb = Allocation.createFromBitmap(rs, bitmap)
+
+            val allocationYuv = Allocation.createSized(rs, Element.U8(rs), yuvBytes.array().size)
+            allocationYuv.copyFrom(yuvBytes.array())
+
+            val scriptYuvToRgb = ScriptIntrinsicYuvToRGB.create(rs, Element.U8_4(rs))
+            scriptYuvToRgb.setInput(allocationYuv)
+            scriptYuvToRgb.forEach(allocationRgb)
+
+            allocationRgb.copyTo(bitmap)
+
+            // Rotate bitmap
+            val matrix = android.graphics.Matrix()
+            matrix.postRotate(90f)
+            val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+
+            val blurredBitmap = fastblur(rotatedBitmap, 1f, 2)
+
+            // Send blurredBitmap to `surface`
+            val canvas = surface.lockCanvas(null)
+            canvas.drawBitmap(blurredBitmap, 0f, 0f, null)
+            surface.unlockCanvasAndPost(canvas)
+
+            // Destroy
+            allocationRgb.destroy()
+            allocationYuv.destroy()
+            scriptYuvToRgb.destroy()
+            rs.destroy()
+            bitmap.recycle()
+            rotatedBitmap.recycle()
+            blurredBitmap.recycle()
+
+            // Release
+            image.close()
+        }, handler)
+
+        val outputs = listOf(imageReader.surface)
+        val session = createCaptureSession(outputs)
+
+        val captureRequest = device.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
+        captureRequest.addTarget(imageReader.surface)
+
+        session.setRepeatingRequest(
+            captureRequest.build(),
+            null,
+            handler,
+        )
     }
 
     fun stopPreview() {
@@ -160,7 +249,7 @@ class CameraHandler(
     }
 
     companion object {
-        const val IMAGE_BUFFER_SIZE = 3
+        const val IMAGE_BUFFER_SIZE = 2
 
         fun getCameraManager(
             context: Context,
