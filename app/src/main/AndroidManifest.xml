@@ -29,6 +29,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".StartRecordingActivity"
+            android:exported="true"
+            android:noHistory="true"
+        />
+
         <receiver
             android:name=".receivers.LocalChangeReceiver"
             android:exported="false">

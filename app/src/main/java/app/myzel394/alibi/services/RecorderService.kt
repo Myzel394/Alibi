@@ -5,6 +5,7 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.Intent.getIntent
 import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -14,6 +15,7 @@ import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.R
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.ui.utils.PermissionHelper
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Calendar
@@ -56,6 +58,10 @@ abstract class RecorderService: Service() {
                 } ?: RecorderState.IDLE
                 changeState(newState)
             }
+        }
+
+        if (intent?.getBooleanExtra("startNow", false) == true) {
+            startRecording()
         }
 
         return super.onStartCommand(intent, flags, startId)
