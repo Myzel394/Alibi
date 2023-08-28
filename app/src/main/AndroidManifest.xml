@@ -31,6 +31,16 @@
         </activity>
 
         <activity
+            android:name=".tasker.AudioRecorder.AudioRecorderActivity"
+            android:exported="true"
+            android:label="@string/ui_audioRecorder_recordingState_label"
+        >
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_CONDITION" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".StartRecordingActivity"
             android:exported="true"
             android:noHistory="true"

@@ -2,10 +2,8 @@ package app.myzel394.alibi
 
 import android.content.Context
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.WindowCompat
 import androidx.datastore.dataStore
 import app.myzel394.alibi.db.AppSettingsSerializer

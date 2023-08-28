@@ -128,5 +128,5 @@ dependencies {
     implementation 'com.maxkeppeler.sheets-compose-dialogs:list:1.2.0'
     implementation 'com.maxkeppeler.sheets-compose-dialogs:input:1.2.0'
 
-    implementation 'com.joaomgcd:taskerpluginlibrary:0.4.4'
+    implementation 'com.joaomgcd:taskerpluginlibrary:0.4.7'
 }
