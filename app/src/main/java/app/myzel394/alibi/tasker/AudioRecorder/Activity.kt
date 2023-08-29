@@ -50,25 +50,24 @@ import androidx.core.view.WindowCompat
 import app.myzel394.alibi.R
 import app.myzel394.alibi.enums.ENUM_LABEL_MAP
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
+import com.joaomgcd.taskerpluginlibrary.input.TaskerInputInfos
 import com.joaomgcd.taskerpluginlibrary.output.TaskerOutputForConfig
 import com.joaomgcd.taskerpluginlibrary.output.TaskerOutputsForConfig
 
 class AudioRecorderActivity : AppCompatActivity(), TaskerPluginConfig<AudioRecorderInput> {
     override val inputForTasker: TaskerInput<AudioRecorderInput>
-        get() = TaskerInput(AudioRecorderInput(RecorderState.IDLE.name))
+        get() = TaskerInput(AudioRecorderInput(selectedState.name))
 
     override val context: Context
         get() = applicationContext
 
     override fun assignFromInput(input: TaskerInput<AudioRecorderInput>) {
-        println("assign")
+        input.regular.run {
+            selectedState = RecorderState.valueOf(state ?: RecorderState.IDLE.name)
+        }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-
-        println("create")
-    }
+    var selectedState by mutableStateOf(RecorderState.IDLE)
 
     override fun onStart() {
         super.onStart()
@@ -156,16 +155,7 @@ class AudioRecorderActivity : AppCompatActivity(), TaskerPluginConfig<AudioRecor
                         onClick = {
                             val helper = AudioRecorderHelper(this@AudioRecorderActivity)
 
-                            helper.addOutputs(
-                                TaskerInput(
-                                    AudioRecorderInput()
-                                ),
-                                TaskerOutputsForConfig().apply {
-                                    add(
-                                        TaskerOutputForConfig(AudioRecorderOutput.VAR_STATE, selectedState.name)
-                                    )
-                                }
-                            )
+                            helper.finishForTasker()
                         },
                     ) {
                         Icon(
