@@ -5,7 +5,7 @@ on:
     types: [ published ]
 
 jobs:
-  build-app:
+  release-app-github:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,3 +36,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           files: app/build/outputs/apk/release/*.apk
+          tag_name: ${{ github.ref }}

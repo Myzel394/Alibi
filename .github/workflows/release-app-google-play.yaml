@@ -5,7 +5,7 @@ on:
     types: [ published ]
 
 jobs:
-  build-app:
+  release-app-google-play:
     runs-on: ubuntu-latest
 
     steps:
