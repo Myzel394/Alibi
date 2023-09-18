@@ -18,6 +18,7 @@ jobs:
           signingStorePassword: ${{ secrets.SIGNING_STORE_PASSWORD }}
           signingKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
           signingKeyAlias: ${{ secrets.SIGNING_KEY_ALIAS }}
+          keyStoreBase64: ${{ secrets.KEYSTORE }}
 
       - name: Setup Java
         uses: actions/setup-java@v3

@@ -11,6 +11,9 @@ inputs:
   signingKeyAlias:
     description: 'The alias for the Key'
     required: true
+  keyStoreBase64:
+    description: 'The KeyStore file encoded as base64'
+    required: true
 
 runs:
   using: composite
@@ -20,7 +23,7 @@ runs:
       uses: timheuer/base64-to-file@v1.0.3
       with:
         fileName: key.jks
-        encodedString: ${{ secrets.KEYSTORE }}
+        encodedString: ${{ inputs.keyStoreBase64 }}
 
     - name: Write Keystore properties 🗝️
       shell: bash
