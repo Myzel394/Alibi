@@ -1,0 +1,41 @@
+name: Build and publish app
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build-app:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Write KeyStore 🗝️
+        uses: ./.github/actions/prepare-keystore
+        with:
+          signingStorePassword: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          signingKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          signingKeyAlias: ${{ secrets.SIGNING_KEY_ALIAS }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: "17.x"
+          cache: 'gradle'
+
+      - name: Build APKs 📱
+        run: ./gradlew bundleRelease
+
+      - name: Upload APKs 🚀
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_STORE_SERVICE_ACCOUNT }}
+          packageName: app.myzel394.alibi
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          track: production
+          status: inProgress
+          inAppUpdatePriority: 2
+          userFraction: 0.33
