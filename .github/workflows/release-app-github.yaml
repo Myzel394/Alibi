@@ -12,19 +12,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Write Keystore file 🗄️
-        id: android_keystore
-        uses: timheuer/base64-to-file@v1.0.3
+      - name: Write KeyStore 🗝️
+        uses: ./.github/actions/prepare-keystore
         with:
-          fileName: key.jks
-          encodedString: ${{ secrets.KEYSTORE }}
-
-      - name: Write Keystore properties 🗝️
-        run: |
-          echo "storeFile=${{ steps.android_keystore.outputs.filePath }}" > key.properties
-          echo "storePassword=${{ secrets.SIGNING_STORE_PASSWORD }}" >> key.properties
-          echo "keyPassword=${{ secrets.SIGNING_KEY_PASSWORD }}" >> key.properties
-          echo "keyAlias=${{ secrets.SIGNING_KEY_ALIAS }}" >> key.properties
+          signingStorePassword: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          signingKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          signingKeyAlias: ${{ secrets.SIGNING_KEY_ALIAS }}
 
       - name: Setup Java
         uses: actions/setup-java@v3

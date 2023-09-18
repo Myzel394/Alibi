@@ -1,0 +1,31 @@
+name: Prepare KeyStore
+description: Write the KeyStore file and properties to disk
+
+inputs:
+  signingStorePassword:
+    description: 'The password for the KeyStore'
+    required: true
+  signingKeyPassword:
+    description: 'The password for the Key'
+    required: true
+  signingKeyAlias:
+    description: 'The alias for the Key'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Write Keystore file 🗄️
+      id: android_keystore
+      uses: timheuer/base64-to-file@v1.0.3
+      with:
+        fileName: key.jks
+        encodedString: ${{ secrets.KEYSTORE }}
+
+    - name: Write Keystore properties 🗝️
+      shell: bash
+      run: |
+        echo "storeFile=${{ steps.android_keystore.outputs.filePath }}" > key.properties
+        echo "storePassword=${{ inputs.signingStorePassword }}" >> key.properties
+        echo "keyPassword=${{ inputs.signingKeyPassword }}" >> key.properties
+        echo "keyAlias=${{ inputs.signingKeyAlias }}" >> key.properties
