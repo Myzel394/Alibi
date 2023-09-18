@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Write KeyStore 🗝️
-        uses: .github/actions/prepare-keystore
+        uses: ./.github/actions/prepare-keystore
         with:
           signingStorePassword: ${{ secrets.SIGNING_STORE_PASSWORD }}
           signingKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
