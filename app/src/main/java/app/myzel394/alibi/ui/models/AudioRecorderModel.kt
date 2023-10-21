@@ -16,12 +16,14 @@ import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.services.RecorderService
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 
-class AudioRecorderModel: ViewModel() {
+class AudioRecorderModel : ViewModel() {
     var recorderState by mutableStateOf(RecorderState.IDLE)
         private set
     var recordingTime by mutableStateOf<Long?>(null)
         private set
     var amplitudes by mutableStateOf<List<Int>>(emptyList())
+        private set
+    var selectedMicrophone by mutableStateOf<MicrophoneInfo?>(null)
         private set
 
     var onAmplitudeChange: () -> Unit = {}
@@ -46,28 +48,35 @@ class AudioRecorderModel: ViewModel() {
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            recorderService = ((service as RecorderService.RecorderBinder).getService() as AudioRecorderService).also {recorder ->
-                recorder.onStateChange = { state ->
-                    recorderState = state
-                }
-                recorder.onRecordingTimeChange = { time ->
-                    recordingTime = time
-                }
-                recorder.onAmplitudeChange = { amps ->
-                    amplitudes = amps
-                    onAmplitudeChange()
-                }
-                recorder.onError = {
-                    recorderService!!.createLastRecording()
-                    onError()
-                }
-            }.also {
-                it.startRecording()
+            recorderService =
+                ((service as RecorderService.RecorderBinder).getService() as AudioRecorderService).also { recorder ->
+                    // Update UI when the service changes
+                    recorder.onStateChange = { state ->
+                        recorderState = state
+                    }
+                    recorder.onRecordingTimeChange = { time ->
+                        recordingTime = time
+                    }
+                    recorder.onAmplitudeChange = { amps ->
+                        amplitudes = amps
+                        onAmplitudeChange()
+                    }
+                    recorder.onError = {
+                        recorderService!!.createLastRecording()
+                        onError()
+                    }
+                    recorder.onSelectedMicrophoneChange = { microphone ->
+                        selectedMicrophone = microphone
+                    }
+                }.also {
+                    // Init UI from the service
+                    it.startRecording()
 
-                recorderState = it.state
-                recordingTime = it.recordingTime
-                amplitudes = it.amplitudes
-            }
+                    recorderState = it.state
+                    recordingTime = it.recordingTime
+                    amplitudes = it.amplitudes
+                    selectedMicrophone = it.selectedMicrophone
+                }
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -80,6 +89,7 @@ class AudioRecorderModel: ViewModel() {
         recorderState = RecorderState.IDLE
         recordingTime = null
         amplitudes = emptyList()
+        selectedMicrophone = null
     }
 
     fun startRecording(context: Context) {
@@ -120,7 +130,7 @@ class AudioRecorderModel: ViewModel() {
     }
 
     fun changeMicrophone(microphone: MicrophoneInfo?) {
-        recorderService!!.selectedDevice = microphone
+        recorderService!!.changeMicrophone(microphone)
     }
 
     fun bindToService(context: Context) {
