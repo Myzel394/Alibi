@@ -23,7 +23,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 
-abstract class RecorderService: Service() {
+abstract class RecorderService : Service() {
     private val binder = RecorderBinder()
 
     private var isPaused: Boolean = false
@@ -61,7 +61,7 @@ abstract class RecorderService: Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    inner class RecorderBinder: Binder() {
+    inner class RecorderBinder : Binder() {
         fun getService(): RecorderService = this@RecorderService
     }
 
@@ -95,10 +95,12 @@ abstract class RecorderService: Service() {
                     start()
                 }
             }
+
             RecorderState.PAUSED -> {
                 pause()
                 isPaused = true
             }
+
             RecorderState.IDLE -> {
                 stop()
                 onDestroy()
@@ -109,6 +111,7 @@ abstract class RecorderService: Service() {
             RecorderState.RECORDING -> {
                 createRecordingTimeTimer()
             }
+
             RecorderState.PAUSED, RecorderState.IDLE -> {
                 recordingTimeTimer.shutdown()
             }
@@ -121,7 +124,7 @@ abstract class RecorderService: Service() {
                 RecorderState.PAUSED
             ).contains(newState) &&
             PermissionHelper.hasGranted(this, android.Manifest.permission.POST_NOTIFICATIONS)
-        ){
+        ) {
             val notification = buildNotification()
             NotificationManagerCompat.from(this).notify(
                 NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID,
@@ -145,22 +148,28 @@ abstract class RecorderService: Service() {
     override fun onDestroy() {
         super.onDestroy()
 
+        stop()
         changeState(RecorderState.IDLE)
 
         stopForeground(STOP_FOREGROUND_REMOVE)
-        NotificationManagerCompat.from(this).cancel(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID)
+        NotificationManagerCompat.from(this)
+            .cancel(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID)
         stopSelf()
     }
 
-    private fun buildStartNotification(): Notification = NotificationCompat.Builder(this, NotificationHelper.RECORDER_CHANNEL_ID)
-        .setContentTitle(getString(R.string.ui_audioRecorder_state_recording_title))
-        .setContentText(getString(R.string.ui_audioRecorder_state_recording_description))
-        .setSmallIcon(R.drawable.launcher_foreground)
-        .setPriority(NotificationCompat.PRIORITY_LOW)
-        .setCategory(NotificationCompat.CATEGORY_SERVICE)
-        .build()
+    private fun buildStartNotification(): Notification =
+        NotificationCompat.Builder(this, NotificationHelper.RECORDER_CHANNEL_ID)
+            .setContentTitle(getString(R.string.ui_audioRecorder_state_recording_title))
+            .setContentText(getString(R.string.ui_audioRecorder_state_recording_description))
+            .setSmallIcon(R.drawable.launcher_foreground)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .build()
 
-    private fun getNotificationChangeStateIntent(newState: RecorderState, requestCode: Int): PendingIntent {
+    private fun getNotificationChangeStateIntent(
+        newState: RecorderState,
+        requestCode: Int
+    ): PendingIntent {
         return PendingIntent.getService(
             this,
             requestCode,
@@ -172,8 +181,11 @@ abstract class RecorderService: Service() {
         )
     }
 
-    private fun buildNotification(): Notification = when(state) {
-        RecorderState.RECORDING -> NotificationCompat.Builder(this, NotificationHelper.RECORDER_CHANNEL_ID)
+    private fun buildNotification(): Notification = when (state) {
+        RecorderState.RECORDING -> NotificationCompat.Builder(
+            this,
+            NotificationHelper.RECORDER_CHANNEL_ID
+        )
             .setContentTitle(getString(R.string.ui_audioRecorder_state_recording_title))
             .setContentText(getString(R.string.ui_audioRecorder_state_recording_description))
             .setSmallIcon(R.drawable.launcher_foreground)
@@ -211,7 +223,11 @@ abstract class RecorderService: Service() {
                 getNotificationChangeStateIntent(RecorderState.PAUSED, 2),
             )
             .build()
-        RecorderState.PAUSED -> NotificationCompat.Builder(this, NotificationHelper.RECORDER_CHANNEL_ID)
+
+        RecorderState.PAUSED -> NotificationCompat.Builder(
+            this,
+            NotificationHelper.RECORDER_CHANNEL_ID
+        )
             .setContentTitle(getString(R.string.ui_audioRecorder_state_paused_title))
             .setContentText(getString(R.string.ui_audioRecorder_state_paused_description))
             .setSmallIcon(R.drawable.launcher_foreground)
@@ -236,6 +252,7 @@ abstract class RecorderService: Service() {
                 getNotificationChangeStateIntent(RecorderState.RECORDING, 3),
             )
             .build()
+
         else -> throw IllegalStateException("Invalid state passed to `buildNotification()`")
     }
 }

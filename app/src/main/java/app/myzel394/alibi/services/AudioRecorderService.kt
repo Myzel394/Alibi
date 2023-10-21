@@ -19,28 +19,31 @@ class AudioRecorderService : IntervalRecorderService() {
     val filePath: String
         get() = "$folder/$counter.${settings!!.fileExtension}"
 
-    private fun _setAudioDevice() {
+    private fun clearAudioDevice() {
         val audioManger = getSystemService(AUDIO_SERVICE)!! as AudioManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (selectedMicrophone == null) {
-                audioManger.clearCommunicationDevice()
-            } else {
-                audioManger.setCommunicationDevice(selectedMicrophone!!.deviceInfo)
-            }
+            audioManger.clearCommunicationDevice()
         } else {
-            if (selectedMicrophone == null) {
-                audioManger.stopBluetoothSco()
-            } else {
-                audioManger.startBluetoothSco()
-            }
+            audioManger.stopBluetoothSco()
+        }
+    }
+
+    private fun startAudioDevice() {
+        if (selectedMicrophone == null) {
+            return
         }
 
+        val audioManger = getSystemService(AUDIO_SERVICE)!! as AudioManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            audioManger.setCommunicationDevice(selectedMicrophone!!.deviceInfo)
+        } else {
+            audioManger.startBluetoothSco()
+        }
     }
 
     private fun createRecorder(): MediaRecorder {
-        _setAudioDevice()
-
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MediaRecorder(this)
         } else {
@@ -70,6 +73,7 @@ class AudioRecorderService : IntervalRecorderService() {
                 it.stop()
                 it.release()
             }
+            clearAudioDevice()
         }
     }
 
@@ -81,6 +85,7 @@ class AudioRecorderService : IntervalRecorderService() {
         }
 
         resetRecorder()
+        startAudioDevice()
 
         try {
             recorder = newRecorder
