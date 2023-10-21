@@ -1,7 +1,11 @@
 package app.myzel394.alibi.ui.components.AudioRecorder.atoms
 
+import android.os.Build
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,12 +17,16 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import app.myzel394.alibi.R
+import app.myzel394.alibi.dataStore
+import app.myzel394.alibi.db.AppSettings
 
 @Composable
 fun MicrophoneSelectionButton(
@@ -26,6 +34,12 @@ fun MicrophoneSelectionButton(
     selected: Boolean = false,
     onSelect: () -> Unit,
 ) {
+    val dataStore = LocalContext.current.dataStore
+    val settings = dataStore
+        .data
+        .collectAsState(initial = AppSettings.getDefaultInstance())
+        .value
+
     Button(
         onClick = onSelect,
         modifier = Modifier
@@ -34,15 +48,27 @@ fun MicrophoneSelectionButton(
         colors = if (selected) ButtonDefaults.buttonColors(
         ) else ButtonDefaults.textButtonColors(),
     ) {
-        MicrophoneTypeInfo(
-            type = microphone?.type ?: MicrophoneInfo.MicrophoneType.PHONE,
-            modifier = Modifier.size(ButtonDefaults.IconSize),
-        )
-        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-        Text(
-            text = microphone?.name
-                ?: stringResource(R.string.ui_audioRecorder_info_microphone_deviceMicrophone),
-            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(ButtonDefaults.IconSpacing),
+        ) {
+            MicrophoneTypeInfo(
+                type = microphone?.type ?: MicrophoneInfo.MicrophoneType.PHONE,
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+            )
+            Column {
+                Text(
+                    text = microphone?.name
+                        ?: stringResource(R.string.ui_audioRecorder_info_microphone_deviceMicrophone),
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && settings.audioRecorderSettings.showAllMicrophones && microphone?.deviceInfo?.address?.isNotBlank() == true)
+                    Text(
+                        microphone.deviceInfo.address.toString(),
+                        fontSize = MaterialTheme.typography.bodySmall.toSpanStyle().fontSize,
+                        color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.secondary,
+                    )
+            }
+        }
     }
 }
