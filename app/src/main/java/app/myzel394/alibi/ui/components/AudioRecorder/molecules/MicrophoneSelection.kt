@@ -16,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,18 +36,22 @@ import app.myzel394.alibi.ui.utils.MicrophoneInfo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MicrophoneSelection(
-    audioRecorder: AudioRecorderModel,
     microphones: List<MicrophoneInfo>,
+    selectedMicrophone: MicrophoneInfo?,
+    onSelect: (MicrophoneInfo?) -> Unit,
 ) {
     var showSelection by rememberSaveable {
         mutableStateOf(false)
     }
+    val sheetState = rememberModalBottomSheetState()
 
     if (showSelection) {
         ModalBottomSheet(
+            modifier = Modifier.fillMaxSize(),
             onDismissRequest = {
                 showSelection = false
-            }
+            },
+            sheetState = sheetState,
         ) {
             Column(
                 modifier = Modifier
@@ -68,9 +73,9 @@ fun MicrophoneSelection(
                 ) {
                     item {
                         MicrophoneSelectionButton(
-                            selected = audioRecorder.recorderService!!.selectedDevice == null,
+                            selected = selectedMicrophone == null,
                             onSelect = {
-                                audioRecorder.changeMicrophone(null)
+                                onSelect(null)
                                 showSelection = false
                             }
                         )
@@ -81,11 +86,11 @@ fun MicrophoneSelection(
 
                         MicrophoneSelectionButton(
                             microphone = microphone,
-                            selected = audioRecorder.recorderService!!.selectedDevice == microphone,
+                            selected = selectedMicrophone == microphone,
                             onSelect = {
-                                audioRecorder.changeMicrophone(microphone)
+                                onSelect(microphone)
                                 showSelection = false
-                            },
+                            }
                         )
                     }
                 }
@@ -100,13 +105,13 @@ fun MicrophoneSelection(
         colors = ButtonDefaults.textButtonColors(),
     ) {
         MicrophoneTypeInfo(
-            type = audioRecorder.recorderService!!.selectedDevice?.type
+            type = selectedMicrophone?.type
                 ?: MicrophoneInfo.MicrophoneType.PHONE,
             modifier = Modifier.size(ButtonDefaults.IconSize),
         )
         Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
         Text(
-            text = audioRecorder.recorderService!!.selectedDevice.let {
+            text = selectedMicrophone.let {
                 it?.name
                     ?: stringResource(R.string.ui_audioRecorder_info_microphone_deviceMicrophone)
             }

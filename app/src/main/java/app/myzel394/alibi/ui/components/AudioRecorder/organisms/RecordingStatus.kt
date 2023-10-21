@@ -48,7 +48,11 @@ import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.ConfirmDeletionDialog
+import app.myzel394.alibi.ui.components.AudioRecorder.atoms.DeleteButton
+import app.myzel394.alibi.ui.components.AudioRecorder.atoms.PauseResumeButton
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.RealtimeAudioVisualizer
+import app.myzel394.alibi.ui.components.AudioRecorder.atoms.RecordingTime
+import app.myzel394.alibi.ui.components.AudioRecorder.atoms.SaveButton
 import app.myzel394.alibi.ui.components.AudioRecorder.molecules.MicrophoneSelection
 import app.myzel394.alibi.ui.components.atoms.Pulsating
 import app.myzel394.alibi.ui.models.AudioRecorderModel
@@ -93,24 +97,7 @@ fun RecordingStatus(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Pulsating {
-                    Box(
-                        modifier = Modifier
-                            .size(16.dp)
-                            .clip(CircleShape)
-                            .background(Color.Red)
-                    )
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = formatDuration(audioRecorder.recordingTime!!),
-                    style = MaterialTheme.typography.headlineLarge,
-                )
-            }
+            RecordingTime(audioRecorder.recordingTime!!)
             Spacer(modifier = Modifier.height(16.dp))
             AnimatedVisibility(
                 visible = progressVisible,
@@ -125,96 +112,67 @@ fun RecordingStatus(
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))
+        }
 
-            var showDeleteDialog by remember { mutableStateOf(false) }
-
-            if (showDeleteDialog) {
-                ConfirmDeletionDialog(
-                    onDismiss = {
-                        showDeleteDialog = false
-                    },
-                    onConfirm = {
-                        showDeleteDialog = false
-                        audioRecorder.stopRecording(context, saveAsLastRecording = false)
-                    },
-                )
-            }
-            val label = stringResource(R.string.ui_audioRecorder_action_delete_label)
-            Button(
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
                 modifier = Modifier
-                    .semantics {
-                        contentDescription = label
-                    },
-                onClick = {
-                    showDeleteDialog = true
-                },
-                colors = ButtonDefaults.textButtonColors(),
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center,
             ) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                DeleteButton(
+                    onDelete = {
+                        audioRecorder.stopRecording(context, saveAsLastRecording = false)
+                    }
                 )
-                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                Text(label)
+            }
+
+            Box(
+                contentAlignment = Alignment.Center,
+            ) {
+                PauseResumeButton(
+                    isPaused = audioRecorder.isPaused,
+                    onChange = {
+                        if (audioRecorder.isPaused) {
+                            audioRecorder.resumeRecording()
+                        } else {
+                            audioRecorder.pauseRecording()
+                        }
+                    },
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center,
+            ) {
+                SaveButton(
+                    onSave = {
+                        runCatching {
+                            audioRecorder.stopRecording(context)
+                        }
+                        audioRecorder.onRecordingSave()
+                    }
+                )
             }
         }
 
-        val pauseLabel = stringResource(R.string.ui_audioRecorder_action_pause_label)
-        val resumeLabel = stringResource(R.string.ui_audioRecorder_action_resume_label)
-        LargeFloatingActionButton(
-            modifier = Modifier
-                .semantics {
-                    contentDescription = if (audioRecorder.isPaused) resumeLabel else pauseLabel
-                },
-            onClick = {
-                if (audioRecorder.isPaused) {
-                    audioRecorder.resumeRecording()
-                } else {
-                    audioRecorder.pauseRecording()
-                }
-            },
-        ) {
-            Icon(
-                if (audioRecorder.isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
-                contentDescription = null,
-            )
-        }
-
-        val alpha by animateFloatAsState(if (progressVisible) 1f else 0f, tween(1000))
-        val label = stringResource(R.string.ui_audioRecorder_action_save_label)
-
-        Button(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-                .height(BIG_PRIMARY_BUTTON_SIZE)
-                .alpha(alpha)
-                .semantics {
-                    contentDescription = label
-                },
-            onClick = {
-                runCatching {
-                    audioRecorder.stopRecording(context)
-                }
-                audioRecorder.onRecordingSave()
-            },
-        ) {
-            Icon(
-                Icons.Default.Save,
-                contentDescription = null,
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-            )
-            Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-            Text(stringResource(R.string.ui_audioRecorder_action_save_label))
-        }
 
         val microphones = MicrophoneInfo.fetchDeviceMicrophones(context)
 
         if (microphones.isNotEmpty()) {
             MicrophoneSelection(
-                audioRecorder = audioRecorder,
-                microphones = microphones
+                microphones = microphones,
+                selectedMicrophone = audioRecorder.recorderService!!.selectedDevice,
+                onSelect = {
+                    audioRecorder.changeMicrophone(it)
+                    audioRecorder.recorderService!!.startNewCycle()
+                }
             )
         }
     }
