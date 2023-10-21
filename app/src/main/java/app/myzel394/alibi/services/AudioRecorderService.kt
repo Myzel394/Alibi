@@ -1,24 +1,20 @@
 package app.myzel394.alibi.services
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.media.MediaRecorder
 import android.media.MediaRecorder.OnErrorListener
-import android.media.MediaRecorder.getAudioSourceMax
 import android.os.Build
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import java.lang.IllegalStateException
 
 class AudioRecorderService : IntervalRecorderService() {
     var amplitudesAmount = 1000
-    var selectedDevice: MicrophoneInfo? = null
+    var selectedMicrophone: MicrophoneInfo? = null
 
     var recorder: MediaRecorder? = null
         private set
     var onError: () -> Unit = {}
+    var onSelectedMicrophoneChange: (MicrophoneInfo?) -> Unit = {}
 
     val filePath: String
         get() = "$folder/$counter.${settings!!.fileExtension}"
@@ -27,13 +23,13 @@ class AudioRecorderService : IntervalRecorderService() {
         val audioManger = getSystemService(AUDIO_SERVICE)!! as AudioManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (selectedDevice == null) {
+            if (selectedMicrophone == null) {
                 audioManger.clearCommunicationDevice()
             } else {
-                audioManger.setCommunicationDevice(selectedDevice!!.deviceInfo)
+                audioManger.setCommunicationDevice(selectedMicrophone!!.deviceInfo)
             }
         } else {
-            if (selectedDevice == null) {
+            if (selectedMicrophone == null) {
                 audioManger.stopBluetoothSco()
             } else {
                 audioManger.startBluetoothSco()
@@ -104,7 +100,7 @@ class AudioRecorderService : IntervalRecorderService() {
         super.stop()
 
         resetRecorder()
-        selectedDevice = null
+        selectedMicrophone = null
     }
 
     override fun getAmplitudeAmount(): Int = amplitudesAmount
@@ -117,5 +113,10 @@ class AudioRecorderService : IntervalRecorderService() {
         } catch (error: RuntimeException) {
             0
         }
+    }
+
+    fun changeMicrophone(microphone: MicrophoneInfo?) {
+        selectedMicrophone = microphone
+        onSelectedMicrophoneChange(microphone)
     }
 }
