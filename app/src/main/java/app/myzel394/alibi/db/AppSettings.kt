@@ -142,6 +142,7 @@ data class AudioRecorderSettings(
     val samplingRate: Int? = null,
     val outputFormat: Int? = null,
     val encoder: Int? = null,
+    val showAllMicrophones: Boolean = false,
 ) {
     fun getOutputFormat(): Int {
         if (outputFormat != null) {
@@ -267,6 +268,10 @@ data class AudioRecorderSettings(
 
     fun setForceExactMaxDuration(forceExactMaxDuration: Boolean): AudioRecorderSettings {
         return copy(forceExactMaxDuration = forceExactMaxDuration)
+    }
+
+    fun setShowAllMicrophones(showAllMicrophones: Boolean): AudioRecorderSettings {
+        return copy(showAllMicrophones = showAllMicrophones)
     }
 
     fun isEncoderCompatible(encoder: Int): Boolean {

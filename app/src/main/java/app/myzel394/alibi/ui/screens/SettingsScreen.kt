@@ -43,6 +43,7 @@ import app.myzel394.alibi.ui.components.SettingsScreen.atoms.IntervalDurationTil
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.MaxDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.OutputFormatTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.SamplingRateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ShowAllMicrophonesTile
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
@@ -80,7 +81,7 @@ fun SettingsScreen(
         },
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) {padding ->
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -129,6 +130,7 @@ fun SettingsScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 32.dp)
                     )
+                    ShowAllMicrophonesTile()
                     BitrateTile()
                     SamplingRateTile()
                     EncoderTile(snackbarHostState = snackbarHostState)

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import app.myzel394.alibi.dataStore
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.DeleteButton
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneDisconnectedDialog
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneReconnectedDialog
@@ -138,8 +141,18 @@ fun RecordingStatus(
             }
         }
 
-
-        val microphones = MicrophoneInfo.fetchDeviceMicrophones(context)
+        val dataStore = LocalContext.current.dataStore
+        val settings = dataStore
+            .data
+            .collectAsState(initial = AppSettings.getDefaultInstance())
+            .value
+        val microphones = MicrophoneInfo.fetchDeviceMicrophones(context).let {
+            if (settings.audioRecorderSettings.showAllMicrophones) {
+                it
+            } else {
+                MicrophoneInfo.filterMicrophones(it)
+            }
+        }
         val microphoneStatus = audioRecorder.microphoneStatus
         val previousStatus = rememberPrevious(microphoneStatus)
 

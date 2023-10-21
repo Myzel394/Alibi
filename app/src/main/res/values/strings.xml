@@ -69,4 +69,6 @@
     <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%s</xliff:g> disconnected. Alibi will use the default microphone instead. We will automatically switch back to <xliff:g name="nam">%s</xliff:g> once it reconnects.</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_title">Microphone reconnected</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_message"><xliff:g name="name">%s</xliff:g> reconnected! Alibi automatically changed the microphone input to it.</string>
+    <string name="ui_settings_option_showAllMicrophones_title">Show hidden microphones</string>
+    <string name="ui_settings_option_showAllMicrophones_description">Show all microphones, including internal ones</string>
 </resources>
