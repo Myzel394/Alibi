@@ -5,6 +5,33 @@ import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.os.Build
 
+val ALLOWED_MICROPHONE_TYPES =
+    setOf(
+        AudioDeviceInfo.TYPE_BLUETOOTH_SCO,
+        AudioDeviceInfo.TYPE_BLUETOOTH_A2DP,
+        AudioDeviceInfo.TYPE_USB_DEVICE,
+        AudioDeviceInfo.TYPE_USB_ACCESSORY,
+        AudioDeviceInfo.TYPE_WIRED_HEADPHONES,
+        AudioDeviceInfo.TYPE_IP,
+        AudioDeviceInfo.TYPE_DOCK,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            AudioDeviceInfo.TYPE_DOCK_ANALOG
+        } else {
+        },
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AudioDeviceInfo.TYPE_BLE_HEADSET
+        } else {
+        },
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AudioDeviceInfo.TYPE_REMOTE_SUBMIX
+        } else {
+        },
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AudioDeviceInfo.TYPE_USB_HEADSET
+        } else {
+        },
+    )
+
 data class MicrophoneInfo(
     val deviceInfo: AudioDeviceInfo,
 ) {
@@ -26,16 +53,16 @@ data class MicrophoneInfo(
 
         fun fetchDeviceMicrophones(context: Context): List<MicrophoneInfo> {
             val audioManager = context.getSystemService(Context.AUDIO_SERVICE)!! as AudioManager
-            val mics =
-                audioManager.getDevices(AudioManager.GET_DEVICES_INPUTS).map(::fromDeviceInfo)
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                audioManager.availableCommunicationDevices.let {
-                    it.subList(2, it.size)
-                }.map(::fromDeviceInfo)
+            return (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                audioManager.availableCommunicationDevices.map(::fromDeviceInfo)
             } else {
-                audioManager.getDevices(AudioManager.GET_DEVICES_INPUTS).let {
-                    it.slice(1 until it.size)
-                }.map(::fromDeviceInfo)
+                audioManager.getDevices(AudioManager.GET_DEVICES_INPUTS).map(::fromDeviceInfo)
+            }).filter {
+                ALLOWED_MICROPHONE_TYPES.contains(it.deviceInfo.type) && it.deviceInfo.isSink
+            }.also {
+                it.forEach {
+                    println("Microphone: ${it.name} - ${it.deviceInfo.type}")
+                }
             }
         }
     }
