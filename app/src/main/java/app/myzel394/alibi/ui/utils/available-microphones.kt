@@ -59,10 +59,6 @@ data class MicrophoneInfo(
                 audioManager.getDevices(AudioManager.GET_DEVICES_INPUTS).map(::fromDeviceInfo)
             }).filter {
                 ALLOWED_MICROPHONE_TYPES.contains(it.deviceInfo.type) && it.deviceInfo.isSink
-            }.also {
-                it.forEach {
-                    println("Microphone: ${it.name} - ${it.deviceInfo.type}")
-                }
             }
         }
     }
