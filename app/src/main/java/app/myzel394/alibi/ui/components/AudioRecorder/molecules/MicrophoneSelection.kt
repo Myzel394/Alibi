@@ -57,18 +57,24 @@ fun MicrophoneSelection(
     }
     val sheetState = rememberModalBottomSheetState()
 
-    val allMicrophones = MicrophoneInfo.fetchDeviceMicrophones(context)
-    val visibleMicrophones = MicrophoneInfo.filterMicrophones(allMicrophones)
-    val hiddenMicrophones = allMicrophones - visibleMicrophones.toSet()
-
     val dataStore = LocalContext.current.dataStore
     val settings = dataStore
         .data
         .collectAsState(initial = AppSettings.getDefaultInstance())
         .value
 
+    val allMicrophones = MicrophoneInfo.fetchDeviceMicrophones(context)
+    val visibleMicrophones = MicrophoneInfo.filterMicrophones(allMicrophones)
+    val hiddenMicrophones = allMicrophones - visibleMicrophones.toSet()
+
     val isTryingToReconnect =
         audioRecorder.selectedMicrophone != null && audioRecorder.microphoneStatus == AudioRecorderModel.MicrophoneConnectivityStatus.DISCONNECTED
+
+    val shownMicrophones = if (isTryingToReconnect && visibleMicrophones.isEmpty()) {
+        listOf(audioRecorder.selectedMicrophone!!)
+    } else {
+        visibleMicrophones
+    }
 
     if (showSelection) {
         ModalBottomSheet(
@@ -95,8 +101,8 @@ fun MicrophoneSelection(
                         type = MessageType.INFO,
                         message = stringResource(
                             R.string.ui_audioRecorder_error_microphoneDisconnected_message,
-                            audioRecorder.recorderService!!.selectedMicrophone?.name ?: "",
-                            audioRecorder.recorderService!!.selectedMicrophone?.name ?: "",
+                            audioRecorder.selectedMicrophone?.name ?: "",
+                            audioRecorder.selectedMicrophone?.name ?: "",
                         )
                     )
 
@@ -116,12 +122,13 @@ fun MicrophoneSelection(
                         )
                     }
 
-                    items(visibleMicrophones.size) {
-                        val microphone = visibleMicrophones[it]
+                    items(shownMicrophones.size) {
+                        val microphone = shownMicrophones[it]
 
                         MicrophoneSelectionButton(
                             microphone = microphone,
                             selected = audioRecorder.selectedMicrophone == microphone,
+                            disabled = isTryingToReconnect && microphone == audioRecorder.selectedMicrophone,
                             onSelect = {
                                 audioRecorder.changeMicrophone(microphone)
                                 showSelection = false
@@ -174,7 +181,7 @@ fun MicrophoneSelection(
         Box {}
     }
 
-    if (visibleMicrophones.isNotEmpty() || (settings.audioRecorderSettings.showAllMicrophones && hiddenMicrophones.isNotEmpty())) {
+    if (shownMicrophones.isNotEmpty() || (settings.audioRecorderSettings.showAllMicrophones && hiddenMicrophones.isNotEmpty())) {
         Button(
             onClick = {
                 showSelection = true

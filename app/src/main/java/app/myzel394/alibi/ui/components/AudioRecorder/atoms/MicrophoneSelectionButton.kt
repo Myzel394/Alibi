@@ -37,6 +37,7 @@ fun MicrophoneSelectionButton(
     microphone: MicrophoneInfo? = null,
     selected: Boolean = false,
     selectedAsFallback: Boolean = false,
+    disabled: Boolean = false,
     onSelect: () -> Unit,
 ) {
     val dataStore = LocalContext.current.dataStore
@@ -47,11 +48,11 @@ fun MicrophoneSelectionButton(
 
     Button(
         onClick = onSelect,
+        enabled = !disabled,
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp),
-        colors = if (selected) ButtonDefaults.buttonColors(
-        ) else ButtonDefaults.textButtonColors(),
+        colors = if (selected) ButtonDefaults.buttonColors() else ButtonDefaults.textButtonColors(),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

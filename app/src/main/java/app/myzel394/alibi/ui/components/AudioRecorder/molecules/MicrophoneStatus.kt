@@ -32,7 +32,7 @@ fun MicrophoneStatus(
     }
 
     LaunchedEffect(microphoneStatus) {
-        if (microphoneStatus != previousStatus && showMicrophoneStatusDialog == null && previousStatus != null) {
+        if (microphoneStatus != previousStatus && showMicrophoneStatusDialog == null && previousStatus != null && audioRecorder.selectedMicrophone != null) {
             showMicrophoneStatusDialog = microphoneStatus
         }
     }
