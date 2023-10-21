@@ -46,6 +46,14 @@ class AudioRecorderModel : ViewModel() {
     var onRecordingSave: () -> Unit = {}
     var onError: () -> Unit = {}
 
+    var microphoneStatus: MicrophoneConnectivityStatus = MicrophoneConnectivityStatus.CONNECTED
+        private set
+
+    enum class MicrophoneConnectivityStatus {
+        CONNECTED,
+        DISCONNECTED
+    }
+
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             recorderService =
@@ -67,6 +75,12 @@ class AudioRecorderModel : ViewModel() {
                     }
                     recorder.onSelectedMicrophoneChange = { microphone ->
                         selectedMicrophone = microphone
+                    }
+                    recorder.onMicrophoneDisconnected = {
+                        microphoneStatus = MicrophoneConnectivityStatus.DISCONNECTED
+                    }
+                    recorder.onMicrophoneReconnected = {
+                        microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
                     }
                 }.also {
                     // Init UI from the service
@@ -90,6 +104,7 @@ class AudioRecorderModel : ViewModel() {
         recordingTime = null
         amplitudes = emptyList()
         selectedMicrophone = null
+        microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
     }
 
     fun startRecording(context: Context) {
@@ -131,6 +146,10 @@ class AudioRecorderModel : ViewModel() {
 
     fun changeMicrophone(microphone: MicrophoneInfo?) {
         recorderService!!.changeMicrophone(microphone)
+
+        if (microphone == null) {
+            microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
+        }
     }
 
     fun bindToService(context: Context) {

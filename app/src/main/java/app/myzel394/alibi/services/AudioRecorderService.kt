@@ -1,11 +1,20 @@
 package app.myzel394.alibi.services
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.media.AudioDeviceCallback
+import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.media.MediaRecorder
 import android.media.MediaRecorder.OnErrorListener
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import androidx.core.content.ContextCompat.getSystemService
+import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import java.lang.IllegalStateException
+import java.util.concurrent.Executor
 
 class AudioRecorderService : IntervalRecorderService() {
     var amplitudesAmount = 1000
@@ -15,6 +24,8 @@ class AudioRecorderService : IntervalRecorderService() {
         private set
     var onError: () -> Unit = {}
     var onSelectedMicrophoneChange: (MicrophoneInfo?) -> Unit = {}
+    var onMicrophoneDisconnected: () -> Unit = {}
+    var onMicrophoneReconnected: () -> Unit = {}
 
     val filePath: String
         get() = "$folder/$counter.${settings!!.fileExtension}"
@@ -95,6 +106,12 @@ class AudioRecorderService : IntervalRecorderService() {
         }
     }
 
+    override fun start() {
+        super.start()
+
+        registerMicrophoneListener()
+    }
+
     override fun pause() {
         super.pause()
 
@@ -106,6 +123,7 @@ class AudioRecorderService : IntervalRecorderService() {
 
         resetRecorder()
         selectedMicrophone = null
+        unregisterMicrophoneListener()
     }
 
     override fun getAmplitudeAmount(): Int = amplitudesAmount
@@ -123,5 +141,51 @@ class AudioRecorderService : IntervalRecorderService() {
     fun changeMicrophone(microphone: MicrophoneInfo?) {
         selectedMicrophone = microphone
         onSelectedMicrophoneChange(microphone)
+
+        if (state == RecorderState.RECORDING) {
+            startNewCycle()
+        }
+    }
+
+    private val audioDeviceCallback = object : AudioDeviceCallback() {
+        override fun onAudioDevicesAdded(addedDevices: Array<out AudioDeviceInfo>?) {
+            super.onAudioDevicesAdded(addedDevices)
+
+            if (selectedMicrophone == null) {
+                return;
+            }
+
+            if (addedDevices?.find { it.id == selectedMicrophone!!.deviceInfo.id } != null) {
+                onMicrophoneReconnected()
+            }
+        }
+
+        override fun onAudioDevicesRemoved(removedDevices: Array<out AudioDeviceInfo>?) {
+            super.onAudioDevicesRemoved(removedDevices)
+
+            if (selectedMicrophone == null) {
+                return;
+            }
+
+            if (removedDevices?.find { it.id == selectedMicrophone!!.deviceInfo.id } != null) {
+                onMicrophoneDisconnected()
+            }
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private fun registerMicrophoneListener() {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE)!! as AudioManager
+
+        audioManager.registerAudioDeviceCallback(
+            audioDeviceCallback,
+            Handler(Looper.getMainLooper())
+        )
+    }
+
+    private fun unregisterMicrophoneListener() {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE)!! as AudioManager
+
+        audioManager.unregisterAudioDeviceCallback(audioDeviceCallback)
     }
 }
