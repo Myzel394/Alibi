@@ -102,7 +102,6 @@ abstract class RecorderService : Service() {
             }
 
             RecorderState.IDLE -> {
-                stop()
                 onDestroy()
             }
         }
@@ -149,7 +148,6 @@ abstract class RecorderService : Service() {
         super.onDestroy()
 
         stop()
-        changeState(RecorderState.IDLE)
 
         stopForeground(STOP_FOREGROUND_REMOVE)
         NotificationManagerCompat.from(this)

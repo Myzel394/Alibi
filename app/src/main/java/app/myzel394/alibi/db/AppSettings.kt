@@ -154,7 +154,7 @@ data class AudioRecorderSettings(
             else MediaRecorder.OutputFormat.THREE_GPP
         }
 
-        return when(encoder) {
+        return when (encoder) {
             MediaRecorder.AudioEncoder.AAC -> MediaRecorder.OutputFormat.AAC_ADTS
             MediaRecorder.AudioEncoder.AAC_ELD -> MediaRecorder.OutputFormat.AAC_ADTS
             MediaRecorder.AudioEncoder.AMR_NB -> MediaRecorder.OutputFormat.AMR_NB
@@ -167,6 +167,7 @@ data class AudioRecorderSettings(
                     MediaRecorder.OutputFormat.AAC_ADTS
                 }
             }
+
             MediaRecorder.AudioEncoder.OPUS -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     MediaRecorder.OutputFormat.OGG
@@ -174,11 +175,12 @@ data class AudioRecorderSettings(
                     MediaRecorder.OutputFormat.AAC_ADTS
                 }
             }
+
             else -> MediaRecorder.OutputFormat.DEFAULT
         }
     }
 
-    fun getMimeType(): String = when(getOutputFormat()) {
+    fun getMimeType(): String = when (getOutputFormat()) {
         MediaRecorder.OutputFormat.AAC_ADTS -> "audio/aac"
         MediaRecorder.OutputFormat.THREE_GPP -> "audio/3gpp"
         MediaRecorder.OutputFormat.MPEG_4 -> "audio/mp4"
@@ -190,7 +192,7 @@ data class AudioRecorderSettings(
         else -> "audio/3gpp"
     }
 
-    fun getSamplingRate(): Int = samplingRate ?: when(getOutputFormat()) {
+    fun getSamplingRate(): Int = samplingRate ?: when (getOutputFormat()) {
         MediaRecorder.OutputFormat.AAC_ADTS -> 96000
         MediaRecorder.OutputFormat.THREE_GPP -> 44100
         MediaRecorder.OutputFormat.MPEG_4 -> 44100
@@ -202,11 +204,10 @@ data class AudioRecorderSettings(
         else -> 48000
     }
 
-    fun getEncoder(): Int = encoder ?:
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            MediaRecorder.AudioEncoder.AAC
-        else
-            MediaRecorder.AudioEncoder.AMR_NB
+    fun getEncoder(): Int = encoder ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        MediaRecorder.AudioEncoder.AAC
+    else
+        MediaRecorder.AudioEncoder.AMR_NB
 
     fun setIntervalDuration(duration: Long): AudioRecorderSettings {
         if (duration < 10 * 1000L || duration > 60 * 60 * 1000L) {
@@ -221,7 +222,6 @@ data class AudioRecorderSettings(
     }
 
     fun setBitRate(bitRate: Int): AudioRecorderSettings {
-        println("bitRate: $bitRate")
         if (bitRate !in 1000..320000) {
             throw Exception("Bit rate must be between 1000 and 320000")
         }

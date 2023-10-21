@@ -151,8 +151,6 @@ fun RecordingStatus(
         }
 
         LaunchedEffect(microphoneStatus) {
-            println(microphoneStatus)
-            println(previousStatus)
             if (microphoneStatus != previousStatus && showMicrophoneStatusDialog == null && previousStatus != null) {
                 showMicrophoneStatusDialog = microphoneStatus
             }

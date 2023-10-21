@@ -1,9 +1,9 @@
 package app.myzel394.alibi.ui.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
+import android.os.Build
 
 data class MicrophoneInfo(
     val deviceInfo: AudioDeviceInfo,
@@ -24,12 +24,19 @@ data class MicrophoneInfo(
             return MicrophoneInfo(deviceInfo)
         }
 
-        @SuppressLint("NewApi")
         fun fetchDeviceMicrophones(context: Context): List<MicrophoneInfo> {
             val audioManager = context.getSystemService(Context.AUDIO_SERVICE)!! as AudioManager
-            return audioManager.availableCommunicationDevices.let {
-                it.subList(2, it.size)
-            }.map(::fromDeviceInfo)
+            val mics =
+                audioManager.getDevices(AudioManager.GET_DEVICES_INPUTS).map(::fromDeviceInfo)
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                audioManager.availableCommunicationDevices.let {
+                    it.subList(2, it.size)
+                }.map(::fromDeviceInfo)
+            } else {
+                audioManager.getDevices(AudioManager.GET_DEVICES_INPUTS).let {
+                    it.slice(1 until it.size)
+                }.map(::fromDeviceInfo)
+            }
         }
     }
 

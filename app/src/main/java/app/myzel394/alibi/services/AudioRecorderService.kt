@@ -30,16 +30,7 @@ class AudioRecorderService : IntervalRecorderService() {
     val filePath: String
         get() = "$folder/$counter.${settings!!.fileExtension}"
 
-    private fun clearAudioDevice() {
-        val audioManger = getSystemService(AUDIO_SERVICE)!! as AudioManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            audioManger.clearCommunicationDevice()
-        } else {
-            audioManger.stopBluetoothSco()
-        }
-    }
-
+    /// Tell Android to use the correct bluetooth microphone, if any selected
     private fun startAudioDevice() {
         if (selectedMicrophone == null) {
             return
@@ -51,6 +42,16 @@ class AudioRecorderService : IntervalRecorderService() {
             audioManger.setCommunicationDevice(selectedMicrophone!!.deviceInfo)
         } else {
             audioManger.startBluetoothSco()
+        }
+    }
+
+    private fun clearAudioDevice() {
+        val audioManger = getSystemService(AUDIO_SERVICE)!! as AudioManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            audioManger.clearCommunicationDevice()
+        } else {
+            audioManger.stopBluetoothSco()
         }
     }
 
@@ -185,7 +186,6 @@ class AudioRecorderService : IntervalRecorderService() {
         }
     }
 
-    @SuppressLint("NewApi")
     private fun registerMicrophoneListener() {
         val audioManager = getSystemService(Context.AUDIO_SERVICE)!! as AudioManager
 
