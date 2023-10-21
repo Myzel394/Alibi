@@ -155,7 +155,19 @@ class AudioRecorderService : IntervalRecorderService() {
                 return;
             }
 
-            if (addedDevices?.find { it.id == selectedMicrophone!!.deviceInfo.id } != null) {
+            // We can't compare the ID, as it seems to be changing on each reconnect
+            val newDevice = addedDevices?.find {
+                it.productName == selectedMicrophone!!.deviceInfo.productName &&
+                        it.isSink == selectedMicrophone!!.deviceInfo.isSink &&
+                        it.type == selectedMicrophone!!.deviceInfo.type && (
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            it.address == selectedMicrophone!!.deviceInfo.address
+                        } else true
+                        )
+            }
+            if (newDevice != null) {
+                changeMicrophone(MicrophoneInfo.fromDeviceInfo(newDevice))
+
                 onMicrophoneReconnected()
             }
         }

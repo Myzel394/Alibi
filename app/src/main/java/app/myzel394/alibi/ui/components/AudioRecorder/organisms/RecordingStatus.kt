@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.DeleteButton
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneDisconnectedDialog
+import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneReconnectedDialog
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.PauseResumeButton
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.RealtimeAudioVisualizer
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.RecordingTime
@@ -159,6 +160,15 @@ fun RecordingStatus(
 
         if (showMicrophoneStatusDialog == AudioRecorderModel.MicrophoneConnectivityStatus.DISCONNECTED) {
             MicrophoneDisconnectedDialog(
+                onClose = {
+                    showMicrophoneStatusDialog = null
+                },
+                microphoneName = audioRecorder.selectedMicrophone?.name ?: "",
+            )
+        }
+
+        if (showMicrophoneStatusDialog == AudioRecorderModel.MicrophoneConnectivityStatus.CONNECTED) {
+            MicrophoneReconnectedDialog(
                 onClose = {
                     showMicrophoneStatusDialog = null
                 },
