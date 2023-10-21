@@ -12,10 +12,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -37,6 +40,8 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneSelectionButton
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneTypeInfo
+import app.myzel394.alibi.ui.components.atoms.MessageBox
+import app.myzel394.alibi.ui.components.atoms.MessageType
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 
@@ -62,6 +67,8 @@ fun MicrophoneSelection(
         .collectAsState(initial = AppSettings.getDefaultInstance())
         .value
 
+    val isTryingToReconnect =
+        audioRecorder.selectedMicrophone != null && audioRecorder.microphoneStatus == AudioRecorderModel.MicrophoneConnectivityStatus.DISCONNECTED
 
     if (showSelection) {
         ModalBottomSheet(
@@ -83,6 +90,16 @@ fun MicrophoneSelection(
                     textAlign = TextAlign.Center,
                 )
 
+                if (isTryingToReconnect)
+                    MessageBox(
+                        type = MessageType.INFO,
+                        message = stringResource(
+                            R.string.ui_audioRecorder_error_microphoneDisconnected_message,
+                            audioRecorder.recorderService!!.selectedMicrophone?.name ?: "",
+                            audioRecorder.recorderService!!.selectedMicrophone?.name ?: "",
+                        )
+                    )
+
                 LazyColumn(
                     modifier = Modifier
                         .padding(horizontal = 32.dp),
@@ -91,6 +108,7 @@ fun MicrophoneSelection(
                     item {
                         MicrophoneSelectionButton(
                             selected = audioRecorder.selectedMicrophone == null,
+                            selectedAsFallback = isTryingToReconnect,
                             onSelect = {
                                 audioRecorder.changeMicrophone(null)
                                 showSelection = false
@@ -175,6 +193,15 @@ fun MicrophoneSelection(
                         ?: stringResource(R.string.ui_audioRecorder_info_microphone_deviceMicrophone)
                 }
             )
+            if (isTryingToReconnect) {
+                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                Icon(
+                    Icons.Default.Warning,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
+            }
         }
     }
 }

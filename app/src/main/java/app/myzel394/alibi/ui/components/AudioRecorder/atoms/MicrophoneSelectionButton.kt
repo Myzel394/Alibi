@@ -12,8 +12,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MicExternalOn
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +36,7 @@ import app.myzel394.alibi.db.AppSettings
 fun MicrophoneSelectionButton(
     microphone: MicrophoneInfo? = null,
     selected: Boolean = false,
+    selectedAsFallback: Boolean = false,
     onSelect: () -> Unit,
 ) {
     val dataStore = LocalContext.current.dataStore
@@ -69,6 +74,14 @@ fun MicrophoneSelectionButton(
                         color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.secondary,
                     )
             }
+            if (selectedAsFallback)
+                Icon(
+                    Icons.Default.MicExternalOn,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier
+                        .size(ButtonDefaults.IconSize),
+                )
         }
     }
 }
