@@ -64,7 +64,7 @@
     <string name="ui_settings_language_title">Language</string>
     <string name="ui_settings_language_update_label">Change</string>
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Device Microphone</string>
-    <string name="ui_audioRecorder_info_microphone_changeExplanation">The selected microphone will be immediately activated</string>
+    <string name="ui_audioRecorder_info_microphone_changeExplanation">The selected microphone will be activated immediately</string>
     <string name="ui_audioRecorder_error_microphoneDisconnected_title">Microphone disconnected</string>
     <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%s</xliff:g> disconnected. Alibi will use the default microphone instead. We will automatically switch back to <xliff:g name="nam">%s</xliff:g> once it reconnects.</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_title">Microphone reconnected</string>
