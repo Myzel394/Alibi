@@ -1,6 +1,7 @@
 package app.myzel394.alibi.ui.components.AudioRecorder.molecules
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,7 +48,6 @@ fun MicrophoneSelection(
 
     if (showSelection) {
         ModalBottomSheet(
-            modifier = Modifier.fillMaxSize(),
             onDismissRequest = {
                 showSelection = false
             },
@@ -96,6 +96,9 @@ fun MicrophoneSelection(
                 }
             }
         }
+    } else {
+        // We need to show a placeholder box to keep the the rest aligned correctly
+        Box {}
     }
 
     Button(
