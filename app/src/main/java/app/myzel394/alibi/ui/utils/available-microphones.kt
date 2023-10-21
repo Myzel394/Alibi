@@ -55,11 +55,13 @@ data class MicrophoneInfo(
         fun fetchDeviceMicrophones(context: Context): List<MicrophoneInfo> {
             return try {
                 val audioManager = context.getSystemService(Context.AUDIO_SERVICE)!! as AudioManager
-                (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val availableDevices = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     audioManager.availableCommunicationDevices.map(::fromDeviceInfo)
                 } else {
                     audioManager.getDevices(AudioManager.GET_DEVICES_INPUTS).map(::fromDeviceInfo)
-                }).filter {
+                }
+
+                availableDevices.filter {
                     ALLOWED_MICROPHONE_TYPES.contains(it.deviceInfo.type) && it.deviceInfo.isSink
                 }
             } catch (error: Exception) {
