@@ -34,6 +34,7 @@ import app.myzel394.alibi.ui.components.AudioRecorder.atoms.RealtimeAudioVisuali
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.RecordingTime
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.SaveButton
 import app.myzel394.alibi.ui.components.AudioRecorder.molecules.MicrophoneSelection
+import app.myzel394.alibi.ui.components.AudioRecorder.molecules.MicrophoneStatus
 import app.myzel394.alibi.ui.effects.rememberPrevious
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.utils.KeepScreenOn
@@ -141,60 +142,6 @@ fun RecordingStatus(
             }
         }
 
-        val dataStore = LocalContext.current.dataStore
-        val settings = dataStore
-            .data
-            .collectAsState(initial = AppSettings.getDefaultInstance())
-            .value
-        val microphones = MicrophoneInfo.fetchDeviceMicrophones(context).let {
-            if (settings.audioRecorderSettings.showAllMicrophones) {
-                it
-            } else {
-                MicrophoneInfo.filterMicrophones(it)
-            }
-        }
-        val microphoneStatus = audioRecorder.microphoneStatus
-        val previousStatus = rememberPrevious(microphoneStatus)
-
-        var showMicrophoneStatusDialog by remember {
-            // null = no dialog
-            // `MicrophoneConnectivityStatus.CONNECTED` = Reconnected dialog
-            // `MicrophoneConnectivityStatus.DISCONNECTED` = Disconnected dialog
-            mutableStateOf<AudioRecorderModel.MicrophoneConnectivityStatus?>(null)
-        }
-
-        LaunchedEffect(microphoneStatus) {
-            if (microphoneStatus != previousStatus && showMicrophoneStatusDialog == null && previousStatus != null) {
-                showMicrophoneStatusDialog = microphoneStatus
-            }
-        }
-
-        if (showMicrophoneStatusDialog == AudioRecorderModel.MicrophoneConnectivityStatus.DISCONNECTED) {
-            MicrophoneDisconnectedDialog(
-                onClose = {
-                    showMicrophoneStatusDialog = null
-                },
-                microphoneName = audioRecorder.selectedMicrophone?.name ?: "",
-            )
-        }
-
-        if (showMicrophoneStatusDialog == AudioRecorderModel.MicrophoneConnectivityStatus.CONNECTED) {
-            MicrophoneReconnectedDialog(
-                onClose = {
-                    showMicrophoneStatusDialog = null
-                },
-                microphoneName = audioRecorder.selectedMicrophone?.name ?: "",
-            )
-        }
-
-        if (microphones.isNotEmpty()) {
-            MicrophoneSelection(
-                microphones = microphones,
-                selectedMicrophone = audioRecorder.selectedMicrophone,
-                onSelect = audioRecorder::changeMicrophone,
-            )
-        } else {
-            Box {}
-        }
+        MicrophoneStatus(audioRecorder)
     }
 }
