@@ -12,7 +12,7 @@ import android.os.Build
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import java.lang.IllegalStateException
 
-class AudioRecorderService: IntervalRecorderService() {
+class AudioRecorderService : IntervalRecorderService() {
     var amplitudesAmount = 1000
     var selectedDevice: MicrophoneInfo? = null
 
@@ -27,11 +27,11 @@ class AudioRecorderService: IntervalRecorderService() {
         val audioManger = getSystemService(AUDIO_SERVICE)!! as AudioManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        if (selectedDevice == null) {
+            if (selectedDevice == null) {
                 audioManger.clearCommunicationDevice()
-        } else {
-            audioManger.setCommunicationDevice(selectedDevice!!.deviceInfo)
-        }
+            } else {
+                audioManger.setCommunicationDevice(selectedDevice!!.deviceInfo)
+            }
         } else {
             if (selectedDevice == null) {
                 audioManger.stopBluetoothSco()
@@ -104,6 +104,7 @@ class AudioRecorderService: IntervalRecorderService() {
         super.stop()
 
         resetRecorder()
+        selectedDevice = null
     }
 
     override fun getAmplitudeAmount(): Int = amplitudesAmount

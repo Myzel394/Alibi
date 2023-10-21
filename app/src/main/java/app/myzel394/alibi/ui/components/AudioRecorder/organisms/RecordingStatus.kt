@@ -168,10 +168,13 @@ fun RecordingStatus(
         if (microphones.isNotEmpty()) {
             MicrophoneSelection(
                 microphones = microphones,
-                selectedMicrophone = audioRecorder.recorderService!!.selectedDevice,
+                selectedMicrophone = audioRecorder.selectedDevice,
                 onSelect = {
                     audioRecorder.changeMicrophone(it)
-                    audioRecorder.recorderService!!.startNewCycle()
+
+                    if (!audioRecorder.isPaused) {
+                        audioRecorder.recorderService!!.startNewCycle()
+                    }
                 }
             )
         }
