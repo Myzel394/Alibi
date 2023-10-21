@@ -4,10 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.media.MediaRecorder
 import android.os.IBinder
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,6 +14,7 @@ import app.myzel394.alibi.db.LastRecording
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.services.RecorderService
+import app.myzel394.alibi.ui.utils.MicrophoneInfo
 
 class AudioRecorderModel: ViewModel() {
     var recorderState by mutableStateOf(RecorderState.IDLE)
@@ -119,6 +117,10 @@ class AudioRecorderModel: ViewModel() {
 
     fun setMaxAmplitudesAmount(amount: Int) {
         recorderService?.amplitudesAmount = amount
+    }
+
+    fun changeMicrophone(microphone: MicrophoneInfo?) {
+        recorderService!!.selectedDevice = microphone
     }
 
     fun bindToService(context: Context) {

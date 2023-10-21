@@ -1,5 +1,4 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Alibi</string>
 
     <string name="dialog_close_cancel_label">Cancel</string>
@@ -64,4 +63,6 @@
     <string name="ui_audioRecorder_error_recording_description">Alibi encountered an error during recording. Would you like to try saving the recording?</string>
     <string name="ui_settings_language_title">Language</string>
     <string name="ui_settings_language_update_label">Change</string>
+    <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Device Microphone</string>
+    <string name="ui_audioRecorder_info_microphone_changeExplanation">The selected microphone will be immediately activated</string>
 </resources>

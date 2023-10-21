@@ -9,11 +9,12 @@ import android.media.MediaRecorder
 import android.media.MediaRecorder.OnErrorListener
 import android.media.MediaRecorder.getAudioSourceMax
 import android.os.Build
+import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import java.lang.IllegalStateException
 
 class AudioRecorderService: IntervalRecorderService() {
     var amplitudesAmount = 1000
-    var selectedDevice: AudioDeviceInfo? = null
+    var selectedDevice: MicrophoneInfo? = null
 
     var recorder: MediaRecorder? = null
         private set
@@ -29,7 +30,7 @@ class AudioRecorderService: IntervalRecorderService() {
         if (selectedDevice == null) {
                 audioManger.clearCommunicationDevice()
         } else {
-            audioManger.setCommunicationDevice(selectedDevice!!)
+            audioManger.setCommunicationDevice(selectedDevice!!.deviceInfo)
         }
         } else {
             if (selectedDevice == null) {
@@ -114,32 +115,6 @@ class AudioRecorderService: IntervalRecorderService() {
             0
         } catch (error: RuntimeException) {
             0
-        }
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action == "changeAudioDevice") {
-            selectedDevice = intent.getStringExtra("deviceID")!!.let {
-                if (it == "null") {
-                    null
-                } else {
-                    val audioManager = getSystemService(AUDIO_SERVICE)!! as AudioManager
-                    audioManager.getDevices(AudioManager.GET_DEVICES_INPUTS).find { device ->
-                        device.id == it.toInt()
-                    }
-                }
-            }
-        }
-
-        return super.onStartCommand(intent, flags, startId)
-    }
-
-    companion object {
-        fun changeAudioDevice(deviceID: String?, context: Context) {
-            val intent = Intent("changeAudioDevice").apply {
-                putExtra("deviceID", deviceID ?: "null")
-            }
-            context.startService(intent)
         }
     }
 }

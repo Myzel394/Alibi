@@ -1,11 +1,9 @@
-package app.myzel394.alibi.ui.components.AudioRecorder.molecules
+package app.myzel394.alibi.ui.components.AudioRecorder.organisms
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,14 +24,12 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,20 +46,17 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
-import app.myzel394.alibi.services.RecorderService
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.ConfirmDeletionDialog
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.RealtimeAudioVisualizer
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.SaveRecordingButton
+import app.myzel394.alibi.ui.components.AudioRecorder.molecules.MicrophoneSelection
 import app.myzel394.alibi.ui.components.atoms.Pulsating
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.utils.KeepScreenOn
+import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import app.myzel394.alibi.ui.utils.formatDuration
 import kotlinx.coroutines.delay
-import java.io.File
-import java.time.Duration
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 @Composable
 fun RecordingStatus(
@@ -214,6 +207,15 @@ fun RecordingStatus(
             )
             Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
             Text(stringResource(R.string.ui_audioRecorder_action_save_label))
+        }
+
+        val microphones = MicrophoneInfo.fetchDeviceMicrophones(context)
+
+        if (microphones.isNotEmpty()) {
+            MicrophoneSelection(
+                audioRecorder = audioRecorder,
+                microphones = microphones
+            )
         }
     }
 }
