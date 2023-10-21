@@ -101,9 +101,7 @@ abstract class RecorderService : Service() {
                 isPaused = true
             }
 
-            RecorderState.IDLE -> {
-                onDestroy()
-            }
+            else -> {}
         }
 
         when (newState) {
@@ -148,6 +146,7 @@ abstract class RecorderService : Service() {
         super.onDestroy()
 
         stop()
+        changeState(RecorderState.IDLE)
 
         stopForeground(STOP_FOREGROUND_REMOVE)
         NotificationManagerCompat.from(this)
