@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.os.Build
+import android.util.Log
 
 val ALLOWED_MICROPHONE_TYPES =
     setOf(
@@ -52,13 +53,19 @@ data class MicrophoneInfo(
         }
 
         fun fetchDeviceMicrophones(context: Context): List<MicrophoneInfo> {
-            val audioManager = context.getSystemService(Context.AUDIO_SERVICE)!! as AudioManager
-            return (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                audioManager.availableCommunicationDevices.map(::fromDeviceInfo)
-            } else {
-                audioManager.getDevices(AudioManager.GET_DEVICES_INPUTS).map(::fromDeviceInfo)
-            }).filter {
-                ALLOWED_MICROPHONE_TYPES.contains(it.deviceInfo.type) && it.deviceInfo.isSink
+            return try {
+                val audioManager = context.getSystemService(Context.AUDIO_SERVICE)!! as AudioManager
+                (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    audioManager.availableCommunicationDevices.map(::fromDeviceInfo)
+                } else {
+                    audioManager.getDevices(AudioManager.GET_DEVICES_INPUTS).map(::fromDeviceInfo)
+                }).filter {
+                    ALLOWED_MICROPHONE_TYPES.contains(it.deviceInfo.type) && it.deviceInfo.isSink
+                }
+            } catch (error: Exception) {
+                Log.getStackTraceString(error)
+
+                emptyList()
             }
         }
     }
