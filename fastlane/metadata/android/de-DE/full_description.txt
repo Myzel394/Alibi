@@ -1,1 +1,1 @@
-<p>Alibi speichert die letzten 30 Minuten auf Ihre Anfrage.</p><p>Alles ist komplett konfigurierbar. Keine Internetverbindung erforderlich.</p>
+<p>Alibi speichert die letzten 30 Minuten, sobald Du sie benötigst.</p><p>Alles ist komplett konfigurierbar. Keine Internetverbindung erforderlich.</p>
