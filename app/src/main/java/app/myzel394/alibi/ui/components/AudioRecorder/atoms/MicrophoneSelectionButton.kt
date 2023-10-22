@@ -46,6 +46,9 @@ fun MicrophoneSelectionButton(
         .collectAsState(initial = AppSettings.getDefaultInstance())
         .value
 
+    // Copied from Android's [FilledButtonTokens]
+    val disabledTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+
     Button(
         onClick = onSelect,
         enabled = !disabled,
@@ -72,7 +75,7 @@ fun MicrophoneSelectionButton(
                     Text(
                         microphone.deviceInfo.address.toString(),
                         fontSize = MaterialTheme.typography.bodySmall.toSpanStyle().fontSize,
-                        color = if (selected || disabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.secondary,
+                        color = if (disabled) disabledTextColor else if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.secondary,
                     )
             }
             if (selectedAsFallback)
