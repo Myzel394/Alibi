@@ -1,5 +1,6 @@
 package app.myzel394.alibi.ui.utils
 
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
@@ -70,7 +71,16 @@ data class MicrophoneInfo(
         /// Filter microphones to only show normal ones
         fun filterMicrophones(microphones: List<MicrophoneInfo>): List<MicrophoneInfo> {
             return microphones.filter {
-                ALLOWED_MICROPHONE_TYPES.contains(it.deviceInfo.type) && it.deviceInfo.isSink
+                it.deviceInfo.isSource && (
+                        ALLOWED_MICROPHONE_TYPES.contains(it.deviceInfo.type) ||
+                                // `type` doesn't seem to be reliably as its sometimes -2147483644 even
+                                // for valid microphones
+                                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
+                                        it.deviceInfo.type == -2147483644 &&
+                                        BluetoothAdapter.checkBluetoothAddress(it.deviceInfo.address) &&
+                                        it.deviceInfo.productName.isNotBlank()
+                                        )
+                        )
             }
         }
     }
