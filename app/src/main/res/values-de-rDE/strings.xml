@@ -1,18 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Alibi</string>
+
     <string name="dialog_close_cancel_label">Abbrechen</string>
     <string name="dialog_close_neutral_label">OK</string>
     <string name="continue_label">Fortsetzten</string>
+
     <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
     <string name="form_error_type_notNumber">Bitte eine gültige Nummer eingeben</string>
     <string name="form_error_value_notInRange">Bitte gib eine Nummer zwischen<xliff:g name="min">%s</xliff:g> und <xliff:g name="max">%s</xliff:g>ein</string>
-    <string name="form_error_value_mustBeGreaterThan">Please enter a number greater than <xliff:g name="min">%s</xliff:g></string>
+    <string name="form_error_value_mustBeGreaterThan">Bitte gib eine größere Zahl als <xliff:g name="min">%s </xliff:g>ein</string>
+
     <string name="notificationChannels_recorder_name">Recorder</string>
     <string name="notificationChannels_recorder_description">Zeigt den aktuellen Status der Aufnahme an</string>
+
     <string name="ui_permissions_request_title">Berechtigung verweigert</string>
     <string name="ui_permissions_request">Bitte erteile die Berechtigung, um fortzufahren</string>
     <string name="ui_permissions_permanentlyDenied_message">Du wirst zu den Einstellungen weitergeleitet, um dort die Berechtigung zu erteilen.</string>
+
     <string name="ui_audioRecorder_action_start_label">Aufnahme starten</string>
     <string name="ui_audioRecorder_action_saveOldRecording_label">Aufnahme vom <xliff:g name="date">%s</xliff:g> speichern</string>
     <string name="ui_audioRecorder_action_delete_label">Löschen</string>
@@ -26,11 +31,13 @@
     <string name="ui_audioRecorder_action_save_processing_dialog_description">Audio wird bearbeitet, Alibi nicht schließen! Du wirst automatisch aufgefordert, die Datei zu speichern, wenn diese fertig bearbeitet ist</string>
     <string name="ui_audioRecorder_state_recording_title">Aufnahme läuft</string>
     <string name="ui_audioRecorder_state_recording_description">Alibi nimmt im Hintergrund weiter auf</string>
+
     <string name="ui_welcome_explanation_title">Wilkommen zu Alibi!</string>
     <string name="ui_welcome_explanation_message">Alibi funktioniert wird eine Dashcam für dein Handy. Es ermöglicht dir, Ton im Hintergrund kontinuierlich aufzunehmen und die letzten 30 Minuten auf Wunsch zu speichern.</string>
     <string name="ui_welcome_responsibility_title">Du bist für die Nutzung dieser App verantwortlich!</string>
     <string name="ui_welcome_responsibility_message">Alibi übernimmt keine Verantwortung für die Nutzung dieser App. Du trägst die alleinige Verantwortung. Die Nutzung erfolgt auf eigene Gefahr.</string>
     <string name="ui_welcome_start_label">Alibi Starten</string>
+
     <string name="ui_settings_title">Einstellungen</string>
     <string name="ui_settings_advancedSettings_label">Erweiterte Einstellungen</string>
     <string name="ui_settings_hint_recordingActive_title">Aufnahme läuft</string>
@@ -57,9 +64,4 @@
     <string name="ui_audioRecorder_error_recording_description">Alibi stieß bei der Aufnahme auf einen Fehler. Soll die Aufnahme gespeichert werden? </string>
     <string name="ui_settings_language_title">Sprache</string>
     <string name="ui_settings_language_update_label">Ändern</string>
-    <string name="ui_settings_option_import_label">Import Settings</string>
-    <string name="ui_settings_option_export_label">Export Settings</string>
-    <string name="ui_settings_option_import_dialog_text">Are you sure you want to import these settings? Your current settings will be overwritten!</string>
-    <string name="ui_settings_option_import_dialog_confirm">Import settings</string>
-    <string name="ui_settings_option_import_success">Settings have been imported successfully!</string>
 </resources>
