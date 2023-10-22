@@ -1,22 +1,18 @@
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Alibi</string>
-
     <string name="dialog_close_cancel_label">İptal</string>
     <string name="dialog_close_neutral_label">Tamam</string>
     <string name="continue_label">Devam</string>
-
     <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
     <string name="form_error_type_notNumber">Lütfen geçerli bir sayı girin</string>
     <string name="form_error_value_notInRange"><xliff:g name="min">%s</xliff:g> ve <xliff:g name="max">%s</xliff:g> arasında bir sayı girin</string>
     <string name="form_error_value_mustBeGreaterThan"><xliff:g name="min">%s</xliff:g>\'den büyük bir sayı girin</string>
-
     <string name="notificationChannels_recorder_name">Ses Kayıt Cihazı</string>
     <string name="notificationChannels_recorder_description">Mevcut kayıt durumunu gösterir</string>
-
     <string name="ui_permissions_request_title">İzin reddedildi</string>
     <string name="ui_permissions_request">Devam etmek için izni verin</string>
     <string name="ui_permissions_permanentlyDenied_message">İzin vermek için uygulama ayarlarına yönlendirileceksiniz.</string>
-
     <string name="ui_audioRecorder_action_start_label">Kayda Başla</string>
     <string name="ui_audioRecorder_action_saveOldRecording_label"><xliff:g name="date">%s</xliff:g> tarihinden Kaydı Kaydet</string>
     <string name="ui_audioRecorder_action_delete_label">Sil</string>
@@ -30,13 +26,11 @@
     <string name="ui_audioRecorder_action_save_processing_dialog_description">Ses işleniyor, Alibi\'yi kapatmayın! Dosya hazır olduğunda dosyayı kaydetmeniz istenecektir</string>
     <string name="ui_audioRecorder_state_recording_title">Ses Kaydediliyor</string>
     <string name="ui_audioRecorder_state_recording_description">Alibi arka planda kayıt yapmaya devam eder</string>
-
     <string name="ui_welcome_explanation_title">Alibi\'ye Hoş Geldiniz!</string>
     <string name="ui_welcome_explanation_message">Alibi, telefonunuz için bir araç kamerası gibidir. Sürekli olarak sesinizi kaydetmenize ve ihtiyaç duyduğunuzda son 30 dakikayı kaydetmenize olanak tanır.</string>
     <string name="ui_welcome_responsibility_title">Bu uygulamanın kullanımından tamamen siz sorumlusunuz</string>
     <string name="ui_welcome_responsibility_message">Alibi bu uygulamanın kullanımına ilişkin herhangi bir sorumluluk kabul etmez. Sadece siz sorumlusunuz. Riskleri göze alarak kullanın.</string>
     <string name="ui_welcome_start_label">Alibi\'yi Başlat</string>
-
     <string name="ui_settings_title">Ayarlar</string>
     <string name="ui_settings_advancedSettings_label">Gelişmiş Ayarlar</string>
     <string name="ui_settings_hint_recordingActive_title">Kayıt Yapılıyor</string>
@@ -63,4 +57,9 @@
     <string name="ui_audioRecorder_error_recording_description">Alibi, kayıt sırasında bir hata ile karşılaştı. Ses kaydını kaydetmeyi denemek ister misiniz?</string>
     <string name="ui_settings_language_title">Dil</string>
     <string name="ui_settings_language_update_label">Değiştir</string>
+    <string name="ui_settings_option_import_label">Import Settings</string>
+    <string name="ui_settings_option_export_label">Export Settings</string>
+    <string name="ui_settings_option_import_dialog_text">Are you sure you want to import these settings? Your current settings will be overwritten!</string>
+    <string name="ui_settings_option_import_dialog_confirm">Import settings</string>
+    <string name="ui_settings_option_import_success">Settings have been imported successfully!</string>
 </resources>
