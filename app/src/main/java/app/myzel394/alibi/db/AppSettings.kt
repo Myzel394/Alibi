@@ -144,6 +144,7 @@ data class LastRecording(
 
 @Serializable
 data class AudioRecorderSettings(
+    // 30 minutes
     val maxDuration: Long = 30 * 60 * 1000L,
     // 60 seconds
     val intervalDuration: Long = 60 * 1000L,
@@ -266,8 +267,8 @@ data class AudioRecorderSettings(
     }
 
     fun setMaxDuration(duration: Long): AudioRecorderSettings {
-        if (duration < 60 * 1000L || duration > 24 * 60 * 60 * 1000L) {
-            throw Exception("Max duration must be between 1 minute and 1 hour")
+        if (duration < 60 * 1000L || duration > 10 * 24 * 60 * 60 * 1000L) {
+            throw Exception("Max duration must be between 1 minute and 10 days")
         }
 
         if (duration < intervalDuration) {
