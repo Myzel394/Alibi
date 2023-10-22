@@ -1,6 +1,7 @@
 package app.myzel394.alibi.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,6 +40,7 @@ import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.EncoderTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ForceExactMaxDurationTile
+import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ImportExport
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.InAppLanguagePicker
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.IntervalDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.MaxDurationTile
@@ -128,16 +130,26 @@ fun SettingsScreen(
             ForceExactMaxDurationTile()
             InAppLanguagePicker()
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
-                Column {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                ) {
+                    Column {
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 32.dp)
+                        )
+                        BitrateTile()
+                        SamplingRateTile()
+                        EncoderTile(snackbarHostState = snackbarHostState)
+                        OutputFormatTile()
+                    }
                     Divider(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 32.dp)
+                            .fillMaxWidth(0.5f)
                     )
-                    BitrateTile()
-                    SamplingRateTile()
-                    EncoderTile(snackbarHostState = snackbarHostState)
-                    OutputFormatTile()
+                    ImportExport()
                 }
             }
         }
