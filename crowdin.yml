@@ -1,7 +1,8 @@
 files:
   - source: /app/src/main/res/values/strings.xml
-    translation: /app/src/main/res/values-b+%two_letters_code%+*/strings.xml
+    translation: /app/src/main/res/values-%locale%/strings.xml
     translate_attributes: 0
     content_segmentation: 0
+    type: xml
   - source: /fastlane/metadata/android/en-US/*.txt
     translation: /fastlane/metadata/android/%locale%/%original_file_name%
