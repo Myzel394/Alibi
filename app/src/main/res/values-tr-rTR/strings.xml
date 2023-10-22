@@ -1,0 +1,66 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Alibi</string>
+
+    <string name="dialog_close_cancel_label">İptal</string>
+    <string name="dialog_close_neutral_label">Tamam</string>
+    <string name="continue_label">Devam</string>
+
+    <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
+    <string name="form_error_type_notNumber">Lütfen geçerli bir sayı girin</string>
+    <string name="form_error_value_notInRange"><xliff:g name="min">%s</xliff:g> ve <xliff:g name="max">%s</xliff:g> arasında bir sayı girin</string>
+    <string name="form_error_value_mustBeGreaterThan"><xliff:g name="min">%s</xliff:g>\'den büyük bir sayı girin</string>
+
+    <string name="notificationChannels_recorder_name">Ses Kayıt Cihazı</string>
+    <string name="notificationChannels_recorder_description">Mevcut kayıt durumunu gösterir</string>
+
+    <string name="ui_permissions_request_title">İzin reddedildi</string>
+    <string name="ui_permissions_request">Devam etmek için izni verin</string>
+    <string name="ui_permissions_permanentlyDenied_message">İzin vermek için uygulama ayarlarına yönlendirileceksiniz.</string>
+
+    <string name="ui_audioRecorder_action_start_label">Kayda Başla</string>
+    <string name="ui_audioRecorder_action_saveOldRecording_label"><xliff:g name="date">%s</xliff:g> tarihinden Kaydı Kaydet</string>
+    <string name="ui_audioRecorder_action_delete_label">Sil</string>
+    <string name="ui_audioRecorder_action_delete_confirm_title">Kayıt Silinsin mi?</string>
+    <string name="ui_audioRecorder_action_delete_confirm_message">Bu kaydı silmek istediğinizden emin misiniz?</string>
+    <string name="ui_audioRecorder_action_pause_label">Kaydı Duraklat</string>
+    <string name="ui_audioRecorder_action_resume_label">Kayda Devam Et</string>
+    <string name="ui_audioRecorder_action_save_label">Kaydı Kaydet</string>
+    <string name="ui_audioRecorder_action_start_description">Alibi arka planda kayıt yapmaya devam edecek ve son <xliff:g name="durationInMinutes">%s</xliff:g> dakikayı depolayacaktır</string>
+    <string name="ui_audioRecorder_action_save_processing_dialog_title">İşleniyor</string>
+    <string name="ui_audioRecorder_action_save_processing_dialog_description">Ses işleniyor, Alibi\'yi kapatmayın! Dosya hazır olduğunda dosyayı kaydetmeniz istenecektir</string>
+    <string name="ui_audioRecorder_state_recording_title">Ses Kaydediliyor</string>
+    <string name="ui_audioRecorder_state_recording_description">Alibi arka planda kayıt yapmaya devam eder</string>
+
+    <string name="ui_welcome_explanation_title">Alibi\'ye Hoş Geldiniz!</string>
+    <string name="ui_welcome_explanation_message">Alibi, telefonunuz için bir araç kamerası gibidir. Sürekli olarak sesinizi kaydetmenize ve ihtiyaç duyduğunuzda son 30 dakikayı kaydetmenize olanak tanır.</string>
+    <string name="ui_welcome_responsibility_title">Bu uygulamanın kullanımından tamamen siz sorumlusunuz</string>
+    <string name="ui_welcome_responsibility_message">Alibi bu uygulamanın kullanımına ilişkin herhangi bir sorumluluk kabul etmez. Sadece siz sorumlusunuz. Riskleri göze alarak kullanın.</string>
+    <string name="ui_welcome_start_label">Alibi\'yi Başlat</string>
+
+    <string name="ui_settings_title">Ayarlar</string>
+    <string name="ui_settings_advancedSettings_label">Gelişmiş Ayarlar</string>
+    <string name="ui_settings_hint_recordingActive_title">Kayıt Yapılıyor</string>
+    <string name="ui_settings_hint_recordingActive_message">Değişiklikleriniz bir sonraki kayıt başlatıldığında uygulanacaktır</string>
+    <string name="ui_settings_option_maxDuration_title">Maksimum Süre</string>
+    <string name="ui_settings_option_maxDuration_description">Kaydın maksimum süresini ayarlayın</string>
+    <string name="ui_settings_option_intervalDuration_title">Tek Seferlik Süre</string>
+    <string name="ui_settings_option_intervalDuration_description">Bu süre boyunca tek bir parça kaydedin. Alibi kayıt alırken birden fazla parça oluşturur ve en eskisini siler. Sesi dışa aktarırken tüm parçalar bir araya getirilir.</string>
+    <string name="ui_settings_option_forceExactDuration_title">Belirtilen uzunluğu zorla</string>
+    <string name="ui_settings_option_forceExactDuration_description">Çıktı dosyasının tam olarak belirtilen uzunlukta olmasını zorlayın. Bu devre dışı bırakılırsa, ses örnekleri toplu olarak kodlandığından çıktı biraz daha uzun olabilir.</string>
+    <string name="ui_settings_option_bitrate_title">Bitrate</string>
+    <string name="ui_settings_option_bitrate_description">Daha yüksek bitrate daha iyi kalite anlamına gelir ancak dosya boyutu da daha büyük olur</string>
+    <string name="ui_settings_option_bitrate_explanation">Ses kaydı için bitrate ayarlayın</string>
+    <string name="ui_settings_option_outputFormat_title">Çıktı Formatı</string>
+    <string name="ui_settings_option_samplingRate_title">Örnekleme Hızı</string>
+    <string name="ui_settings_option_samplingRate_description">Ses sinyalinden saniyede kaç örnek alınacağını tanımlayın</string>
+    <string name="ui_settings_option_samplingRate_explanation">Örnekleme hızını ayarlayın</string>
+    <string name="ui_settings_option_encoder_title">Kodlayıcı</string>
+    <string name="ui_settings_option_encoder_extra_outputFormatChanged">Çıktı formatı, mevcut kodlayıcıyla uyumsuz olduğu için değiştirildi</string>
+    <string name="ui_settings_value_auto_label">Otomatik</string>
+    <string name="ui_audioRecorder_state_paused_title">Kayıt Duraklatıldı</string>
+    <string name="ui_audioRecorder_state_paused_description">Ses Kaydı duraklatıldı</string>
+    <string name="ui_audioRecorder_error_recording_title">Bir hata oluştu</string>
+    <string name="ui_audioRecorder_error_recording_description">Alibi, kayıt sırasında bir hata ile karşılaştı. Ses kaydını kaydetmeyi denemek ister misiniz?</string>
+    <string name="ui_settings_language_title">Dil</string>
+    <string name="ui_settings_language_update_label">Değiştir</string>
+</resources>
