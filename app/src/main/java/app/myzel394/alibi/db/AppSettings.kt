@@ -7,6 +7,7 @@ import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
+import org.json.JSONObject
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE_TIME
@@ -40,8 +41,28 @@ data class AppSettings(
         DARK,
     }
 
+    fun toJSONObject(): JSONObject {
+        return JSONObject(
+            mapOf(
+                "audioRecorderSettings" to audioRecorderSettings.toJSONObject(),
+                "hasSeenOnboarding" to hasSeenOnboarding,
+                "showAdvancedSettings" to showAdvancedSettings,
+                "theme" to theme.name,
+            )
+        )
+    }
+
     companion object {
         fun getDefaultInstance(): AppSettings = AppSettings()
+
+        fun fromJSONObject(data: JSONObject): AppSettings {
+            return AppSettings(
+                audioRecorderSettings = AudioRecorderSettings.fromJSONObject(data.getJSONObject("audioRecorderSettings")),
+                hasSeenOnboarding = data.getBoolean("hasSeenOnboarding"),
+                showAdvancedSettings = data.getBoolean("showAdvancedSettings"),
+                theme = Theme.valueOf(data.getString("theme")),
+            )
+        }
     }
 }
 
@@ -292,6 +313,20 @@ data class AudioRecorderSettings(
         return supportedFormats.contains(outputFormat)
     }
 
+    fun toJSONObject(): JSONObject {
+        return JSONObject(
+            mapOf(
+                "maxDuration" to maxDuration,
+                "intervalDuration" to intervalDuration,
+                "forceExactMaxDuration" to forceExactMaxDuration,
+                "bitRate" to bitRate,
+                "samplingRate" to samplingRate,
+                "outputFormat" to outputFormat,
+                "encoder" to encoder,
+            )
+        )
+    }
+
     companion object {
         fun getDefaultInstance(): AudioRecorderSettings = AudioRecorderSettings()
         val EXAMPLE_MAX_DURATIONS = listOf(
@@ -398,5 +433,23 @@ data class AudioRecorderSettings(
                 }
             }
         }).toMap()
+
+        fun fromJSONObject(data: JSONObject): AudioRecorderSettings {
+            return AudioRecorderSettings(
+                maxDuration = data.getLong("maxDuration"),
+                intervalDuration = data.getLong("intervalDuration"),
+                forceExactMaxDuration = data.getBoolean("forceExactMaxDuration"),
+                bitRate = data.getInt("bitRate"),
+                samplingRate = data.optInt("samplingRate", -1).let {
+                    if (it == -1) null else it
+                },
+                outputFormat = data.optInt("outputFormat", -1).let {
+                    if (it == -1) null else it
+                },
+                encoder = data.optInt("encoder", -1).let {
+                    if (it == -1) null else it
+                },
+            )
+        }
     }
 }
