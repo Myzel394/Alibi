@@ -5,7 +5,6 @@ import android.os.Build
 import android.util.Log
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
-import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import org.json.JSONObject
 import java.io.File
@@ -52,6 +51,19 @@ data class AppSettings(
         )
     }
 
+    fun exportToString(): String {
+        return JSONObject(
+            mapOf(
+                "_meta" to mapOf(
+                    "version" to 1,
+                    "date" to LocalDateTime.now().format(ISO_DATE_TIME),
+                    "app" to "app.myzel394.alibi",
+                ),
+                "data" to toJSONObject(),
+            )
+        ).toString(0)
+    }
+
     companion object {
         fun getDefaultInstance(): AppSettings = AppSettings()
 
@@ -62,6 +74,11 @@ data class AppSettings(
                 showAdvancedSettings = data.getBoolean("showAdvancedSettings"),
                 theme = Theme.valueOf(data.getString("theme")),
             )
+        }
+
+        fun fromExportedString(data: String): AppSettings {
+            val json = JSONObject(data)
+            return fromJSONObject(json.getJSONObject("data"))
         }
     }
 }
