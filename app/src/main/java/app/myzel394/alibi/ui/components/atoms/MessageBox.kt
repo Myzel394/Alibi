@@ -42,7 +42,7 @@ fun MessageBox(
         MessageType.WARNING -> Color.Yellow
     }
     val textColor = if (isDark) onContainerColor else MaterialTheme.colorScheme.onSurface
-    val backgroundColor = if (isDark) containerColor else onContainerColor
+    val backgroundColor = if (isDark) containerColor else containerColor
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

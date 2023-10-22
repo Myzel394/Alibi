@@ -72,7 +72,7 @@ fun MicrophoneSelectionButton(
                     Text(
                         microphone.deviceInfo.address.toString(),
                         fontSize = MaterialTheme.typography.bodySmall.toSpanStyle().fontSize,
-                        color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.secondary,
+                        color = if (selected || disabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.secondary,
                     )
             }
             if (selectedAsFallback)
