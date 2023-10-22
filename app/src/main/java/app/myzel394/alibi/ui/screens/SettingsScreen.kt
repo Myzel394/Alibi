@@ -35,6 +35,7 @@ import androidx.navigation.NavController
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.EncoderTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ForceExactMaxDurationTile
@@ -43,6 +44,7 @@ import app.myzel394.alibi.ui.components.SettingsScreen.atoms.IntervalDurationTil
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.MaxDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.OutputFormatTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.SamplingRateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ThemeSelector
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
@@ -80,7 +82,7 @@ fun SettingsScreen(
         },
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) {padding ->
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -107,6 +109,9 @@ fun SettingsScreen(
                         message = stringResource(R.string.ui_settings_hint_recordingActive_message),
                     )
                 }
+            if (!SUPPORTS_DARK_MODE_NATIVELY) {
+                ThemeSelector()
+            }
             GlobalSwitch(
                 label = stringResource(R.string.ui_settings_advancedSettings_label),
                 checked = settings.showAdvancedSettings,
