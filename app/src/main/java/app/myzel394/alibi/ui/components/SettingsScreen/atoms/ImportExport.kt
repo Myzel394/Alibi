@@ -14,6 +14,9 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,7 +38,9 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 @Composable
-fun ImportExport() {
+fun ImportExport(
+    snackbarHostState: SnackbarHostState,
+) {
     val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
@@ -60,6 +65,8 @@ fun ImportExport() {
     }
 
     if (settingsToBeImported != null) {
+        val successMessage = stringResource(R.string.ui_settings_option_import_success)
+
         AlertDialog(
             onDismissRequest = {
                 settingsToBeImported = null
@@ -84,7 +91,14 @@ fun ImportExport() {
                                 settingsToBeImported!!
                             }
                             settingsToBeImported = null
+
+                            snackbarHostState.showSnackbar(
+                                message = successMessage,
+                                withDismissAction = true,
+                                duration = SnackbarDuration.Short,
+                            )
                         }
+
                     },
                 ) {
                     Icon(

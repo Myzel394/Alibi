@@ -16,7 +16,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -65,7 +67,21 @@ fun SettingsScreen(
     )
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                snackbar = {
+                    Snackbar(
+                        snackbarData = it,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        actionColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        actionContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        dismissActionContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                }
+            )
+        },
         topBar = {
             LargeTopAppBar(
                 title = {
@@ -149,7 +165,7 @@ fun SettingsScreen(
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                     )
-                    ImportExport()
+                    ImportExport(snackbarHostState = snackbarHostState)
                 }
             }
         }
