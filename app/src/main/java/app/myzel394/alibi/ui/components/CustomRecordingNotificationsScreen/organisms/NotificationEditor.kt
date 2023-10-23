@@ -1,27 +1,33 @@
 package app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.organisms
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxColors
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 import app.myzel394.alibi.db.NotificationSettings
@@ -50,6 +56,7 @@ fun NotificationEditor(
         mutableStateOf(R.drawable.launcher_monochrome_noopacity)
     }
 
+    // TODO: Add Preview functionality
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,7 +68,7 @@ fun NotificationEditor(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            showOngoing = true,
+            showOngoing = showOngoing,
             title = title,
             description = description,
             icon = painterResource(icon),
@@ -78,6 +85,36 @@ fun NotificationEditor(
                 icon = it
             },
         )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(MaterialTheme.shapes.medium)
+                .clickable {
+                    showOngoing = showOngoing.not()
+                }
+                .background(MaterialTheme.colorScheme.tertiaryContainer)
+                .padding(8.dp),
+        ) {
+            Checkbox(
+                checked = showOngoing,
+                onCheckedChange = {
+                    showOngoing = it
+                },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = MaterialTheme.colorScheme.tertiary,
+                    checkmarkColor = MaterialTheme.colorScheme.onTertiary,
+                )
+            )
+            Text(
+                text = stringResource(R.string.ui_settings_customNotifications_showOngoing_label),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                fontWeight = FontWeight.Bold,
+            )
+        }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),

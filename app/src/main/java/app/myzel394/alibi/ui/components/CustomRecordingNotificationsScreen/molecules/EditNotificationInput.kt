@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,6 +65,12 @@ fun EditNotificationInput(
     var ongoingStartTime by remember { mutableStateOf(LocalDateTime.now()) }
 
     val secondaryColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+
+    LaunchedEffect(showOngoing) {
+        if (showOngoing) {
+            ongoingStartTime = LocalDateTime.now()
+        }
+    }
 
     Row(
         modifier = Modifier
