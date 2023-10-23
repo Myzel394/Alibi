@@ -8,7 +8,6 @@ import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.json.JSONObject
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE_TIME
@@ -427,23 +426,41 @@ data class NotificationSettings(
         val titleID: Int,
         val messageID: Int,
         val showOngoing: Boolean,
+        val iconID: Int,
     ) {
         data object Default : Preset(
             R.string.ui_audioRecorder_state_recording_title,
             R.string.ui_audioRecorder_state_recording_description,
             true,
+            R.drawable.launcher_monochrome_noopacity,
         )
 
         data object Weather : Preset(
             R.string.ui_audioRecorder_state_recording_fake_weather_title,
             R.string.ui_audioRecorder_state_recording_fake_weather_description,
             false,
+            R.drawable.ic_cloud
         )
 
         data object Player : Preset(
-            R.string.ui_audioRecorder_state_recording_fake_weather_title,
-            R.string.ui_audioRecorder_state_recording_fake_weather_description,
+            R.string.ui_audioRecorder_state_recording_fake_player_title,
+            R.string.ui_audioRecorder_state_recording_fake_player_description,
+            true,
+            R.drawable.ic_note,
+        )
+
+        data object Browser : Preset(
+            R.string.ui_audioRecorder_state_recording_fake_browser_title,
+            R.string.ui_audioRecorder_state_recording_fake_browser_description,
+            true,
+            R.drawable.ic_download,
+        )
+
+        data object VPN : Preset(
+            R.string.ui_audioRecorder_state_recording_fake_vpn_title,
+            R.string.ui_audioRecorder_state_recording_fake_vpn_description,
             false,
+            R.drawable.ic_vpn,
         )
     }
 
@@ -456,5 +473,13 @@ data class NotificationSettings(
                 preset = preset,
             )
         }
+
+        val PRESETS = listOf(
+            Preset.Default,
+            Preset.Weather,
+            Preset.Player,
+            Preset.Browser,
+            Preset.VPN,
+        )
     }
 }

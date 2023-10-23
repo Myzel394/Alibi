@@ -1,33 +1,25 @@
 package app.myzel394.alibi.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -37,24 +29,9 @@ import androidx.navigation.NavController
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
-import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms.EditNotificationInput
-import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms.LandingElement
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BitrateTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.CustomNotificationTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.EncoderTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ForceExactMaxDurationTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ImportExport
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.InAppLanguagePicker
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.IntervalDurationTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.MaxDurationTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.OutputFormatTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.SamplingRateTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ThemeSelector
-import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
-import app.myzel394.alibi.ui.components.atoms.MessageBox
-import app.myzel394.alibi.ui.components.atoms.MessageType
-import kotlinx.coroutines.launch
+import app.myzel394.alibi.db.NotificationSettings
+import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms.NotificationPresetSelect
+import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.molecules.EditNotificationInput
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,10 +70,12 @@ fun CustomRecordingNotificationsScreen(
     ) { padding ->
         if (settings.notificationSettings == null) {
         }
-        Box(
+        Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(padding)
-                .padding(vertical = 64.dp)
+                .padding(vertical = 64.dp, horizontal = 16.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
             EditNotificationInput(
                 modifier = Modifier
@@ -109,7 +88,22 @@ fun CustomRecordingNotificationsScreen(
                 onTitleChange = {},
                 onDescriptionChange = {},
             )
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(NotificationSettings.PRESETS.size) {
+                    val preset = NotificationSettings.PRESETS[it]
 
+                    NotificationPresetSelect(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+
+                            },
+                        preset = preset,
+                    )
+                }
+            }
         }
     }
 }

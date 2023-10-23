@@ -1,4 +1,4 @@
-package app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms
+package app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.molecules
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -41,6 +41,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
+import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms.PreviewIcon
 import app.myzel394.alibi.ui.effects.rememberForceUpdate
 import com.maxkeppeler.sheets.input.models.InputText
 import java.time.Duration
@@ -72,19 +73,11 @@ fun EditNotificationInput(
     ) {
         val headlineSize = 22.dp
 
-        Box(
-            modifier = Modifier
-                .size(headlineSize)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondary)
-                .padding(1.dp),
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.launcher_foreground),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
-            )
-        }
+        PreviewIcon(
+            modifier = Modifier.size(headlineSize),
+            painter = painterResource(id = R.drawable.launcher_foreground)
+        )
+
         Column(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(16.dp),

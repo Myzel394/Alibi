@@ -78,4 +78,10 @@
     <string name="ui_settings_customNotifications_landing_description">Due to Android\'s restrictions, Alibi has to show a notification while recording. To hide the fact that you\'re using Alibi, you can customize the notification.</string>
     <string name="ui_settings_customNotifications_landing_help_hideNotifications">Alternatively, you can also simply disable notifications</string>
     <string name="ui_settings_customNotifications_landing_getStarted">Create own notification</string>
+    <string name="ui_audioRecorder_state_recording_fake_player_title">Playing Audio</string>
+    <string name="ui_audioRecorder_state_recording_fake_player_description">Now playing: Despacito</string>
+    <string name="ui_audioRecorder_state_recording_fake_browser_title">Downloading attachments.zip</string>
+    <string name="ui_audioRecorder_state_recording_fake_browser_description">Downloading file...</string>
+    <string name="ui_audioRecorder_state_recording_fake_vpn_title">Connected to VPN</string>
+    <string name="ui_audioRecorder_state_recording_fake_vpn_description">Connection Secured</string>
 </resources>
