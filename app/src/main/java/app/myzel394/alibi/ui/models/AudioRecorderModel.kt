@@ -18,7 +18,7 @@ import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.services.RecorderService
 
-class AudioRecorderModel: ViewModel() {
+class AudioRecorderModel : ViewModel() {
     var recorderState by mutableStateOf(RecorderState.IDLE)
         private set
     var recordingTime by mutableStateOf<Long?>(null)
@@ -48,28 +48,29 @@ class AudioRecorderModel: ViewModel() {
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            recorderService = ((service as RecorderService.RecorderBinder).getService() as AudioRecorderService).also {recorder ->
-                recorder.onStateChange = { state ->
-                    recorderState = state
-                }
-                recorder.onRecordingTimeChange = { time ->
-                    recordingTime = time
-                }
-                recorder.onAmplitudeChange = { amps ->
-                    amplitudes = amps
-                    onAmplitudeChange()
-                }
-                recorder.onError = {
-                    recorderService!!.createLastRecording()
-                    onError()
-                }
-            }.also {
-                it.startRecording()
+            recorderService =
+                ((service as RecorderService.RecorderBinder).getService() as AudioRecorderService).also { recorder ->
+                    recorder.onStateChange = { state ->
+                        recorderState = state
+                    }
+                    recorder.onRecordingTimeChange = { time ->
+                        recordingTime = time
+                    }
+                    recorder.onAmplitudeChange = { amps ->
+                        amplitudes = amps
+                        onAmplitudeChange()
+                    }
+                    recorder.onError = {
+                        recorderService!!.createLastRecording()
+                        onError()
+                    }
+                }.also {
+                    it.startRecording()
 
-                recorderState = it.state
-                recordingTime = it.recordingTime
-                amplitudes = it.amplitudes
-            }
+                    recorderState = it.state
+                    recordingTime = it.recordingTime
+                    amplitudes = it.amplitudes
+                }
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -115,6 +116,10 @@ class AudioRecorderModel: ViewModel() {
 
     fun resumeRecording() {
         recorderService!!.changeState(RecorderState.RECORDING)
+    }
+
+    fun setNotificationDetails(details: RecorderService.NotificationDetails) {
+        recorderService?.notificationDetails = details
     }
 
     fun setMaxAmplitudesAmount(amount: Int) {
