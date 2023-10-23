@@ -20,13 +20,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,40 +51,28 @@ import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ThemeSelector
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
-import app.myzel394.alibi.ui.models.AudioRecorderModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(
+fun CustomRecordingNotificationsScreen(
     navController: NavController,
-    audioRecorder: AudioRecorderModel,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         rememberTopAppBarState()
     )
 
+    val dataStore = LocalContext.current.dataStore
+    val settings = dataStore
+        .data
+        .collectAsState(initial = AppSettings.getDefaultInstance())
+        .value
+
     Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-                snackbar = {
-                    Snackbar(
-                        snackbarData = it,
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        actionColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        actionContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        dismissActionContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
-                }
-            )
-        },
         topBar = {
             LargeTopAppBar(
                 title = {
-                    Text(stringResource(R.string.ui_settings_title))
+                    Text(stringResource(R.string.ui_settings_option_customNotification_title))
                 },
                 navigationIcon = {
                     IconButton(onClick = navController::popBackStack) {
@@ -109,67 +95,6 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val scope = rememberCoroutineScope()
-            val dataStore = LocalContext.current.dataStore
-            val settings = dataStore
-                .data
-                .collectAsState(initial = AppSettings.getDefaultInstance())
-                .value
-
-            // Show alert
-            if (audioRecorder.isInRecording)
-                Box(
-                    modifier = Modifier
-                        .padding(16.dp)
-                ) {
-                    MessageBox(
-                        type = MessageType.WARNING,
-                        title = stringResource(R.string.ui_settings_hint_recordingActive_title),
-                        message = stringResource(R.string.ui_settings_hint_recordingActive_message),
-                    )
-                }
-            if (!SUPPORTS_DARK_MODE_NATIVELY) {
-                ThemeSelector()
-            }
-            GlobalSwitch(
-                label = stringResource(R.string.ui_settings_advancedSettings_label),
-                checked = settings.showAdvancedSettings,
-                onCheckedChange = {
-                    scope.launch {
-                        dataStore.updateData {
-                            it.setShowAdvancedSettings(it.showAdvancedSettings.not())
-                        }
-                    }
-                }
-            )
-            MaxDurationTile()
-            IntervalDurationTile()
-            ForceExactMaxDurationTile()
-            InAppLanguagePicker()
-            CustomNotificationTile(navController = navController)
-            AnimatedVisibility(visible = settings.showAdvancedSettings) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(32.dp),
-                ) {
-                    Column {
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 32.dp)
-                        )
-                        BitrateTile()
-                        SamplingRateTile()
-                        EncoderTile(snackbarHostState = snackbarHostState)
-                        OutputFormatTile()
-                    }
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                    )
-                    ImportExport(snackbarHostState = snackbarHostState)
-                }
-            }
         }
     }
 }

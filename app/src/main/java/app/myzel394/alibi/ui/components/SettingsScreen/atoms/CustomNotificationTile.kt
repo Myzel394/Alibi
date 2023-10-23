@@ -12,13 +12,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.navigation.NavController
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.components.atoms.SettingsTile
+import app.myzel394.alibi.ui.enums.Screen
 
 @Composable
-fun CustomNotificationTile() {
+fun CustomNotificationTile(
+    navController: NavController,
+) {
     val dataStore = LocalContext.current.dataStore
     val settings = dataStore
         .data
@@ -33,7 +37,9 @@ fun CustomNotificationTile() {
 
     SettingsTile(
         firstModifier = Modifier
-            .clickable { }
+            .clickable {
+                navController.navigate(Screen.CustomRecordingNotifications.route)
+            }
             .semantics { contentDescription = label },
         title = stringResource(R.string.ui_settings_option_customNotification_title),
         description = label,
