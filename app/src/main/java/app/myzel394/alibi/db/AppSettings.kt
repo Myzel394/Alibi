@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter.ISO_DATE_TIME
 @Serializable
 data class AppSettings(
     val audioRecorderSettings: AudioRecorderSettings = AudioRecorderSettings(),
-    val notificationSettings: NotificationSettings = NotificationSettings.fromPreset(NotificationSettings.Preset.Default),
+    val notificationSettings: NotificationSettings? = null,
     val hasSeenOnboarding: Boolean = false,
     val showAdvancedSettings: Boolean = false,
     val theme: Theme = Theme.SYSTEM,
@@ -433,6 +433,7 @@ data class NotificationSettings(
             R.string.ui_audioRecorder_state_recording_description,
             true,
         )
+
         data object Weather : Preset(
             R.string.ui_audioRecorder_state_recording_fake_weather_title,
             R.string.ui_audioRecorder_state_recording_fake_weather_description,

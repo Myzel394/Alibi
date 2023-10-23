@@ -71,4 +71,7 @@
     <string name="ui_settings_option_import_dialog_text">Are you sure you want to import these settings? Your current settings will be overwritten!</string>
     <string name="ui_settings_option_import_dialog_confirm">Import settings</string>
     <string name="ui_settings_option_import_success">Settings have been imported successfully!</string>
+    <string name="ui_settings_option_customNotification_title">Custom Notifications</string>
+    <string name="ui_settings_option_customNotification_description_setup">Setup custom recording notifications now</string>
+    <string name="ui_settings_option_customNotification_description_edit">Edit recording notifications</string>
 </resources>
