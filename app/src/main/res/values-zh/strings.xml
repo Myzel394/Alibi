@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Alibi</string>
+    <string name="dialog_close_cancel_label">取消</string>
+    <string name="dialog_close_neutral_label">OK</string>
+    <string name="continue_label">继续</string>
+    <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
+    <string name="form_error_type_notNumber">请输入有效数字</string>
+    <string name="form_error_value_notInRange">Please enter a number between <xliff:g name="min">%s</xliff:g> and <xliff:g name="max">%s</xliff:g></string>
+    <string name="form_error_value_mustBeGreaterThan">Please enter a number greater than <xliff:g name="min">%s</xliff:g></string>
+    <string name="notificationChannels_recorder_name">录音机</string>
+    <string name="notificationChannels_recorder_description">显示当前录制状态</string>
+    <string name="ui_permissions_request_title">无法获取权限</string>
+    <string name="ui_permissions_request">请授予权限以继续</string>
+    <string name="ui_permissions_permanentlyDenied_message">您将被重定向到应用程序设置页面，在那里可以授予相关权限</string>
+    <string name="ui_audioRecorder_action_start_label">开始录音</string>
+    <string name="ui_audioRecorder_action_saveOldRecording_label">Save Recording from <xliff:g name="date">%s</xliff:g></string>
+    <string name="ui_audioRecorder_action_delete_label">删除</string>
+    <string name="ui_audioRecorder_action_delete_confirm_title">确定删除记录？</string>
+    <string name="ui_audioRecorder_action_delete_confirm_message">您确定要删除此录音吗?</string>
+    <string name="ui_audioRecorder_action_pause_label">暂停录制</string>
+    <string name="ui_audioRecorder_action_resume_label">恢复录制</string>
+    <string name="ui_audioRecorder_action_save_label">保存录音</string>
+    <string name="ui_audioRecorder_action_start_description">Alibi will continue recording in the background and store the last <xliff:g name="durationInMinutes">%s</xliff:g> minutes at your request</string>
+    <string name="ui_audioRecorder_action_save_processing_dialog_title">处理中</string>
+    <string name="ui_audioRecorder_action_save_processing_dialog_description">正在处理音频，请勿关闭Alibi! 一旦文件准备好，您将自动收到保存文件的提示</string>
+    <string name="ui_audioRecorder_state_recording_title">录制中</string>
+    <string name="ui_audioRecorder_state_recording_description">Alibi会在后台持续记录</string>
+    <string name="ui_welcome_explanation_title">欢迎使用Alibi!</string>
+    <string name="ui_welcome_explanation_message">Alibi就像你手机上的行车记录仪一样。它会不断地录制音频，并在您需要时保存最近的30分钟录音。</string>
+    <string name="ui_welcome_responsibility_title">您需要自行承担使用该应用程序所带来的风险和后果。</string>
+    <string name="ui_welcome_responsibility_message">Alibi不对该应用程序的使用负任何责任。您在使用时需自行承担使用风险。</string>
+    <string name="ui_welcome_start_label">开始使用Alibi</string>
+    <string name="ui_settings_title">设置</string>
+    <string name="ui_settings_advancedSettings_label">高级设置</string>
+    <string name="ui_settings_hint_recordingActive_title">您正在录音...</string>
+    <string name="ui_settings_hint_recordingActive_message">您的更改将在下次开始录音时应用</string>
+    <string name="ui_settings_option_maxDuration_title">最大持续时间</string>
+    <string name="ui_settings_option_maxDuration_description">设置录音的最大时长</string>
+    <string name="ui_settings_option_intervalDuration_title">批处理时间</string>
+    <string name="ui_settings_option_intervalDuration_description">按照指定的时长录制一个单独的批次。Alibi会记录多个批次并删除最旧的批次。在导出音频时，所有批次将被合并到一起。</string>
+    <string name="ui_settings_option_forceExactDuration_title">强制指定时长</string>
+    <string name="ui_settings_option_forceExactDuration_description">强制将输出文件拆分为指定的时长。如果禁用此选项，由于批量音频样本被一同编码，输出文件可能会略长一些。</string>
+    <string name="ui_settings_option_bitrate_title">比特率</string>
+    <string name="ui_settings_option_bitrate_description">更高的比特率意味着更好的音频质量以及更大的储存空间占用</string>
+    <string name="ui_settings_option_bitrate_explanation">为音频录制设置比特率</string>
+    <string name="ui_settings_option_outputFormat_title">输出格式</string>
+    <string name="ui_settings_option_samplingRate_title">采样率</string>
+    <string name="ui_settings_option_samplingRate_description">定义每秒从音频信号中提取的采样数</string>
+    <string name="ui_settings_option_samplingRate_explanation">设置采样率</string>
+    <string name="ui_settings_option_encoder_title">编码器</string>
+    <string name="ui_settings_option_encoder_extra_outputFormatChanged">Output Format has been changed because the current one was incompatible with this encoder</string>
+    <string name="ui_settings_value_auto_label">自动</string>
+    <string name="ui_audioRecorder_state_paused_title">录制暂停</string>
+    <string name="ui_audioRecorder_state_paused_description">音频录制已暂停</string>
+    <string name="ui_audioRecorder_error_recording_title">An error occured</string>
+    <string name="ui_audioRecorder_error_recording_description">Alibi encountered an error during recording. Would you like to try saving the recording?</string>
+    <string name="ui_settings_language_title">Language</string>
+    <string name="ui_settings_language_update_label">Change</string>
+    <string name="ui_settings_option_import_label">Import Settings</string>
+    <string name="ui_settings_option_export_label">Export Settings</string>
+    <string name="ui_settings_option_import_dialog_text">Are you sure you want to import these settings? Your current settings will be overwritten!</string>
+    <string name="ui_settings_option_import_dialog_confirm">Import settings</string>
+    <string name="ui_settings_option_import_success">Settings have been imported successfully!</string>
+</resources>

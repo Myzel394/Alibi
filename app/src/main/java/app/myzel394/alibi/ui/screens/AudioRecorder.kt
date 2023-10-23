@@ -60,7 +60,7 @@ fun AudioRecorder(
                 try {
                     val file = audioRecorder.lastRecording!!.concatenateFiles()
 
-                    saveFile(file)
+                    saveFile(file, file.name)
                 } catch (error: Exception) {
                     Log.getStackTraceString(error)
                 } finally {
@@ -161,7 +161,7 @@ fun AudioRecorder(
                 }
             )
         },
-    ) {padding ->
+    ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()

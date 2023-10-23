@@ -1,6 +1,7 @@
 package app.myzel394.alibi.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +16,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -35,15 +38,18 @@ import androidx.navigation.NavController
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.EncoderTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ForceExactMaxDurationTile
+import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ImportExport
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.InAppLanguagePicker
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.IntervalDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.MaxDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.OutputFormatTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.SamplingRateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ShowAllMicrophonesTile
+import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ThemeSelector
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
@@ -62,7 +68,21 @@ fun SettingsScreen(
     )
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                snackbar = {
+                    Snackbar(
+                        snackbarData = it,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        actionColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        actionContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        dismissActionContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                }
+            )
+        },
         topBar = {
             LargeTopAppBar(
                 title = {
@@ -108,6 +128,9 @@ fun SettingsScreen(
                         message = stringResource(R.string.ui_settings_hint_recordingActive_message),
                     )
                 }
+            if (!SUPPORTS_DARK_MODE_NATIVELY) {
+                ThemeSelector()
+            }
             GlobalSwitch(
                 label = stringResource(R.string.ui_settings_advancedSettings_label),
                 checked = settings.showAdvancedSettings,
@@ -124,17 +147,27 @@ fun SettingsScreen(
             ForceExactMaxDurationTile()
             InAppLanguagePicker()
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
-                Column {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                ) {
+                    ShowAllMicrophonesTile()
+                    Column {
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 32.dp)
+                        )
+                        BitrateTile()
+                        SamplingRateTile()
+                        EncoderTile(snackbarHostState = snackbarHostState)
+                        OutputFormatTile()
+                    }
                     Divider(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 32.dp)
+                            .fillMaxWidth(0.5f)
                     )
-                    ShowAllMicrophonesTile()
-                    BitrateTile()
-                    SamplingRateTile()
-                    EncoderTile(snackbarHostState = snackbarHostState)
-                    OutputFormatTile()
+                    ImportExport(snackbarHostState = snackbarHostState)
                 }
             }
         }

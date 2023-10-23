@@ -65,10 +65,10 @@ fun MaxDurationTile() {
             updateValue(newTimeInSeconds * 1000L)
         },
         config = DurationConfig(
-            timeFormat = DurationFormat.MM_SS,
+            timeFormat = DurationFormat.HH_MM,
             currentTime = settings.audioRecorderSettings.maxDuration / 1000,
             minTime = 60,
-            maxTime = 24 * 60 * 60,
+            maxTime = 10 * 24 * 60 * 60,
         )
     )
     SettingsTile(
@@ -95,7 +95,7 @@ fun MaxDurationTile() {
             ExampleListRoulette(
                 items = AudioRecorderSettings.EXAMPLE_MAX_DURATIONS,
                 onItemSelected = ::updateValue,
-            ) {maxDuration ->
+            ) { maxDuration ->
                 Text(formatDuration(maxDuration))
             }
         }
