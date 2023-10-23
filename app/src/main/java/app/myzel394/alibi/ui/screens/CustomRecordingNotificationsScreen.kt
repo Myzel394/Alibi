@@ -38,6 +38,7 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
+import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms.EditNotificationInput
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms.LandingElement
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.CustomNotificationTile
@@ -91,10 +92,24 @@ fun CustomRecordingNotificationsScreen(
             .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { padding ->
         if (settings.notificationSettings == null) {
-            LandingElement(
+        }
+        Box(
+            modifier = Modifier
+                .padding(padding)
+                .padding(vertical = 64.dp)
+        ) {
+            EditNotificationInput(
                 modifier = Modifier
-                    .padding(padding),
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                showOngoing = true,
+                title = "Alibi",
+                description = "test",
+                onShowOngoingChange = {},
+                onTitleChange = {},
+                onDescriptionChange = {},
             )
+
         }
     }
 }
