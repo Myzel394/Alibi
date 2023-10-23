@@ -74,4 +74,8 @@
     <string name="ui_settings_option_customNotification_title">Custom Notifications</string>
     <string name="ui_settings_option_customNotification_description_setup">Setup custom recording notifications now</string>
     <string name="ui_settings_option_customNotification_description_edit">Edit recording notifications</string>
+    <string name="ui_settings_customNotifications_landing_title">Don\'t expose yourself</string>
+    <string name="ui_settings_customNotifications_landing_description">Due to Android\'s restrictions, Alibi has to show a notification while recording. To hide the fact that you\'re using Alibi, you can customize the notification.</string>
+    <string name="ui_settings_customNotifications_landing_help_hideNotifications">Alternatively, you can also simply disable notifications</string>
+    <string name="ui_settings_customNotifications_landing_getStarted">Create own notification</string>
 </resources>

@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -37,6 +38,7 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
+import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms.LandingElement
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.CustomNotificationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.EncoderTile
@@ -70,7 +72,7 @@ fun CustomRecordingNotificationsScreen(
 
     Scaffold(
         topBar = {
-            LargeTopAppBar(
+            TopAppBar(
                 title = {
                     Text(stringResource(R.string.ui_settings_option_customNotification_title))
                 },
@@ -88,13 +90,11 @@ fun CustomRecordingNotificationsScreen(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+        if (settings.notificationSettings == null) {
+            LandingElement(
+                modifier = Modifier
+                    .padding(padding),
+            )
         }
     }
 }
