@@ -28,8 +28,11 @@
     <string name="ui_audioRecorder_action_start_description">Alibi will continue recording in the background and store the last <xliff:g name="durationInMinutes">%s</xliff:g> minutes at your request</string>
     <string name="ui_audioRecorder_action_save_processing_dialog_title">Processing</string>
     <string name="ui_audioRecorder_action_save_processing_dialog_description">Processing Audio, do not close Alibi! You will be automatically prompted to save the file once it\'s ready</string>
+
     <string name="ui_audioRecorder_state_recording_title">Recording Audio</string>
     <string name="ui_audioRecorder_state_recording_description">Alibi keeps recording in the background</string>
+    <string name="ui_audioRecorder_state_recording_fake_weather_title">Current Weather</string>
+    <string name="ui_audioRecorder_state_recording_fake_weather_description">14° with light chance of rain</string>
 
     <string name="ui_welcome_explanation_title">Welcome to Alibi!</string>
     <string name="ui_welcome_explanation_message">Alibi is like a dashcam for your phone. It allows you to record your audio continuously and save the last 30 minutes when you need it.</string>

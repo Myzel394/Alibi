@@ -3,6 +3,7 @@ package app.myzel394.alibi.db
 import android.media.MediaRecorder
 import android.os.Build
 import android.util.Log
+import app.myzel394.alibi.R
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.serialization.Serializable
@@ -14,6 +15,7 @@ import java.time.format.DateTimeFormatter.ISO_DATE_TIME
 @Serializable
 data class AppSettings(
     val audioRecorderSettings: AudioRecorderSettings = AudioRecorderSettings(),
+    val notificationSettings: NotificationSettings = NotificationSettings.fromPreset(NotificationSettings.Preset.Default),
     val hasSeenOnboarding: Boolean = false,
     val showAdvancedSettings: Boolean = false,
     val theme: Theme = Theme.SYSTEM,
@@ -466,6 +468,49 @@ data class AudioRecorderSettings(
                 encoder = data.optInt("encoder", -1).let {
                     if (it == -1) null else it
                 },
+            )
+        }
+    }
+}
+
+@Serializable
+data class NotificationSettings(
+    val title: String,
+    val message: String,
+    val showOngoing: Boolean,
+    val preset: Preset? = null,
+) {
+    @Serializable
+    sealed class Preset(
+        val titleID: Int,
+        val messageID: Int,
+        val showOngoing: Boolean,
+    ) {
+        data object Default : Preset(
+            R.string.ui_audioRecorder_state_recording_title,
+            R.string.ui_audioRecorder_state_recording_description,
+            true,
+        )
+        data object Weather : Preset(
+            R.string.ui_audioRecorder_state_recording_fake_weather_title,
+            R.string.ui_audioRecorder_state_recording_fake_weather_description,
+            false,
+        )
+
+        data object Player : Preset(
+            R.string.ui_audioRecorder_state_recording_fake_weather_title,
+            R.string.ui_audioRecorder_state_recording_fake_weather_description,
+            false,
+        )
+    }
+
+    companion object {
+        fun fromPreset(preset: Preset): NotificationSettings {
+            return NotificationSettings(
+                title = "",
+                message = "",
+                showOngoing = preset.showOngoing,
+                preset = preset,
             )
         }
     }
