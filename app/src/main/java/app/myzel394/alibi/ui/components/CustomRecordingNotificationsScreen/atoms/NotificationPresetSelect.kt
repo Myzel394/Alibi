@@ -29,14 +29,14 @@ fun NotificationPresetSelect(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
             .clip(MaterialTheme.shapes.large)
+            .then(modifier)
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
             .border(
                 width = 1.dp,
                 shape = MaterialTheme.shapes.large,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
             )
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .then(modifier),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
         PreviewIcon(
             modifier = Modifier.size(32.dp),

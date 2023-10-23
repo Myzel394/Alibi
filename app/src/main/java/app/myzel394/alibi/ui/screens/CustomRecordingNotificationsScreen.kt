@@ -1,13 +1,15 @@
 package app.myzel394.alibi.ui.screens
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +34,7 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.NotificationSettings
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms.NotificationPresetSelect
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.molecules.EditNotificationInput
+import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.organisms.NotificationEditor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +44,7 @@ fun CustomRecordingNotificationsScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         rememberTopAppBarState()
     )
+    val scrollState = rememberScrollState()
 
     val dataStore = LocalContext.current.dataStore
     val settings = dataStore
@@ -70,40 +74,11 @@ fun CustomRecordingNotificationsScreen(
     ) { padding ->
         if (settings.notificationSettings == null) {
         }
-        Column(
+        NotificationEditor(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(padding)
-                .padding(vertical = 64.dp, horizontal = 16.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-        ) {
-            EditNotificationInput(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                showOngoing = true,
-                title = "Alibi",
-                description = "test",
-                onShowOngoingChange = {},
-                onTitleChange = {},
-                onDescriptionChange = {},
-            )
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(NotificationSettings.PRESETS.size) {
-                    val preset = NotificationSettings.PRESETS[it]
-
-                    NotificationPresetSelect(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-
-                            },
-                        preset = preset,
-                    )
-                }
-            }
-        }
+                .verticalScroll(scrollState),
+            scrollState = scrollState,
+        )
     }
 }

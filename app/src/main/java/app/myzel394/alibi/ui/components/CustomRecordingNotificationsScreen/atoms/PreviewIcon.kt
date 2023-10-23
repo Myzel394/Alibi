@@ -31,7 +31,7 @@ fun PreviewIcon(
             .then(modifier)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.secondary)
-            .padding(1.dp)
+            .padding(2.dp)
     ) {
         Image(
             painter = painter,
