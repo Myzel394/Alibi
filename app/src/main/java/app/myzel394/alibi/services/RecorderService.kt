@@ -5,10 +5,13 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.ServiceCompat
 import app.myzel394.alibi.MainActivity
 import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.R
@@ -150,7 +153,16 @@ abstract class RecorderService : Service() {
         recordingStart = LocalDateTime.now()
 
         val notification = getNotificationHelper().buildStartingNotification()
-        startForeground(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID, notification)
+        ServiceCompat.startForeground(
+            this,
+            NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID,
+            notification,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+            } else {
+                0
+            },
+        )
 
         // Start
         changeState(RecorderState.RECORDING)
