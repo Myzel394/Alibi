@@ -26,6 +26,8 @@
     <string name="ui_audioRecorder_action_save_processing_dialog_description">正在处理音频，请勿关闭Alibi! 一旦文件准备好，您将自动收到保存文件的提示</string>
     <string name="ui_audioRecorder_state_recording_title">录制中</string>
     <string name="ui_audioRecorder_state_recording_description">Alibi会在后台持续记录</string>
+    <string name="ui_audioRecorder_state_recording_fake_weather_title">Current Weather</string>
+    <string name="ui_audioRecorder_state_recording_fake_weather_description">14° with light chance of rain</string>
     <string name="ui_welcome_explanation_title">欢迎使用Alibi!</string>
     <string name="ui_welcome_explanation_message">Alibi就像你手机上的行车记录仪一样。它会不断地录制音频，并在您需要时保存最近的30分钟录音。</string>
     <string name="ui_welcome_responsibility_title">您需要自行承担使用该应用程序所带来的风险和后果。</string>
@@ -62,4 +64,21 @@
     <string name="ui_settings_option_import_dialog_text">Are you sure you want to import these settings? Your current settings will be overwritten!</string>
     <string name="ui_settings_option_import_dialog_confirm">Import settings</string>
     <string name="ui_settings_option_import_success">Settings have been imported successfully!</string>
+    <string name="ui_settings_option_customNotification_title">Custom Notifications</string>
+    <string name="ui_settings_option_customNotification_description_setup">Setup custom recording notifications now</string>
+    <string name="ui_settings_option_customNotification_description_edit">Edit recording notifications</string>
+    <string name="ui_settings_customNotifications_landing_title">Don\'t expose yourself</string>
+    <string name="ui_settings_customNotifications_landing_description">Due to Android\'s restrictions, Alibi has to show a notification while recording. To hide the fact that you\'re using Alibi, you can customize the notification.</string>
+    <string name="ui_settings_customNotifications_landing_help_hideNotifications">Alternatively, you can also simply disable notifications</string>
+    <string name="ui_settings_customNotifications_landing_getStarted">Create own notification</string>
+    <string name="ui_audioRecorder_state_recording_fake_player_title">Playing Audio</string>
+    <string name="ui_audioRecorder_state_recording_fake_player_description">Now playing: Despacito</string>
+    <string name="ui_audioRecorder_state_recording_fake_browser_title">Downloading attachments.zip</string>
+    <string name="ui_audioRecorder_state_recording_fake_browser_description">Downloading file...</string>
+    <string name="ui_audioRecorder_state_recording_fake_vpn_title">Connected to VPN</string>
+    <string name="ui_audioRecorder_state_recording_fake_vpn_description">Connection Secured</string>
+    <string name="ui_settings_customNotifications_preset_apply_label">Apply Preset \"%s\"</string>
+    <string name="ui_settings_customNotifications_showOngoing_label">Show Duration</string>
+    <string name="ui_settings_customNotifications_save_label">Update notification</string>
+    <string name="ui_settings_customNotifications_edit_help">This is a preview for your notification. You can edit the title and the message. At the bottom you can find some presets.</string>
 </resources>
