@@ -9,7 +9,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-abstract class ExtraRecorderInformationService: RecorderService() {
+abstract class ExtraRecorderInformationService : RecorderService() {
     abstract fun getAmplitudeAmount(): Int
     abstract fun getAmplitude(): Int
 
@@ -30,7 +30,11 @@ abstract class ExtraRecorderInformationService: RecorderService() {
 
         // Delete old amplitudes
         if (amplitudes.size > getAmplitudeAmount()) {
-            amplitudes.drop(amplitudes.size - getAmplitudeAmount())
+            // Should be more efficient than dropping the elements, getting a new list
+            // clearing old list and adding new elements to it
+            repeat(amplitudes.size - getAmplitudeAmount()) {
+                amplitudes.removeAt(0)
+            }
         }
 
         handler.postDelayed(::updateAmplitude, 100)
