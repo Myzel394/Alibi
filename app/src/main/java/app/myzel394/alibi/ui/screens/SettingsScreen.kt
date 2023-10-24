@@ -153,13 +153,13 @@ fun SettingsScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
-                    ShowAllMicrophonesTile()
                     Column {
                         Divider(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 32.dp)
                         )
+                        ShowAllMicrophonesTile()
                         BitrateTile()
                         SamplingRateTile()
                         EncoderTile(snackbarHostState = snackbarHostState)
