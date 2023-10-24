@@ -36,6 +36,7 @@ import app.myzel394.alibi.ui.utils.openNotificationsSettings
 @Composable
 fun LandingElement(
     modifier: Modifier = Modifier,
+    onOpenEditor: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -82,7 +83,7 @@ fun LandingElement(
                     style = MaterialTheme.typography.bodySmall,
                 )
                 Button(
-                    onClick = {},
+                    onClick = onOpenEditor,
                     colors = ButtonDefaults.filledTonalButtonColors(),
                 ) {
                     Icon(

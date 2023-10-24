@@ -24,7 +24,7 @@ import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NotificationPresetsRoulette(
-    onClick: (String, String, Int, Boolean) -> Unit,
+    onClick: (String, String, Int, Boolean, NotificationSettings.Preset) -> Unit,
 ) {
     val state = rememberLazyListState()
 
@@ -62,6 +62,7 @@ fun NotificationPresetsRoulette(
                                 presetDescription,
                                 preset.iconID,
                                 preset.showOngoing,
+                                preset,
                             )
                         },
                     preset = preset,

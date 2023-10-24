@@ -28,6 +28,10 @@ data class AppSettings(
         return copy(audioRecorderSettings = audioRecorderSettings)
     }
 
+    fun setNotificationSettings(notificationSettings: NotificationSettings?): AppSettings {
+        return copy(notificationSettings = notificationSettings)
+    }
+
     fun setHasSeenOnboarding(hasSeenOnboarding: Boolean): AppSettings {
         return copy(hasSeenOnboarding = hasSeenOnboarding)
     }
@@ -418,6 +422,7 @@ data class AudioRecorderSettings(
 data class NotificationSettings(
     val title: String,
     val message: String,
+    val iconID: Int,
     val showOngoing: Boolean,
     val preset: Preset? = null,
 ) {
@@ -428,6 +433,7 @@ data class NotificationSettings(
         val showOngoing: Boolean,
         val iconID: Int,
     ) {
+        @Serializable
         data object Default : Preset(
             R.string.ui_audioRecorder_state_recording_title,
             R.string.ui_audioRecorder_state_recording_description,
@@ -435,6 +441,7 @@ data class NotificationSettings(
             R.drawable.launcher_monochrome_noopacity,
         )
 
+        @Serializable
         data object Weather : Preset(
             R.string.ui_audioRecorder_state_recording_fake_weather_title,
             R.string.ui_audioRecorder_state_recording_fake_weather_description,
@@ -442,6 +449,7 @@ data class NotificationSettings(
             R.drawable.ic_cloud
         )
 
+        @Serializable
         data object Player : Preset(
             R.string.ui_audioRecorder_state_recording_fake_player_title,
             R.string.ui_audioRecorder_state_recording_fake_player_description,
@@ -449,6 +457,7 @@ data class NotificationSettings(
             R.drawable.ic_note,
         )
 
+        @Serializable
         data object Browser : Preset(
             R.string.ui_audioRecorder_state_recording_fake_browser_title,
             R.string.ui_audioRecorder_state_recording_fake_browser_description,
@@ -456,6 +465,7 @@ data class NotificationSettings(
             R.drawable.ic_download,
         )
 
+        @Serializable
         data object VPN : Preset(
             R.string.ui_audioRecorder_state_recording_fake_vpn_title,
             R.string.ui_audioRecorder_state_recording_fake_vpn_description,
@@ -470,6 +480,7 @@ data class NotificationSettings(
                 title = "",
                 message = "",
                 showOngoing = preset.showOngoing,
+                iconID = preset.iconID,
                 preset = preset,
             )
         }

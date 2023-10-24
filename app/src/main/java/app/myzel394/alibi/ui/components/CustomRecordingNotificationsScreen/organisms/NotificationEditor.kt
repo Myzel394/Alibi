@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,6 +57,7 @@ import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms.NotificationPresetSelect
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.molecules.EditNotificationInput
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.molecules.NotificationPresetsRoulette
+import kotlinx.coroutines.newFixedThreadPoolContext
 
 val HORIZONTAL_PADDING = 16.dp;
 
@@ -63,7 +65,7 @@ val HORIZONTAL_PADDING = 16.dp;
 @Composable
 fun NotificationEditor(
     modifier: Modifier = Modifier,
-    scrollState: ScrollState,
+    onNotificationChange: (String, String, Int, Boolean, NotificationSettings.Preset?) -> Unit,
 ) {
     val defaultTitle = stringResource(R.string.ui_audioRecorder_state_recording_title)
     val defaultDescription = stringResource(R.string.ui_audioRecorder_state_recording_description)
@@ -80,8 +82,10 @@ fun NotificationEditor(
     var icon: Int by rememberSaveable {
         mutableIntStateOf(R.drawable.launcher_monochrome_noopacity)
     }
+    var preset: NotificationSettings.Preset? by remember {
+        mutableStateOf(null)
+    }
 
-    // TODO: Add Preview functionality
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -150,16 +154,25 @@ fun NotificationEditor(
             verticalArrangement = Arrangement.spacedBy(32.dp),
         ) {
             NotificationPresetsRoulette(
-                onClick = { presetTitle, presetDescription, presetIcon, presetShowOngoing ->
+                onClick = { presetTitle, presetDescription, presetIcon, presetShowOngoing, newPreset ->
                     title = presetTitle
                     description = presetDescription
                     icon = presetIcon
                     showOngoing = presetShowOngoing
+                    preset = newPreset
                 }
             )
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    onNotificationChange(
+                        title,
+                        description,
+                        icon,
+                        showOngoing,
+                        preset,
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = HORIZONTAL_PADDING)

@@ -22,7 +22,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -35,9 +41,11 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.NotificationSettings
+import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms.LandingElement
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.atoms.NotificationPresetSelect
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.molecules.EditNotificationInput
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.organisms.NotificationEditor
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,13 +55,22 @@ fun CustomRecordingNotificationsScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         rememberTopAppBarState()
     )
-    val scrollState = rememberScrollState()
 
     val dataStore = LocalContext.current.dataStore
     val settings = dataStore
         .data
         .collectAsState(initial = AppSettings.getDefaultInstance())
         .value
+
+    var showEditor: Boolean by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(settings.notificationSettings) {
+        if (settings.notificationSettings != null) {
+            showEditor = true
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -75,13 +92,38 @@ fun CustomRecordingNotificationsScreen(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { padding ->
-        if (settings.notificationSettings == null) {
+        if (showEditor) {
+            val scope = rememberCoroutineScope()
+
+            NotificationEditor(
+                modifier = Modifier
+                    .padding(padding)
+                    .padding(vertical = 16.dp),
+                onNotificationChange = { title, description, icon, showOngoing, preset ->
+                    scope.launch {
+                        dataStore.updateData { settings ->
+                            settings.setNotificationSettings(
+                                if (preset == null) {
+                                    NotificationSettings(
+                                        title = title,
+                                        message = description,
+                                        iconID = icon,
+                                        showOngoing = showOngoing,
+                                    )
+                                } else {
+                                    NotificationSettings.fromPreset(preset)
+                                }
+                            )
+                        }
+                    }
+                }
+            )
+        } else {
+            LandingElement(
+                onOpenEditor = {
+                    showEditor = true
+                }
+            )
         }
-        NotificationEditor(
-            modifier = Modifier
-                .padding(padding)
-                .padding(vertical = 16.dp),
-            scrollState = scrollState,
-        )
     }
 }
