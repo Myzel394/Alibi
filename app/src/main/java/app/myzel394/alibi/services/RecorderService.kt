@@ -40,7 +40,7 @@ abstract class RecorderService : Service() {
         private set
     private lateinit var recordingTimeTimer: ScheduledExecutorService
     var onRecordingTimeChange: ((Long) -> Unit)? = null
-    var notificationDetails: NotificationDetails? = null
+    var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
 
     protected abstract fun start()
     protected abstract fun pause()
@@ -139,7 +139,7 @@ abstract class RecorderService : Service() {
     fun startRecording() {
         recordingStart = LocalDateTime.now()
 
-        val notification = buildStartNotification()
+        val notification = getNotificationHelper().buildStartingNotification()
         startForeground(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID, notification)
 
         // Start
@@ -157,117 +157,26 @@ abstract class RecorderService : Service() {
         stopSelf()
     }
 
-    private fun buildStartNotification(): Notification =
-        NotificationCompat.Builder(this, NotificationHelper.RECORDER_CHANNEL_ID)
-            .setContentTitle(getString(R.string.ui_audioRecorder_state_recording_title))
-            .setContentText(getString(R.string.ui_audioRecorder_state_recording_description))
-            .setSmallIcon(R.drawable.launcher_foreground)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .build()
-
-    private fun getNotificationChangeStateIntent(
-        newState: RecorderState,
-        requestCode: Int
-    ): PendingIntent {
-        return PendingIntent.getService(
-            this,
-            requestCode,
-            Intent(this, AudioRecorderService::class.java).apply {
-                action = "changeState"
-                putExtra("newState", newState.name)
-            },
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
+    private fun getNotificationHelper(): RecorderNotificationHelper {
+        return RecorderNotificationHelper(this, notificationDetails)
     }
 
-    private fun buildNotification(): Notification = when (state) {
-        RecorderState.RECORDING -> NotificationCompat.Builder(
-            this,
-            NotificationHelper.RECORDER_CHANNEL_ID
-        )
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .setWhen(
-                Date.from(
-                    Calendar
-                        .getInstance()
-                        .also { it.add(Calendar.MILLISECOND, -recordingTime.toInt()) }
-                        .toInstant()
-                ).time,
-            )
-            .setSilent(true)
-            .setOnlyAlertOnce(true)
-            .setUsesChronometer(true)
-            .setChronometerCountDown(false)
-            .setContentIntent(
-                PendingIntent.getActivity(
-                    this,
-                    0,
-                    Intent(this, MainActivity::class.java),
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-                )
-            )
-            .addAction(
-                R.drawable.ic_cancel,
-                getString(R.string.ui_audioRecorder_action_delete_label),
-                getNotificationChangeStateIntent(RecorderState.IDLE, 1),
-            )
-            .addAction(
-                R.drawable.ic_pause,
-                getString(R.string.ui_audioRecorder_action_pause_label),
-                getNotificationChangeStateIntent(RecorderState.PAUSED, 2),
-            )
-            .apply {
-                setContentTitle(
-                    notificationDetails?.title
-                        ?: getString(R.string.ui_audioRecorder_state_recording_title)
-                )
-                setContentText(
-                    notificationDetails?.description
-                        ?: getString(R.string.ui_audioRecorder_state_recording_description)
-                )
-                setSmallIcon(notificationDetails?.icon ?: R.drawable.launcher_foreground)
-                setOngoing(notificationDetails?.isOngoing ?: true)
+
+    private fun buildNotification(): Notification {
+        val notificationHelper = getNotificationHelper()
+
+        return when (state) {
+            RecorderState.RECORDING -> {
+                notificationHelper.buildRecordingNotification(recordingTime)
             }
-            .build()
 
-        RecorderState.PAUSED -> NotificationCompat.Builder(
-            this,
-            NotificationHelper.RECORDER_CHANNEL_ID
-        )
-            .setContentTitle(getString(R.string.ui_audioRecorder_state_paused_title))
-            .setContentText(getString(R.string.ui_audioRecorder_state_paused_description))
-            .setSmallIcon(R.drawable.launcher_foreground)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .setOngoing(false)
-            .setOnlyAlertOnce(true)
-            .setUsesChronometer(false)
-            .setWhen(Date.from(recordingStart.atZone(ZoneId.systemDefault()).toInstant()).time)
-            .setShowWhen(true)
-            .setContentIntent(
-                PendingIntent.getActivity(
-                    this,
-                    0,
-                    Intent(this, MainActivity::class.java),
-                    PendingIntent.FLAG_IMMUTABLE,
-                )
-            )
-            .addAction(
-                R.drawable.ic_play,
-                getString(R.string.ui_audioRecorder_action_resume_label),
-                getNotificationChangeStateIntent(RecorderState.RECORDING, 3),
-            )
-            .build()
+            RecorderState.PAUSED -> {
+                notificationHelper.buildPausedNotification(recordingStart)
+            }
 
-        else -> throw IllegalStateException("Invalid state passed to `buildNotification()`")
+            else -> {
+                throw IllegalStateException("Notification can't be built in state $state")
+            }
+        }
     }
-
-    data class NotificationDetails(
-        val title: String,
-        val description: String,
-        val icon: Int,
-        val isOngoing: Boolean,
-    )
 }
