@@ -86,4 +86,5 @@
     <string name="ui_audioRecorder_state_recording_fake_vpn_description">Connection Secured</string>
     <string name="ui_settings_customNotifications_preset_apply_label">Apply Preset \"%s\"</string>
     <string name="ui_settings_customNotifications_showOngoing_label">Show Duration</string>
+    <string name="ui_settings_customNotifications_save_label">Update notification</string>
 </resources>
