@@ -152,11 +152,10 @@ abstract class RecorderService : Service() {
     fun startRecording() {
         recordingStart = LocalDateTime.now()
 
-        val notification = getNotificationHelper().buildStartingNotification()
         ServiceCompat.startForeground(
             this,
             NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID,
-            notification,
+            getNotificationHelper().buildStartingNotification(),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
             } else {
