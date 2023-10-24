@@ -98,9 +98,9 @@ data class RecorderNotificationHelper(
 
     fun buildRecordingNotification(recordingTime: Long): Notification {
         return createBaseNotification()
-            .setUsesChronometer(true)
+            .setUsesChronometer(details?.isOngoing ?: true)
             .setOngoing(details?.isOngoing ?: true)
-            .setShowWhen(true)
+            .setShowWhen(details?.isOngoing ?: true)
             .setWhen(
                 Date.from(
                     Calendar
