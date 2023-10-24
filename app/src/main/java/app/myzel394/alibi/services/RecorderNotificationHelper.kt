@@ -8,7 +8,9 @@ import androidx.core.app.NotificationCompat
 import app.myzel394.alibi.MainActivity
 import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.R
+import app.myzel394.alibi.db.NotificationSettings
 import app.myzel394.alibi.enums.RecorderState
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Calendar
@@ -18,12 +20,36 @@ data class RecorderNotificationHelper(
     val context: Context,
     val details: NotificationDetails? = null,
 ) {
+    @Serializable
     data class NotificationDetails(
         val title: String,
         val description: String,
         val icon: Int,
         val isOngoing: Boolean,
-    )
+    ) {
+        companion object {
+            fun fromNotificationSettings(
+                context: Context,
+                settings: NotificationSettings,
+            ): NotificationDetails {
+                return if (settings.preset == null) {
+                    NotificationDetails(
+                        settings.title,
+                        settings.message,
+                        settings.iconID,
+                        settings.showOngoing,
+                    )
+                } else {
+                    NotificationDetails(
+                        context.getString(settings.preset.titleID),
+                        context.getString(settings.preset.messageID),
+                        settings.preset.iconID,
+                        settings.preset.showOngoing,
+                    )
+                }
+            }
+        }
+    }
 
     private fun getNotificationChangeStateIntent(
         newState: RecorderState,

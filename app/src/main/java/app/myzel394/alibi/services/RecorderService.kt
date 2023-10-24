@@ -14,6 +14,7 @@ import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.R
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.ui.utils.PermissionHelper
+import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Calendar
@@ -51,6 +52,15 @@ abstract class RecorderService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
+            "init" -> {
+                notificationDetails = intent.getStringExtra("notificationDetails")?.let {
+                    Json.decodeFromString(
+                        RecorderNotificationHelper.NotificationDetails.serializer(),
+                        it
+                    )
+                }
+            }
+
             "changeState" -> {
                 val newState = intent.getStringExtra("newState")?.let {
                     RecorderState.valueOf(it)
