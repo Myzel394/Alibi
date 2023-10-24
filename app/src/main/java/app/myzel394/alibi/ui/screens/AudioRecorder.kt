@@ -41,6 +41,7 @@ import app.myzel394.alibi.db.LastRecording
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,6 +62,9 @@ fun AudioRecorder(
         audioRecorder.onRecordingSave = {
             scope.launch {
                 isProcessingAudio = true
+
+                // Give the user some time to see the processing dialog
+                delay(100)
 
                 try {
                     val file = audioRecorder.lastRecording!!.concatenateFiles()
