@@ -34,6 +34,10 @@ import app.myzel394.alibi.ui.components.AudioRecorder.molecules.StartRecording
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import app.myzel394.alibi.R
+import app.myzel394.alibi.dataStore
+import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.db.LastRecording
+import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import kotlinx.coroutines.launch
@@ -167,10 +171,13 @@ fun AudioRecorder(
                 .fillMaxSize()
                 .padding(padding),
         ) {
+            val appSettings =
+                context.dataStore.data.collectAsState(AppSettings.getDefaultInstance()).value
+
             if (audioRecorder.isInRecording)
                 RecordingStatus(audioRecorder = audioRecorder)
             else
-                StartRecording(audioRecorder = audioRecorder)
+                StartRecording(audioRecorder = audioRecorder, appSettings = appSettings)
         }
     }
 }

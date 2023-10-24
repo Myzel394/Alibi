@@ -34,15 +34,17 @@ fun MessageBox(
         MessageType.INFO -> MaterialTheme.colorScheme.tertiaryContainer
         MessageType.SUCCESS -> Color.Green.copy(alpha = 0.3f)
         MessageType.WARNING -> Color.Yellow.copy(alpha = 0.3f)
+        MessageType.SURFACE -> MaterialTheme.colorScheme.surfaceVariant
     }
     val onContainerColor = when (type) {
-        MessageType.ERROR -> MaterialTheme.colorScheme.onErrorContainer
+        MessageType.ERROR -> MaterialTheme.colorScheme.onError
         MessageType.INFO -> MaterialTheme.colorScheme.onTertiaryContainer
         MessageType.SUCCESS -> Color.Green
         MessageType.WARNING -> Color.Yellow
+        MessageType.SURFACE -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     val textColor = if (isDark) onContainerColor else MaterialTheme.colorScheme.onSurface
-    val backgroundColor = if (isDark) containerColor else containerColor
+    val backgroundColor = if (isDark) containerColor else onContainerColor
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -56,6 +58,7 @@ fun MessageBox(
             imageVector = when (type) {
                 MessageType.ERROR -> Icons.Default.Error
                 MessageType.INFO -> Icons.Default.Info
+                MessageType.SURFACE -> Icons.Default.Info
                 MessageType.SUCCESS -> Icons.Default.Check
                 MessageType.WARNING -> Icons.Default.Warning
             },
@@ -84,6 +87,7 @@ fun MessageBox(
 enum class MessageType {
     ERROR,
     INFO,
+    SURFACE,
     SUCCESS,
     WARNING,
 }

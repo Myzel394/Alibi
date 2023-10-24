@@ -10,10 +10,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.LastRecording
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.services.AudioRecorderService
+import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.services.RecorderService
+import kotlinx.coroutines.flow.last
+import kotlinx.serialization.json.Json
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 
 class AudioRecorderModel : ViewModel() {
@@ -45,6 +49,7 @@ class AudioRecorderModel : ViewModel() {
 
     var onRecordingSave: () -> Unit = {}
     var onError: () -> Unit = {}
+    var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
 
     var microphoneStatus: MicrophoneConnectivityStatus = MicrophoneConnectivityStatus.CONNECTED
         private set
@@ -112,7 +117,19 @@ class AudioRecorderModel : ViewModel() {
             context.unbindService(connection)
         }
 
-        val intent = Intent(context, AudioRecorderService::class.java)
+        val intent = Intent(context, AudioRecorderService::class.java).apply {
+            action = "init"
+
+            if (notificationDetails != null) {
+                putExtra(
+                    "notificationDetails",
+                    Json.encodeToString(
+                        RecorderNotificationHelper.NotificationDetails.serializer(),
+                        notificationDetails!!,
+                    ),
+                )
+            }
+        }
         ContextCompat.startForegroundService(context, intent)
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
