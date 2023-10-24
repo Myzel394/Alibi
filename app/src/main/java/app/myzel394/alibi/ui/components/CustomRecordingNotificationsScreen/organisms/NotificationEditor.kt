@@ -40,6 +40,8 @@ import app.myzel394.alibi.db.NotificationSettings
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.models.NotificationViewModel
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.molecules.EditNotificationInput
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.molecules.NotificationPresetsRoulette
+import app.myzel394.alibi.ui.components.atoms.MessageBox
+import app.myzel394.alibi.ui.components.atoms.MessageType
 
 val HORIZONTAL_PADDING = 16.dp;
 
@@ -109,6 +111,11 @@ fun NotificationEditor(
                 .padding(horizontal = HORIZONTAL_PADDING),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            MessageBox(
+                type = MessageType.SURFACE,
+                message = stringResource(R.string.ui_settings_customNotifications_edit_help)
+            )
+
             EditNotificationInput(
                 modifier = Modifier
                     .fillMaxWidth()

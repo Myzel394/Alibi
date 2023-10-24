@@ -29,17 +29,19 @@ fun MessageBox(
     title: String? = null,
 ) {
     val isDark = rememberIsInDarkMode()
-    val containerColor = when(type) {
+    val containerColor = when (type) {
         MessageType.ERROR -> MaterialTheme.colorScheme.errorContainer
         MessageType.INFO -> MaterialTheme.colorScheme.tertiaryContainer
         MessageType.SUCCESS -> Color.Green.copy(alpha = 0.3f)
         MessageType.WARNING -> Color.Yellow.copy(alpha = 0.3f)
+        MessageType.SURFACE -> MaterialTheme.colorScheme.surfaceVariant
     }
-    val onContainerColor = when(type) {
+    val onContainerColor = when (type) {
         MessageType.ERROR -> MaterialTheme.colorScheme.onError
         MessageType.INFO -> MaterialTheme.colorScheme.onTertiaryContainer
         MessageType.SUCCESS -> Color.Green
         MessageType.WARNING -> Color.Yellow
+        MessageType.SURFACE -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     val textColor = if (isDark) onContainerColor else MaterialTheme.colorScheme.onSurface
     val backgroundColor = if (isDark) containerColor else onContainerColor
@@ -53,9 +55,10 @@ fun MessageBox(
             .then(modifier)
     ) {
         Icon(
-            imageVector = when(type) {
+            imageVector = when (type) {
                 MessageType.ERROR -> Icons.Default.Error
                 MessageType.INFO -> Icons.Default.Info
+                MessageType.SURFACE -> Icons.Default.Info
                 MessageType.SUCCESS -> Icons.Default.Check
                 MessageType.WARNING -> Icons.Default.Warning
             },
@@ -84,6 +87,7 @@ fun MessageBox(
 enum class MessageType {
     ERROR,
     INFO,
+    SURFACE,
     SUCCESS,
     WARNING,
 }
