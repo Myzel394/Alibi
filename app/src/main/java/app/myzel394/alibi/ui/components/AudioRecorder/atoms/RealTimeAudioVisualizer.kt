@@ -38,7 +38,7 @@ fun RealtimeAudioVisualizer(
     audioRecorder: AudioRecorderModel,
 ) {
     val scope = rememberCoroutineScope()
-    val amplitudes = audioRecorder.amplitudes!!
+    val amplitudes = audioRecorder.amplitudes
     val primary = MaterialTheme.colorScheme.primary
     val primaryMuted = primary.copy(alpha = 0.3f)
 
@@ -63,7 +63,7 @@ fun RealtimeAudioVisualizer(
     }
 
     val configuration = LocalConfiguration.current
-    val screenWidth = with (LocalDensity.current) {configuration.screenWidthDp.dp.toPx()}
+    val screenWidth = with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx() }
 
     LaunchedEffect(screenWidth) {
         // Add 1 to allow the visualizer to overflow the screen
@@ -86,9 +86,10 @@ fun RealtimeAudioVisualizer(
                     val isOverThreshold = offset >= GROW_START_INDEX
                     val horizontalProgress = (
                             clamp(horizontalValue, GROW_START, GROW_END)
-                    - GROW_START) / (GROW_END - GROW_START)
+                                    - GROW_START) / (GROW_END - GROW_START)
                     val amplitudePercentage = (amplitude.toFloat() / MAX_AMPLITUDE).coerceAtMost(1f)
-                    val boxHeight = (height * amplitudePercentage * horizontalProgress).coerceAtLeast(15f)
+                    val boxHeight =
+                        (height * amplitudePercentage * horizontalProgress).coerceAtLeast(15f)
 
                     drawRoundRect(
                         color = if (amplitudePercentage > 0.05f && isOverThreshold) primary else primaryMuted,
