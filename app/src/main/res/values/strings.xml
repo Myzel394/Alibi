@@ -88,4 +88,5 @@
     <string name="ui_settings_customNotifications_showOngoing_label">Show Duration</string>
     <string name="ui_settings_customNotifications_save_label">Update notification</string>
     <string name="ui_settings_customNotifications_edit_help">This is a preview for your notification. You can edit the title and the message. At the bottom you can find some presets.</string>
+    <string name="ui_about_title">About Alibi</string>
 </resources>
