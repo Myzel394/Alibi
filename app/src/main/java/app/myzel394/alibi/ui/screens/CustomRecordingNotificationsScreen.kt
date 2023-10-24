@@ -102,7 +102,12 @@ fun CustomRecordingNotificationsScreen(
                 onNotificationChange = { notificationSettings ->
                     scope.launch {
                         dataStore.updateData { settings ->
-                            settings.setNotificationSettings(notificationSettings)
+                            settings.setNotificationSettings(notificationSettings.let {
+                                if (it.preset == NotificationSettings.Preset.Default)
+                                    null
+                                else
+                                    it
+                            })
                         }
                     }
                     navController.popBackStack()
