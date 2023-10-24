@@ -55,13 +55,26 @@ class NotificationViewModel : ViewModel() {
     fun initialize(
         title: String,
         description: String,
+        showOngoing: Boolean = true,
+        icon: Int = R.drawable.launcher_monochrome_noopacity,
     ) {
-        if (_hasBeenInitialized) {
-            return
-        }
-
         _title.value = title
         _description.value = description
+        this.showOngoing = showOngoing
+        this.icon = icon
         _hasBeenInitialized = true
+    }
+
+    fun asNotificationSettings(): NotificationSettings {
+        return if (!_presetChanged && notificationPreset != null) {
+            NotificationSettings.fromPreset(notificationPreset!!)
+        } else {
+            NotificationSettings(
+                title = title,
+                message = description,
+                iconID = icon,
+                showOngoing = showOngoing,
+            )
+        }
     }
 }

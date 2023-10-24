@@ -25,15 +25,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import app.myzel394.alibi.R
+import app.myzel394.alibi.dataStore
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.NotificationSettings
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.models.NotificationViewModel
 import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.molecules.EditNotificationInput
@@ -41,21 +45,59 @@ import app.myzel394.alibi.ui.components.CustomRecordingNotificationsScreen.molec
 
 val HORIZONTAL_PADDING = 16.dp;
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun NotificationEditor(
     modifier: Modifier = Modifier,
     notificationModel: NotificationViewModel = viewModel(),
-    onNotificationChange: (String, String, Int, Boolean, NotificationSettings.Preset?) -> Unit,
+    onNotificationChange: (NotificationSettings) -> Unit,
 ) {
-    val defaultTitle = stringResource(R.string.ui_audioRecorder_state_recording_title)
-    val defaultDescription = stringResource(R.string.ui_audioRecorder_state_recording_description)
+    val dataStore = LocalContext.current.dataStore
+    val settings = dataStore
+        .data
+        .collectAsState(initial = AppSettings.getDefaultInstance())
+        .value
 
-    LaunchedEffect(defaultTitle, defaultDescription) {
-        notificationModel.initialize(
-            defaultTitle,
-            defaultDescription,
-        )
+    if (settings.notificationSettings != null) {
+        val title = settings.notificationSettings.let {
+            if (it.preset != null)
+                stringResource(it.preset.titleID)
+            else
+                it.title
+        }
+        val description = settings.notificationSettings.let {
+            if (it.preset != null)
+                stringResource(it.preset.messageID)
+            else
+                it.message
+        }
+
+        LaunchedEffect(Unit) {
+            notificationModel.initialize(
+                title,
+                description,
+                settings.notificationSettings.showOngoing,
+                settings.notificationSettings.iconID,
+            )
+
+            if (settings.notificationSettings.preset != null) {
+                notificationModel.setPreset(
+                    title,
+                    description,
+                    settings.notificationSettings.preset
+                )
+            }
+        }
+    } else {
+        val defaultTitle = stringResource(R.string.ui_audioRecorder_state_recording_title)
+        val defaultDescription =
+            stringResource(R.string.ui_audioRecorder_state_recording_description)
+
+        LaunchedEffect(Unit) {
+            notificationModel.initialize(
+                defaultTitle,
+                defaultDescription,
+            )
+        }
     }
 
     Column(
@@ -128,11 +170,7 @@ fun NotificationEditor(
             Button(
                 onClick = {
                     onNotificationChange(
-                        notificationModel.title,
-                        notificationModel.description,
-                        notificationModel.icon,
-                        notificationModel.showOngoing,
-                        notificationModel.notificationPreset,
+                        notificationModel.asNotificationSettings()
                     )
                 },
                 modifier = Modifier

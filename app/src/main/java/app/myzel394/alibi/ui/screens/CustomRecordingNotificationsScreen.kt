@@ -99,23 +99,13 @@ fun CustomRecordingNotificationsScreen(
                 modifier = Modifier
                     .padding(padding)
                     .padding(vertical = 16.dp),
-                onNotificationChange = { title, description, icon, showOngoing, preset ->
+                onNotificationChange = { notificationSettings ->
                     scope.launch {
                         dataStore.updateData { settings ->
-                            settings.setNotificationSettings(
-                                if (preset == null) {
-                                    NotificationSettings(
-                                        title = title,
-                                        message = description,
-                                        iconID = icon,
-                                        showOngoing = showOngoing,
-                                    )
-                                } else {
-                                    NotificationSettings.fromPreset(preset)
-                                }
-                            )
+                            settings.setNotificationSettings(notificationSettings)
                         }
                     }
+                    navController.popBackStack()
                 }
             )
         } else {
