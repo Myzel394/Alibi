@@ -26,6 +26,8 @@
     <string name="ui_audioRecorder_action_save_processing_dialog_description">Audio wird bearbeitet, Alibi nicht schließen! Du wirst automatisch aufgefordert, die Datei zu speichern, wenn diese fertig bearbeitet ist</string>
     <string name="ui_audioRecorder_state_recording_title">Aufnahme läuft</string>
     <string name="ui_audioRecorder_state_recording_description">Alibi nimmt im Hintergrund weiter auf</string>
+    <string name="ui_audioRecorder_state_recording_fake_weather_title">Current Weather</string>
+    <string name="ui_audioRecorder_state_recording_fake_weather_description">14° with light chance of rain</string>
     <string name="ui_welcome_explanation_title">Wilkommen zu Alibi!</string>
     <string name="ui_welcome_explanation_message">Alibi funktioniert wird eine Dashcam für dein Handy. Es ermöglicht dir, Ton im Hintergrund kontinuierlich aufzunehmen und die letzten 30 Minuten auf Wunsch zu speichern.</string>
     <string name="ui_welcome_responsibility_title">Du bist für die Nutzung dieser App verantwortlich!</string>
@@ -62,4 +64,21 @@
     <string name="ui_settings_option_import_dialog_text">Sind Sie sicher, dass Sie diese Einstellungen importieren wollen? Ihre aktuellen Einstellungen werden überschrieben!</string>
     <string name="ui_settings_option_import_dialog_confirm">Einstellungen importieren</string>
     <string name="ui_settings_option_import_success">Einstellungen wurden erfolgreich importiert!</string>
+    <string name="ui_settings_option_customNotification_title">Custom Notifications</string>
+    <string name="ui_settings_option_customNotification_description_setup">Setup custom recording notifications now</string>
+    <string name="ui_settings_option_customNotification_description_edit">Edit recording notifications</string>
+    <string name="ui_settings_customNotifications_landing_title">Don\'t expose yourself</string>
+    <string name="ui_settings_customNotifications_landing_description">Due to Android\'s restrictions, Alibi has to show a notification while recording. To hide the fact that you\'re using Alibi, you can customize the notification.</string>
+    <string name="ui_settings_customNotifications_landing_help_hideNotifications">Alternatively, you can also simply disable notifications</string>
+    <string name="ui_settings_customNotifications_landing_getStarted">Create own notification</string>
+    <string name="ui_audioRecorder_state_recording_fake_player_title">Playing Audio</string>
+    <string name="ui_audioRecorder_state_recording_fake_player_description">Now playing: Despacito</string>
+    <string name="ui_audioRecorder_state_recording_fake_browser_title">Downloading attachments.zip</string>
+    <string name="ui_audioRecorder_state_recording_fake_browser_description">Downloading file...</string>
+    <string name="ui_audioRecorder_state_recording_fake_vpn_title">Connected to VPN</string>
+    <string name="ui_audioRecorder_state_recording_fake_vpn_description">Connection Secured</string>
+    <string name="ui_settings_customNotifications_preset_apply_label">Apply Preset \"%s\"</string>
+    <string name="ui_settings_customNotifications_showOngoing_label">Show Duration</string>
+    <string name="ui_settings_customNotifications_save_label">Update notification</string>
+    <string name="ui_settings_customNotifications_edit_help">This is a preview for your notification. You can edit the title and the message. At the bottom you can find some presets.</string>
 </resources>
