@@ -13,7 +13,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.time.LocalDateTime
 
-class AppSettingsSerializer: Serializer<AppSettings> {
+class AppSettingsSerializer : Serializer<AppSettings> {
     override val defaultValue: AppSettings = AppSettings.getDefaultInstance()
 
     override suspend fun readFrom(input: InputStream): AppSettings {
@@ -39,8 +39,9 @@ class AppSettingsSerializer: Serializer<AppSettings> {
     }
 }
 
-class LocalDateTimeSerializer: KSerializer<LocalDateTime> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)
+class LocalDateTimeSerializer : KSerializer<LocalDateTime> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): LocalDateTime {
         return LocalDateTime.parse(decoder.decodeString())

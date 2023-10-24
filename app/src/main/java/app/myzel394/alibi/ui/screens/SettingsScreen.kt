@@ -40,6 +40,7 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BitrateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.atoms.CustomNotificationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.EncoderTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ForceExactMaxDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ImportExport
@@ -145,6 +146,7 @@ fun SettingsScreen(
             IntervalDurationTile()
             ForceExactMaxDurationTile()
             InAppLanguagePicker()
+            CustomNotificationTile(navController = navController)
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

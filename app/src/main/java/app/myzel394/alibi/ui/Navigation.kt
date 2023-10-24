@@ -1,10 +1,13 @@
 package app.myzel394.alibi.ui
 
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -25,6 +28,7 @@ import app.myzel394.alibi.db.LastRecording
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.screens.AudioRecorder
+import app.myzel394.alibi.ui.screens.CustomRecordingNotificationsScreen
 import app.myzel394.alibi.ui.screens.SettingsScreen
 import app.myzel394.alibi.ui.screens.WelcomeScreen
 
@@ -88,6 +92,23 @@ fun Navigation(
             SettingsScreen(
                 navController = navController,
                 audioRecorder = audioRecorder,
+            )
+        }
+        composable(
+            Screen.CustomRecordingNotifications.route,
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { it -> it / 2 }
+                ) + fadeIn()
+            },
+            exitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { it -> it / 2 }
+                ) + fadeOut(tween(150))
+            }
+        ) {
+            CustomRecordingNotificationsScreen(
+                navController = navController,
             )
         }
     }
