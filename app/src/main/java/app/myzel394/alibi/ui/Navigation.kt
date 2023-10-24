@@ -1,5 +1,6 @@
 package app.myzel394.alibi.ui
 
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -103,7 +104,7 @@ fun Navigation(
             exitTransition = {
                 slideOutHorizontally(
                     targetOffsetX = { it -> it / 2 }
-                ) + fadeOut()
+                ) + fadeOut(tween(150))
             }
         ) {
             CustomRecordingNotificationsScreen(
