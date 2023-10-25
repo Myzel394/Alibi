@@ -39,13 +39,13 @@ fun AboutTile(
         modifier = Modifier
             .padding(horizontal = 32.dp, vertical = 48.dp)
             .fillMaxWidth()
+            .clip(MaterialTheme.shapes.medium)
             .semantics {
                 contentDescription = label
             }
             .clickable {
                 navController.navigate(Screen.About.route)
             }
-            .clip(MaterialTheme.shapes.medium)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
