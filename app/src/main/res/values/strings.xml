@@ -89,4 +89,7 @@
     <string name="ui_settings_customNotifications_save_label">Update notification</string>
     <string name="ui_settings_customNotifications_edit_help">This is a preview for your notification. You can edit the title and the message. At the bottom you can find some presets.</string>
     <string name="ui_about_title">About Alibi</string>
+    <string name="ui_about_contribute_title">Support Alibi</string>
+    <string name="ui_about_contribute_message">In my free time I develop Alibi and other free open source software. It would mean the world to me if you could help me in any way :)</string>
+    <string name="ui_about_contribute_development">Developing features or fixing bugs</string>
 </resources>
