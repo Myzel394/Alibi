@@ -62,25 +62,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import app.myzel394.alibi.R
 import app.myzel394.alibi.BuildConfig
+import app.myzel394.alibi.ui.components.AboutScreen.atoms.DonationsTile
+import app.myzel394.alibi.ui.components.AboutScreen.atoms.GPGKeyOverview
 import kotlin.random.Random
 
 const val GITHUB_URL = "https://github.com/Myzel394/Alibi"
 const val CROWDIN_URL = "https://crowdin.com/project/alibi"
-const val PUBLIC_KEY = """-----BEGIN PGP PUBLIC KEY BLOCK-----
-
-mDMEZTfvnhYJKwYBBAHaRw8BAQdAi2AiLsTaBoLhnQtY5vi3xBU/H428wbNfBSe+
-2dhz3r60Jk15emVsMzk0IDxnaXRodWIuN2Eyb3BAc2ltcGxlbG9naW4uY28+iJkE
-ExYKAEEWIQR9BS8nNHwqrNgV0B3NE0dCwel5WQUCZTfvngIbAwUJEswDAAULCQgH
-AgIiAgYVCgkICwIEFgIDAQIeBwIXgAAKCRDNE0dCwel5WcS8AQCf9g6eEaut1suW
-l6jCLIg3b1nWLckmLJaonM6PruUtigEAmVnFOxMpOZEIcILT8CD2Riy+IVN9gTNH
-qOHnaFsu8AK4OARlN++eEgorBgEEAZdVAQUBAQdAe4ffDtRundKH9kam746i2TBu
-P9sfb3QVi5QqfK+bek8DAQgHiH4EGBYKACYWIQR9BS8nNHwqrNgV0B3NE0dCwel5
-WQUCZTfvngIbDAUJEswDAAAKCRDNE0dCwel5WWwSAQDj4ZAl6bSqwbcptEMYQaPM
-MMhMafm446MjkhQioeXw+wEAzA8mS6RBx7IZvu1dirmFHXOEYJclwjyQhNs4uEjq
-/Ak=
-=ICHe
------END PGP PUBLIC KEY BLOCK-----"""
-const val PUBLIC_KEY_FINGERPRINT = "7D05 2F27 347C 2AAC D815  D01D CD13 4742 C1E9 7959"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -232,92 +219,9 @@ fun AboutScreen(
                     )
                 }
 
-                var donationsOpened by rememberSaveable {
-                    mutableStateOf(false)
-                }
-                val donationLabel = stringResource(R.string.ui_about_contribute_donatation)
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.medium)
-                        .semantics {
-                            contentDescription = donationLabel
-                        }
-                        .clickable {
-                            donationsOpened = !donationsOpened
-                        }
-                        .background(
-                            MaterialTheme.colorScheme.surfaceVariant
-                        )
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        listOf(
-                            Icons.Default.CurrencyBitcoin,
-                            Icons.Default.CurrencyFranc,
-                            Icons.Default.CurrencyLira,
-                            Icons.Default.CurrencyPound,
-                            Icons.Default.CurrencyRuble,
-                            Icons.Default.CurrencyRupee,
-                            Icons.Default.CurrencyYen,
-                            Icons.Default.CurrencyYuan,
-                        ).asSequence().shuffled().first(),
-                        contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize.times(1.2f))
-                    )
-                    Text(
-                        stringResource(R.string.ui_about_contribute_donatation),
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
+                DonationsTile()
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(
-                            MaterialTheme.colorScheme.primaryContainer
-                        )
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        Icons.Default.Key,
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp)
-                    )
-
-                    Text(
-                        stringResource(R.string.ui_about_gpg_key_hint),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-
-                    val clipboardManager =
-                        LocalContext.current.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    Text(
-                        PUBLIC_KEY_FINGERPRINT,
-                        modifier = Modifier
-                            .clip(MaterialTheme.shapes.small)
-                            .background(
-                                MaterialTheme.colorScheme.surfaceVariant
-                            )
-                            .padding(8.dp),
-                    )
-                    Button(
-                        onClick = {
-                            val clip = ClipData.newPlainText("text", PUBLIC_KEY)
-                            clipboardManager.setPrimaryClip(clip)
-                        },
-                        colors = ButtonDefaults.textButtonColors(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Text(stringResource(R.string.ui_about_gpg_key_copy))
-                    }
-                }
+                GPGKeyOverview()
             }
         }
     }
