@@ -1,5 +1,8 @@
 package app.myzel394.alibi.ui.screens
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CurrencyBitcoin
@@ -22,7 +27,10 @@ import androidx.compose.material.icons.filled.CurrencyRuble
 import androidx.compose.material.icons.filled.CurrencyRupee
 import androidx.compose.material.icons.filled.CurrencyYen
 import androidx.compose.material.icons.filled.CurrencyYuan
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -57,6 +66,21 @@ import kotlin.random.Random
 
 const val GITHUB_URL = "https://github.com/Myzel394/Alibi"
 const val CROWDIN_URL = "https://crowdin.com/project/alibi"
+const val PUBLIC_KEY = """-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mDMEZTfvnhYJKwYBBAHaRw8BAQdAi2AiLsTaBoLhnQtY5vi3xBU/H428wbNfBSe+
+2dhz3r60Jk15emVsMzk0IDxnaXRodWIuN2Eyb3BAc2ltcGxlbG9naW4uY28+iJkE
+ExYKAEEWIQR9BS8nNHwqrNgV0B3NE0dCwel5WQUCZTfvngIbAwUJEswDAAULCQgH
+AgIiAgYVCgkICwIEFgIDAQIeBwIXgAAKCRDNE0dCwel5WcS8AQCf9g6eEaut1suW
+l6jCLIg3b1nWLckmLJaonM6PruUtigEAmVnFOxMpOZEIcILT8CD2Riy+IVN9gTNH
+qOHnaFsu8AK4OARlN++eEgorBgEEAZdVAQUBAQdAe4ffDtRundKH9kam746i2TBu
+P9sfb3QVi5QqfK+bek8DAQgHiH4EGBYKACYWIQR9BS8nNHwqrNgV0B3NE0dCwel5
+WQUCZTfvngIbDAUJEswDAAAKCRDNE0dCwel5WWwSAQDj4ZAl6bSqwbcptEMYQaPM
+MMhMafm446MjkhQioeXw+wEAzA8mS6RBx7IZvu1dirmFHXOEYJclwjyQhNs4uEjq
+/Ak=
+=ICHe
+-----END PGP PUBLIC KEY BLOCK-----"""
+const val PUBLIC_KEY_FINGERPRINT = "7D05 2F27 347C 2AAC D815  D01D CD13 4742 C1E9 7959"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,9 +114,9 @@ fun AboutScreen(
     ) { padding ->
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 32.dp),
+                .padding(horizontal = 32.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(48.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -126,7 +150,7 @@ fun AboutScreen(
                 )
             }
             Column(
-                verticalArrangement = Arrangement.spacedBy(24.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 Text(
                     stringResource(R.string.ui_about_contribute_title),
@@ -247,6 +271,52 @@ fun AboutScreen(
                         stringResource(R.string.ui_about_contribute_donatation),
                         fontWeight = FontWeight.Bold,
                     )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(
+                            MaterialTheme.colorScheme.primaryContainer
+                        )
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Icon(
+                        Icons.Default.Key,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp)
+                    )
+
+                    Text(
+                        stringResource(R.string.ui_about_gpg_key_hint),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+
+                    val clipboardManager =
+                        LocalContext.current.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    Text(
+                        PUBLIC_KEY_FINGERPRINT,
+                        modifier = Modifier
+                            .clip(MaterialTheme.shapes.small)
+                            .background(
+                                MaterialTheme.colorScheme.surfaceVariant
+                            )
+                            .padding(8.dp),
+                    )
+                    Button(
+                        onClick = {
+                            val clip = ClipData.newPlainText("text", PUBLIC_KEY)
+                            clipboardManager.setPrimaryClip(clip)
+                        },
+                        colors = ButtonDefaults.textButtonColors(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.ui_about_gpg_key_copy))
+                    }
                 }
             }
         }
