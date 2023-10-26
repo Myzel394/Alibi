@@ -22,7 +22,7 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.screens.AboutScreen
-import app.myzel394.alibi.ui.screens.AudioRecorder
+import app.myzel394.alibi.ui.screens.AudioRecorderScreen
 import app.myzel394.alibi.ui.screens.CustomRecordingNotificationsScreen
 import app.myzel394.alibi.ui.screens.SettingsScreen
 import app.myzel394.alibi.ui.screens.WelcomeScreen
@@ -70,7 +70,7 @@ fun Navigation(
                 scaleOut(targetScale = SCALE_IN) + fadeOut(tween(durationMillis = 150))
             }
         ) {
-            AudioRecorder(
+            AudioRecorderScreen(
                 navController = navController,
                 audioRecorder = audioRecorder,
             )
