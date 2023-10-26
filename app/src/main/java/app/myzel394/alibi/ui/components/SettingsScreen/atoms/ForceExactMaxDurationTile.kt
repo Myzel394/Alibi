@@ -18,14 +18,11 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun ForceExactMaxDurationTile() {
+fun ForceExactMaxDurationTile(
+    settings: AppSettings,
+) {
     val scope = rememberCoroutineScope()
-    val showDialog = rememberUseCaseState()
     val dataStore = LocalContext.current.dataStore
-    val settings = dataStore
-        .data
-        .collectAsState(initial = AppSettings.getDefaultInstance())
-        .value
 
     fun updateValue(forceExactMaxDuration: Boolean) {
         scope.launch {

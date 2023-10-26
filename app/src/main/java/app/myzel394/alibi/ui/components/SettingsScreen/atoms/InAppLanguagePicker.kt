@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.os.LocaleListCompat
 import app.myzel394.alibi.R
 import app.myzel394.alibi.SUPPORTED_LOCALES
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.AudioRecorderSettings
 import app.myzel394.alibi.ui.components.atoms.SettingsTile
 import app.myzel394.alibi.ui.utils.IconResource
