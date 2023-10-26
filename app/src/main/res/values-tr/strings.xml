@@ -59,6 +59,15 @@
     <string name="ui_audioRecorder_error_recording_description">Alibi, kayıt sırasında bir hata ile karşılaştı. Ses kaydını kaydetmeyi denemek ister misiniz?</string>
     <string name="ui_settings_language_title">Dil</string>
     <string name="ui_settings_language_update_label">Değiştir</string>
+    <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Device Microphone</string>
+    <string name="ui_audioRecorder_info_microphone_changeExplanation">The selected microphone will be activated immediately</string>
+    <string name="ui_audioRecorder_error_microphoneDisconnected_title">Microphone disconnected</string>
+    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%s</xliff:g> disconnected. Alibi will use the default microphone instead. We will automatically switch back to <xliff:g name="nam">%s</xliff:g> once it reconnects.</string>
+    <string name="ui_audioRecorder_error_microphoneReconnected_title">Microphone reconnected</string>
+    <string name="ui_audioRecorder_error_microphoneReconnected_message"><xliff:g name="name">%s</xliff:g> reconnected! Alibi automatically changed the microphone input to it.</string>
+    <string name="ui_settings_option_showAllMicrophones_title">Show hidden microphones</string>
+    <string name="ui_settings_option_showAllMicrophones_description">Show all microphones, including internal ones</string>
+    <string name="ui_audioRecorder_info_microphone_hiddenMicrophones">Hidden Microphones</string>
     <string name="ui_settings_option_import_label">Import Settings</string>
     <string name="ui_settings_option_export_label">Export Settings</string>
     <string name="ui_settings_option_import_dialog_text">Are you sure you want to import these settings? Your current settings will be overwritten!</string>
@@ -81,4 +90,14 @@
     <string name="ui_settings_customNotifications_showOngoing_label">Show Duration</string>
     <string name="ui_settings_customNotifications_save_label">Update notification</string>
     <string name="ui_settings_customNotifications_edit_help">This is a preview for your notification. You can edit the title and the message. At the bottom you can find some presets.</string>
+    <string name="ui_about_title">About Alibi</string>
+    <string name="ui_about_contribute_title">Support Alibi</string>
+    <string name="ui_about_contribute_message">In my free time I develop Alibi and other free open source software. It would mean the world to me if you could help me in any way :)</string>
+    <string name="ui_about_contribute_development">Developing features or fixing bugs</string>
+    <string name="accessibility_open_in_browser">Open link in browser: %s</string>
+    <string name="ui_about_contribute_translation">Translate Alibi into your language</string>
+    <string name="ui_about_contribute_donatation">Make a donation</string>
+    <string name="ui_about_gpg_key_hint">You can copy my GPG key here. This key only exists once and I can use it to prove to you that I\'m really who I am. Please save it now so that you can verify my signature later.</string>
+    <string name="ui_about_gpg_key_copy">Copy GPG Key</string>
+    <string name="ui_about_contribute_donation_githubSponsors">Become a GitHub Sponsor</string>
 </resources>
