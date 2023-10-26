@@ -7,6 +7,11 @@ val BIG_PRIMARY_BUTTON_SIZE = 64.dp
 val MAX_AMPLITUDE = 20000
 val SUPPORTS_DARK_MODE_NATIVELY = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
+// You are not allowed to change the constants below.
+// If you do so, you will be blocked on GitHub.
+const val REPO_URL = "https://github.com/Myzel394/Alibi"
+const val TRANSLATION_HELP_URL = "https://crowdin.com/project/alibi"
+const val GITHUB_SPONSORS_URL = "https://github.com/sponsors/Myzel394"
 const val PUBLIC_KEY = """-----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mDMEZTfvnhYJKwYBBAHaRw8BAQdAi2AiLsTaBoLhnQtY5vi3xBU/H428wbNfBSe+

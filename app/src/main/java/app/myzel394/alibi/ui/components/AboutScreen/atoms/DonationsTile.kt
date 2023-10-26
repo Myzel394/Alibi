@@ -6,12 +6,14 @@ import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,6 +30,7 @@ import androidx.compose.material.icons.filled.CurrencyRuble
 import androidx.compose.material.icons.filled.CurrencyRupee
 import androidx.compose.material.icons.filled.CurrencyYen
 import androidx.compose.material.icons.filled.CurrencyYuan
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +44,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -49,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 import app.myzel394.alibi.ui.CRYPTO_DONATIONS
+import app.myzel394.alibi.ui.GITHUB_SPONSORS_URL
 import app.myzel394.alibi.ui.PUBLIC_KEY
 
 @Composable
@@ -121,6 +128,26 @@ fun DonationsTile() {
         enter = expandVertically(),
     ) {
         Column {
+            val uriHandler = LocalUriHandler.current
+
+            Button(
+                onClick = {
+                    uriHandler.openUri(GITHUB_SPONSORS_URL)
+                },
+                colors = ButtonDefaults.textButtonColors(),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_github),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize.times(1.2f))
+                )
+                Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+                Text(
+                    stringResource(R.string.ui_about_contribute_donation_githubSponsors)
+                )
+            }
             for (crypto in CRYPTO_DONATIONS) {
                 Row(
                     modifier = Modifier

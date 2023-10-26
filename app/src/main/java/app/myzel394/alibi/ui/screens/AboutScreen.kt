@@ -1,8 +1,5 @@
 package app.myzel394.alibi.ui.screens
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,18 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.CurrencyBitcoin
-import androidx.compose.material.icons.filled.CurrencyFranc
-import androidx.compose.material.icons.filled.CurrencyLira
-import androidx.compose.material.icons.filled.CurrencyPound
-import androidx.compose.material.icons.filled.CurrencyRuble
-import androidx.compose.material.icons.filled.CurrencyRupee
-import androidx.compose.material.icons.filled.CurrencyYen
-import androidx.compose.material.icons.filled.CurrencyYuan
-import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.OpenInNew
-import androidx.compose.material.icons.filled.Shield
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,16 +27,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -62,12 +42,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import app.myzel394.alibi.R
 import app.myzel394.alibi.BuildConfig
+import app.myzel394.alibi.ui.TRANSLATION_HELP_URL
+import app.myzel394.alibi.ui.REPO_URL
 import app.myzel394.alibi.ui.components.AboutScreen.atoms.DonationsTile
 import app.myzel394.alibi.ui.components.AboutScreen.atoms.GPGKeyOverview
-import kotlin.random.Random
-
-const val GITHUB_URL = "https://github.com/Myzel394/Alibi"
-const val CROWDIN_URL = "https://crowdin.com/project/alibi"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -148,7 +126,7 @@ fun AboutScreen(
                     style = MaterialTheme.typography.titleMedium,
                 )
 
-                val githubLabel = stringResource(R.string.accessibility_open_in_browser, GITHUB_URL)
+                val githubLabel = stringResource(R.string.accessibility_open_in_browser, REPO_URL)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -157,7 +135,7 @@ fun AboutScreen(
                             contentDescription = githubLabel
                         }
                         .clickable {
-                            uriHandler.openUri(GITHUB_URL)
+                            uriHandler.openUri(REPO_URL)
                         }
                         .background(
                             MaterialTheme.colorScheme.surfaceVariant
@@ -184,7 +162,7 @@ fun AboutScreen(
                 }
 
                 val crowdinLabel =
-                    stringResource(R.string.accessibility_open_in_browser, CROWDIN_URL)
+                    stringResource(R.string.accessibility_open_in_browser, TRANSLATION_HELP_URL)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -193,7 +171,7 @@ fun AboutScreen(
                             contentDescription = crowdinLabel
                         }
                         .clickable {
-                            uriHandler.openUri(CROWDIN_URL)
+                            uriHandler.openUri(TRANSLATION_HELP_URL)
                         }
                         .background(
                             MaterialTheme.colorScheme.surfaceVariant

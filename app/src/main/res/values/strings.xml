@@ -97,4 +97,5 @@
     <string name="ui_about_contribute_donatation">Make a donation</string>
     <string name="ui_about_gpg_key_hint">You can copy my GPG key here. This key only exists once and I can use it to prove to you that I\'m really who I am. Please save it now so that you can verify my signature later.</string>
     <string name="ui_about_gpg_key_copy">Copy GPG Key</string>
+    <string name="ui_about_contribute_donation_githubSponsors">Become a GitHub Sponsor</string>
 </resources>
