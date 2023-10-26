@@ -49,14 +49,22 @@ fun AudioRecorder(
     audioRecorder: AudioRecorderModel,
 ) {
     val context = LocalContext.current
+
     val settings = rememberSettings()
-    val saveFile = rememberFileSaverDialog(settings.audioRecorderSettings.getMimeType())
     val scope = rememberCoroutineScope()
+
+    val saveFile = rememberFileSaverDialog(
+        settings.audioRecorderSettings.getMimeType()
+    ) {
+        if (settings.audioRecorderSettings.deleteRecordingsImmediately) {
+            AudioRecorderExporter.clearAllRecordings(context)
+        }
+    }
 
     var isProcessingAudio by remember { mutableStateOf(false) }
     var showRecorderError by remember { mutableStateOf(false) }
 
-    DisposableEffect(Unit) {
+    DisposableEffect(key1 = audioRecorder, key2 = settings.audioRecorderSettings) {
         audioRecorder.onRecordingSave = {
             scope.launch {
                 isProcessingAudio = true
