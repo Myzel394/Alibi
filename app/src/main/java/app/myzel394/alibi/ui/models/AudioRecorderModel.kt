@@ -4,22 +4,17 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.media.MediaRecorder
 import android.os.IBinder
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
-import app.myzel394.alibi.dataStore
-import app.myzel394.alibi.db.LastRecording
+import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.services.RecorderService
-import kotlinx.coroutines.flow.last
 import kotlinx.serialization.json.Json
 
 class AudioRecorderModel : ViewModel() {
@@ -44,7 +39,7 @@ class AudioRecorderModel : ViewModel() {
     var recorderService: AudioRecorderService? = null
         private set
 
-    var lastRecording: LastRecording? by mutableStateOf<LastRecording?>(null)
+    var lastRecording: RecordingInformation? by mutableStateOf<RecordingInformation?>(null)
         private set
 
     var onRecordingSave: () -> Unit = {}

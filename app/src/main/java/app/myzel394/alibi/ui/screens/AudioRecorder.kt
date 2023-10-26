@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import app.myzel394.alibi.ui.components.AudioRecorder.molecules.RecordingStatus
 import app.myzel394.alibi.ui.components.AudioRecorder.molecules.StartRecording
@@ -37,8 +36,7 @@ import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.db.LastRecording
-import app.myzel394.alibi.services.RecorderNotificationHelper
+import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import kotlinx.coroutines.delay
@@ -67,7 +65,8 @@ fun AudioRecorder(
                 delay(100)
 
                 try {
-                    val file = audioRecorder.lastRecording!!.concatenateFiles()
+                    val file =
+                        AudioRecorderExporter(audioRecorder.lastRecording!!).concatenateFiles()
 
                     saveFile(file, file.name)
                 } catch (error: Exception) {

@@ -1,6 +1,5 @@
 package app.myzel394.alibi.ui
 
-import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -13,10 +12,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,7 +19,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.myzel394.alibi.dataStore
-import app.myzel394.alibi.db.LastRecording
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.screens.AboutScreen

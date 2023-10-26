@@ -42,6 +42,7 @@ import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
@@ -79,6 +80,9 @@ fun StartRecording(
                         it
                     )
             }
+
+            AudioRecorderExporter.clearAllRecordings(context)
+
             audioRecorder.startRecording(context)
         }
     }
@@ -144,7 +148,7 @@ fun StartRecording(
                 .fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
-        if (audioRecorder.lastRecording != null && audioRecorder.lastRecording!!.hasRecordingAvailable) {
+        if (audioRecorder.lastRecording != null && audioRecorder.lastRecording!!.hasRecordingsAvailable) {
             Column(
                 modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,

@@ -5,7 +5,7 @@ import android.media.MediaRecorder.OnErrorListener
 import android.os.Build
 import java.lang.IllegalStateException
 
-class AudioRecorderService: IntervalRecorderService() {
+class AudioRecorderService : IntervalRecorderService() {
     var amplitudesAmount = 1000
 
     var recorder: MediaRecorder? = null
@@ -13,7 +13,7 @@ class AudioRecorderService: IntervalRecorderService() {
     var onError: () -> Unit = {}
 
     val filePath: String
-        get() = "$folder/$counter.${settings!!.fileExtension}"
+        get() = "${outputFolder}/$counter.${settings!!.fileExtension}"
 
     private fun createRecorder(): MediaRecorder {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
