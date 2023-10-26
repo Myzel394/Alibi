@@ -3,6 +3,8 @@ package app.myzel394.alibi.ui.components.AboutScreen.atoms
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
@@ -89,38 +92,42 @@ fun DonationsTile() {
         )
     }
 
-    // TODO: Add LazyColumn, make expandable
-    Column {
-        val clipboardManager =
-            LocalContext.current.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clipboardManager =
+        LocalContext.current.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-        for (crypto in CRYPTO_DONATIONS) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.medium)
-                    .clickable {
-                        val clip = ClipData.newPlainText("text", crypto.value)
-                        clipboardManager.setPrimaryClip(clip)
-                    }
-                    .padding(8.dp)
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    Icons.Default.ContentCopy,
-                    contentDescription = null,
-                )
-                Text(
-                    crypto.key,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    crypto.value,
-                    fontSize = MaterialTheme.typography.bodyMedium.fontSize.times(0.5),
-                )
+    AnimatedVisibility(
+        visible = donationsOpened,
+        enter = expandVertically(),
+    ) {
+        Column {
+            for (crypto in CRYPTO_DONATIONS) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable {
+                            val clip = ClipData.newPlainText("text", crypto.value)
+                            clipboardManager.setPrimaryClip(clip)
+                        }
+                        .padding(8.dp)
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        Icons.Default.ContentCopy,
+                        contentDescription = null,
+                    )
+                    Text(
+                        crypto.key,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        crypto.value,
+                        fontSize = MaterialTheme.typography.bodyMedium.fontSize.times(0.5),
+                    )
+                }
             }
         }
     }
