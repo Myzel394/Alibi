@@ -60,7 +60,8 @@ fun StartRecording(
     // Loading this from parent, because if we load it ourselves
     // and permissions have already been granted, initial
     // settings will be used, instead of the actual settings.
-    appSettings: AppSettings
+    appSettings: AppSettings,
+    onSaveLastRecording: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -168,10 +169,7 @@ fun StartRecording(
                             contentDescription = label
                         },
                     colors = ButtonDefaults.textButtonColors(),
-                    onClick = {
-                        audioRecorder.stopRecording(context)
-                        audioRecorder.onRecordingSave()
-                    },
+                    onClick = onSaveLastRecording,
                 ) {
                     Icon(
                         Icons.Default.Save,

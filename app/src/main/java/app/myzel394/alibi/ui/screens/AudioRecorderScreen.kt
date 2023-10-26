@@ -36,6 +36,7 @@ import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
@@ -60,6 +61,14 @@ fun AudioRecorderScreen(
         if (settings.audioRecorderSettings.deleteRecordingsImmediately) {
             AudioRecorderExporter.clearAllRecordings(context)
         }
+
+        if (!AudioRecorderExporter.hasRecordingsAvailable(context)) {
+            scope.launch {
+                dataStore.updateData {
+                    it.setLastRecording(null)
+                }
+            }
+        }
     }
 
     var isProcessingAudio by remember { mutableStateOf(false) }
@@ -77,28 +86,34 @@ fun AudioRecorderScreen(
         }
     }
 
+    fun saveRecording() {
+        scope.launch {
+            isProcessingAudio = true
+
+            // Give the user some time to see the processing dialog
+            delay(100)
+
+            try {
+                val file = AudioRecorderExporter(
+                    audioRecorder.recorderService?.getRecordingInformation()
+                        ?: settings.lastRecording
+                        ?: throw Exception("No recording information available"),
+                ).concatenateFiles()
+
+                saveFile(file, file.name)
+            } catch (error: Exception) {
+                Log.getStackTraceString(error)
+            } finally {
+                isProcessingAudio = false
+            }
+        }
+    }
+
     DisposableEffect(key1 = audioRecorder, key2 = settings) {
         audioRecorder.onRecordingSave = onRecordingSave@{
-            val recordingInformation = audioRecorder.recorderService!!.getRecordingInformation()
+            saveAsLastRecording()
 
-            scope.launch {
-                isProcessingAudio = true
-
-                // Give the user some time to see the processing dialog
-                delay(100)
-
-                try {
-                    val file = AudioRecorderExporter(recordingInformation).concatenateFiles()
-
-                    saveFile(file, file.name)
-
-                    saveAsLastRecording()
-                } catch (error: Exception) {
-                    Log.getStackTraceString(error)
-                } finally {
-                    isProcessingAudio = false
-                }
-            }
+            saveRecording()
         }
         audioRecorder.onError = {
             saveAsLastRecording()
@@ -166,7 +181,9 @@ fun AudioRecorderScreen(
             confirmButton = {
                 Button(
                     onClick = {
-                        audioRecorder.onRecordingSave()
+                        showRecorderError = false
+
+                        saveRecording()
                     },
                     colors = ButtonDefaults.textButtonColors(),
                 ) {
@@ -206,7 +223,10 @@ fun AudioRecorderScreen(
             if (audioRecorder.isInRecording)
                 RecordingStatus(audioRecorder = audioRecorder)
             else
-                StartRecording(audioRecorder = audioRecorder, appSettings = appSettings)
+                StartRecording(
+                    audioRecorder = audioRecorder, appSettings = appSettings,
+                    onSaveLastRecording = ::saveRecording,
+                )
         }
     }
 }

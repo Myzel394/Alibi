@@ -112,8 +112,7 @@ data class AudioRecorderExporter(
             getFolder(context).deleteRecursively()
         }
 
-        fun hasRecordingsAvailable(context: Context) {
+        fun hasRecordingsAvailable(context: Context) =
             getFolder(context).listFiles()?.isNotEmpty() ?: false
-        }
     }
 }

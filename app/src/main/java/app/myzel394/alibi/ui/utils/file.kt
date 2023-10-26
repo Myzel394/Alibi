@@ -14,7 +14,7 @@ import java.io.File
 @Composable
 fun rememberFileSaverDialog(
     mimeType: String,
-    callback: (Uri) -> Unit = {},
+    callback: (Uri?) -> Unit = {},
 ): ((File, String) -> Unit) {
     val context = LocalContext.current
 
@@ -32,9 +32,7 @@ fun rememberFileSaverDialog(
 
             file.value = null
 
-            if (it != null) {
-                callback(it)
-            }
+            callback(it)
         }
 
     return { it, name ->
