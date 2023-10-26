@@ -5,6 +5,7 @@ sealed class Screen(val route: String) {
     data object Settings : Screen("settings")
     data object Welcome : Screen("welcome")
     data object CustomRecordingNotifications : Screen("custom-recording-notifications")
+    data object About : Screen("about")
 
     fun withArgs(vararg args: String): String {
         return buildString {

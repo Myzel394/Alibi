@@ -27,6 +27,7 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.LastRecording
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.models.AudioRecorderModel
+import app.myzel394.alibi.ui.screens.AboutScreen
 import app.myzel394.alibi.ui.screens.AudioRecorder
 import app.myzel394.alibi.ui.screens.CustomRecordingNotificationsScreen
 import app.myzel394.alibi.ui.screens.SettingsScreen
@@ -108,6 +109,19 @@ fun Navigation(
             }
         ) {
             CustomRecordingNotificationsScreen(
+                navController = navController,
+            )
+        }
+        composable(
+            Screen.About.route,
+            enterTransition = {
+                scaleIn()
+            },
+            exitTransition = {
+                scaleOut() + fadeOut(tween(150))
+            }
+        ) {
+            AboutScreen(
                 navController = navController,
             )
         }
