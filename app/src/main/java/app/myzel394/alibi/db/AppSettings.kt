@@ -2,7 +2,6 @@ package app.myzel394.alibi.db
 
 import android.media.MediaRecorder
 import android.os.Build
-import android.util.Log
 import app.myzel394.alibi.R
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
@@ -19,6 +18,7 @@ data class AppSettings(
     val hasSeenOnboarding: Boolean = false,
     val showAdvancedSettings: Boolean = false,
     val theme: Theme = Theme.SYSTEM,
+    val lastRecording: RecordingInformation? = null,
 ) {
     fun setShowAdvancedSettings(showAdvancedSettings: Boolean): AppSettings {
         return copy(showAdvancedSettings = showAdvancedSettings)
@@ -38,6 +38,10 @@ data class AppSettings(
 
     fun setTheme(theme: Theme): AppSettings {
         return copy(theme = theme)
+    }
+
+    fun setLastRecording(lastRecording: RecordingInformation?): AppSettings {
+        return copy(lastRecording = lastRecording)
     }
 
     enum class Theme {
@@ -63,7 +67,7 @@ data class AppSettings(
 }
 
 @Serializable
-data class LastRecording(
+data class RecordingInformation(
     val folderPath: String,
     @Serializable(with = LocalDateTimeSerializer::class)
     val recordingStart: LocalDateTime,
@@ -72,91 +76,8 @@ data class LastRecording(
     val fileExtension: String,
     val forceExactMaxDuration: Boolean,
 ) {
-    val fileFolder: File
-        get() = File(folderPath)
-
-    val filePaths: List<File>
-        get() =
-            File(folderPath).listFiles()?.filter {
-                val name = it.nameWithoutExtension
-
-                name.toIntOrNull() != null
-            }?.toList() ?: emptyList()
-
-    val hasRecordingAvailable: Boolean
-        get() = filePaths.isNotEmpty()
-
-    private fun stripConcatenatedFileToExactDuration(
-        outputFile: File
-    ) {
-        // Move the concatenated file to a temporary file
-        val rawFile = File("$folderPath/${outputFile.nameWithoutExtension}-raw.${fileExtension}")
-        outputFile.renameTo(rawFile)
-
-        val command = "-sseof ${maxDuration / -1000} -i $rawFile -y $outputFile"
-
-        val session = FFmpegKit.execute(command)
-
-        if (!ReturnCode.isSuccess(session.returnCode)) {
-            Log.d(
-                "Audio Concatenation",
-                String.format(
-                    "Command failed with state %s and rc %s.%s",
-                    session.getState(),
-                    session.getReturnCode(),
-                    session.getFailStackTrace()
-                )
-            )
-
-            throw Exception("Failed to strip concatenated audio")
-        }
-    }
-
-    suspend fun concatenateFiles(forceConcatenation: Boolean = false): File {
-        val paths = filePaths.joinToString("|")
-        val fileName = recordingStart
-            .format(ISO_DATE_TIME)
-            .toString()
-            .replace(":", "-")
-            .replace(".", "_")
-        val outputFile = File("$fileFolder/$fileName.${fileExtension}")
-
-        if (outputFile.exists() && !forceConcatenation) {
-            return outputFile
-        }
-
-        val command = "-i 'concat:$paths' -y" +
-                " -acodec copy" +
-                " -metadata title='$fileName' " +
-                " -metadata date='${recordingStart.format(ISO_DATE_TIME)}'" +
-                " -metadata batch_count='${filePaths.size}'" +
-                " -metadata batch_duration='${intervalDuration}'" +
-                " -metadata max_duration='${maxDuration}'" +
-                " $outputFile"
-
-        val session = FFmpegKit.execute(command)
-
-        if (!ReturnCode.isSuccess(session.returnCode)) {
-            Log.d(
-                "Audio Concatenation",
-                String.format(
-                    "Command failed with state %s and rc %s.%s",
-                    session.getState(),
-                    session.getReturnCode(),
-                    session.getFailStackTrace()
-                )
-            )
-
-            throw Exception("Failed to concatenate audios")
-        }
-
-        val minRequiredForPossibleInExactMaxDuration = maxDuration / intervalDuration
-        if (forceExactMaxDuration && filePaths.size > minRequiredForPossibleInExactMaxDuration) {
-            stripConcatenatedFileToExactDuration(outputFile)
-        }
-
-        return outputFile
-    }
+    val hasRecordingsAvailable
+        get() = File(folderPath).listFiles()?.isNotEmpty() ?: false
 }
 
 @Serializable
@@ -172,6 +93,7 @@ data class AudioRecorderSettings(
     val outputFormat: Int? = null,
     val encoder: Int? = null,
     val showAllMicrophones: Boolean = false,
+    val deleteRecordingsImmediately: Boolean = false,
 ) {
     fun getOutputFormat(): Int {
         if (outputFormat != null) {
@@ -301,6 +223,10 @@ data class AudioRecorderSettings(
 
     fun setShowAllMicrophones(showAllMicrophones: Boolean): AudioRecorderSettings {
         return copy(showAllMicrophones = showAllMicrophones)
+    }
+
+    fun setDeleteRecordingsImmediately(deleteRecordingsImmediately: Boolean): AudioRecorderSettings {
+        return copy(deleteRecordingsImmediately = deleteRecordingsImmediately)
     }
 
     fun isEncoderCompatible(encoder: Int): Boolean {

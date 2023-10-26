@@ -12,7 +12,10 @@ import androidx.compose.ui.platform.LocalContext
 import java.io.File
 
 @Composable
-fun rememberFileSaverDialog(mimeType: String): ((File, String) -> Unit) {
+fun rememberFileSaverDialog(
+    mimeType: String,
+    callback: (Uri?) -> Unit = {},
+): ((File, String) -> Unit) {
     val context = LocalContext.current
 
     var file = remember { mutableStateOf<File?>(null) }
@@ -28,6 +31,8 @@ fun rememberFileSaverDialog(mimeType: String): ((File, String) -> Unit) {
             }
 
             file.value = null
+
+            callback(it)
         }
 
     return { it, name ->

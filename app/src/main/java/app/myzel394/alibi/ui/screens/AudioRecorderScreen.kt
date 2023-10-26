@@ -36,8 +36,8 @@ import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.db.LastRecording
-import app.myzel394.alibi.services.RecorderNotificationHelper
+import app.myzel394.alibi.db.RecordingInformation
+import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import kotlinx.coroutines.delay
@@ -45,40 +45,80 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AudioRecorder(
+fun AudioRecorderScreen(
     navController: NavController,
     audioRecorder: AudioRecorderModel,
 ) {
     val context = LocalContext.current
+
+    val dataStore = context.dataStore
     val settings = rememberSettings()
-    val saveFile = rememberFileSaverDialog(settings.audioRecorderSettings.getMimeType())
     val scope = rememberCoroutineScope()
+
+    val saveFile = rememberFileSaverDialog(
+        settings.audioRecorderSettings.getMimeType()
+    ) {
+        if (settings.audioRecorderSettings.deleteRecordingsImmediately) {
+            AudioRecorderExporter.clearAllRecordings(context)
+        }
+
+        if (!AudioRecorderExporter.hasRecordingsAvailable(context)) {
+            scope.launch {
+                dataStore.updateData {
+                    it.setLastRecording(null)
+                }
+            }
+        }
+    }
 
     var isProcessingAudio by remember { mutableStateOf(false) }
     var showRecorderError by remember { mutableStateOf(false) }
 
-    DisposableEffect(Unit) {
-        audioRecorder.onRecordingSave = {
+    fun saveAsLastRecording() {
+        if (!settings.audioRecorderSettings.deleteRecordingsImmediately) {
             scope.launch {
-                isProcessingAudio = true
-
-                // Give the user some time to see the processing dialog
-                delay(100)
-
-                try {
-                    val file = audioRecorder.lastRecording!!.concatenateFiles()
-
-                    saveFile(file, file.name)
-                } catch (error: Exception) {
-                    Log.getStackTraceString(error)
-                } finally {
-                    isProcessingAudio = false
+                dataStore.updateData {
+                    it.setLastRecording(
+                        audioRecorder.recorderService!!.getRecordingInformation()
+                    )
                 }
             }
         }
+    }
+
+    fun saveRecording() {
+        scope.launch {
+            isProcessingAudio = true
+
+            // Give the user some time to see the processing dialog
+            delay(100)
+
+            try {
+                val file = AudioRecorderExporter(
+                    audioRecorder.recorderService?.getRecordingInformation()
+                        ?: settings.lastRecording
+                        ?: throw Exception("No recording information available"),
+                ).concatenateFiles()
+
+                saveFile(file, file.name)
+            } catch (error: Exception) {
+                Log.getStackTraceString(error)
+            } finally {
+                isProcessingAudio = false
+            }
+        }
+    }
+
+    DisposableEffect(key1 = audioRecorder, key2 = settings) {
+        audioRecorder.onRecordingSave = onRecordingSave@{
+            saveAsLastRecording()
+
+            saveRecording()
+        }
         audioRecorder.onError = {
-            // No need to save last recording as it's done automatically on error
-            audioRecorder.stopRecording(context, saveAsLastRecording = false)
+            saveAsLastRecording()
+
+            audioRecorder.stopRecording(context)
             showRecorderError = true
         }
 
@@ -141,7 +181,9 @@ fun AudioRecorder(
             confirmButton = {
                 Button(
                     onClick = {
-                        audioRecorder.onRecordingSave()
+                        showRecorderError = false
+
+                        saveRecording()
                     },
                     colors = ButtonDefaults.textButtonColors(),
                 ) {
@@ -181,7 +223,10 @@ fun AudioRecorder(
             if (audioRecorder.isInRecording)
                 RecordingStatus(audioRecorder = audioRecorder)
             else
-                StartRecording(audioRecorder = audioRecorder, appSettings = appSettings)
+                StartRecording(
+                    audioRecorder = audioRecorder, appSettings = appSettings,
+                    onSaveLastRecording = ::saveRecording,
+                )
         }
     }
 }

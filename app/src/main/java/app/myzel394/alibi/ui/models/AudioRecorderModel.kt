@@ -10,13 +10,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
-import app.myzel394.alibi.dataStore
-import app.myzel394.alibi.db.LastRecording
+import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.services.RecorderService
-import kotlinx.coroutines.flow.last
 import kotlinx.serialization.json.Json
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 
@@ -42,9 +40,6 @@ class AudioRecorderModel : ViewModel() {
         get() = (recordingTime!! / recorderService!!.settings!!.maxDuration).toFloat()
 
     var recorderService: AudioRecorderService? = null
-        private set
-
-    var lastRecording: LastRecording? by mutableStateOf<LastRecording?>(null)
         private set
 
     var onRecordingSave: () -> Unit = {}
@@ -75,7 +70,6 @@ class AudioRecorderModel : ViewModel() {
                         onAmplitudeChange()
                     }
                     recorder.onError = {
-                        recorderService!!.createLastRecording()
                         onError()
                     }
                     recorder.onSelectedMicrophoneChange = { microphone ->
@@ -134,11 +128,7 @@ class AudioRecorderModel : ViewModel() {
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
 
-    fun stopRecording(context: Context, saveAsLastRecording: Boolean = true) {
-        if (saveAsLastRecording) {
-            lastRecording = recorderService!!.createLastRecording()
-        }
-
+    fun stopRecording(context: Context) {
         runCatching {
             context.unbindService(connection)
         }

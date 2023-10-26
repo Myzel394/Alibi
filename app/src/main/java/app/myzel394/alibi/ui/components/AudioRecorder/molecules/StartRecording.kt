@@ -42,6 +42,7 @@ import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
@@ -59,7 +60,8 @@ fun StartRecording(
     // Loading this from parent, because if we load it ourselves
     // and permissions have already been granted, initial
     // settings will be used, instead of the actual settings.
-    appSettings: AppSettings
+    appSettings: AppSettings,
+    onSaveLastRecording: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -79,6 +81,9 @@ fun StartRecording(
                         it
                     )
             }
+
+            AudioRecorderExporter.clearAllRecordings(context)
+
             audioRecorder.startRecording(context)
         }
     }
@@ -144,7 +149,7 @@ fun StartRecording(
                 .fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
-        if (audioRecorder.lastRecording != null && audioRecorder.lastRecording!!.hasRecordingAvailable) {
+        if (appSettings.lastRecording?.hasRecordingsAvailable == true) {
             Column(
                 modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -153,7 +158,7 @@ fun StartRecording(
                 val label = stringResource(
                     R.string.ui_audioRecorder_action_saveOldRecording_label,
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
-                        .format(audioRecorder.lastRecording!!.recordingStart),
+                        .format(appSettings.lastRecording.recordingStart),
                 )
                 Button(
                     modifier = Modifier
@@ -164,10 +169,7 @@ fun StartRecording(
                             contentDescription = label
                         },
                     colors = ButtonDefaults.textButtonColors(),
-                    onClick = {
-                        audioRecorder.stopRecording(context)
-                        audioRecorder.onRecordingSave()
-                    },
+                    onClick = onSaveLastRecording,
                 ) {
                     Icon(
                         Icons.Default.Save,

@@ -28,7 +28,7 @@ class AudioRecorderService : IntervalRecorderService() {
     var onMicrophoneReconnected: () -> Unit = {}
 
     val filePath: String
-        get() = "$folder/$counter.${settings!!.fileExtension}"
+        get() = "${outputFolder}/$counter.${settings!!.fileExtension}"
 
     /// Tell Android to use the correct bluetooth microphone, if any selected
     private fun startAudioDevice() {

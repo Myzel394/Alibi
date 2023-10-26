@@ -1,39 +1,37 @@
 package app.myzel394.alibi.services
 
-import android.content.Context
 import android.media.MediaRecorder
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AudioRecorderSettings
-import app.myzel394.alibi.db.LastRecording
+import app.myzel394.alibi.db.RecordingInformation
+import app.myzel394.alibi.helpers.AudioRecorderExporter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.File
-import java.time.LocalDateTime
-import java.util.Timer
-import java.util.TimerTask
-import java.util.UUID
-import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-abstract class IntervalRecorderService: ExtraRecorderInformationService() {
+abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     private var job = SupervisorJob()
     private var scope = CoroutineScope(Dispatchers.IO + job)
 
     protected var counter = 0
         private set
-    protected lateinit var folder: File
+
     var settings: Settings? = null
         protected set
 
     private lateinit var cycleTimer: ScheduledExecutorService
 
-    fun createLastRecording(): LastRecording = LastRecording(
-        folderPath = folder.absolutePath,
+    protected val outputFolder: File
+        get() = AudioRecorderExporter.getFolder(this)
+
+    fun getRecordingInformation(): RecordingInformation = RecordingInformation(
+        folderPath = outputFolder.absolutePath,
         recordingStart = recordingStart,
         maxDuration = settings!!.maxDuration,
         fileExtension = settings!!.fileExtension,
@@ -60,18 +58,10 @@ abstract class IntervalRecorderService: ExtraRecorderInformationService() {
         }
     }
 
-    private fun getRandomFileFolder(): String {
-        // uuid
-        val folder = UUID.randomUUID().toString()
-
-        return "${externalCacheDir!!.absolutePath}/$folder"
-    }
-
     override fun start() {
         super.start()
 
-        folder = File(getRandomFileFolder())
-        folder.mkdirs()
+        outputFolder.mkdirs()
 
         scope.launch {
             dataStore.data.collectLatest { preferenceSettings ->
@@ -104,7 +94,7 @@ abstract class IntervalRecorderService: ExtraRecorderInformationService() {
         val timeMultiplier = settings!!.maxDuration / settings!!.intervalDuration
         val earliestCounter = counter - timeMultiplier
 
-        folder.listFiles()?.forEach { file ->
+        outputFolder.listFiles()?.forEach { file ->
             val fileCounter = file.nameWithoutExtension.toIntOrNull() ?: return
 
             if (fileCounter < earliestCounter) {
@@ -123,7 +113,7 @@ abstract class IntervalRecorderService: ExtraRecorderInformationService() {
         val encoder: Int,
     ) {
         val fileExtension: String
-            get() = when(outputFormat) {
+            get() = when (outputFormat) {
                 MediaRecorder.OutputFormat.AAC_ADTS -> "aac"
                 MediaRecorder.OutputFormat.THREE_GPP -> "3gp"
                 MediaRecorder.OutputFormat.MPEG_4 -> "mp4"

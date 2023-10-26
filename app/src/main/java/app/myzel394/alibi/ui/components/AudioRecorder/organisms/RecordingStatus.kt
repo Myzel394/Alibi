@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.DeleteButton
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneDisconnectedDialog
 import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneReconnectedDialog
@@ -105,7 +106,9 @@ fun RecordingStatus(
             ) {
                 DeleteButton(
                     onDelete = {
-                        audioRecorder.stopRecording(context, saveAsLastRecording = false)
+                        audioRecorder.stopRecording(context)
+
+                        AudioRecorderExporter.clearAllRecordings(context)
                     }
                 )
             }
