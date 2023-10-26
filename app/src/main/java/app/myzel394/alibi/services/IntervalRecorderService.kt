@@ -30,7 +30,7 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     protected val outputFolder: File
         get() = AudioRecorderExporter.getFolder(this)
 
-    fun createLastRecording(): RecordingInformation = RecordingInformation(
+    fun getRecordingInformation(): RecordingInformation = RecordingInformation(
         folderPath = outputFolder.absolutePath,
         recordingStart = recordingStart,
         maxDuration = settings!!.maxDuration,

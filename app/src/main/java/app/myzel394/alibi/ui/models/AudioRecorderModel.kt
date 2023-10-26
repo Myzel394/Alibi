@@ -42,9 +42,6 @@ class AudioRecorderModel : ViewModel() {
     var recorderService: AudioRecorderService? = null
         private set
 
-    var lastRecording: RecordingInformation? by mutableStateOf<RecordingInformation?>(null)
-        private set
-
     var onRecordingSave: () -> Unit = {}
     var onError: () -> Unit = {}
     var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
@@ -73,7 +70,6 @@ class AudioRecorderModel : ViewModel() {
                         onAmplitudeChange()
                     }
                     recorder.onError = {
-                        recorderService!!.createLastRecording()
                         onError()
                     }
                     recorder.onSelectedMicrophoneChange = { microphone ->
@@ -132,11 +128,7 @@ class AudioRecorderModel : ViewModel() {
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
 
-    fun stopRecording(context: Context, saveAsLastRecording: Boolean = true) {
-        if (saveAsLastRecording) {
-            lastRecording = recorderService!!.createLastRecording()
-        }
-
+    fun stopRecording(context: Context) {
         runCatching {
             context.unbindService(connection)
         }

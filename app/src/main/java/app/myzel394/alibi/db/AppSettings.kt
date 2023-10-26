@@ -18,6 +18,7 @@ data class AppSettings(
     val hasSeenOnboarding: Boolean = false,
     val showAdvancedSettings: Boolean = false,
     val theme: Theme = Theme.SYSTEM,
+    val lastRecording: RecordingInformation? = null,
 ) {
     fun setShowAdvancedSettings(showAdvancedSettings: Boolean): AppSettings {
         return copy(showAdvancedSettings = showAdvancedSettings)
@@ -37,6 +38,10 @@ data class AppSettings(
 
     fun setTheme(theme: Theme): AppSettings {
         return copy(theme = theme)
+    }
+
+    fun setLastRecording(lastRecording: RecordingInformation?): AppSettings {
+        return copy(lastRecording = lastRecording)
     }
 
     enum class Theme {

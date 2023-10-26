@@ -148,7 +148,7 @@ fun StartRecording(
                 .fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
-        if (audioRecorder.lastRecording != null && audioRecorder.lastRecording!!.hasRecordingsAvailable) {
+        if (appSettings.lastRecording?.hasRecordingsAvailable == true) {
             Column(
                 modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -157,7 +157,7 @@ fun StartRecording(
                 val label = stringResource(
                     R.string.ui_audioRecorder_action_saveOldRecording_label,
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
-                        .format(audioRecorder.lastRecording!!.recordingStart),
+                        .format(appSettings.lastRecording.recordingStart),
                 )
                 Button(
                     modifier = Modifier

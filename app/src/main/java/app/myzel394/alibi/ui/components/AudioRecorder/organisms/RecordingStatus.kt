@@ -106,7 +106,8 @@ fun RecordingStatus(
             ) {
                 DeleteButton(
                     onDelete = {
-                        audioRecorder.stopRecording(context, saveAsLastRecording = false)
+                        audioRecorder.stopRecording(context)
+
                         AudioRecorderExporter.clearAllRecordings(context)
                     }
                 )

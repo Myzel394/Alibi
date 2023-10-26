@@ -50,6 +50,7 @@ fun AudioRecorder(
 ) {
     val context = LocalContext.current
 
+    val dataStore = context.dataStore
     val settings = rememberSettings()
     val scope = rememberCoroutineScope()
 
@@ -64,8 +65,22 @@ fun AudioRecorder(
     var isProcessingAudio by remember { mutableStateOf(false) }
     var showRecorderError by remember { mutableStateOf(false) }
 
-    DisposableEffect(key1 = audioRecorder, key2 = settings.audioRecorderSettings) {
-        audioRecorder.onRecordingSave = {
+    fun saveAsLastRecording() {
+        if (!settings.audioRecorderSettings.deleteRecordingsImmediately) {
+            scope.launch {
+                dataStore.updateData {
+                    it.setLastRecording(
+                        audioRecorder.recorderService!!.getRecordingInformation()
+                    )
+                }
+            }
+        }
+    }
+
+    DisposableEffect(key1 = audioRecorder, key2 = settings) {
+        audioRecorder.onRecordingSave = onRecordingSave@{
+            val recordingInformation = audioRecorder.recorderService!!.getRecordingInformation()
+
             scope.launch {
                 isProcessingAudio = true
 
@@ -73,10 +88,11 @@ fun AudioRecorder(
                 delay(100)
 
                 try {
-                    val file =
-                        AudioRecorderExporter(audioRecorder.lastRecording!!).concatenateFiles()
+                    val file = AudioRecorderExporter(recordingInformation).concatenateFiles()
 
                     saveFile(file, file.name)
+
+                    saveAsLastRecording()
                 } catch (error: Exception) {
                     Log.getStackTraceString(error)
                 } finally {
@@ -85,8 +101,9 @@ fun AudioRecorder(
             }
         }
         audioRecorder.onError = {
-            // No need to save last recording as it's done automatically on error
-            audioRecorder.stopRecording(context, saveAsLastRecording = false)
+            saveAsLastRecording()
+
+            audioRecorder.stopRecording(context)
             showRecorderError = true
         }
 
