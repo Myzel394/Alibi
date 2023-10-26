@@ -88,6 +88,7 @@ data class AudioRecorderSettings(
     val outputFormat: Int? = null,
     val encoder: Int? = null,
     val showAllMicrophones: Boolean = false,
+    val deleteRecordingsImmediately: Boolean = false,
 ) {
     fun getOutputFormat(): Int {
         if (outputFormat != null) {
@@ -217,6 +218,10 @@ data class AudioRecorderSettings(
 
     fun setShowAllMicrophones(showAllMicrophones: Boolean): AudioRecorderSettings {
         return copy(showAllMicrophones = showAllMicrophones)
+    }
+
+    fun setDeleteRecordingsImmediately(deleteRecordingsImmediately: Boolean): AudioRecorderSettings {
+        return copy(deleteRecordingsImmediately = deleteRecordingsImmediately)
     }
 
     fun isEncoderCompatible(encoder: Int): Boolean {
