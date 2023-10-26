@@ -16,6 +16,7 @@ import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.services.RecorderService
 import kotlinx.serialization.json.Json
+import app.myzel394.alibi.ui.utils.MicrophoneInfo
 
 class AudioRecorderModel : ViewModel() {
     var recorderState by mutableStateOf(RecorderState.IDLE)
@@ -23,6 +24,8 @@ class AudioRecorderModel : ViewModel() {
     var recordingTime by mutableStateOf<Long?>(null)
         private set
     var amplitudes by mutableStateOf<List<Int>>(emptyList())
+        private set
+    var selectedMicrophone by mutableStateOf<MicrophoneInfo?>(null)
         private set
 
     var onAmplitudeChange: () -> Unit = {}
@@ -46,10 +49,19 @@ class AudioRecorderModel : ViewModel() {
     var onError: () -> Unit = {}
     var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
 
+    var microphoneStatus: MicrophoneConnectivityStatus = MicrophoneConnectivityStatus.CONNECTED
+        private set
+
+    enum class MicrophoneConnectivityStatus {
+        CONNECTED,
+        DISCONNECTED
+    }
+
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             recorderService =
                 ((service as RecorderService.RecorderBinder).getService() as AudioRecorderService).also { recorder ->
+                    // Update UI when the service changes
                     recorder.onStateChange = { state ->
                         recorderState = state
                     }
@@ -64,12 +76,23 @@ class AudioRecorderModel : ViewModel() {
                         recorderService!!.createLastRecording()
                         onError()
                     }
+                    recorder.onSelectedMicrophoneChange = { microphone ->
+                        selectedMicrophone = microphone
+                    }
+                    recorder.onMicrophoneDisconnected = {
+                        microphoneStatus = MicrophoneConnectivityStatus.DISCONNECTED
+                    }
+                    recorder.onMicrophoneReconnected = {
+                        microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
+                    }
                 }.also {
+                    // Init UI from the service
                     it.startRecording()
 
                     recorderState = it.state
                     recordingTime = it.recordingTime
                     amplitudes = it.amplitudes
+                    selectedMicrophone = it.selectedMicrophone
                 }
         }
 
@@ -83,6 +106,8 @@ class AudioRecorderModel : ViewModel() {
         recorderState = RecorderState.IDLE
         recordingTime = null
         amplitudes = emptyList()
+        selectedMicrophone = null
+        microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
     }
 
     fun startRecording(context: Context) {
@@ -132,6 +157,14 @@ class AudioRecorderModel : ViewModel() {
 
     fun setMaxAmplitudesAmount(amount: Int) {
         recorderService?.amplitudesAmount = amount
+    }
+
+    fun changeMicrophone(microphone: MicrophoneInfo?) {
+        recorderService!!.changeMicrophone(microphone)
+
+        if (microphone == null) {
+            microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
+        }
     }
 
     fun bindToService(context: Context) {

@@ -2,26 +2,19 @@ package app.myzel394.alibi.services
 
 import android.annotation.SuppressLint
 import android.app.Notification
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
-import app.myzel394.alibi.MainActivity
 import app.myzel394.alibi.NotificationHelper
-import app.myzel394.alibi.R
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.ui.utils.PermissionHelper
 import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.util.Calendar
-import java.util.Date
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -115,10 +108,7 @@ abstract class RecorderService : Service() {
                 isPaused = true
             }
 
-            RecorderState.IDLE -> {
-                stop()
-                onDestroy()
-            }
+            else -> {}
         }
 
         when (newState) {
@@ -170,6 +160,7 @@ abstract class RecorderService : Service() {
     override fun onDestroy() {
         super.onDestroy()
 
+        stop()
         changeState(RecorderState.IDLE)
 
         stopForeground(STOP_FOREGROUND_REMOVE)
