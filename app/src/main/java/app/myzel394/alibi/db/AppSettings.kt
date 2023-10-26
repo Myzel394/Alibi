@@ -171,6 +171,7 @@ data class AudioRecorderSettings(
     val samplingRate: Int? = null,
     val outputFormat: Int? = null,
     val encoder: Int? = null,
+    val showAllMicrophones: Boolean = false,
 ) {
     fun getOutputFormat(): Int {
         if (outputFormat != null) {
@@ -251,7 +252,6 @@ data class AudioRecorderSettings(
     }
 
     fun setBitRate(bitRate: Int): AudioRecorderSettings {
-        println("bitRate: $bitRate")
         if (bitRate !in 1000..320000) {
             throw Exception("Bit rate must be between 1000 and 320000")
         }
@@ -297,6 +297,10 @@ data class AudioRecorderSettings(
 
     fun setForceExactMaxDuration(forceExactMaxDuration: Boolean): AudioRecorderSettings {
         return copy(forceExactMaxDuration = forceExactMaxDuration)
+    }
+
+    fun setShowAllMicrophones(showAllMicrophones: Boolean): AudioRecorderSettings {
+        return copy(showAllMicrophones = showAllMicrophones)
     }
 
     fun isEncoderCompatible(encoder: Int): Boolean {
