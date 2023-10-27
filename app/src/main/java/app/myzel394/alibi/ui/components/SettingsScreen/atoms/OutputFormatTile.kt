@@ -1,6 +1,5 @@
 package app.myzel394.alibi.ui.components.SettingsScreen.atoms
 
-import android.media.MediaRecorder
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AudioFile
 import androidx.compose.material3.Button
@@ -8,13 +7,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -35,14 +29,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OutputFormatTile() {
+fun OutputFormatTile(
+    settings: AppSettings,
+) {
     val scope = rememberCoroutineScope()
     val showDialog = rememberUseCaseState()
     val dataStore = LocalContext.current.dataStore
-    val settings = dataStore
-        .data
-        .collectAsState(initial = AppSettings.getDefaultInstance())
-        .value
     val availableOptions = if (settings.audioRecorderSettings.encoder == null)
         AudioRecorderSettings.OUTPUT_FORMAT_INDEX_TEXT_MAP.keys.toTypedArray()
     else AudioRecorderSettings.ENCODER_SUPPORTED_OUTPUT_FORMATS_MAP[settings.audioRecorderSettings.encoder]!!
@@ -74,7 +66,7 @@ fun OutputFormatTile() {
                     selected = settings.audioRecorderSettings.outputFormat == option,
                 )
             }.toList()
-        ) {index, option ->
+        ) { index, _ ->
             updateValue(availableOptions[index])
         },
     )

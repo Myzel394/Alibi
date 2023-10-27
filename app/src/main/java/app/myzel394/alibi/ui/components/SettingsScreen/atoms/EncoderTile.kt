@@ -2,7 +2,6 @@ package app.myzel394.alibi.ui.components.SettingsScreen.atoms
 
 import android.media.MediaRecorder
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AudioFile
 import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,17 +34,15 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EncoderTile(
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    settings: AppSettings,
 ) {
     val scope = rememberCoroutineScope()
     val showDialog = rememberUseCaseState()
     val dataStore = LocalContext.current.dataStore
-    val settings = dataStore
-        .data
-        .collectAsState(initial = AppSettings.getDefaultInstance())
-        .value
 
-    val updatedOutputFormatLabel = stringResource(R.string.ui_settings_option_encoder_extra_outputFormatChanged)
+    val updatedOutputFormatLabel =
+        stringResource(R.string.ui_settings_option_encoder_extra_outputFormatChanged)
 
     fun updateValue(encoder: Int?) {
         scope.launch {
@@ -92,7 +89,7 @@ fun EncoderTile(
                     selected = settings.audioRecorderSettings.encoder == index,
                 )
             }.toList()
-        ) {index, option ->
+        ) { index, _ ->
             updateValue(index)
         },
     )
