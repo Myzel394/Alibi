@@ -13,6 +13,8 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name=".UpdateSettingsApp"
         android:allowBackup="true"
@@ -56,6 +58,14 @@
                 android:name="autoStoreLocales"
                 android:value="true" />
         </service>
+
+        <receiver
+            android:name=".receivers.BootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -109,4 +109,6 @@
     <string name="ui_about_contribute_donation_githubSponsors">Become a GitHub Sponsor</string>
     <string name="ui_settings_option_deleteRecordingsImmediately_title">Delete Recordings Immediately</string>
     <string name="ui_settings_option_deleteRecordingsImmediately_description">If enabled, Alibi will immediately delete recordings after you have saved the file.</string>
+    <string name="ui_settings_bootBehavior_title">Boot Behavior</string>
+    <string name="ui_settings_bootBehavior_values_SHOW_NOTIFICATION_title">Show a notification</string>
 </resources>

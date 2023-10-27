@@ -57,6 +57,10 @@ abstract class RecorderService : Service() {
                 }
             }
 
+            "initStart" -> {
+                startRecording()
+            }
+
             "changeState" -> {
                 val newState = intent.getStringExtra("newState")?.let {
                     RecorderState.valueOf(it)
