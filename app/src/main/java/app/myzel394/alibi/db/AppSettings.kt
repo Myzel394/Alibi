@@ -19,6 +19,7 @@ data class AppSettings(
     val showAdvancedSettings: Boolean = false,
     val theme: Theme = Theme.SYSTEM,
     val lastRecording: RecordingInformation? = null,
+    val bootBehavior: BootBehavior? = BootBehavior.START_RECORDING,
 ) {
     fun setShowAdvancedSettings(showAdvancedSettings: Boolean): AppSettings {
         return copy(showAdvancedSettings = showAdvancedSettings)
@@ -44,10 +45,19 @@ data class AppSettings(
         return copy(lastRecording = lastRecording)
     }
 
+    fun setBootBehavior(bootBehavior: BootBehavior?): AppSettings {
+        return copy(bootBehavior = bootBehavior)
+    }
+
     enum class Theme {
         SYSTEM,
         LIGHT,
         DARK,
+    }
+
+    enum class BootBehavior {
+        START_RECORDING,
+        SHOW_NOTIFICATION,
     }
 
     fun exportToString(): String {
