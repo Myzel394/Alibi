@@ -56,6 +56,7 @@ import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ThemeSelector
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
+import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import kotlinx.coroutines.launch
 
@@ -114,10 +115,7 @@ fun SettingsScreen(
         ) {
             val scope = rememberCoroutineScope()
             val dataStore = LocalContext.current.dataStore
-            val settings = dataStore
-                .data
-                .collectAsState(initial = AppSettings.getDefaultInstance())
-                .value
+            val settings = rememberSettings()
 
             // Show alert
             if (audioRecorder.isInRecording)
@@ -145,12 +143,12 @@ fun SettingsScreen(
                     }
                 }
             )
-            MaxDurationTile()
-            IntervalDurationTile()
-            ForceExactMaxDurationTile()
+            MaxDurationTile(settings = settings)
+            IntervalDurationTile(settings = settings)
+            ForceExactMaxDurationTile(settings = settings)
             InAppLanguagePicker()
-            DeleteRecordingsImmediatelyTile()
-            CustomNotificationTile(navController = navController)
+            DeleteRecordingsImmediatelyTile(settings = settings)
+            CustomNotificationTile(navController = navController, settings = settings)
             AboutTile(navController = navController)
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
                 Column(
@@ -163,11 +161,11 @@ fun SettingsScreen(
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 32.dp)
                         )
-                        ShowAllMicrophonesTile()
-                        BitrateTile()
-                        SamplingRateTile()
-                        EncoderTile(snackbarHostState = snackbarHostState)
-                        OutputFormatTile()
+                        ShowAllMicrophonesTile(settings = settings)
+                        BitrateTile(settings = settings)
+                        SamplingRateTile(settings = settings)
+                        EncoderTile(snackbarHostState = snackbarHostState, settings = settings)
+                        OutputFormatTile(settings = settings)
                     }
                     Divider(
                         modifier = Modifier

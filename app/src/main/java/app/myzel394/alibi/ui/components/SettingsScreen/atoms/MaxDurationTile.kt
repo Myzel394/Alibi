@@ -33,14 +33,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MaxDurationTile() {
+fun MaxDurationTile(
+    settings: AppSettings,
+) {
     val scope = rememberCoroutineScope()
     val showDialog = rememberUseCaseState()
     val dataStore = LocalContext.current.dataStore
-    val settings = dataStore
-        .data
-        .collectAsState(initial = AppSettings.getDefaultInstance())
-        .value
 
     fun updateValue(maxDuration: Long) {
         scope.launch {

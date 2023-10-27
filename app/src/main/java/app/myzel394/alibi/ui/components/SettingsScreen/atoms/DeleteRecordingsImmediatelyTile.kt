@@ -16,14 +16,12 @@ import app.myzel394.alibi.ui.components.atoms.SettingsTile
 import kotlinx.coroutines.launch
 
 @Composable
-fun DeleteRecordingsImmediatelyTile() {
+fun DeleteRecordingsImmediatelyTile(
+    settings: AppSettings,
+) {
     val scope = rememberCoroutineScope()
 
     val dataStore = LocalContext.current.dataStore
-    val settings = dataStore
-        .data
-        .collectAsState(initial = AppSettings.getDefaultInstance())
-        .value
 
     SettingsTile(
         title = stringResource(R.string.ui_settings_option_deleteRecordingsImmediately_title),

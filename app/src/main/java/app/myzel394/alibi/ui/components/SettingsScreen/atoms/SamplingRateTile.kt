@@ -36,14 +36,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SamplingRateTile() {
+fun SamplingRateTile(
+    settings: AppSettings,
+) {
     val scope = rememberCoroutineScope()
     val showDialog = rememberUseCaseState()
     val dataStore = LocalContext.current.dataStore
-    val settings = dataStore
-        .data
-        .collectAsState(initial = AppSettings.getDefaultInstance())
-        .value
 
     fun updateValue(samplingRate: Int?) {
         scope.launch {

@@ -22,12 +22,9 @@ import app.myzel394.alibi.ui.enums.Screen
 @Composable
 fun CustomNotificationTile(
     navController: NavController,
+    settings: AppSettings,
 ) {
     val dataStore = LocalContext.current.dataStore
-    val settings = dataStore
-        .data
-        .collectAsState(initial = AppSettings.getDefaultInstance())
-        .value
 
     val label = if (settings.notificationSettings == null)
         stringResource(R.string.ui_settings_option_customNotification_description_setup)

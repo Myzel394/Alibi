@@ -19,13 +19,11 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun ShowAllMicrophonesTile() {
+fun ShowAllMicrophonesTile(
+    settings: AppSettings,
+) {
     val scope = rememberCoroutineScope()
     val dataStore = LocalContext.current.dataStore
-    val settings = dataStore
-        .data
-        .collectAsState(initial = AppSettings.getDefaultInstance())
-        .value
 
     fun updateValue(showAllMicrophones: Boolean) {
         scope.launch {
