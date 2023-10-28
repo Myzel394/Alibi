@@ -1,7 +1,9 @@
 package app.myzel394.alibi.services
 
-import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.media.AudioDeviceCallback
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
@@ -9,12 +11,11 @@ import android.media.MediaRecorder
 import android.media.MediaRecorder.OnErrorListener
 import android.os.Build
 import android.os.Handler
+import android.os.IBinder
 import android.os.Looper
-import androidx.core.content.ContextCompat.getSystemService
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import java.lang.IllegalStateException
-import java.util.concurrent.Executor
 
 class AudioRecorderService : IntervalRecorderService() {
     var amplitudesAmount = 1000
