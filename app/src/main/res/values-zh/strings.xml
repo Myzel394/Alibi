@@ -18,8 +18,8 @@
     <string name="ui_audioRecorder_action_delete_label">删除</string>
     <string name="ui_audioRecorder_action_delete_confirm_title">确定删除记录？</string>
     <string name="ui_audioRecorder_action_delete_confirm_message">您确定要删除此录音吗?</string>
-    <string name="ui_audioRecorder_action_pause_label">暂停录制</string>
-    <string name="ui_audioRecorder_action_resume_label">恢复录制</string>
+    <string name="ui_audioRecorder_action_pause_label">Pause</string>
+    <string name="ui_audioRecorder_action_resume_label">Resume</string>
     <string name="ui_audioRecorder_action_save_label">保存录音</string>
     <string name="ui_audioRecorder_action_start_description">Alibi will continue recording in the background and store the last <xliff:g name="durationInMinutes">%s</xliff:g> minutes at your request</string>
     <string name="ui_audioRecorder_action_save_processing_dialog_title">处理中</string>
