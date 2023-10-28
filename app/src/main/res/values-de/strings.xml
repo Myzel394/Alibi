@@ -18,8 +18,8 @@
     <string name="ui_audioRecorder_action_delete_label">Löschen</string>
     <string name="ui_audioRecorder_action_delete_confirm_title">Aufnahme Löschen?</string>
     <string name="ui_audioRecorder_action_delete_confirm_message">Bist du sicher, dass du diese Aufnahme löschen möchtest?</string>
-    <string name="ui_audioRecorder_action_pause_label">Aufnahme pausieren</string>
-    <string name="ui_audioRecorder_action_resume_label">Aufnahme fortsetzten</string>
+    <string name="ui_audioRecorder_action_pause_label">Pause</string>
+    <string name="ui_audioRecorder_action_resume_label">Resume</string>
     <string name="ui_audioRecorder_action_save_label">Aufnahme speichern</string>
     <string name="ui_audioRecorder_action_start_description">Alibi wird im Hintergrund weiterhin aufnehmen und die letzten <xliff:g name="durationInMinutes">%s</xliff:g> Minuten auf Wunsch speichern</string>
     <string name="ui_audioRecorder_action_save_processing_dialog_title">Bearbeiten</string>
