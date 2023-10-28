@@ -18,8 +18,8 @@
     <string name="ui_audioRecorder_action_delete_label">Sil</string>
     <string name="ui_audioRecorder_action_delete_confirm_title">Kayıt Silinsin mi?</string>
     <string name="ui_audioRecorder_action_delete_confirm_message">Bu kaydı silmek istediğinizden emin misiniz?</string>
-    <string name="ui_audioRecorder_action_pause_label">Kaydı Duraklat</string>
-    <string name="ui_audioRecorder_action_resume_label">Kayda Devam Et</string>
+    <string name="ui_audioRecorder_action_pause_label">Pause</string>
+    <string name="ui_audioRecorder_action_resume_label">Resume</string>
     <string name="ui_audioRecorder_action_save_label">Kaydı Kaydet</string>
     <string name="ui_audioRecorder_action_start_description">Alibi arka planda kayıt yapmaya devam edecek ve son <xliff:g name="durationInMinutes">%s</xliff:g> dakikayı depolayacaktır</string>
     <string name="ui_audioRecorder_action_save_processing_dialog_title">İşleniyor</string>
