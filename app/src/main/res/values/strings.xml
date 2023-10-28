@@ -111,4 +111,8 @@
     <string name="ui_settings_option_deleteRecordingsImmediately_description">If enabled, Alibi will immediately delete recordings after you have saved the file.</string>
     <string name="ui_settings_bootBehavior_title">Boot Behavior</string>
     <string name="ui_settings_bootBehavior_values_SHOW_NOTIFICATION_title">Show a notification</string>
+    <string name="notificationChannels_boot_name">Boot notification</string>
+    <string name="notificationChannels_boot_description">If enabled, you\'ll be informed that your recording was interrupted</string>
+    <string name="notification_boot_title">Alibi was interrupted</string>
+    <string name="notification_boot_message">Your device restarted and your recording has been interrupted</string>
 </resources>

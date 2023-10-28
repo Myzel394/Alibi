@@ -125,7 +125,7 @@ class AudioRecorderModel : ViewModel() {
             }
         }
         ContextCompat.startForegroundService(context, intent)
-        context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        context.bindService(intent, connection, 0)
     }
 
     fun stopRecording(context: Context) {
