@@ -55,10 +55,10 @@ abstract class RecorderService : Service() {
                         it
                     )
                 }
-            }
 
-            "initStart" -> {
-                startRecording()
+                if (intent.getBooleanExtra("startImmediately", false)) {
+                    startRecording()
+                }
             }
 
             "changeState" -> {

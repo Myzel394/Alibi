@@ -19,7 +19,7 @@ data class AppSettings(
     val showAdvancedSettings: Boolean = false,
     val theme: Theme = Theme.SYSTEM,
     val lastRecording: RecordingInformation? = null,
-    val bootBehavior: BootBehavior? = BootBehavior.SHOW_NOTIFICATION,
+    val bootBehavior: BootBehavior? = BootBehavior.START_RECORDING,
 ) {
     fun setShowAdvancedSettings(showAdvancedSettings: Boolean): AppSettings {
         return copy(showAdvancedSettings = showAdvancedSettings)

@@ -58,10 +58,21 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
         }
     }
 
+    private fun fetchCounterValue() {
+        val files = outputFolder.listFiles()?.filter {
+            val name = it.nameWithoutExtension
+
+            name.toIntOrNull() != null
+        }?.toList() ?: emptyList()
+
+        counter = files.size
+    }
+
     override fun start() {
         super.start()
 
         outputFolder.mkdirs()
+        fetchCounterValue()
 
         scope.launch {
             dataStore.data.collectLatest { preferenceSettings ->

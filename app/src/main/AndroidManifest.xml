@@ -47,6 +47,7 @@
         </receiver>
         <service
             android:name=".services.AudioRecorderService"
+            android:exported="false"
             android:foregroundServiceType="microphone" />
 
         <!-- Change locale for Android <= 12 -->

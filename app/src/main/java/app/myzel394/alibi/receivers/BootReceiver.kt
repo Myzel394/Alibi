@@ -45,8 +45,15 @@ class BootReceiver : BroadcastReceiver() {
             }
         }
 
+        println("BootReceiver.startRecording()")
         val intent = Intent(context, AudioRecorderService::class.java).apply {
             action = "init"
+
+            putExtra(
+                "startImmediately",
+                true,
+            )
+
             if (settings.notificationSettings != null) {
                 putExtra(
                     "notificationDetails",
@@ -61,7 +68,6 @@ class BootReceiver : BroadcastReceiver() {
             }
         }
         ContextCompat.startForegroundService(context, intent)
-        context.bindService(intent, connection, 0)
     }
 
     private fun showNotification(context: Context) {
@@ -98,8 +104,11 @@ class BootReceiver : BroadcastReceiver() {
             return
         }
 
+        println("BootReceiver.onReceive()")
+
         scope.launch {
             context.dataStore.data.collectLatest { settings ->
+                println("BootBehavior: ${settings.bootBehavior}")
                 when (settings.bootBehavior) {
                     AppSettings.BootBehavior.CONTINUE_RECORDING -> {
                         if (AudioRecorderExporter.hasRecordingsAvailable(context)) {
