@@ -1,13 +1,17 @@
 package app.myzel394.alibi.services
 
+import android.app.Activity
 import android.app.ActivityManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Bundle
 import android.os.IBinder
+import android.os.PersistableBundle
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
+import androidx.compose.animation.core.updateTransition
 import androidx.core.content.ContextCompat
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
@@ -29,17 +33,17 @@ class AudioRecorderTileService : TileService() {
 
     override fun onStartListening() {
         super.onStartListening()
+        println("started =================")
 
-        println("Before start")
         scope.launch {
-            println("Getting recorder...")
             val state = getRecorderState()
-            println("All right updating")
             updateTile(state)
         }
     }
 
     override fun onStopListening() {
+        println("stoppeeeeeeeeeeeed =================")
+
         runCatching {
             connection?.let { unbindService(it) }
             connection = null
@@ -48,32 +52,44 @@ class AudioRecorderTileService : TileService() {
         super.onStopListening()
     }
 
-    private fun startRecording() {
-        scope.launch {
-            dataStore.data.collectLatest { appSettings ->
-                val notificationDetails = appSettings.notificationSettings?.let {
-                    RecorderNotificationHelper.NotificationDetails.fromNotificationSettings(
-                        this@AudioRecorderTileService,
-                        it,
-                    )
-                }
-
-                val intent =
-                    Intent(this@AudioRecorderTileService, AudioRecorderService::class.java).apply {
-                        action = "init"
-
-                        if (notificationDetails != null) {
-                            putExtra(
-                                "notificationDetails",
-                                Json.encodeToString(
-                                    RecorderNotificationHelper.NotificationDetails.serializer(),
-                                    notificationDetails,
-                                ),
-                            )
-                        }
-                    }
-                ContextCompat.startForegroundService(this@AudioRecorderTileService, intent)
+    private suspend fun startRecording() {
+        dataStore.data.collectLatest { appSettings ->
+            val notificationDetails = appSettings.notificationSettings?.let {
+                RecorderNotificationHelper.NotificationDetails.fromNotificationSettings(
+                    this@AudioRecorderTileService,
+                    it,
+                )
             }
+
+            val intent =
+                Intent(this, AudioRecorderService::class.java).apply {
+                    action = "init"
+                }
+            ContextCompat.startForegroundService(this, intent)
+
+            /*
+            val intent =
+                Intent(this@AudioRecorderTileService, AudioRecorderService::class.java).apply {
+                    action = "init"
+
+                    if (notificationDetails != null) {
+                        putExtra(
+                            "notificationDetails",
+                            Json.encodeToString(
+                                RecorderNotificationHelper.NotificationDetails.serializer(),
+                                notificationDetails,
+                            ),
+                        )
+                    }
+                }
+            ContextCompat.startForegroundService(this@AudioRecorderTileService, intent)
+
+            println("recorder")
+            val recorder = getRecorder()
+            println("recorder eta ${recorder}")
+            recorder?.startRecording()
+
+             */
         }
     }
 
@@ -84,6 +100,9 @@ class AudioRecorderTileService : TileService() {
 
             when (state) {
                 RecorderState.IDLE -> {
+                    // Already update to provide a fast UI response
+                    // Optimistically assume that the state will change
+                    updateTile(RecorderState.RECORDING)
                     AudioRecorderExporter.clearAllRecordings(this@AudioRecorderTileService)
                     startRecording()
                 }
