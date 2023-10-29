@@ -60,15 +60,6 @@ fun Navigation(
         }
         composable(
             Screen.AudioRecorder.route,
-            enterTransition = {
-                when (initialState.destination.route) {
-                    Screen.Welcome.route -> null
-                    else -> scaleIn(initialScale = SCALE_IN) + fadeIn()
-                }
-            },
-            exitTransition = {
-                scaleOut(targetScale = SCALE_IN) + fadeOut(tween(durationMillis = 150))
-            }
         ) {
             AudioRecorderScreen(
                 navController = navController,
@@ -77,12 +68,6 @@ fun Navigation(
         }
         composable(
             Screen.Settings.route,
-            enterTransition = {
-                scaleIn(initialScale = 1 / SCALE_IN) + fadeIn()
-            },
-            exitTransition = {
-                scaleOut(targetScale = 1 / SCALE_IN) + fadeOut(tween(durationMillis = 150))
-            }
         ) {
             SettingsScreen(
                 navController = navController,
@@ -91,16 +76,6 @@ fun Navigation(
         }
         composable(
             Screen.CustomRecordingNotifications.route,
-            enterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { it -> it / 2 }
-                ) + fadeIn()
-            },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { it -> it / 2 }
-                ) + fadeOut(tween(150))
-            }
         ) {
             CustomRecordingNotificationsScreen(
                 navController = navController,
@@ -108,12 +83,6 @@ fun Navigation(
         }
         composable(
             Screen.About.route,
-            enterTransition = {
-                scaleIn()
-            },
-            exitTransition = {
-                scaleOut() + fadeOut(tween(150))
-            }
         ) {
             AboutScreen(
                 navController = navController,
