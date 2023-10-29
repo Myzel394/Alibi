@@ -34,7 +34,7 @@ abstract class RecorderService : Service() {
     var onStateChange: ((RecorderState) -> Unit)? = null
 
     var recordingTime = 0L
-        private set
+        protected set
     private lateinit var recordingTimeTimer: ScheduledExecutorService
     var onRecordingTimeChange: ((Long) -> Unit)? = null
     var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
