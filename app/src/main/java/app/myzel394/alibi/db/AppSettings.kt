@@ -173,10 +173,6 @@ data class AudioRecorderSettings(
 
         runCatching {
             return File(saveFolder!!).apply {
-                if (!AudioRecorderExporter.canFolderBeUsed(this)) {
-                    throw SecurityException("Can't write to folder")
-                }
-
                 if (!exists()) {
                     mkdirs()
                 }

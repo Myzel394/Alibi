@@ -51,6 +51,7 @@ import app.myzel394.alibi.ui.components.SettingsScreen.atoms.IntervalDurationTil
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.MaxDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.OutputFormatTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.SamplingRateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.atoms.SaveFolderTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ShowAllMicrophonesTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ThemeSelector
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
@@ -161,6 +162,7 @@ fun SettingsScreen(
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 32.dp)
                         )
+                        SaveFolderTile(settings = settings)
                         ShowAllMicrophonesTile(settings = settings)
                         BitrateTile(settings = settings)
                         SamplingRateTile(settings = settings)

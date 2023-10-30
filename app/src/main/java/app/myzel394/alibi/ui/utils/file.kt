@@ -56,3 +56,18 @@ fun rememberFileSelectorDialog(
         launcher.launch(arrayOf(mimeType))
     }
 }
+
+@Composable
+fun rememberFolderSelectorDialog(
+    callback: (Uri?) -> Unit
+): (() -> Unit) {
+    val launcher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.OpenDocumentTree(),
+            callback,
+        )
+
+    return {
+        launcher.launch(null)
+    }
+}
