@@ -28,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -156,12 +157,28 @@ fun SaveFolderTile(
         },
         extra = {
             Column(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 if (settings.audioRecorderSettings.saveFolder != null) {
+                    Text(
+                        text = stringResource(
+                            R.string.form_value_selected,
+                            settings
+                                .audioRecorderSettings
+                                .saveFolder
+                                .split(":")[1]
+                                .replace("/", " > ")
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                     Button(
                         colors = ButtonDefaults.filledTonalButtonColors(),
+                        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                         onClick = {
                             updateValue(null)
                         }
@@ -178,18 +195,18 @@ fun SaveFolderTile(
                             text = stringResource(R.string.ui_settings_option_saveFolder_action_default_label),
                         )
                     }
+                } else {
+                    Text(
+                        text = stringResource(
+                            R.string.form_value_selected,
+                            stringResource(R.string.ui_settings_option_saveFolder_defaultValue)
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
-                Text(
-                    text = stringResource(
-                        R.string.form_value_selected,
-                        settings.audioRecorderSettings.saveFolder
-                            ?: stringResource(R.string.ui_settings_option_saveFolder_defaultValue)
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                )
             }
         }
     )
