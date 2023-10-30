@@ -1,8 +1,10 @@
 package app.myzel394.alibi.db
 
+import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
 import app.myzel394.alibi.R
+import app.myzel394.alibi.helpers.AudioRecorderExporter
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.serialization.Serializable
@@ -94,6 +96,7 @@ data class AudioRecorderSettings(
     val encoder: Int? = null,
     val showAllMicrophones: Boolean = false,
     val deleteRecordingsImmediately: Boolean = false,
+    val saveFolder: String? = null,
 ) {
     fun getOutputFormat(): Int {
         if (outputFormat != null) {
@@ -161,6 +164,28 @@ data class AudioRecorderSettings(
     else
         MediaRecorder.AudioEncoder.AMR_NB
 
+    fun getSaveFolder(context: Context): File {
+        val defaultFolder = AudioRecorderExporter.getFolder(context)
+
+        if (saveFolder == null) {
+            return defaultFolder
+        }
+
+        runCatching {
+            return File(saveFolder!!).apply {
+                if (!AudioRecorderExporter.canFolderBeUsed(this)) {
+                    throw SecurityException("Can't write to folder")
+                }
+
+                if (!exists()) {
+                    mkdirs()
+                }
+            }
+        }
+
+        return defaultFolder
+    }
+
     fun setIntervalDuration(duration: Long): AudioRecorderSettings {
         if (duration < 10 * 1000L || duration > 60 * 60 * 1000L) {
             throw Exception("Interval duration must be between 10 seconds and 1 hour")
@@ -227,6 +252,10 @@ data class AudioRecorderSettings(
 
     fun setDeleteRecordingsImmediately(deleteRecordingsImmediately: Boolean): AudioRecorderSettings {
         return copy(deleteRecordingsImmediately = deleteRecordingsImmediately)
+    }
+
+    fun setSaveFolder(saveFolder: String?): AudioRecorderSettings {
+        return copy(saveFolder = saveFolder)
     }
 
     fun isEncoderCompatible(encoder: Int): Boolean {

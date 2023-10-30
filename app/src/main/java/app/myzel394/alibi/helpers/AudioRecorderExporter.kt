@@ -114,5 +114,9 @@ data class AudioRecorderExporter(
 
         fun hasRecordingsAvailable(context: Context) =
             getFolder(context).listFiles()?.isNotEmpty() ?: false
+
+        // Write required for saving the audio files
+        // Read required for concatenating the audio files
+        fun canFolderBeUsed(file: File) = file.canRead() && file.canWrite()
     }
 }
