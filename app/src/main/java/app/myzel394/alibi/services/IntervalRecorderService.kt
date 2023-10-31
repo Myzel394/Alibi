@@ -1,6 +1,8 @@
 package app.myzel394.alibi.services
 
 import android.media.MediaRecorder
+import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AudioRecorderSettings
 import app.myzel394.alibi.db.RecordingInformation
@@ -10,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.w3c.dom.DocumentFragment
 import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -27,11 +30,15 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
 
     private lateinit var cycleTimer: ScheduledExecutorService
 
-    protected val outputFolder: File
+    protected val defaultOutputFolder: File
         get() = AudioRecorderExporter.getFolder(this)
 
+    var customOutputFolder: DocumentFile? = null
+
+    var onCustomOutputFolderNotAccessible: () -> Unit = {}
+
     fun getRecordingInformation(): RecordingInformation = RecordingInformation(
-        folderPath = outputFolder.absolutePath,
+        folderPath = customOutputFolder?.uri?.toString() ?: defaultOutputFolder.absolutePath,
         recordingStart = recordingStart,
         maxDuration = settings!!.maxDuration,
         fileExtension = settings!!.fileExtension,
@@ -61,14 +68,28 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     override fun start() {
         super.start()
 
-        outputFolder.mkdirs()
-
         scope.launch {
             dataStore.data.collectLatest { preferenceSettings ->
                 if (settings == null) {
                     settings = Settings.from(preferenceSettings.audioRecorderSettings)
 
+                    if (settings!!.folder != null) {
+                        customOutputFolder = DocumentFile.fromTreeUri(
+                            this@IntervalRecorderService,
+                            Uri.parse(settings!!.folder)
+                        )
+
+                        if (!customOutputFolder!!.canRead() || !customOutputFolder!!.canWrite()) {
+                            customOutputFolder = null
+                            onCustomOutputFolderNotAccessible()
+                        }
+                    }
+
                     createTimer()
+                }
+
+                if (customOutputFolder == null) {
+                    defaultOutputFolder.mkdirs()
                 }
             }
         }
@@ -90,15 +111,37 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
         cycleTimer.shutdown()
     }
 
+    fun clearAllRecordings() {
+        if (customOutputFolder != null) {
+            customOutputFolder!!.listFiles().forEach {
+                it.delete()
+            }
+        } else {
+            defaultOutputFolder.listFiles()?.forEach {
+                it.delete()
+            }
+        }
+    }
+
     private fun deleteOldRecordings() {
         val timeMultiplier = settings!!.maxDuration / settings!!.intervalDuration
         val earliestCounter = counter - timeMultiplier
 
-        outputFolder.listFiles()?.forEach { file ->
-            val fileCounter = file.nameWithoutExtension.toIntOrNull() ?: return
+        if (customOutputFolder != null) {
+            customOutputFolder!!.listFiles().forEach {
+                val fileCounter = it.name?.substringBeforeLast(".")?.toIntOrNull() ?: return@forEach
 
-            if (fileCounter < earliestCounter) {
-                file.delete()
+                if (fileCounter < earliestCounter) {
+                    it.delete()
+                }
+            }
+        } else {
+            defaultOutputFolder.listFiles()?.forEach {
+                val fileCounter = it.nameWithoutExtension.toIntOrNull() ?: return
+
+                if (fileCounter < earliestCounter) {
+                    it.delete()
+                }
             }
         }
     }
@@ -111,6 +154,7 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
         val samplingRate: Int,
         val outputFormat: Int,
         val encoder: Int,
+        val folder: String? = null,
     ) {
         val fileExtension: String
             get() = when (outputFormat) {

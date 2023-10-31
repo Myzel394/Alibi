@@ -1,20 +1,19 @@
 package app.myzel394.alibi.services
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.media.AudioDeviceCallback
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.media.MediaRecorder
 import android.media.MediaRecorder.OnErrorListener
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import java.lang.IllegalStateException
-import java.util.concurrent.Executor
 
 class AudioRecorderService : IntervalRecorderService() {
     var amplitudesAmount = 1000
@@ -26,9 +25,6 @@ class AudioRecorderService : IntervalRecorderService() {
     var onSelectedMicrophoneChange: (MicrophoneInfo?) -> Unit = {}
     var onMicrophoneDisconnected: () -> Unit = {}
     var onMicrophoneReconnected: () -> Unit = {}
-
-    val filePath: String
-        get() = "${outputFolder}/$counter.${settings!!.fileExtension}"
 
     /// Tell Android to use the correct bluetooth microphone, if any selected
     private fun startAudioDevice() {
@@ -61,6 +57,26 @@ class AudioRecorderService : IntervalRecorderService() {
         } else {
             MediaRecorder()
         }.apply {
+            setOutputFormat(settings!!.outputFormat)
+
+            // Setting file path
+            if (customOutputFolder == null) {
+                val newFilePath = "${defaultOutputFolder}/$counter.${settings!!.fileExtension}"
+
+                println("newfile path: ${newFilePath}")
+
+                setOutputFile(newFilePath)
+            } else {
+                customOutputFolder!!.createFile(
+                    "audio/${settings!!.fileExtension}",
+                    "${counter}.${settings!!.fileExtension}"
+                )!!.let {
+                    val fileDescriptor =
+                        contentResolver.openFileDescriptor(it.uri, "w")!!.fileDescriptor
+                    setOutputFile(fileDescriptor)
+                }
+            }
+
             // Audio Source is kinda strange, here are my experimental findings using a Pixel 7 Pro
             // and Redmi Buds 3 Pro:
             // - MIC: Uses the bottom microphone of the phone (17)
@@ -68,8 +84,7 @@ class AudioRecorderService : IntervalRecorderService() {
             // - VOICE_COMMUNICATION: Uses the bottom microphone of the phone (17)
             // - DEFAULT: Uses the bottom microphone of the phone (17)
             setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFile(filePath)
-            setOutputFormat(settings!!.outputFormat)
+
             setAudioEncoder(settings!!.encoder)
             setAudioEncodingBitRate(settings!!.bitRate)
             setAudioSamplingRate(settings!!.samplingRate)

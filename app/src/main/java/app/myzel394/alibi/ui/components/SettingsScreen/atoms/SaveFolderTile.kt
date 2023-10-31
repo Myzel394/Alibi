@@ -1,5 +1,6 @@
 package app.myzel394.alibi.ui.components.SettingsScreen.atoms
 
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,7 +43,6 @@ import app.myzel394.alibi.ui.components.atoms.SettingsTile
 import app.myzel394.alibi.ui.utils.rememberFolderSelectorDialog
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import kotlinx.coroutines.launch
-import java.io.File
 
 @Composable
 fun SaveFolderTile(
@@ -67,7 +67,7 @@ fun SaveFolderTile(
             return@rememberFolderSelectorDialog
         }
 
-        updateValue(folder.path)
+        updateValue(folder.toString())
     }
 
     var showWarning by remember { mutableStateOf(false) }

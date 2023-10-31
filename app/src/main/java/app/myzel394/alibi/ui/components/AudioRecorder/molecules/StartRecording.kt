@@ -1,6 +1,7 @@
 package app.myzel394.alibi.ui.components.AudioRecorder.molecules
 
 import android.Manifest
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -38,11 +39,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.helpers.AudioRecorderExporter
+import app.myzel394.alibi.helpers.AudioRecorderExporter.Companion.clearAllRecordings
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
@@ -72,19 +75,26 @@ fun StartRecording(
     LaunchedEffect(startRecording) {
         if (startRecording) {
             startRecording = false
-            audioRecorder.notificationDetails = appSettings.notificationSettings.let {
-                if (it == null)
-                    null
-                else
-                    RecorderNotificationHelper.NotificationDetails.fromNotificationSettings(
-                        context,
-                        it
-                    )
+
+            audioRecorder.let { recorder ->
+                recorder.notificationDetails = appSettings.notificationSettings.let {
+                    if (it == null)
+                        null
+                    else
+                        RecorderNotificationHelper.NotificationDetails.fromNotificationSettings(
+                            context,
+                            it
+                        )
+                }
+                recorder.customOutputFolder = appSettings.audioRecorderSettings.saveFolder.let {
+                    if (it == null)
+                        null
+                    else
+                        DocumentFile.fromTreeUri(context, Uri.parse(it))
+                }
+
+                recorder.startRecording(context)
             }
-
-            AudioRecorderExporter.clearAllRecordings(context)
-
-            audioRecorder.startRecording(context)
         }
     }
 
