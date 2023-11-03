@@ -1,12 +1,11 @@
 package app.myzel394.alibi.ui.components.SettingsScreen.atoms
 
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -29,19 +28,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toFile
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.ui.components.atoms.SettingsTile
 import app.myzel394.alibi.ui.utils.rememberFolderSelectorDialog
-import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -53,6 +48,15 @@ fun SaveFolderTile(
     val dataStore = context.dataStore
 
     fun updateValue(path: String?) {
+        if (settings.audioRecorderSettings.saveFolder != null) {
+            runCatching {
+                context.contentResolver.releasePersistableUriPermission(
+                    Uri.parse(settings.audioRecorderSettings.saveFolder),
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            }
+        }
+
         scope.launch {
             dataStore.updateData {
                 it.setAudioRecorderSettings(
@@ -66,6 +70,11 @@ fun SaveFolderTile(
         if (folder == null) {
             return@rememberFolderSelectorDialog
         }
+
+        context.contentResolver.takePersistableUriPermission(
+            folder,
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        )
 
         updateValue(folder.toString())
     }
