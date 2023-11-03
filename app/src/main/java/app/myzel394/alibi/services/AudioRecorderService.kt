@@ -57,15 +57,9 @@ class AudioRecorderService : IntervalRecorderService() {
         } else {
             MediaRecorder()
         }.apply {
-            setOutputFormat(settings!!.outputFormat)
-
             // Setting file path
+            /*
             if (customOutputFolder == null) {
-                val newFilePath = "${defaultOutputFolder}/$counter.${settings!!.fileExtension}"
-
-                println("newfile path: ${newFilePath}")
-
-                setOutputFile(newFilePath)
             } else {
                 customOutputFolder!!.createFile(
                     "audio/${settings!!.fileExtension}",
@@ -76,6 +70,15 @@ class AudioRecorderService : IntervalRecorderService() {
                     setOutputFile(fileDescriptor)
                 }
             }
+            */
+
+            val newFilePath = "${defaultOutputFolder}/$counter.${settings!!.fileExtension}"
+
+            println("newfile path: ${newFilePath}")
+
+            setOutputFile(newFilePath)
+            println("outputformat eta: ${settings!!.outputFormat}")
+            setOutputFormat(settings!!.outputFormat)
 
             // Audio Source is kinda strange, here are my experimental findings using a Pixel 7 Pro
             // and Redmi Buds 3 Pro:
