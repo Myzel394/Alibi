@@ -58,8 +58,10 @@ class AudioRecorderService : IntervalRecorderService() {
             MediaRecorder()
         }.apply {
             // Setting file path
-            /*
             if (customOutputFolder == null) {
+                val newFilePath = "${defaultOutputFolder}/$counter.${settings!!.fileExtension}"
+
+                setOutputFile(newFilePath)
             } else {
                 customOutputFolder!!.createFile(
                     "audio/${settings!!.fileExtension}",
@@ -70,15 +72,6 @@ class AudioRecorderService : IntervalRecorderService() {
                     setOutputFile(fileDescriptor)
                 }
             }
-            */
-
-            val newFilePath = "${defaultOutputFolder}/$counter.${settings!!.fileExtension}"
-
-            println("newfile path: ${newFilePath}")
-
-            setOutputFile(newFilePath)
-            println("outputformat eta: ${settings!!.outputFormat}")
-            setOutputFormat(settings!!.outputFormat)
 
             // Audio Source is kinda strange, here are my experimental findings using a Pixel 7 Pro
             // and Redmi Buds 3 Pro:
@@ -87,6 +80,8 @@ class AudioRecorderService : IntervalRecorderService() {
             // - VOICE_COMMUNICATION: Uses the bottom microphone of the phone (17)
             // - DEFAULT: Uses the bottom microphone of the phone (17)
             setAudioSource(MediaRecorder.AudioSource.MIC)
+            println("outputformat eta: ${settings!!.outputFormat}")
+            setOutputFormat(settings!!.outputFormat)
 
             setAudioEncoder(settings!!.encoder)
             setAudioEncodingBitRate(settings!!.bitRate)

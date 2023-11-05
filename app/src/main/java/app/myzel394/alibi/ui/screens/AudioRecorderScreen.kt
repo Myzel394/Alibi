@@ -28,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
 import androidx.navigation.NavController
 import app.myzel394.alibi.ui.components.AudioRecorder.organisms.RecordingStatus
 import app.myzel394.alibi.ui.components.AudioRecorder.molecules.StartRecording
@@ -94,11 +96,19 @@ fun AudioRecorderScreen(
             delay(100)
 
             try {
+                if (settings.audioRecorderSettings.saveFolder != null) {
+                    AudioRecorderExporter.linkBatches(
+                        context,
+                        settings.audioRecorderSettings.saveFolder.toUri(),
+                        AudioRecorderExporter.getFolder(context),
+                    )
+                }
+
                 val file = AudioRecorderExporter(
                     audioRecorder.recorderService?.getRecordingInformation()
                         ?: settings.lastRecording
                         ?: throw Exception("No recording information available"),
-                ).concatenateFiles()
+                ).concatenateFiles(context)
 
                 saveFile(file, file.name)
             } catch (error: Exception) {

@@ -1,7 +1,11 @@
 package app.myzel394.alibi.helpers
 
 import android.content.Context
+import android.net.Uri
+import android.system.Os
 import android.util.Log
+import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.ui.RECORDER_SUBFOLDER_NAME
 import com.arthenica.ffmpegkit.FFmpegKit
@@ -12,16 +16,12 @@ import java.time.format.DateTimeFormatter
 data class AudioRecorderExporter(
     val recording: RecordingInformation,
 ) {
-    val filePaths: List<File>
-        get() =
-            File(recording.folderPath).listFiles()?.filter {
-                val name = it.nameWithoutExtension
+    private fun getFilePaths(context: Context): List<File> =
+        getFolder(context).listFiles()?.filter {
+            val name = it.nameWithoutExtension
 
-                name.toIntOrNull() != null
-            }?.toList() ?: emptyList()
-
-    val hasRecordingAvailable: Boolean
-        get() = filePaths.isNotEmpty()
+            name.toIntOrNull() != null
+        }?.toList() ?: emptyList()
 
     private fun stripConcatenatedFileToExactDuration(
         outputFile: File
@@ -50,8 +50,14 @@ data class AudioRecorderExporter(
         }
     }
 
-    suspend fun concatenateFiles(forceConcatenation: Boolean = false): File {
-        val paths = filePaths.joinToString("|")
+    suspend fun concatenateFiles(
+        context: Context,
+        forceConcatenation: Boolean = false,
+    ): File {
+        val filePaths = getFilePaths(context)
+        val paths = filePaths.joinToString("|") {
+            it.path
+        }
         val fileName = recording.recordingStart
             .format(DateTimeFormatter.ISO_DATE_TIME)
             .toString()
@@ -97,14 +103,6 @@ data class AudioRecorderExporter(
         return outputFile
     }
 
-    suspend fun cleanupFiles() {
-        filePaths.forEach {
-            runCatching {
-                it.delete()
-            }
-        }
-    }
-
     companion object {
         fun getFolder(context: Context) = File(context.filesDir, RECORDER_SUBFOLDER_NAME)
 
@@ -114,5 +112,29 @@ data class AudioRecorderExporter(
 
         fun hasRecordingsAvailable(context: Context) =
             getFolder(context).listFiles()?.isNotEmpty() ?: false
+
+        fun linkBatches(context: Context, batchesFolder: Uri, destinationFolder: File) {
+            val folder = DocumentFile.fromTreeUri(
+                context,
+                batchesFolder,
+            )!!
+
+            destinationFolder.mkdirs()
+
+            folder.listFiles().forEach {
+                if (it.name?.substringBeforeLast(".")?.toIntOrNull() == null) {
+                    return@forEach
+                }
+
+                println(
+                    "symlinking ${folder.uri}/${it.name} to ${destinationFolder.absolutePath}/${it.name}"
+                )
+
+                Os.symlink(
+                    "${folder.uri}/${it.name}",
+                    "${destinationFolder.absolutePath}/${it.name}",
+                )
+            }
+        }
     }
 }
