@@ -18,7 +18,7 @@
     <string name="ui_audioRecorder_action_delete_label">Löschen</string>
     <string name="ui_audioRecorder_action_delete_confirm_title">Aufnahme Löschen?</string>
     <string name="ui_audioRecorder_action_delete_confirm_message">Bist du sicher, dass du diese Aufnahme löschen möchtest?</string>
-    <string name="ui_audioRecorder_action_pause_label">Pause</string>
+    <string name="ui_audioRecorder_action_pause_label">Anhalten</string>
     <string name="ui_audioRecorder_action_resume_label">Fortsetzen</string>
     <string name="ui_audioRecorder_action_save_label">Aufnahme speichern</string>
     <string name="ui_audioRecorder_action_start_description">Alibi wird im Hintergrund weiterhin aufnehmen und die letzten <xliff:g name="durationInMinutes">%s</xliff:g> Minuten auf Wunsch speichern</string>
@@ -76,7 +76,7 @@
     <string name="ui_settings_option_customNotification_title">Benutzerdefinierte Benachrichtigungen</string>
     <string name="ui_settings_option_customNotification_description_setup">Benutzerdefinierte Aufzeichnungsbenachrichtigungen einrichten</string>
     <string name="ui_settings_option_customNotification_description_edit">Aufnahmebenachrichtigungen bearbeiten</string>
-    <string name="ui_settings_customNotifications_landing_title">Don\'t expose yourself</string>
+    <string name="ui_settings_customNotifications_landing_title">Lass dich nicht entdecken</string>
     <string name="ui_settings_customNotifications_landing_description">Aufgrund einer Android-Einschränkung muss Alibi während der Aufnahme eine Benachrichtigung anzeigen. Um die Tatsache zu verbergen, dass du Alibi verwendest, kannst du die Benachrichtigung anpassen.</string>
     <string name="ui_settings_customNotifications_landing_help_hideNotifications">Alternativ kannst du auch einfach Benachrichtigungen deaktivieren</string>
     <string name="ui_settings_customNotifications_landing_getStarted">Eigene Benachrichtigung erstellen</string>
@@ -97,9 +97,9 @@
     <string name="accessibility_open_in_browser">Link im Browser öffnen: %s</string>
     <string name="ui_about_contribute_translation">Übersetze Alibi in deine Sprache</string>
     <string name="ui_about_contribute_donatation">Spenden</string>
-    <string name="ui_about_gpg_key_hint">You can copy my GPG key here. This key only exists once and I can use it to prove to you that I\'m really who I am. Please save it now so that you can verify my signature later.</string>
-    <string name="ui_about_gpg_key_copy">Copy GPG Key</string>
-    <string name="ui_about_contribute_donation_githubSponsors">Become a GitHub Sponsor</string>
-    <string name="ui_settings_option_deleteRecordingsImmediately_title">Delete Recordings Immediately</string>
-    <string name="ui_settings_option_deleteRecordingsImmediately_description">If enabled, Alibi will immediately delete recordings after you have saved the file.</string>
+    <string name="ui_about_gpg_key_hint">Hier kannst du meinen GPG-Schlüssel kopieren. Dieser Schlüssel existiert nur einmal und ich kann ihn benutzen, um Ihnen zu beweisen, dass ich wirklich bin, wer ich bin. Bitte speichern Sie ihn jetzt, damit Sie später verifizieren können, dass ich bin, wer ich bin.</string>
+    <string name="ui_about_gpg_key_copy">GPG-Schlüssel kopieren</string>
+    <string name="ui_about_contribute_donation_githubSponsors">Werde ein Github Sponsor</string>
+    <string name="ui_settings_option_deleteRecordingsImmediately_title">Aufnahmen sofort löschen</string>
+    <string name="ui_settings_option_deleteRecordingsImmediately_description">Falls aktiviert, löscht Alibi sofort Aufnahmen, nachdem Sie die Datei gespeichert haben.</string>
 </resources>
