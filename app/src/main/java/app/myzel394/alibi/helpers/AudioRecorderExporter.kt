@@ -4,11 +4,13 @@ import android.content.Context
 import android.net.Uri
 import android.system.Os
 import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.ui.RECORDER_SUBFOLDER_NAME
 import com.arthenica.ffmpegkit.FFmpegKit
+import com.arthenica.ffmpegkit.FFmpegKitConfig
 import com.arthenica.ffmpegkit.ReturnCode
 import java.io.File
 import java.time.format.DateTimeFormatter
@@ -52,12 +54,17 @@ data class AudioRecorderExporter(
 
     suspend fun concatenateFiles(
         context: Context,
+        uri: Uri,
         forceConcatenation: Boolean = false,
     ): File {
         val filePaths = getFilePaths(context)
         val paths = filePaths.joinToString("|") {
             it.path
         }
+        val filePath = FFmpegKitConfig.getSafParameter(context, uri, "rw")
+        println("!!!!!!!!!!!!!!!!!!1")
+        println(getFolder(context).listFiles()?.map { it.name })
+        println(filePath)
         val fileName = recording.recordingStart
             .format(DateTimeFormatter.ISO_DATE_TIME)
             .toString()
@@ -69,7 +76,8 @@ data class AudioRecorderExporter(
             return outputFile
         }
 
-        val command = "-i 'concat:$paths' -y" +
+        val command = "-protocol_whitelist saf,concat,content,file,subfile " +
+                "-i 'concat:${filePath}' -y" +
                 " -acodec copy" +
                 " -metadata title='$fileName' " +
                 " -metadata date='${recording.recordingStart.format(DateTimeFormatter.ISO_DATE_TIME)}'" +
@@ -77,6 +85,10 @@ data class AudioRecorderExporter(
                 " -metadata batch_duration='${recording.intervalDuration}'" +
                 " -metadata max_duration='${recording.maxDuration}'" +
                 " $outputFile"
+
+        println("--------------------")
+        println(command)
+        println(outputFile)
 
         val session = FFmpegKit.execute(command)
 

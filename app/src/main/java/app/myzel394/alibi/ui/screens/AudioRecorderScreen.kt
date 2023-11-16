@@ -108,7 +108,13 @@ fun AudioRecorderScreen(
                     audioRecorder.recorderService?.getRecordingInformation()
                         ?: settings.lastRecording
                         ?: throw Exception("No recording information available"),
-                ).concatenateFiles(context)
+                ).concatenateFiles(
+                    context,
+                    DocumentFile.fromTreeUri(
+                        context,
+                        settings.audioRecorderSettings.saveFolder!!.toUri(),
+                    )!!.findFile("1.aac")!!.uri,
+                )
 
                 saveFile(file, file.name)
             } catch (error: Exception) {
