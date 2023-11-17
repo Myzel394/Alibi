@@ -57,6 +57,14 @@ class AudioRecorderService : IntervalRecorderService() {
         } else {
             MediaRecorder()
         }.apply {
+            // Audio Source is kinda strange, here are my experimental findings using a Pixel 7 Pro
+            // and Redmi Buds 3 Pro:
+            // - MIC: Uses the bottom microphone of the phone (17)
+            // - CAMCORDER: Uses the top microphone of the phone (2)
+            // - VOICE_COMMUNICATION: Uses the bottom microphone of the phone (17)
+            // - DEFAULT: Uses the bottom microphone of the phone (17)
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+
             // Setting file path
             if (customOutputFolder == null) {
                 val newFilePath = "${defaultOutputFolder}/$counter.${settings!!.fileExtension}"
@@ -73,13 +81,6 @@ class AudioRecorderService : IntervalRecorderService() {
                 }
             }
 
-            // Audio Source is kinda strange, here are my experimental findings using a Pixel 7 Pro
-            // and Redmi Buds 3 Pro:
-            // - MIC: Uses the bottom microphone of the phone (17)
-            // - CAMCORDER: Uses the top microphone of the phone (2)
-            // - VOICE_COMMUNICATION: Uses the bottom microphone of the phone (17)
-            // - DEFAULT: Uses the bottom microphone of the phone (17)
-            setAudioSource(MediaRecorder.AudioSource.MIC)
             println("outputformat eta: ${settings!!.outputFormat}")
             setOutputFormat(settings!!.outputFormat)
 

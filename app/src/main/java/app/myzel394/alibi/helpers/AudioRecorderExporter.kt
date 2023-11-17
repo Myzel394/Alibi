@@ -55,8 +55,9 @@ data class AudioRecorderExporter(
     suspend fun concatenateFiles(
         context: Context,
         uri: Uri,
+        folder: DocumentFile,
         forceConcatenation: Boolean = false,
-    ): File {
+    ) {
         val filePaths = getFilePaths(context)
         val paths = filePaths.joinToString("|") {
             it.path
@@ -70,11 +71,10 @@ data class AudioRecorderExporter(
             .toString()
             .replace(":", "-")
             .replace(".", "_")
-        val outputFile = File("${recording.folderPath}/$fileName.${recording.fileExtension}")
-
-        if (outputFile.exists() && !forceConcatenation) {
-            return outputFile
-        }
+        val outputFile = FFmpegKitConfig.getSafParameterForWrite(
+            context,
+            (folder.uri.path + "/$fileName.aac").toUri()
+        )
 
         val command = "-protocol_whitelist saf,concat,content,file,subfile " +
                 "-i 'concat:${filePath}' -y" +
@@ -108,11 +108,7 @@ data class AudioRecorderExporter(
 
         val minRequiredForPossibleInExactMaxDuration =
             recording.maxDuration / recording.intervalDuration
-        if (recording.forceExactMaxDuration && filePaths.size > minRequiredForPossibleInExactMaxDuration) {
-            stripConcatenatedFileToExactDuration(outputFile)
-        }
 
-        return outputFile
     }
 
     companion object {

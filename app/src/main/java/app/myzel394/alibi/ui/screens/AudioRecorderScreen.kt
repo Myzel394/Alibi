@@ -96,14 +96,6 @@ fun AudioRecorderScreen(
             delay(100)
 
             try {
-                if (settings.audioRecorderSettings.saveFolder != null) {
-                    AudioRecorderExporter.linkBatches(
-                        context,
-                        settings.audioRecorderSettings.saveFolder.toUri(),
-                        AudioRecorderExporter.getFolder(context),
-                    )
-                }
-
                 val file = AudioRecorderExporter(
                     audioRecorder.recorderService?.getRecordingInformation()
                         ?: settings.lastRecording
@@ -114,9 +106,13 @@ fun AudioRecorderScreen(
                         context,
                         settings.audioRecorderSettings.saveFolder!!.toUri(),
                     )!!.findFile("1.aac")!!.uri,
+                    DocumentFile.fromTreeUri(
+                        context,
+                        settings.audioRecorderSettings.saveFolder!!.toUri(),
+                    )!!
                 )
 
-                saveFile(file, file.name)
+                //saveFile(file, file.name)
             } catch (error: Exception) {
                 Log.getStackTraceString(error)
             } finally {
