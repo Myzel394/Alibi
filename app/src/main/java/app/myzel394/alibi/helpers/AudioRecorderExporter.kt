@@ -63,9 +63,6 @@ data class AudioRecorderExporter(
             it.path
         }
         val filePath = FFmpegKitConfig.getSafParameter(context, uri, "rw")
-        println("!!!!!!!!!!!!!!!!!!1")
-        println(getFolder(context).listFiles()?.map { it.name })
-        println(filePath)
         val fileName = recording.recordingStart
             .format(DateTimeFormatter.ISO_DATE_TIME)
             .toString()
@@ -73,22 +70,18 @@ data class AudioRecorderExporter(
             .replace(".", "_")
         val outputFile = FFmpegKitConfig.getSafParameterForWrite(
             context,
-            (folder.uri.path + "/$fileName.aac").toUri()
+            folder.createFile("audio/aac", "${fileName}.aac")!!.uri,
         )
 
-        val command = "-protocol_whitelist saf,concat,content,file,subfile " +
-                "-i 'concat:${filePath}' -y" +
+        val command = "-protocol_whitelist saf,concat,content,file,subfile" +
+                " -i 'concat:${filePath}' -y" +
                 " -acodec copy" +
-                " -metadata title='$fileName' " +
+                " -metadata title='$fileName'" +
                 " -metadata date='${recording.recordingStart.format(DateTimeFormatter.ISO_DATE_TIME)}'" +
                 " -metadata batch_count='${filePaths.size}'" +
                 " -metadata batch_duration='${recording.intervalDuration}'" +
                 " -metadata max_duration='${recording.maxDuration}'" +
                 " $outputFile"
-
-        println("--------------------")
-        println(command)
-        println(outputFile)
 
         val session = FFmpegKit.execute(command)
 
@@ -134,9 +127,6 @@ data class AudioRecorderExporter(
                     return@forEach
                 }
 
-                println(
-                    "symlinking ${folder.uri}/${it.name} to ${destinationFolder.absolutePath}/${it.name}"
-                )
 
                 Os.symlink(
                     "${folder.uri}/${it.name}",

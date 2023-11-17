@@ -81,7 +81,6 @@ class AudioRecorderService : IntervalRecorderService() {
                 }
             }
 
-            println("outputformat eta: ${settings!!.outputFormat}")
             setOutputFormat(settings!!.outputFormat)
 
             setAudioEncoder(settings!!.encoder)
