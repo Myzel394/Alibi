@@ -7,6 +7,7 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AudioRecorderSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.helpers.AudioRecorderExporter
+import app.myzel394.alibi.helpers.BatchesFolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,7 +23,7 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     private var job = SupervisorJob()
     private var scope = CoroutineScope(Dispatchers.IO + job)
 
-    protected var counter = 0
+    protected var counter = 0L
         private set
 
     var settings: Settings? = null
@@ -33,12 +34,12 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     protected val defaultOutputFolder: File
         get() = AudioRecorderExporter.getFolder(this)
 
-    var customOutputFolder: DocumentFile? = null
+    var batchesFolder: BatchesFolder = BatchesFolder.viaInternalFolder(this)
 
     var onCustomOutputFolderNotAccessible: () -> Unit = {}
 
     fun getRecordingInformation(): RecordingInformation = RecordingInformation(
-        folderPath = customOutputFolder?.uri?.toString() ?: defaultOutputFolder.absolutePath,
+        folderPath = batchesFolder.exportFolderForSettings(),
         recordingStart = recordingStart,
         maxDuration = settings!!.maxDuration,
         fileExtension = settings!!.fileExtension,
@@ -68,31 +69,14 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     override fun start() {
         super.start()
 
-        scope.launch {
-            dataStore.data.collectLatest { preferenceSettings ->
-                if (settings == null) {
-                    settings = Settings.from(preferenceSettings.audioRecorderSettings)
-
-                    if (settings!!.folder != null) {
-                        customOutputFolder = DocumentFile.fromTreeUri(
-                            this@IntervalRecorderService,
-                            Uri.parse(settings!!.folder)
-                        )
-
-                        if (!customOutputFolder!!.canRead() || !customOutputFolder!!.canWrite()) {
-                            customOutputFolder = null
-                            onCustomOutputFolderNotAccessible()
-                        }
-                    }
-
-                    createTimer()
-                }
-
-                if (customOutputFolder == null) {
-                    defaultOutputFolder.mkdirs()
-                }
-            }
+        if (!batchesFolder.checkIfFolderIsAccessible()) {
+            batchesFolder =
+                BatchesFolder.viaInternalFolder(this@IntervalRecorderService)
+            onCustomOutputFolderNotAccessible()
         }
+        batchesFolder.initFolders()
+
+        createTimer()
     }
 
     override fun pause() {
@@ -112,38 +96,14 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     }
 
     fun clearAllRecordings() {
-        if (customOutputFolder != null) {
-            customOutputFolder!!.listFiles().forEach {
-                it.delete()
-            }
-        } else {
-            defaultOutputFolder.listFiles()?.forEach {
-                it.delete()
-            }
-        }
+        batchesFolder.deleteRecordings()
     }
 
     private fun deleteOldRecordings() {
         val timeMultiplier = settings!!.maxDuration / settings!!.intervalDuration
         val earliestCounter = counter - timeMultiplier
 
-        if (customOutputFolder != null) {
-            customOutputFolder!!.listFiles().forEach {
-                val fileCounter = it.name?.substringBeforeLast(".")?.toIntOrNull() ?: return@forEach
-
-                if (fileCounter < earliestCounter) {
-                    it.delete()
-                }
-            }
-        } else {
-            defaultOutputFolder.listFiles()?.forEach {
-                val fileCounter = it.nameWithoutExtension.toIntOrNull() ?: return
-
-                if (fileCounter < earliestCounter) {
-                    it.delete()
-                }
-            }
-        }
+        batchesFolder.deleteOldRecordings(earliestCounter)
     }
 
     data class Settings(

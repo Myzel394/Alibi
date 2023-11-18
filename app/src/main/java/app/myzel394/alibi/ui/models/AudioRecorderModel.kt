@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.AudioRecorderExporter
+import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.services.RecorderService
@@ -47,7 +48,7 @@ class AudioRecorderModel : ViewModel() {
     var onRecordingSave: () -> Unit = {}
     var onError: () -> Unit = {}
     var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
-    var customOutputFolder: DocumentFile? = null
+    var batchesFolder: BatchesFolder? = null
 
     var microphoneStatus: MicrophoneConnectivityStatus = MicrophoneConnectivityStatus.CONNECTED
         private set
@@ -61,8 +62,6 @@ class AudioRecorderModel : ViewModel() {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             recorderService =
                 ((service as RecorderService.RecorderBinder).getService() as AudioRecorderService).also { recorder ->
-                    recorder.clearAllRecordings()
-
                     // Update UI when the service changes
                     recorder.onStateChange = { state ->
                         recorderState = state
@@ -86,7 +85,7 @@ class AudioRecorderModel : ViewModel() {
                     recorder.onMicrophoneReconnected = {
                         microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
                     }
-                    recorder.customOutputFolder = customOutputFolder
+                    recorder.batchesFolder = batchesFolder ?: recorder.batchesFolder
                 }.also {
                     // Init UI from the service
                     it.startRecording()

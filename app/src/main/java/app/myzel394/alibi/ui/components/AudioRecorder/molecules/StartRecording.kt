@@ -46,6 +46,7 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.helpers.AudioRecorderExporter.Companion.clearAllRecordings
+import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
@@ -86,12 +87,16 @@ fun StartRecording(
                             it
                         )
                 }
-                recorder.customOutputFolder = appSettings.audioRecorderSettings.saveFolder.let {
-                    if (it == null)
-                        null
-                    else
-                        DocumentFile.fromTreeUri(context, Uri.parse(it))
-                }
+                recorder.batchesFolder = if (appSettings.audioRecorderSettings.saveFolder == null)
+                    BatchesFolder.viaInternalFolder(context)
+                else
+                    BatchesFolder.viaCustomFolder(
+                        context,
+                        DocumentFile.fromTreeUri(
+                            context,
+                            Uri.parse(appSettings.audioRecorderSettings.saveFolder)
+                        )!!
+                    )
 
                 recorder.startRecording(context)
             }

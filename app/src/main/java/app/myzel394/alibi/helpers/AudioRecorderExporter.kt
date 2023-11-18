@@ -4,8 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.system.Os
 import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.ui.RECORDER_SUBFOLDER_NAME
@@ -18,70 +16,35 @@ import java.time.format.DateTimeFormatter
 data class AudioRecorderExporter(
     val recording: RecordingInformation,
 ) {
-    private fun getFilePaths(context: Context): List<File> =
-        getFolder(context).listFiles()?.filter {
-            val name = it.nameWithoutExtension
+    private fun getInternalFilePaths(context: Context): List<File> =
+        getFolder(context)
+            .listFiles()
+            ?.filter {
+                val name = it.nameWithoutExtension
 
-            name.toIntOrNull() != null
-        }?.toList() ?: emptyList()
-
-    private fun stripConcatenatedFileToExactDuration(
-        outputFile: File
-    ) {
-        // Move the concatenated file to a temporary file
-        val rawFile =
-            File("${recording.folderPath}/${outputFile.nameWithoutExtension}-raw.${recording.fileExtension}")
-        outputFile.renameTo(rawFile)
-
-        val command = "-sseof ${recording.maxDuration / -1000} -i $rawFile -y $outputFile"
-
-        val session = FFmpegKit.execute(command)
-
-        if (!ReturnCode.isSuccess(session.returnCode)) {
-            Log.d(
-                "Audio Concatenation",
-                String.format(
-                    "Command failed with state %s and rc %s.%s",
-                    session.state,
-                    session.returnCode,
-                    session.failStackTrace,
-                )
-            )
-
-            throw Exception("Failed to strip concatenated audio")
-        }
-    }
+                name.toIntOrNull() != null
+            }
+            ?.toList()
+            ?: emptyList()
 
     suspend fun concatenateFiles(
         context: Context,
-        uri: Uri,
-        folder: DocumentFile,
+        batchesFolder: BatchesFolder,
         forceConcatenation: Boolean = false,
     ) {
-        val filePaths = getFilePaths(context)
-        val paths = filePaths.joinToString("|") {
-            it.path
-        }
-        val filePath = FFmpegKitConfig.getSafParameter(context, uri, "rw")
-        val fileName = recording.recordingStart
-            .format(DateTimeFormatter.ISO_DATE_TIME)
-            .toString()
-            .replace(":", "-")
-            .replace(".", "_")
-        val outputFile = FFmpegKitConfig.getSafParameterForWrite(
-            context,
-            folder.createFile("audio/aac", "${fileName}.aac")!!.uri,
-        )
+        val filePaths = batchesFolder.getBatchesForFFmpeg().joinToString("|")
+        val outputFile =
+            batchesFolder.getOutputFileForFFmpeg(recording.recordingStart, recording.fileExtension)
 
-        val command = "-protocol_whitelist saf,concat,content,file,subfile" +
-                " -i 'concat:${filePath}' -y" +
-                " -acodec copy" +
-                " -metadata title='$fileName'" +
-                " -metadata date='${recording.recordingStart.format(DateTimeFormatter.ISO_DATE_TIME)}'" +
-                " -metadata batch_count='${filePaths.size}'" +
-                " -metadata batch_duration='${recording.intervalDuration}'" +
-                " -metadata max_duration='${recording.maxDuration}'" +
-                " $outputFile"
+        val command =
+            "-protocol_whitelist saf,concat,content,file,subfile" +
+                    " -i 'concat:${filePaths}' -y" +
+                    " -acodec copy" +
+                    " -metadata date='${recording.recordingStart.format(DateTimeFormatter.ISO_DATE_TIME)}'" +
+                    " -metadata batch_count='${filePaths.length}'" +
+                    " -metadata batch_duration='${recording.intervalDuration}'" +
+                    " -metadata max_duration='${recording.maxDuration}'" +
+                    " $outputFile"
 
         val session = FFmpegKit.execute(command)
 
@@ -101,7 +64,6 @@ data class AudioRecorderExporter(
 
         val minRequiredForPossibleInExactMaxDuration =
             recording.maxDuration / recording.intervalDuration
-
     }
 
     companion object {
@@ -115,10 +77,11 @@ data class AudioRecorderExporter(
             getFolder(context).listFiles()?.isNotEmpty() ?: false
 
         fun linkBatches(context: Context, batchesFolder: Uri, destinationFolder: File) {
-            val folder = DocumentFile.fromTreeUri(
-                context,
-                batchesFolder,
-            )!!
+            val folder =
+                DocumentFile.fromTreeUri(
+                    context,
+                    batchesFolder,
+                )!!
 
             destinationFolder.mkdirs()
 
@@ -126,7 +89,6 @@ data class AudioRecorderExporter(
                 if (it.name?.substringBeforeLast(".")?.toIntOrNull() == null) {
                     return@forEach
                 }
-
 
                 Os.symlink(
                     "${folder.uri}/${it.name}",
@@ -136,3 +98,4 @@ data class AudioRecorderExporter(
         }
     }
 }
+

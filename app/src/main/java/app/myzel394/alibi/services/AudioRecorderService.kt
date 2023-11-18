@@ -12,6 +12,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.enums.RecorderState
+import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import java.lang.IllegalStateException
 
@@ -65,19 +66,17 @@ class AudioRecorderService : IntervalRecorderService() {
             // - DEFAULT: Uses the bottom microphone of the phone (17)
             setAudioSource(MediaRecorder.AudioSource.MIC)
 
-            // Setting file path
-            if (customOutputFolder == null) {
-                val newFilePath = "${defaultOutputFolder}/$counter.${settings!!.fileExtension}"
+            when (batchesFolder.type) {
+                BatchesFolder.BatchType.INTERNAL -> {
+                    setOutputFile(
+                        batchesFolder.asInternalGetOutputPath(counter, settings!!.fileExtension)
+                    )
+                }
 
-                setOutputFile(newFilePath)
-            } else {
-                customOutputFolder!!.createFile(
-                    "audio/${settings!!.fileExtension}",
-                    "${counter}.${settings!!.fileExtension}"
-                )!!.let {
-                    val fileDescriptor =
-                        contentResolver.openFileDescriptor(it.uri, "w")!!.fileDescriptor
-                    setOutputFile(fileDescriptor)
+                BatchesFolder.BatchType.CUSTOM -> {
+                    setOutputFile(
+                        batchesFolder.asCustomGetFileDescriptor(counter, settings!!.fileExtension)
+                    )
                 }
             }
 
@@ -99,6 +98,7 @@ class AudioRecorderService : IntervalRecorderService() {
                 it.release()
             }
             clearAudioDevice()
+            batchesFolder.cleanup()
         }
     }
 

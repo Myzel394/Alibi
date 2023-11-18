@@ -40,6 +40,7 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.helpers.AudioRecorderExporter
+import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import kotlinx.coroutines.delay
@@ -96,23 +97,16 @@ fun AudioRecorderScreen(
             delay(100)
 
             try {
-                val file = AudioRecorderExporter(
+                AudioRecorderExporter(
                     audioRecorder.recorderService?.getRecordingInformation()
                         ?: settings.lastRecording
                         ?: throw Exception("No recording information available"),
                 ).concatenateFiles(
                     context,
-                    DocumentFile.fromTreeUri(
-                        context,
-                        settings.audioRecorderSettings.saveFolder!!.toUri(),
-                    )!!.findFile("1.aac")!!.uri,
-                    DocumentFile.fromTreeUri(
-                        context,
-                        settings.audioRecorderSettings.saveFolder!!.toUri(),
-                    )!!
+                    audioRecorder.recorderService!!.batchesFolder
                 )
 
-                //saveFile(file, file.name)
+                // saveFile(file, file.name)
             } catch (error: Exception) {
                 Log.getStackTraceString(error)
             } finally {
