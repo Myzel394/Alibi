@@ -67,8 +67,6 @@ class AudioRecorderModel : ViewModel() {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             recorderService =
                 ((service as RecorderService.RecorderBinder).getService() as AudioRecorderService).also { recorder ->
-                    recorder.clearAllRecordings()
-
                     // Init variables from us to the service
                     recorder.onStateChange = { state ->
                         recorderState = state
@@ -95,6 +93,8 @@ class AudioRecorderModel : ViewModel() {
                     recorder.batchesFolder = batchesFolder ?: recorder.batchesFolder
                     recorder.settings =
                         IntervalRecorderService.Settings.from(settings.audioRecorderSettings)
+
+                    recorder.clearAllRecordings()
                 }.also {
                     // Init UI from the service
                     it.startRecording()
@@ -122,8 +122,8 @@ class AudioRecorderModel : ViewModel() {
 
     fun startRecording(context: Context, settings: AppSettings) {
         runCatching {
-            context.unbindService(connection)
             recorderService?.clearAllRecordings()
+            context.unbindService(connection)
         }
 
         notificationDetails = settings.notificationSettings.let {

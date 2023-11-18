@@ -62,7 +62,7 @@ data class BatchesFolder(
                 .map {
                     FFmpegKitConfig.getSafParameterForRead(
                         context,
-                        customFolder!!.findFile(it.name!!)!!.uri
+                        it.uri,
                     )!!
                 }
         }
@@ -82,7 +82,10 @@ data class BatchesFolder(
             BatchType.INTERNAL -> File(getInternalFolder(), "$name.$extension").absolutePath
             BatchType.CUSTOM -> FFmpegKitConfig.getSafParameterForWrite(
                 context,
-                customFolder!!.createFile("audio/${extension}", "${name}.${extension}")!!.uri
+                getCustomDefinedFolder().createFile(
+                    "audio/${extension}",
+                    "${name}.${extension}"
+                )!!.uri
             )!!
         }
     }
@@ -97,9 +100,7 @@ data class BatchesFolder(
     fun deleteRecordings() {
         when (type) {
             BatchType.INTERNAL -> getInternalFolder().deleteRecursively()
-            BatchType.CUSTOM -> getCustomDefinedFolder().listFiles().forEach {
-                it.delete()
-            }
+            BatchType.CUSTOM -> customFolder?.findFile(subfolderName)?.delete()
         }
     }
 
