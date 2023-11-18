@@ -22,7 +22,11 @@ data class BatchesFolder(
     fun initFolders() {
         when (type) {
             BatchType.INTERNAL -> getFolder(context).mkdirs()
-            BatchType.CUSTOM -> customFolder?.createDirectory(subfolderName)
+            BatchType.CUSTOM -> {
+                if (customFolder!!.findFile(subfolderName) == null) {
+                    customFolder.createDirectory(subfolderName)
+                }
+            }
         }
     }
 
@@ -93,7 +97,9 @@ data class BatchesFolder(
     fun deleteRecordings() {
         when (type) {
             BatchType.INTERNAL -> getInternalFolder().deleteRecursively()
-            BatchType.CUSTOM -> getCustomDefinedFolder().delete()
+            BatchType.CUSTOM -> getCustomDefinedFolder().listFiles().forEach {
+                it.delete()
+            }
         }
     }
 
@@ -120,7 +126,7 @@ data class BatchesFolder(
     fun checkIfFolderIsAccessible(): Boolean {
         return when (type) {
             BatchType.INTERNAL -> true
-            BatchType.CUSTOM -> customFolder!!.canWrite() && customFolder.canRead()
+            BatchType.CUSTOM -> getCustomDefinedFolder().canWrite() && getCustomDefinedFolder().canRead()
         }
     }
 
@@ -132,7 +138,8 @@ data class BatchesFolder(
         counter: Long,
         fileExtension: String,
     ): FileDescriptor {
-        val file = customFolder!!.createFile("audio/$fileExtension", "$counter.$fileExtension")!!
+        val file =
+            getCustomDefinedFolder().createFile("audio/$fileExtension", "$counter.$fileExtension")!!
 
         customFileFileDescriptor = context.contentResolver.openFileDescriptor(file.uri, "w")!!
 

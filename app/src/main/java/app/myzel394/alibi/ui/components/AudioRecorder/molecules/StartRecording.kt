@@ -77,29 +77,7 @@ fun StartRecording(
         if (startRecording) {
             startRecording = false
 
-            audioRecorder.let { recorder ->
-                recorder.notificationDetails = appSettings.notificationSettings.let {
-                    if (it == null)
-                        null
-                    else
-                        RecorderNotificationHelper.NotificationDetails.fromNotificationSettings(
-                            context,
-                            it
-                        )
-                }
-                recorder.batchesFolder = if (appSettings.audioRecorderSettings.saveFolder == null)
-                    BatchesFolder.viaInternalFolder(context)
-                else
-                    BatchesFolder.viaCustomFolder(
-                        context,
-                        DocumentFile.fromTreeUri(
-                            context,
-                            Uri.parse(appSettings.audioRecorderSettings.saveFolder)
-                        )!!
-                    )
-
-                recorder.startRecording(context)
-            }
+            audioRecorder.startRecording(context, appSettings)
         }
     }
 

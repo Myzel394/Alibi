@@ -26,13 +26,9 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     protected var counter = 0L
         private set
 
-    var settings: Settings? = null
-        protected set
+    lateinit var settings: Settings
 
     private lateinit var cycleTimer: ScheduledExecutorService
-
-    protected val defaultOutputFolder: File
-        get() = AudioRecorderExporter.getFolder(this)
 
     var batchesFolder: BatchesFolder = BatchesFolder.viaInternalFolder(this)
 
@@ -41,10 +37,10 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     fun getRecordingInformation(): RecordingInformation = RecordingInformation(
         folderPath = batchesFolder.exportFolderForSettings(),
         recordingStart = recordingStart,
-        maxDuration = settings!!.maxDuration,
-        fileExtension = settings!!.fileExtension,
-        intervalDuration = settings!!.intervalDuration,
-        forceExactMaxDuration = settings!!.forceExactMaxDuration,
+        maxDuration = settings.maxDuration,
+        fileExtension = settings.fileExtension,
+        intervalDuration = settings.intervalDuration,
+        forceExactMaxDuration = settings.forceExactMaxDuration,
     )
 
     // Make overrideable
@@ -60,7 +56,7 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
                     startNewCycle()
                 },
                 0,
-                settings!!.intervalDuration,
+                settings.intervalDuration,
                 TimeUnit.MILLISECONDS
             )
         }
@@ -69,12 +65,13 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     override fun start() {
         super.start()
 
+        batchesFolder.initFolders()
         if (!batchesFolder.checkIfFolderIsAccessible()) {
             batchesFolder =
                 BatchesFolder.viaInternalFolder(this@IntervalRecorderService)
+            batchesFolder.initFolders()
             onCustomOutputFolderNotAccessible()
         }
-        batchesFolder.initFolders()
 
         createTimer()
     }

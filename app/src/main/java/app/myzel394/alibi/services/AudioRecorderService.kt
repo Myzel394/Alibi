@@ -69,22 +69,22 @@ class AudioRecorderService : IntervalRecorderService() {
             when (batchesFolder.type) {
                 BatchesFolder.BatchType.INTERNAL -> {
                     setOutputFile(
-                        batchesFolder.asInternalGetOutputPath(counter, settings!!.fileExtension)
+                        batchesFolder.asInternalGetOutputPath(counter, settings.fileExtension)
                     )
                 }
 
                 BatchesFolder.BatchType.CUSTOM -> {
                     setOutputFile(
-                        batchesFolder.asCustomGetFileDescriptor(counter, settings!!.fileExtension)
+                        batchesFolder.asCustomGetFileDescriptor(counter, settings.fileExtension)
                     )
                 }
             }
 
-            setOutputFormat(settings!!.outputFormat)
+            setOutputFormat(settings.outputFormat)
 
-            setAudioEncoder(settings!!.encoder)
-            setAudioEncodingBitRate(settings!!.bitRate)
-            setAudioSamplingRate(settings!!.samplingRate)
+            setAudioEncoder(settings.encoder)
+            setAudioEncodingBitRate(settings.bitRate)
+            setAudioSamplingRate(settings.samplingRate)
             setOnErrorListener(OnErrorListener { _, _, _ ->
                 onError()
             })
