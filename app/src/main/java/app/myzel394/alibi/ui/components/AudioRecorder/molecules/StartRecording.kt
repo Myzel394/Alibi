@@ -129,7 +129,7 @@ fun StartRecording(
                 .fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
-        if (appSettings.lastRecording?.hasRecordingsAvailable == true) {
+        if (appSettings.lastRecording?.hasRecordingsAvailable(context) == true) {
             Column(
                 modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,

@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import app.myzel394.alibi.ui.components.AudioRecorder.organisms.RecordingStatus
 import app.myzel394.alibi.ui.components.AudioRecorder.molecules.StartRecording
@@ -130,25 +129,26 @@ fun AudioRecorderScreen(
                 val recording = audioRecorder.recorderService?.getRecordingInformation()
                     ?: settings.lastRecording
                     ?: throw Exception("No recording information available")
-                val outputFile = audioRecorder.batchesFolder!!.getOutputFileForFFmpeg(
+                val batchesFolder = BatchesFolder.importFromFolder(recording.folderPath, context)
+                val outputFile = batchesFolder.getOutputFileForFFmpeg(
                     recording.recordingStart,
                     recording.fileExtension
                 )
 
                 AudioRecorderExporter(recording).concatenateFiles(
-                    audioRecorder.recorderService!!.batchesFolder,
+                    batchesFolder,
                     outputFile,
                 )
 
-                val name = audioRecorder.batchesFolder!!.getName(
+                val name = batchesFolder.getName(
                     recording.recordingStart,
                     recording.fileExtension,
                 )
 
-                when (audioRecorder.batchesFolder!!.type) {
+                when (batchesFolder.type) {
                     BatchesFolder.BatchType.INTERNAL -> {
                         saveFile(
-                            audioRecorder.batchesFolder!!.asInternalGetOutputFile(
+                            batchesFolder.asInternalGetOutputFile(
                                 recording.recordingStart,
                                 recording.fileExtension,
                             ), name
@@ -156,10 +156,10 @@ fun AudioRecorderScreen(
                     }
 
                     BatchesFolder.BatchType.CUSTOM -> {
-                        showSnackbar(audioRecorder.batchesFolder!!.customFolder!!.uri)
+                        showSnackbar(batchesFolder.customFolder!!.uri)
 
                         if (settings.audioRecorderSettings.deleteRecordingsImmediately) {
-                            audioRecorder.batchesFolder!!.deleteRecordings()
+                            batchesFolder.deleteRecordings()
                         }
                     }
                 }

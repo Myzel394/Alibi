@@ -5,6 +5,7 @@ import android.media.MediaRecorder
 import android.os.Build
 import app.myzel394.alibi.R
 import app.myzel394.alibi.helpers.AudioRecorderExporter
+import app.myzel394.alibi.helpers.BatchesFolder
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.serialization.Serializable
@@ -77,8 +78,8 @@ data class RecordingInformation(
     val intervalDuration: Long,
     val fileExtension: String,
 ) {
-    val hasRecordingsAvailable
-        get() = File(folderPath).listFiles()?.isNotEmpty() ?: false
+    fun hasRecordingsAvailable(context: Context): Boolean =
+        BatchesFolder.importFromFolder(folderPath, context).hasRecordingsAvailable()
 }
 
 @Serializable

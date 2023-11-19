@@ -142,7 +142,8 @@ data class BatchesFolder(
     fun hasRecordingsAvailable(): Boolean {
         return when (type) {
             BatchType.INTERNAL -> getInternalFolder().listFiles()?.isNotEmpty() ?: false
-            BatchType.CUSTOM -> getCustomDefinedFolder().listFiles().isNotEmpty()
+            BatchType.CUSTOM -> customFolder?.findFile(subfolderName)?.listFiles()?.isNotEmpty()
+                ?: false
         }
     }
 
