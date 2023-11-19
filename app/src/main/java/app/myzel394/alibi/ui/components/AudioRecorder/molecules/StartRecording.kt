@@ -41,6 +41,7 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
+import app.myzel394.alibi.ui.effects.rememberForceUpdateOnLifeCycleChange
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -129,9 +130,13 @@ fun StartRecording(
                 .fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
+
+        val forceUpdate = rememberForceUpdateOnLifeCycleChange()
         if (appSettings.lastRecording?.hasRecordingsAvailable(context) == true) {
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .then(forceUpdate),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom,
             ) {
