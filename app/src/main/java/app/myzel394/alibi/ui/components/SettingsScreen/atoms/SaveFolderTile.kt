@@ -167,7 +167,6 @@ fun SaveFolderTile(
             }
         },
         extra = {
-            println(settings.audioRecorderSettings.saveFolder)
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
