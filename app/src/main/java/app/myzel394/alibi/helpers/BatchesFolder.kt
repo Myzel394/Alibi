@@ -133,6 +133,9 @@ data class BatchesFolder(
         when (type) {
             BatchType.INTERNAL -> getInternalFolder().deleteRecursively()
             BatchType.CUSTOM -> customFolder?.findFile(subfolderName)?.delete()
+                ?: customFolder?.findFile(subfolderName)?.listFiles()?.forEach {
+                    it.delete()
+                }
         }
     }
 

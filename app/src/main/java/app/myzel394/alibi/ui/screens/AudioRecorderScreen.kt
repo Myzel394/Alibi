@@ -157,6 +157,10 @@ fun AudioRecorderScreen(
 
                     BatchesFolder.BatchType.CUSTOM -> {
                         showSnackbar(audioRecorder.batchesFolder!!.customFolder!!.uri)
+
+                        if (settings.audioRecorderSettings.deleteRecordingsImmediately) {
+                            audioRecorder.batchesFolder!!.deleteRecordings()
+                        }
                     }
                 }
             } catch (error: Exception) {
