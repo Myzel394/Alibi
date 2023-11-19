@@ -2,6 +2,7 @@ package app.myzel394.alibi.ui.components.SettingsScreen.atoms
 
 import android.content.Intent
 import android.net.Uri
+import android.text.TextUtils.split
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +39,7 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.components.atoms.SettingsTile
 import app.myzel394.alibi.ui.utils.rememberFolderSelectorDialog
 import kotlinx.coroutines.launch
+import java.net.URLDecoder
 
 @Composable
 fun SaveFolderTile(
@@ -165,6 +167,7 @@ fun SaveFolderTile(
             }
         },
         extra = {
+            println(settings.audioRecorderSettings.saveFolder)
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -174,11 +177,7 @@ fun SaveFolderTile(
                     Text(
                         text = stringResource(
                             R.string.form_value_selected,
-                            settings
-                                .audioRecorderSettings
-                                .saveFolder
-                                .split(":")[1]
-                                .replace("/", " > ")
+                            splitPath(settings.audioRecorderSettings.saveFolder).joinToString(" > ")
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -219,4 +218,15 @@ fun SaveFolderTile(
             }
         }
     )
+}
+
+fun splitPath(path: String): List<String> {
+    return try {
+        URLDecoder
+            .decode(path, "UTF-8")
+            .split(":", limit = 3)[2]
+            .split("/")
+    } catch (e: Exception) {
+        listOf(path)
+    }
 }
