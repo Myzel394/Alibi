@@ -136,7 +136,6 @@ fun AudioRecorderScreen(
                 )
 
                 AudioRecorderExporter(recording).concatenateFiles(
-                    context,
                     audioRecorder.recorderService!!.batchesFolder,
                     outputFile,
                 )

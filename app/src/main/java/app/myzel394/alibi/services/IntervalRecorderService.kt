@@ -40,7 +40,6 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
         maxDuration = settings.maxDuration,
         fileExtension = settings.fileExtension,
         intervalDuration = settings.intervalDuration,
-        forceExactMaxDuration = settings.forceExactMaxDuration,
     )
 
     // Make overrideable
@@ -106,7 +105,6 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     data class Settings(
         val maxDuration: Long,
         val intervalDuration: Long,
-        val forceExactMaxDuration: Boolean,
         val bitRate: Int,
         val samplingRate: Int,
         val outputFormat: Int,
@@ -135,7 +133,6 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
                     outputFormat = audioRecorderSettings.getOutputFormat(),
                     encoder = audioRecorderSettings.getEncoder(),
                     maxDuration = audioRecorderSettings.maxDuration,
-                    forceExactMaxDuration = audioRecorderSettings.forceExactMaxDuration,
                 )
             }
         }

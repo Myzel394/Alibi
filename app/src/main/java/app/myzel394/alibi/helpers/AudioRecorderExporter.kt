@@ -17,12 +17,11 @@ data class AudioRecorderExporter(
     val recording: RecordingInformation,
 ) {
     suspend fun concatenateFiles(
-        context: Context,
         batchesFolder: BatchesFolder,
         outputFilePath: String,
         forceConcatenation: Boolean = false,
     ) {
-        val filePaths = batchesFolder.getBatchesForFFmpeg().joinToString("|")
+        val filePaths = batchesFolder.getBatchesForFFmpeg()
 
         if (batchesFolder.checkIfOutputAlreadyExists(
                 recording.recordingStart,
@@ -32,12 +31,13 @@ data class AudioRecorderExporter(
             return
         }
 
+        val filePathsConcatenated = filePaths.joinToString("|")
         val command =
             "-protocol_whitelist saf,concat,content,file,subfile" +
-                    " -i 'concat:${filePaths}' -y" +
+                    " -i 'concat:$filePathsConcatenated' -y" +
                     " -acodec copy" +
                     " -metadata date='${recording.recordingStart.format(DateTimeFormatter.ISO_DATE_TIME)}'" +
-                    " -metadata batch_count='${filePaths.length}'" +
+                    " -metadata batch_count='${filePaths.size}'" +
                     " -metadata batch_duration='${recording.intervalDuration}'" +
                     " -metadata max_duration='${recording.maxDuration}'" +
                     " $outputFilePath"
@@ -57,9 +57,6 @@ data class AudioRecorderExporter(
 
             throw Exception("Failed to concatenate audios")
         }
-
-        val minRequiredForPossibleInExactMaxDuration =
-            recording.maxDuration / recording.intervalDuration
     }
 
     companion object {
