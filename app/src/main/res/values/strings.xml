@@ -118,4 +118,6 @@
     <string name="ui_settings_option_saveFolder_warning_text">By default, Alibi will save the recording batches into its private, encrypted file storage. You can change this and specify an external, unencrypted folder. This will allow you to access the batches manually. ONLY DO THIS IF YOU KNOW WHAT YOU ARE DOING!</string>
     <string name="ui_settings_option_saveFolder_warning_action_confirm">Yes, change folder</string>
     <string name="ui_settings_option_saveFolder_action_default_label">Use private, encrypted storage</string>
+    <string name="ui_audioRecorder_action_save_success">Recording has been saved successfully!</string>
+    <string name="ui_audioRecorder_action_save_openFolder">Open</string>
 </resources>

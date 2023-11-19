@@ -68,10 +68,47 @@ data class BatchesFolder(
         }
     }
 
+    fun getName(date: LocalDateTime, extension: String): String {
+        val name = date
+            .format(DateTimeFormatter.ISO_DATE_TIME)
+            .toString()
+            .replace(":", "-")
+            .replace(".", "_")
+
+        return "$name.$extension"
+    }
+
+    fun asInternalGetOutputFile(date: LocalDateTime, extension: String): File {
+        return File(getInternalFolder(), getName(date, extension))
+    }
+
+    fun asCustomGetOutputFile(
+        date: LocalDateTime,
+        extension: String,
+    ): DocumentFile {
+        return getCustomDefinedFolder().createFile("audio/$extension", getName(date, extension))!!
+    }
+
     fun getOutputFileForFFmpeg(
         date: LocalDateTime,
         extension: String,
     ): String {
+        return when (type) {
+            BatchType.INTERNAL -> asInternalGetOutputFile(date, extension).absolutePath
+            BatchType.CUSTOM -> FFmpegKitConfig.getSafParameterForWrite(
+                context,
+                customFolder!!.createFile(
+                    "audio/${extension}",
+                    getName(date, extension),
+                )!!.uri
+            )!!
+        }
+    }
+
+    fun checkIfOutputAlreadyExists(
+        date: LocalDateTime,
+        extension: String
+    ): Boolean {
         val name = date
             .format(DateTimeFormatter.ISO_DATE_TIME)
             .toString()
@@ -79,14 +116,9 @@ data class BatchesFolder(
             .replace(".", "_")
 
         return when (type) {
-            BatchType.INTERNAL -> File(getInternalFolder(), "$name.$extension").absolutePath
-            BatchType.CUSTOM -> FFmpegKitConfig.getSafParameterForWrite(
-                context,
-                getCustomDefinedFolder().createFile(
-                    "audio/${extension}",
-                    "${name}.${extension}"
-                )!!.uri
-            )!!
+            BatchType.INTERNAL -> File(getInternalFolder(), "$name.$extension").exists()
+            BatchType.CUSTOM ->
+                getCustomDefinedFolder().findFile("${name}.${extension}")?.exists() ?: false
         }
     }
 
@@ -101,6 +133,13 @@ data class BatchesFolder(
         when (type) {
             BatchType.INTERNAL -> getInternalFolder().deleteRecursively()
             BatchType.CUSTOM -> customFolder?.findFile(subfolderName)?.delete()
+        }
+    }
+
+    fun hasRecordingsAvailable(): Boolean {
+        return when (type) {
+            BatchType.INTERNAL -> getInternalFolder().listFiles()?.isNotEmpty() ?: false
+            BatchType.CUSTOM -> getCustomDefinedFolder().listFiles().isNotEmpty()
         }
     }
 

@@ -1,5 +1,7 @@
 package app.myzel394.alibi.ui.screens
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +20,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -28,8 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import androidx.documentfile.provider.DocumentFile
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import app.myzel394.alibi.ui.components.AudioRecorder.organisms.RecordingStatus
 import app.myzel394.alibi.ui.components.AudioRecorder.molecules.StartRecording
@@ -38,7 +45,6 @@ import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.ui.effects.rememberSettings
@@ -52,6 +58,7 @@ fun AudioRecorderScreen(
     navController: NavController,
     audioRecorder: AudioRecorderModel,
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
     val dataStore = context.dataStore
@@ -62,10 +69,10 @@ fun AudioRecorderScreen(
         settings.audioRecorderSettings.getMimeType()
     ) {
         if (settings.audioRecorderSettings.deleteRecordingsImmediately) {
-            AudioRecorderExporter.clearAllRecordings(context)
+            audioRecorder.batchesFolder!!.deleteRecordings()
         }
 
-        if (!AudioRecorderExporter.hasRecordingsAvailable(context)) {
+        if (!audioRecorder.batchesFolder!!.hasRecordingsAvailable()) {
             scope.launch {
                 dataStore.updateData {
                     it.setLastRecording(null)
@@ -89,6 +96,29 @@ fun AudioRecorderScreen(
         }
     }
 
+    val successMessage = stringResource(R.string.ui_audioRecorder_action_save_success)
+    val openMessage = stringResource(R.string.ui_audioRecorder_action_save_openFolder)
+
+    fun openFolder(uri: Uri) {
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+
+        context.startActivity(intent)
+    }
+
+    fun showSnackbar(uri: Uri) {
+        scope.launch {
+            val result = snackbarHostState.showSnackbar(
+                message = successMessage,
+                actionLabel = openMessage,
+                duration = SnackbarDuration.Short,
+            )
+
+            if (result == SnackbarResult.ActionPerformed) {
+                openFolder(uri)
+            }
+        }
+    }
+
     fun saveRecording() {
         scope.launch {
             isProcessingAudio = true
@@ -97,16 +127,39 @@ fun AudioRecorderScreen(
             delay(100)
 
             try {
-                AudioRecorderExporter(
-                    audioRecorder.recorderService?.getRecordingInformation()
-                        ?: settings.lastRecording
-                        ?: throw Exception("No recording information available"),
-                ).concatenateFiles(
-                    context,
-                    audioRecorder.recorderService!!.batchesFolder
+                val recording = audioRecorder.recorderService?.getRecordingInformation()
+                    ?: settings.lastRecording
+                    ?: throw Exception("No recording information available")
+                val outputFile = audioRecorder.batchesFolder!!.getOutputFileForFFmpeg(
+                    recording.recordingStart,
+                    recording.fileExtension
                 )
 
-                // saveFile(file, file.name)
+                AudioRecorderExporter(recording).concatenateFiles(
+                    context,
+                    audioRecorder.recorderService!!.batchesFolder,
+                    outputFile,
+                )
+
+                val name = audioRecorder.batchesFolder!!.getName(
+                    recording.recordingStart,
+                    recording.fileExtension,
+                )
+
+                when (audioRecorder.batchesFolder!!.type) {
+                    BatchesFolder.BatchType.INTERNAL -> {
+                        saveFile(
+                            audioRecorder.batchesFolder!!.asInternalGetOutputFile(
+                                recording.recordingStart,
+                                recording.fileExtension,
+                            ), name
+                        )
+                    }
+
+                    BatchesFolder.BatchType.CUSTOM -> {
+                        showSnackbar(audioRecorder.batchesFolder!!.customFolder!!.uri)
+                    }
+                }
             } catch (error: Exception) {
                 Log.getStackTraceString(error)
             } finally {
@@ -198,6 +251,21 @@ fun AudioRecorderScreen(
             }
         )
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                snackbar = {
+                    Snackbar(
+                        snackbarData = it,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        actionColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        actionContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        dismissActionContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                }
+            )
+        },
         topBar = {
             TopAppBar(
                 title = {
