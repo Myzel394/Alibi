@@ -34,7 +34,7 @@ abstract class RecorderService : Service() {
     var onStateChange: ((RecorderState) -> Unit)? = null
 
     var recordingTime = 0L
-        private set
+        protected set
     private lateinit var recordingTimeTimer: ScheduledExecutorService
     var onRecordingTimeChange: ((Long) -> Unit)? = null
     var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
@@ -54,6 +54,10 @@ abstract class RecorderService : Service() {
                         RecorderNotificationHelper.NotificationDetails.serializer(),
                         it
                     )
+                }
+
+                if (intent.getBooleanExtra("startImmediately", false)) {
+                    startRecording()
                 }
             }
 
@@ -142,16 +146,22 @@ abstract class RecorderService : Service() {
     fun startRecording() {
         recordingStart = LocalDateTime.now()
 
-        ServiceCompat.startForeground(
-            this,
-            NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID,
-            getNotificationHelper().buildStartingNotification(),
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
-            } else {
-                0
-            },
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(
+                NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID,
+                getNotificationHelper().buildStartingNotification(),
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+                } else {
+                    0
+                },
+            )
+        } else {
+            startForeground(
+                NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID,
+                getNotificationHelper().buildStartingNotification(),
+            )
+        }
 
         // Start
         changeState(RecorderState.RECORDING)

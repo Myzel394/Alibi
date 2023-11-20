@@ -1,5 +1,6 @@
 package app.myzel394.alibi.services
 
+import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AudioRecorderSettings
@@ -58,10 +59,45 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
         }
     }
 
+    private fun fetchCounterValue() {
+        val files = outputFolder.listFiles()?.filter {
+            val name = it.nameWithoutExtension
+
+            name.toIntOrNull() != null
+        }?.toList() ?: emptyList()
+
+        counter = files.size
+    }
+
+    private fun fetchRecordingTime() {
+        var oldAmount = 0L
+
+        for (file in outputFolder.listFiles() ?: emptyArray()) {
+            if (file.nameWithoutExtension.toIntOrNull() == null) {
+                continue
+            }
+
+            // It's better to at least get an approximate value, than to crash
+            runCatching {
+                val amount = MediaMetadataRetriever().run {
+                    setDataSource(file.absolutePath)
+                    extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toIntOrNull()
+                        ?: 0
+                }
+
+                oldAmount += amount
+            }
+        }
+
+        recordingTime = oldAmount
+    }
+
     override fun start() {
         super.start()
 
         outputFolder.mkdirs()
+        fetchCounterValue()
+        fetchRecordingTime()
 
         scope.launch {
             dataStore.data.collectLatest { preferenceSettings ->

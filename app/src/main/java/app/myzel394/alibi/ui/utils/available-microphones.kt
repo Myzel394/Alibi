@@ -16,10 +16,13 @@ val ALLOWED_MICROPHONE_TYPES =
         AudioDeviceInfo.TYPE_WIRED_HEADPHONES,
         AudioDeviceInfo.TYPE_IP,
         AudioDeviceInfo.TYPE_DOCK,
+        /*
+        Currently unavailable due to targetSDK 33
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             AudioDeviceInfo.TYPE_DOCK_ANALOG
         } else {
         },
+         */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             AudioDeviceInfo.TYPE_BLE_HEADSET
         } else {

@@ -109,4 +109,17 @@
     <string name="ui_about_contribute_donation_githubSponsors">Become a GitHub Sponsor</string>
     <string name="ui_settings_option_deleteRecordingsImmediately_title">Delete Recordings Immediately</string>
     <string name="ui_settings_option_deleteRecordingsImmediately_description">If enabled, Alibi will immediately delete recordings after you have saved the file.</string>
+    <string name="ui_settings_bootBehavior_title">Boot Behavior</string>
+    <string name="ui_settings_bootBehavior_values_SHOW_NOTIFICATION_title">Show a notification</string>
+    <string name="notificationChannels_boot_name">Boot notification</string>
+    <string name="notificationChannels_boot_description">If enabled, you\'ll be informed that your recording was interrupted</string>
+    <string name="notification_boot_title">Alibi was interrupted</string>
+    <string name="notification_boot_message">Your device restarted and your recording has been interrupted</string>
+    <string name="ui_settings_bootBehavior_values_START_RECORDING_title">Always start recording</string>
+    <string name="ui_settings_bootBehavior_values_CONTINUE_RECORDING_title">Continue recording</string>
+    <string name="ui_settings_bootBehavior_values_SHOW_NOTIFICATION_description">Show a notification if recording has been interrupted</string>
+    <string name="ui_settings_bootBehavior_values_START_RECORDING_description">Continue recording, if interrupted, otherwise start a new recording</string>
+    <string name="ui_settings_bootBehavior_values_CONTINUE_RECORDING_description">If recording has been interrupted, continue it</string>
+    <string name="ui_settings_bootBehavior_values_nothing_title">Do nothing</string>
+    <string name="ui_settings_bootBehavior_help">What should Alibi do when your phone boots up?</string>
 </resources>

@@ -82,6 +82,10 @@ fun StartRecording(
                     )
             }
 
+            runCatching {
+                audioRecorder.stopRecording(context)
+            }
+
             AudioRecorderExporter.clearAllRecordings(context)
 
             audioRecorder.startRecording(context)

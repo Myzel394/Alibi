@@ -41,6 +41,7 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.AboutTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BitrateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BootBehaviorTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.CustomNotificationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.DeleteRecordingsImmediatelyTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.EncoderTile
@@ -149,6 +150,7 @@ fun SettingsScreen(
             InAppLanguagePicker()
             DeleteRecordingsImmediatelyTile(settings = settings)
             CustomNotificationTile(navController = navController, settings = settings)
+            BootBehaviorTile(settings = settings)
             AboutTile(navController = navController)
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
                 Column(

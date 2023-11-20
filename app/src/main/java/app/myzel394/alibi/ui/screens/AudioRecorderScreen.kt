@@ -94,6 +94,7 @@ fun AudioRecorderScreen(
             delay(100)
 
             try {
+                audioRecorder.stopRecording(context)
                 val file = AudioRecorderExporter(
                     audioRecorder.recorderService?.getRecordingInformation()
                         ?: settings.lastRecording
