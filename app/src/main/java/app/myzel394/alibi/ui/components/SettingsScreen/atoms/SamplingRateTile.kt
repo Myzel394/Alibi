@@ -60,7 +60,8 @@ fun SamplingRateTile(
         header = Header.Default(
             title = stringResource(R.string.ui_settings_option_samplingRate_title),
             icon = IconSource(
-                painter = IconResource.fromImageVector(Icons.Default.RadioButtonChecked).asPainterResource(),
+                painter = IconResource.fromImageVector(Icons.Default.RadioButtonChecked)
+                    .asPainterResource(),
                 contentDescription = null,
             )
         ),
@@ -79,11 +80,11 @@ fun SamplingRateTile(
                         val samplingRate = text?.toIntOrNull()
 
                         if (samplingRate == null) {
-                            ValidationResult.Invalid(notNumberLabel)
+                            return@InputTextField ValidationResult.Invalid(notNumberLabel)
                         }
 
-                        if (samplingRate!! <= 1000) {
-                            ValidationResult.Invalid(mustBeGreaterThanLabel)
+                        if (samplingRate <= 1000) {
+                            return@InputTextField ValidationResult.Invalid(mustBeGreaterThanLabel)
                         }
 
                         ValidationResult.Valid
@@ -92,7 +93,8 @@ fun SamplingRateTile(
                 )
             ),
         ) { result ->
-            val samplingRate = result.getString("samplingRate")?.toIntOrNull() ?: throw IllegalStateException("SamplingRate is null")
+            val samplingRate = result.getString("samplingRate")?.toIntOrNull()
+                ?: throw IllegalStateException("SamplingRate is null")
 
             updateValue(samplingRate)
         }
@@ -115,7 +117,8 @@ fun SamplingRateTile(
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Text(
-                    (settings.audioRecorderSettings.samplingRate ?: stringResource(R.string.ui_settings_value_auto_label)).toString()
+                    (settings.audioRecorderSettings.samplingRate
+                        ?: stringResource(R.string.ui_settings_value_auto_label)).toString()
                 )
             }
         },
@@ -123,9 +126,10 @@ fun SamplingRateTile(
             ExampleListRoulette(
                 items = AudioRecorderSettings.EXAMPLE_SAMPLING_RATE,
                 onItemSelected = ::updateValue,
-            ) {samplingRate ->
+            ) { samplingRate ->
                 Text(
-                    (samplingRate ?: stringResource(R.string.ui_settings_value_auto_label)).toString()
+                    (samplingRate
+                        ?: stringResource(R.string.ui_settings_value_auto_label)).toString()
                 )
             }
         }
