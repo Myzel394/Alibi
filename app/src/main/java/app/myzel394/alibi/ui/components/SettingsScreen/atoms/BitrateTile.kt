@@ -79,11 +79,11 @@ fun BitrateTile(
                         val bitRate = text?.toIntOrNull()
 
                         if (bitRate == null) {
-                            ValidationResult.Invalid(notNumberLabel)
+                            return@InputTextField ValidationResult.Invalid(notNumberLabel)
                         }
 
                         if (bitRate !in 1..320) {
-                            ValidationResult.Invalid(notInRangeLabel)
+                            return@InputTextField ValidationResult.Invalid(notInRangeLabel)
                         }
 
                         ValidationResult.Valid
@@ -92,7 +92,9 @@ fun BitrateTile(
                 )
             ),
         ) { result ->
-            val bitRate = result.getString("bitrate")?.toIntOrNull() ?: throw IllegalStateException("Bitrate is null")
+            val bitRate = result.getString("bitrate")?.toIntOrNull() ?: throw IllegalStateException(
+                "Bitrate is null"
+            )
 
             updateValue(bitRate * 1000)
         }
@@ -126,7 +128,7 @@ fun BitrateTile(
             ExampleListRoulette(
                 items = AudioRecorderSettings.EXAMPLE_BITRATE_VALUES,
                 onItemSelected = ::updateValue,
-            ) {bitRate ->
+            ) { bitRate ->
                 Text(
                     stringResource(
                         R.string.format_kbps,
