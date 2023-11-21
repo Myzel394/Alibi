@@ -1,8 +1,11 @@
 package app.myzel394.alibi.db
 
+import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
 import app.myzel394.alibi.R
+import app.myzel394.alibi.helpers.AudioRecorderExporter
+import app.myzel394.alibi.helpers.BatchesFolder
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.serialization.Serializable
@@ -74,10 +77,9 @@ data class RecordingInformation(
     val maxDuration: Long,
     val intervalDuration: Long,
     val fileExtension: String,
-    val forceExactMaxDuration: Boolean,
 ) {
-    val hasRecordingsAvailable
-        get() = File(folderPath).listFiles()?.isNotEmpty() ?: false
+    fun hasRecordingsAvailable(context: Context): Boolean =
+        BatchesFolder.importFromFolder(folderPath, context).hasRecordingsAvailable()
 }
 
 @Serializable
@@ -86,7 +88,6 @@ data class AudioRecorderSettings(
     val maxDuration: Long = 30 * 60 * 1000L,
     // 60 seconds
     val intervalDuration: Long = 60 * 1000L,
-    val forceExactMaxDuration: Boolean = true,
     // 320 Kbps
     val bitRate: Int = 320000,
     val samplingRate: Int? = null,
@@ -94,6 +95,7 @@ data class AudioRecorderSettings(
     val encoder: Int? = null,
     val showAllMicrophones: Boolean = false,
     val deleteRecordingsImmediately: Boolean = false,
+    val saveFolder: String? = null,
 ) {
     fun getOutputFormat(): Int {
         if (outputFormat != null) {
@@ -161,6 +163,24 @@ data class AudioRecorderSettings(
     else
         MediaRecorder.AudioEncoder.AMR_NB
 
+    fun getSaveFolder(context: Context): File {
+        val defaultFolder = AudioRecorderExporter.getFolder(context)
+
+        if (saveFolder == null) {
+            return defaultFolder
+        }
+
+        runCatching {
+            return File(saveFolder!!).apply {
+                if (!exists()) {
+                    mkdirs()
+                }
+            }
+        }
+
+        return defaultFolder
+    }
+
     fun setIntervalDuration(duration: Long): AudioRecorderSettings {
         if (duration < 10 * 1000L || duration > 60 * 60 * 1000L) {
             throw Exception("Interval duration must be between 10 seconds and 1 hour")
@@ -217,16 +237,16 @@ data class AudioRecorderSettings(
         return copy(maxDuration = duration)
     }
 
-    fun setForceExactMaxDuration(forceExactMaxDuration: Boolean): AudioRecorderSettings {
-        return copy(forceExactMaxDuration = forceExactMaxDuration)
-    }
-
     fun setShowAllMicrophones(showAllMicrophones: Boolean): AudioRecorderSettings {
         return copy(showAllMicrophones = showAllMicrophones)
     }
 
     fun setDeleteRecordingsImmediately(deleteRecordingsImmediately: Boolean): AudioRecorderSettings {
         return copy(deleteRecordingsImmediately = deleteRecordingsImmediately)
+    }
+
+    fun setSaveFolder(saveFolder: String?): AudioRecorderSettings {
+        return copy(saveFolder = saveFolder)
     }
 
     fun isEncoderCompatible(encoder: Int): Boolean {

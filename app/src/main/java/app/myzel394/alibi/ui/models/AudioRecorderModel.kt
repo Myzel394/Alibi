@@ -4,15 +4,21 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.net.Uri
 import android.os.IBinder
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
+import app.myzel394.alibi.helpers.AudioRecorderExporter
+import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.services.AudioRecorderService
+import app.myzel394.alibi.services.IntervalRecorderService
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.services.RecorderService
 import kotlinx.serialization.json.Json
@@ -45,6 +51,9 @@ class AudioRecorderModel : ViewModel() {
     var onRecordingSave: () -> Unit = {}
     var onError: () -> Unit = {}
     var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
+    var batchesFolder: BatchesFolder? = null
+
+    private lateinit var settings: AppSettings
 
     var microphoneStatus: MicrophoneConnectivityStatus = MicrophoneConnectivityStatus.CONNECTED
         private set
@@ -58,7 +67,7 @@ class AudioRecorderModel : ViewModel() {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             recorderService =
                 ((service as RecorderService.RecorderBinder).getService() as AudioRecorderService).also { recorder ->
-                    // Update UI when the service changes
+                    // Init variables from us to the service
                     recorder.onStateChange = { state ->
                         recorderState = state
                     }
@@ -81,6 +90,11 @@ class AudioRecorderModel : ViewModel() {
                     recorder.onMicrophoneReconnected = {
                         microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
                     }
+                    recorder.batchesFolder = batchesFolder ?: recorder.batchesFolder
+                    recorder.settings =
+                        IntervalRecorderService.Settings.from(settings.audioRecorderSettings)
+
+                    recorder.clearAllRecordings()
                 }.also {
                     // Init UI from the service
                     it.startRecording()
@@ -106,10 +120,32 @@ class AudioRecorderModel : ViewModel() {
         microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
     }
 
-    fun startRecording(context: Context) {
+    fun startRecording(context: Context, settings: AppSettings) {
         runCatching {
+            recorderService?.clearAllRecordings()
             context.unbindService(connection)
         }
+
+        notificationDetails = settings.notificationSettings.let {
+            if (it == null)
+                null
+            else
+                RecorderNotificationHelper.NotificationDetails.fromNotificationSettings(
+                    context,
+                    it
+                )
+        }
+        batchesFolder = if (settings.audioRecorderSettings.saveFolder == null)
+            BatchesFolder.viaInternalFolder(context)
+        else
+            BatchesFolder.viaCustomFolder(
+                context,
+                DocumentFile.fromTreeUri(
+                    context,
+                    Uri.parse(settings.audioRecorderSettings.saveFolder)
+                )!!
+            )
+        this.settings = settings
 
         val intent = Intent(context, AudioRecorderService::class.java).apply {
             action = "init"

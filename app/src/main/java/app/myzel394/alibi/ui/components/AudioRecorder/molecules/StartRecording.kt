@@ -20,13 +20,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,19 +36,13 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.helpers.AudioRecorderExporter
-import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
+import app.myzel394.alibi.ui.effects.rememberForceUpdateOnLifeCycleChange
 import app.myzel394.alibi.ui.models.AudioRecorderModel
-import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.lastOrNull
-import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -72,19 +64,8 @@ fun StartRecording(
     LaunchedEffect(startRecording) {
         if (startRecording) {
             startRecording = false
-            audioRecorder.notificationDetails = appSettings.notificationSettings.let {
-                if (it == null)
-                    null
-                else
-                    RecorderNotificationHelper.NotificationDetails.fromNotificationSettings(
-                        context,
-                        it
-                    )
-            }
 
-            AudioRecorderExporter.clearAllRecordings(context)
-
-            audioRecorder.startRecording(context)
+            audioRecorder.startRecording(context, appSettings)
         }
     }
 
@@ -149,9 +130,13 @@ fun StartRecording(
                 .fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
-        if (appSettings.lastRecording?.hasRecordingsAvailable == true) {
+
+        val forceUpdate = rememberForceUpdateOnLifeCycleChange()
+        if (appSettings.lastRecording?.hasRecordingsAvailable(context) == true) {
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .then(forceUpdate),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom,
             ) {

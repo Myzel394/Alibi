@@ -9,6 +9,7 @@
     <string name="form_error_type_notNumber">Please enter a valid number</string>
     <string name="form_error_value_notInRange">Please enter a number between <xliff:g name="min">%s</xliff:g> and <xliff:g name="max">%s</xliff:g></string>
     <string name="form_error_value_mustBeGreaterThan">Please enter a number greater than <xliff:g name="min">%s</xliff:g></string>
+    <string name="form_value_selected">Selected: %s</string>
 
     <string name="notificationChannels_recorder_name">Recorder</string>
     <string name="notificationChannels_recorder_description">Shows the current recording status</string>
@@ -109,4 +110,14 @@
     <string name="ui_about_contribute_donation_githubSponsors">Become a GitHub Sponsor</string>
     <string name="ui_settings_option_deleteRecordingsImmediately_title">Delete Recordings Immediately</string>
     <string name="ui_settings_option_deleteRecordingsImmediately_description">If enabled, Alibi will immediately delete recordings after you have saved the file.</string>
+    <string name="ui_settings_option_saveFolder_title">Batches folder</string>
+    <string name="ui_settings_option_saveFolder_explanation">Where Alibi should store the temporary batches of your recordings.</string>
+    <string name="ui_settings_option_saveFolder_action_select_label">Select</string>
+    <string name="ui_settings_option_saveFolder_defaultValue">Encrypted Internal Storage</string>
+    <string name="ui_settings_option_saveFolder_warning_title">Are you sure you want to change the folder?</string>
+    <string name="ui_settings_option_saveFolder_warning_text">By default, Alibi will save the recording batches into its private, encrypted file storage. You can change this and specify an external, unencrypted folder. This will allow you to access the batches manually. ONLY DO THIS IF YOU KNOW WHAT YOU ARE DOING!</string>
+    <string name="ui_settings_option_saveFolder_warning_action_confirm">Yes, change folder</string>
+    <string name="ui_settings_option_saveFolder_action_default_label">Use private, encrypted storage</string>
+    <string name="ui_audioRecorder_action_save_success">Recording has been saved successfully!</string>
+    <string name="ui_audioRecorder_action_save_openFolder">Open</string>
 </resources>

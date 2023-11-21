@@ -39,8 +39,6 @@
     <string name="ui_settings_option_maxDuration_description">Set the maximum duration of the recording</string>
     <string name="ui_settings_option_intervalDuration_title">Batch duration</string>
     <string name="ui_settings_option_intervalDuration_description">Record a single batch for this duration. Alibi records multiple batches and deletes the oldest one. When exporting the audio, all batches will be merged together</string>
-    <string name="ui_settings_option_forceExactDuration_title">Force exact duration</string>
-    <string name="ui_settings_option_forceExactDuration_description">Force to strip the output file to be the exactly specified duration. If this is disabled, the output file may be a bit longer due to batches of audio samples being encoded together.</string>
     <string name="ui_settings_option_bitrate_title">Bitrate</string>
     <string name="ui_settings_option_bitrate_description">A higher bitrate means better quality but also larger file size</string>
     <string name="ui_settings_option_bitrate_explanation">Set the bitrate for the audio recording</string>

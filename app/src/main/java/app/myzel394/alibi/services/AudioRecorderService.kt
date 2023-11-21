@@ -1,20 +1,20 @@
 package app.myzel394.alibi.services
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.media.AudioDeviceCallback
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.media.MediaRecorder
 import android.media.MediaRecorder.OnErrorListener
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.enums.RecorderState
+import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import java.lang.IllegalStateException
-import java.util.concurrent.Executor
 
 class AudioRecorderService : IntervalRecorderService() {
     var amplitudesAmount = 1000
@@ -26,9 +26,6 @@ class AudioRecorderService : IntervalRecorderService() {
     var onSelectedMicrophoneChange: (MicrophoneInfo?) -> Unit = {}
     var onMicrophoneDisconnected: () -> Unit = {}
     var onMicrophoneReconnected: () -> Unit = {}
-
-    val filePath: String
-        get() = "${outputFolder}/$counter.${settings!!.fileExtension}"
 
     /// Tell Android to use the correct bluetooth microphone, if any selected
     private fun startAudioDevice() {
@@ -68,11 +65,26 @@ class AudioRecorderService : IntervalRecorderService() {
             // - VOICE_COMMUNICATION: Uses the bottom microphone of the phone (17)
             // - DEFAULT: Uses the bottom microphone of the phone (17)
             setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFile(filePath)
-            setOutputFormat(settings!!.outputFormat)
-            setAudioEncoder(settings!!.encoder)
-            setAudioEncodingBitRate(settings!!.bitRate)
-            setAudioSamplingRate(settings!!.samplingRate)
+
+            when (batchesFolder.type) {
+                BatchesFolder.BatchType.INTERNAL -> {
+                    setOutputFile(
+                        batchesFolder.asInternalGetOutputPath(counter, settings.fileExtension)
+                    )
+                }
+
+                BatchesFolder.BatchType.CUSTOM -> {
+                    setOutputFile(
+                        batchesFolder.asCustomGetFileDescriptor(counter, settings.fileExtension)
+                    )
+                }
+            }
+
+            setOutputFormat(settings.outputFormat)
+
+            setAudioEncoder(settings.encoder)
+            setAudioEncodingBitRate(settings.bitRate)
+            setAudioSamplingRate(settings.samplingRate)
             setOnErrorListener(OnErrorListener { _, _, _ ->
                 onError()
             })
@@ -86,6 +98,7 @@ class AudioRecorderService : IntervalRecorderService() {
                 it.release()
             }
             clearAudioDevice()
+            batchesFolder.cleanup()
         }
     }
 

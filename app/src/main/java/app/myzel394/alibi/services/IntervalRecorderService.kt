@@ -1,15 +1,19 @@
 package app.myzel394.alibi.services
 
 import android.media.MediaRecorder
+import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AudioRecorderSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.helpers.AudioRecorderExporter
+import app.myzel394.alibi.helpers.BatchesFolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.w3c.dom.DocumentFragment
 import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -19,24 +23,23 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     private var job = SupervisorJob()
     private var scope = CoroutineScope(Dispatchers.IO + job)
 
-    protected var counter = 0
+    protected var counter = 0L
         private set
 
-    var settings: Settings? = null
-        protected set
+    lateinit var settings: Settings
 
     private lateinit var cycleTimer: ScheduledExecutorService
 
-    protected val outputFolder: File
-        get() = AudioRecorderExporter.getFolder(this)
+    var batchesFolder: BatchesFolder = BatchesFolder.viaInternalFolder(this)
+
+    var onCustomOutputFolderNotAccessible: () -> Unit = {}
 
     fun getRecordingInformation(): RecordingInformation = RecordingInformation(
-        folderPath = outputFolder.absolutePath,
+        folderPath = batchesFolder.exportFolderForSettings(),
         recordingStart = recordingStart,
-        maxDuration = settings!!.maxDuration,
-        fileExtension = settings!!.fileExtension,
-        intervalDuration = settings!!.intervalDuration,
-        forceExactMaxDuration = settings!!.forceExactMaxDuration,
+        maxDuration = settings.maxDuration,
+        fileExtension = settings.fileExtension,
+        intervalDuration = settings.intervalDuration,
     )
 
     // Make overrideable
@@ -52,7 +55,7 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
                     startNewCycle()
                 },
                 0,
-                settings!!.intervalDuration,
+                settings.intervalDuration,
                 TimeUnit.MILLISECONDS
             )
         }
@@ -61,17 +64,15 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     override fun start() {
         super.start()
 
-        outputFolder.mkdirs()
-
-        scope.launch {
-            dataStore.data.collectLatest { preferenceSettings ->
-                if (settings == null) {
-                    settings = Settings.from(preferenceSettings.audioRecorderSettings)
-
-                    createTimer()
-                }
-            }
+        batchesFolder.initFolders()
+        if (!batchesFolder.checkIfFolderIsAccessible()) {
+            batchesFolder =
+                BatchesFolder.viaInternalFolder(this@IntervalRecorderService)
+            batchesFolder.initFolders()
+            onCustomOutputFolderNotAccessible()
         }
+
+        createTimer()
     }
 
     override fun pause() {
@@ -90,27 +91,25 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
         cycleTimer.shutdown()
     }
 
+    fun clearAllRecordings() {
+        batchesFolder.deleteRecordings()
+    }
+
     private fun deleteOldRecordings() {
         val timeMultiplier = settings!!.maxDuration / settings!!.intervalDuration
         val earliestCounter = counter - timeMultiplier
 
-        outputFolder.listFiles()?.forEach { file ->
-            val fileCounter = file.nameWithoutExtension.toIntOrNull() ?: return
-
-            if (fileCounter < earliestCounter) {
-                file.delete()
-            }
-        }
+        batchesFolder.deleteOldRecordings(earliestCounter)
     }
 
     data class Settings(
         val maxDuration: Long,
         val intervalDuration: Long,
-        val forceExactMaxDuration: Boolean,
         val bitRate: Int,
         val samplingRate: Int,
         val outputFormat: Int,
         val encoder: Int,
+        val folder: String? = null,
     ) {
         val fileExtension: String
             get() = when (outputFormat) {
@@ -134,7 +133,6 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
                     outputFormat = audioRecorderSettings.getOutputFormat(),
                     encoder = audioRecorderSettings.getEncoder(),
                     maxDuration = audioRecorderSettings.maxDuration,
-                    forceExactMaxDuration = audioRecorderSettings.forceExactMaxDuration,
                 )
             }
         }
