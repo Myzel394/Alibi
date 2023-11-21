@@ -8,6 +8,7 @@
     <string name="form_error_type_notNumber">Bitte eine gültige Nummer eingeben</string>
     <string name="form_error_value_notInRange">Bitte gib eine Nummer zwischen<xliff:g name="min">%s</xliff:g> und <xliff:g name="max">%s</xliff:g>ein</string>
     <string name="form_error_value_mustBeGreaterThan">Bitte gib eine Zahl größer als <xliff:g name="min">%s</xliff:g> ein</string>
+    <string name="form_value_selected">Selected: %s</string>
     <string name="notificationChannels_recorder_name">Aufnahme</string>
     <string name="notificationChannels_recorder_description">Zeigt den aktuellen Status der Aufnahme an</string>
     <string name="ui_permissions_request_title">Berechtigung verweigert</string>
@@ -18,14 +19,16 @@
     <string name="ui_audioRecorder_action_delete_label">Löschen</string>
     <string name="ui_audioRecorder_action_delete_confirm_title">Aufnahme Löschen?</string>
     <string name="ui_audioRecorder_action_delete_confirm_message">Bist du sicher, dass du diese Aufnahme löschen möchtest?</string>
-    <string name="ui_audioRecorder_action_pause_label">Aufnahme pausieren</string>
-    <string name="ui_audioRecorder_action_resume_label">Aufnahme fortsetzten</string>
+    <string name="ui_audioRecorder_action_pause_label">Anhalten</string>
+    <string name="ui_audioRecorder_action_resume_label">Fortsetzen</string>
     <string name="ui_audioRecorder_action_save_label">Aufnahme speichern</string>
     <string name="ui_audioRecorder_action_start_description">Alibi wird im Hintergrund weiterhin aufnehmen und die letzten <xliff:g name="durationInMinutes">%s</xliff:g> Minuten auf Wunsch speichern</string>
     <string name="ui_audioRecorder_action_save_processing_dialog_title">Bearbeiten</string>
     <string name="ui_audioRecorder_action_save_processing_dialog_description">Audio wird bearbeitet, Alibi nicht schließen! Du wirst automatisch aufgefordert, die Datei zu speichern, wenn diese fertig bearbeitet ist</string>
     <string name="ui_audioRecorder_state_recording_title">Aufnahme läuft</string>
     <string name="ui_audioRecorder_state_recording_description">Alibi nimmt im Hintergrund weiter auf</string>
+    <string name="ui_audioRecorder_state_recording_fake_weather_title">Aktuelles Wetter</string>
+    <string name="ui_audioRecorder_state_recording_fake_weather_description">14° mit leichter Regenwahrscheinlichkeit</string>
     <string name="ui_welcome_explanation_title">Wilkommen zu Alibi!</string>
     <string name="ui_welcome_explanation_message">Alibi funktioniert wird eine Dashcam für dein Handy. Es ermöglicht dir, Ton im Hintergrund kontinuierlich aufzunehmen und die letzten 30 Minuten auf Wunsch zu speichern.</string>
     <string name="ui_welcome_responsibility_title">Du bist für die Nutzung dieser App verantwortlich!</string>
@@ -57,9 +60,57 @@
     <string name="ui_audioRecorder_error_recording_description">Alibi stieß bei der Aufnahme auf einen Fehler. Soll die Aufnahme gespeichert werden? </string>
     <string name="ui_settings_language_title">Sprache</string>
     <string name="ui_settings_language_update_label">Ändern</string>
+    <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Geräte-Mikrofon</string>
+    <string name="ui_audioRecorder_info_microphone_changeExplanation">Das ausgewählte Mikrofon wird sofort aktiviert</string>
+    <string name="ui_audioRecorder_error_microphoneDisconnected_title">Mikrofon wurde getrennt</string>
+    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%s</xliff:g> wurde getrennt. Alibi wird stattdessen das Standardmikrofon verwenden und automatisch zu <xliff:g name="nam">%s</xliff:g> wechseln, sobald es erneut verbunden wird.</string>
+    <string name="ui_audioRecorder_error_microphoneReconnected_title">Mikrofon erneut verbunden</string>
+    <string name="ui_audioRecorder_error_microphoneReconnected_message"><xliff:g name="name">%s</xliff:g> wurde wieder verbunden! Alibi hat den Mikrofoneingang automatisch geändert.</string>
+    <string name="ui_settings_option_showAllMicrophones_title">Versteckte Mikrofone anzeigen</string>
+    <string name="ui_settings_option_showAllMicrophones_description">Alle Mikrofone, einschließlich interner Mikrofone anzeigen</string>
+    <string name="ui_audioRecorder_info_microphone_hiddenMicrophones">Versteckte Mikrofone</string>
     <string name="ui_settings_option_import_label">Einstellungen importieren</string>
     <string name="ui_settings_option_export_label">Einstellungen exportieren</string>
     <string name="ui_settings_option_import_dialog_text">Sind Sie sicher, dass Sie diese Einstellungen importieren wollen? Ihre aktuellen Einstellungen werden überschrieben!</string>
     <string name="ui_settings_option_import_dialog_confirm">Einstellungen importieren</string>
     <string name="ui_settings_option_import_success">Einstellungen wurden erfolgreich importiert!</string>
+    <string name="ui_settings_option_customNotification_title">Benutzerdefinierte Benachrichtigungen</string>
+    <string name="ui_settings_option_customNotification_description_setup">Benutzerdefinierte Aufzeichnungsbenachrichtigungen einrichten</string>
+    <string name="ui_settings_option_customNotification_description_edit">Aufnahmebenachrichtigungen bearbeiten</string>
+    <string name="ui_settings_customNotifications_landing_title">Lass dich nicht entdecken</string>
+    <string name="ui_settings_customNotifications_landing_description">Aufgrund einer Android-Einschränkung muss Alibi während der Aufnahme eine Benachrichtigung anzeigen. Um die Tatsache zu verbergen, dass du Alibi verwendest, kannst du die Benachrichtigung anpassen.</string>
+    <string name="ui_settings_customNotifications_landing_help_hideNotifications">Alternativ kannst du auch einfach Benachrichtigungen deaktivieren</string>
+    <string name="ui_settings_customNotifications_landing_getStarted">Eigene Benachrichtigung erstellen</string>
+    <string name="ui_audioRecorder_state_recording_fake_player_title">Audio abspielen</string>
+    <string name="ui_audioRecorder_state_recording_fake_player_description">Jetzt spielt: Despacito</string>
+    <string name="ui_audioRecorder_state_recording_fake_browser_title">attachments.zip wird heruntergeladen</string>
+    <string name="ui_audioRecorder_state_recording_fake_browser_description">Datei wird heruntergeladen...</string>
+    <string name="ui_audioRecorder_state_recording_fake_vpn_title">Mit VPN verbunden</string>
+    <string name="ui_audioRecorder_state_recording_fake_vpn_description">Verbindung sicher</string>
+    <string name="ui_settings_customNotifications_preset_apply_label">Vorlage \"%s \" anwenden</string>
+    <string name="ui_settings_customNotifications_showOngoing_label">Dauer anzeigen</string>
+    <string name="ui_settings_customNotifications_save_label">Benachrichtigung aktualisieren</string>
+    <string name="ui_settings_customNotifications_edit_help">Dies ist eine Vorschau für deine Benachrichtigung. Du kannst den Titel und die Nachricht bearbeiten. Am unteren Ende findest du einige Beispiele.</string>
+    <string name="ui_about_title">Über Alibi</string>
+    <string name="ui_about_contribute_title">Unterstütze Alibi</string>
+    <string name="ui_about_contribute_message">In meiner Freizeit entwickle ich Alibi und andere freie Open-Source-Software. Es bedeutet die Welt für mich, wenn du mir in irgendeiner Weise helfen könntest :)</string>
+    <string name="ui_about_contribute_development">Funktionen entwickeln oder Fehler beheben</string>
+    <string name="accessibility_open_in_browser">Link im Browser öffnen: %s</string>
+    <string name="ui_about_contribute_translation">Übersetze Alibi in deine Sprache</string>
+    <string name="ui_about_contribute_donatation">Spenden</string>
+    <string name="ui_about_gpg_key_hint">Hier kannst du meinen GPG-Schlüssel kopieren. Dieser Schlüssel existiert nur einmal und ich kann ihn benutzen, um Ihnen zu beweisen, dass ich wirklich bin, wer ich bin. Bitte speichern Sie ihn jetzt, damit Sie später verifizieren können, dass ich bin, wer ich bin.</string>
+    <string name="ui_about_gpg_key_copy">GPG-Schlüssel kopieren</string>
+    <string name="ui_about_contribute_donation_githubSponsors">Werde ein Github Sponsor</string>
+    <string name="ui_settings_option_deleteRecordingsImmediately_title">Aufnahmen sofort löschen</string>
+    <string name="ui_settings_option_deleteRecordingsImmediately_description">Falls aktiviert, löscht Alibi sofort Aufnahmen, nachdem Sie die Datei gespeichert haben.</string>
+    <string name="ui_settings_option_saveFolder_title">Batches folder</string>
+    <string name="ui_settings_option_saveFolder_explanation">Where Alibi should store the temporary batches of your recordings.</string>
+    <string name="ui_settings_option_saveFolder_action_select_label">Select</string>
+    <string name="ui_settings_option_saveFolder_defaultValue">Encrypted Internal Storage</string>
+    <string name="ui_settings_option_saveFolder_warning_title">Are you sure you want to change the folder?</string>
+    <string name="ui_settings_option_saveFolder_warning_text">By default, Alibi will save the recording batches into its private, encrypted file storage. You can change this and specify an external, unencrypted folder. This will allow you to access the batches manually. ONLY DO THIS IF YOU KNOW WHAT YOU ARE DOING!</string>
+    <string name="ui_settings_option_saveFolder_warning_action_confirm">Yes, change folder</string>
+    <string name="ui_settings_option_saveFolder_action_default_label">Use private, encrypted storage</string>
+    <string name="ui_audioRecorder_action_save_success">Recording has been saved successfully!</string>
+    <string name="ui_audioRecorder_action_save_openFolder">Open</string>
 </resources>
