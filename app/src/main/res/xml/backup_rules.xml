@@ -10,4 +10,7 @@
    <include domain="sharedpref" path="."/>
    <exclude domain="sharedpref" path="device.xml"/>
 -->
+    <exclude
+        domain="file"
+        path=".recordings" />
 </full-backup-content>
