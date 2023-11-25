@@ -102,9 +102,24 @@ class VideoService : LifecycleService() {
                 delay(15000)
 
                 result.stop()
+                // Unbind use cases before rebinding
+                cameraProvider?.unbindAll()
+                // Bind use cases to camera
+                cameraProvider?.bindToLifecycle(this@VideoService, cameraSelector, videoCapture)
 
-                cameraProvider.unbindAll()
+                delay(5000)
+
+                val recording = videoCapture.output.prepareRecording(this@VideoService, options)
+                    .withAudioEnabled()
+                val result = recording.start(ContextCompat.getMainExecutor(this@VideoService), {})
+
+                delay(15000)
+
+                result.stop()
+
                 stopSelf()
+                stopForeground(STOP_FOREGROUND_REMOVE)
+
             }
         }, ContextCompat.getMainExecutor(this))
     }
