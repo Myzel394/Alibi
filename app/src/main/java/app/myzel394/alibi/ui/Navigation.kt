@@ -24,6 +24,7 @@ import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.screens.AboutScreen
 import app.myzel394.alibi.ui.screens.AudioRecorderScreen
 import app.myzel394.alibi.ui.screens.CustomRecordingNotificationsScreen
+import app.myzel394.alibi.ui.screens.POCVideo
 import app.myzel394.alibi.ui.screens.SettingsScreen
 import app.myzel394.alibi.ui.screens.WelcomeScreen
 
@@ -70,10 +71,7 @@ fun Navigation(
                 scaleOut(targetScale = SCALE_IN) + fadeOut(tween(durationMillis = 150))
             }
         ) {
-            AudioRecorderScreen(
-                navController = navController,
-                audioRecorder = audioRecorder,
-            )
+            POCVideo()
         }
         composable(
             Screen.Settings.route,
