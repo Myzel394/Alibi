@@ -16,9 +16,11 @@ import androidx.camera.core.Preview
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.MediaStoreOutputOptions
+import androidx.camera.video.PendingRecording
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
+import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture.withOutput
 import androidx.camera.video.VideoRecordEvent
 import androidx.core.app.NotificationCompat
@@ -31,13 +33,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 class VideoService : LifecycleService() {
     private var job = SupervisorJob()
     private var scope = CoroutineScope(Dispatchers.IO + job)
 
+    private var counter = 0
+    private lateinit var cycleTimer: ScheduledExecutorService
+    private var recording: Recording? = null
+
     private fun createMediaStoreOutputOptions(): MediaStoreOutputOptions {
-        val name = "CameraX-recording.mp4"
+        val name = "CameraX-recording-$counter.mp4"
         val contentValues = ContentValues().apply {
             put(MediaStore.Video.Media.DISPLAY_NAME, name)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -68,11 +77,10 @@ class VideoService : LifecycleService() {
             this,
             NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID,
             notification,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA
-            } else {
-                0
-            },
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA + ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+            else
+                0,
         )
 
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -89,37 +97,36 @@ class VideoService : LifecycleService() {
             // Unbind use cases before rebinding
             cameraProvider?.unbindAll()
             // Bind use cases to camera
-            cameraProvider?.bindToLifecycle(this@VideoService, cameraSelector, videoCapture)
+            cameraProvider?.bindToLifecycle(
+                this@VideoService,
+                cameraSelector,
+                videoCapture
+            )
 
             val options = createMediaStoreOutputOptions()
 
-            val recording = videoCapture.output.prepareRecording(this@VideoService, options)
-                .withAudioEnabled()
+            cycleTimer = Executors.newSingleThreadScheduledExecutor().also {
+                it.scheduleAtFixedRate(
+                    {
+                        val mainHandler = ContextCompat.getMainExecutor(this@VideoService)
 
-            val result = recording.start(ContextCompat.getMainExecutor(this@VideoService), {})
+                        mainHandler.execute {
+                            runCatching {
+                                recording?.stop()
+                            }
 
-            scope.launch {
-                delay(15000)
+                            val r =
+                                videoCapture.output.prepareRecording(this@VideoService, options)
+                                    .withAudioEnabled()
 
-                result.stop()
-                // Unbind use cases before rebinding
-                cameraProvider?.unbindAll()
-                // Bind use cases to camera
-                cameraProvider?.bindToLifecycle(this@VideoService, cameraSelector, videoCapture)
-
-                delay(5000)
-
-                val recording = videoCapture.output.prepareRecording(this@VideoService, options)
-                    .withAudioEnabled()
-                val result = recording.start(ContextCompat.getMainExecutor(this@VideoService), {})
-
-                delay(15000)
-
-                result.stop()
-
-                stopSelf()
-                stopForeground(STOP_FOREGROUND_REMOVE)
-
+                            recording =
+                                r.start(ContextCompat.getMainExecutor(this@VideoService), {})
+                        }
+                    },
+                    0,
+                    10_000,
+                    TimeUnit.MILLISECONDS
+                )
             }
         }, ContextCompat.getMainExecutor(this))
     }
