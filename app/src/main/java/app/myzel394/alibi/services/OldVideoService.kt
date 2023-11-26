@@ -3,26 +3,16 @@ package app.myzel394.alibi.services
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.pm.ServiceInfo
-import android.graphics.SurfaceTexture
-import android.hardware.Camera
 import android.os.Build
 import android.provider.MediaStore
-import android.view.Surface
-import android.view.TextureView
-import android.view.ViewGroup
-import androidx.camera.core.CameraProvider
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.Preview
-import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.MediaStoreOutputOptions
-import androidx.camera.video.PendingRecording
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture.withOutput
-import androidx.camera.video.VideoRecordEvent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
@@ -31,13 +21,15 @@ import app.myzel394.alibi.NotificationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-class VideoService : LifecycleService() {
+
+class VideoService : IntervalRecorderService() {
+}
+
+class OldVideoService : LifecycleService() {
     private var job = SupervisorJob()
     private var scope = CoroutineScope(Dispatchers.IO + job)
 
@@ -88,7 +80,7 @@ class VideoService : LifecycleService() {
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider = cameraProviderFuture.get()
             val recorder = Recorder.Builder()
-                .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
+                .setQualitySelector(QualitySelector.from(Quality.LOWEST))
                 .build()
             val videoCapture = withOutput(recorder)
             // Select back camera as a default
@@ -98,7 +90,7 @@ class VideoService : LifecycleService() {
             cameraProvider?.unbindAll()
             // Bind use cases to camera
             cameraProvider?.bindToLifecycle(
-                this@VideoService,
+                this@OldVideoService,
                 cameraSelector,
                 videoCapture
             )
@@ -108,7 +100,7 @@ class VideoService : LifecycleService() {
             cycleTimer = Executors.newSingleThreadScheduledExecutor().also {
                 it.scheduleAtFixedRate(
                     {
-                        val mainHandler = ContextCompat.getMainExecutor(this@VideoService)
+                        val mainHandler = ContextCompat.getMainExecutor(this@OldVideoService)
 
                         mainHandler.execute {
                             runCatching {
@@ -116,11 +108,11 @@ class VideoService : LifecycleService() {
                             }
 
                             val r =
-                                videoCapture.output.prepareRecording(this@VideoService, options)
+                                videoCapture.output.prepareRecording(this@OldVideoService, options)
                                     .withAudioEnabled()
 
                             recording =
-                                r.start(ContextCompat.getMainExecutor(this@VideoService), {})
+                                r.start(ContextCompat.getMainExecutor(this@OldVideoService), {})
                         }
                     },
                     0,

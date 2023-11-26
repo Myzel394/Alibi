@@ -52,7 +52,7 @@
             android:name=".services.AudioRecorderService"
             android:foregroundServiceType="microphone" />
         <service
-            android:name=".services.VideoService"
+            android:name=".services.OldVideoService"
             android:foregroundServiceType="camera|microphone" />
 
         <!-- Change locale for Android <= 12 -->

@@ -19,14 +19,12 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-abstract class IntervalRecorderService : ExtraRecorderInformationService() {
-    private var job = SupervisorJob()
-    private var scope = CoroutineScope(Dispatchers.IO + job)
-
+abstract class IntervalRecorderService<S : IntervalRecorderService.Settings, I> :
+    RecorderService() {
     protected var counter = 0L
         private set
 
-    lateinit var settings: Settings
+    lateinit var settings: S
 
     private lateinit var cycleTimer: ScheduledExecutorService
 
@@ -34,13 +32,7 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
 
     var onCustomOutputFolderNotAccessible: () -> Unit = {}
 
-    fun getRecordingInformation(): RecordingInformation = RecordingInformation(
-        folderPath = batchesFolder.exportFolderForSettings(),
-        recordingStart = recordingStart,
-        maxDuration = settings.maxDuration,
-        fileExtension = settings.fileExtension,
-        intervalDuration = settings.intervalDuration,
-    )
+    abstract fun getRecordingInformation(): I
 
     // Make overrideable
     open fun startNewCycle() {
@@ -62,8 +54,6 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     }
 
     override fun start() {
-        super.start()
-
         batchesFolder.initFolders()
         if (!batchesFolder.checkIfFolderIsAccessible()) {
             batchesFolder =
@@ -81,10 +71,6 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
 
     override fun resume() {
         createTimer()
-
-        // We first want to start our timers, so the `ExtraRecorderInformationService` can fetch
-        // amplitudes
-        super.resume()
     }
 
     override fun stop() {
@@ -96,45 +82,14 @@ abstract class IntervalRecorderService : ExtraRecorderInformationService() {
     }
 
     private fun deleteOldRecordings() {
-        val timeMultiplier = settings!!.maxDuration / settings!!.intervalDuration
+        val timeMultiplier = settings.maxDuration / settings.intervalDuration
         val earliestCounter = counter - timeMultiplier
 
         batchesFolder.deleteOldRecordings(earliestCounter)
     }
 
-    data class Settings(
-        val maxDuration: Long,
-        val intervalDuration: Long,
-        val bitRate: Int,
-        val samplingRate: Int,
-        val outputFormat: Int,
-        val encoder: Int,
-        val folder: String? = null,
-    ) {
-        val fileExtension: String
-            get() = when (outputFormat) {
-                MediaRecorder.OutputFormat.AAC_ADTS -> "aac"
-                MediaRecorder.OutputFormat.THREE_GPP -> "3gp"
-                MediaRecorder.OutputFormat.MPEG_4 -> "mp4"
-                MediaRecorder.OutputFormat.MPEG_2_TS -> "ts"
-                MediaRecorder.OutputFormat.WEBM -> "webm"
-                MediaRecorder.OutputFormat.AMR_NB -> "amr"
-                MediaRecorder.OutputFormat.AMR_WB -> "awb"
-                MediaRecorder.OutputFormat.OGG -> "ogg"
-                else -> "raw"
-            }
-
-        companion object {
-            fun from(audioRecorderSettings: AudioRecorderSettings): Settings {
-                return Settings(
-                    intervalDuration = audioRecorderSettings.intervalDuration,
-                    bitRate = audioRecorderSettings.bitRate,
-                    samplingRate = audioRecorderSettings.getSamplingRate(),
-                    outputFormat = audioRecorderSettings.getOutputFormat(),
-                    encoder = audioRecorderSettings.getEncoder(),
-                    maxDuration = audioRecorderSettings.maxDuration,
-                )
-            }
-        }
-    }
+    abstract class Settings(
+        open val maxDuration: Long,
+        open val intervalDuration: Long,
+    )
 }

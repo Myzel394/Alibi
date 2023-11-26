@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
+import androidx.lifecycle.LifecycleService
 import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.ui.utils.PermissionHelper
@@ -20,7 +21,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 
-abstract class RecorderService : Service() {
+abstract class RecorderService : LifecycleService() {
     private val binder = RecorderBinder()
 
     private var isPaused: Boolean = false
@@ -44,7 +45,10 @@ abstract class RecorderService : Service() {
     protected abstract fun resume()
     protected abstract fun stop()
 
-    override fun onBind(p0: Intent?): IBinder? = binder
+    override fun onBind(intent: Intent): IBinder? {
+        super.onBind(intent)
+        return binder
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
