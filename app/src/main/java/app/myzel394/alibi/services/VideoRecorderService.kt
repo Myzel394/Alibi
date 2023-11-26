@@ -7,6 +7,7 @@ import android.os.Build
 import android.provider.MediaStore
 import androidx.camera.core.CameraSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.MediaStoreOutputOptions
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
@@ -17,6 +18,7 @@ import androidx.camera.video.VideoCapture.withOutput
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.LifecycleService
 import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.db.RecordingInformation
@@ -157,23 +159,13 @@ class VideoService : IntervalRecorderService<VideoService.Settings, RecordingInf
         val fileExtension
             get() = "mp4"
 
-        fun getOutputOptions(video: VideoService): MediaStoreOutputOptions {
-            val contentValues = ContentValues().apply {
-                put(MediaStore.Video.Media.DISPLAY_NAME, "${video.counter}.$fileExtension")
-
-                put(
-                    MediaStore.MediaColumns.RELATIVE_PATH,
-                    "DCIM/Recordings"
-                )
+        fun getOutputOptions(video: VideoService): FileOutputOptions {
+            val fileName = "${video.counter}.$fileExtension"
+            val file = video.batchesFolder.getInternalFolder().resolve(fileName).apply {
+                createNewFile()
             }
 
-            // TODO: Find a way to make this work with the internal storage
-            return MediaStoreOutputOptions.Builder(
-                video.contentResolver,
-                MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-            )
-                .setContentValues(contentValues)
-                .build()
+            return FileOutputOptions.Builder(file).build()
         }
 
         companion object {

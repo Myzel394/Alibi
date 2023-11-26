@@ -34,11 +34,11 @@ data class BatchesFolder(
         customFileFileDescriptor?.close()
     }
 
-    private fun getInternalFolder(): File {
+    fun getInternalFolder(): File {
         return getFolder(context)
     }
 
-    private fun getCustomDefinedFolder(): DocumentFile {
+    fun getCustomDefinedFolder(): DocumentFile {
         return customFolder!!.findFile(subfolderName)!!
     }
 
