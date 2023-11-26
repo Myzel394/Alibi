@@ -1,26 +1,16 @@
 package app.myzel394.alibi.services
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
-import android.content.pm.ServiceInfo
-import android.os.Build
-import android.provider.MediaStore
 import androidx.camera.core.CameraSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.FileOutputOptions
-import androidx.camera.video.MediaStoreOutputOptions
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoCapture.withOutput
-import androidx.core.app.NotificationCompat
-import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
-import androidx.lifecycle.LifecycleService
-import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.db.RecordingInformation
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -28,12 +18,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
 
 
-class VideoService : IntervalRecorderService<VideoService.Settings, RecordingInformation>() {
+class VideoRecorderService :
+    IntervalRecorderService<VideoRecorderService.Settings, RecordingInformation>() {
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
@@ -56,7 +44,7 @@ class VideoService : IntervalRecorderService<VideoService.Settings, RecordingInf
     // This should only be called when starting a recording.
     private suspend fun openCamera() {
         cameraProvider = withContext(Dispatchers.IO) {
-            ProcessCameraProvider.getInstance(this@VideoService).get()
+            ProcessCameraProvider.getInstance(this@VideoRecorderService).get()
         }
 
         val recorder = Recorder.Builder()
@@ -159,7 +147,7 @@ class VideoService : IntervalRecorderService<VideoService.Settings, RecordingInf
         val fileExtension
             get() = "mp4"
 
-        fun getOutputOptions(video: VideoService): FileOutputOptions {
+        fun getOutputOptions(video: VideoRecorderService): FileOutputOptions {
             val fileName = "${video.counter}.$fileExtension"
             val file = video.batchesFolder.getInternalFolder().resolve(fileName).apply {
                 createNewFile()
