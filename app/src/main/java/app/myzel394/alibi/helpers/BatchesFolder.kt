@@ -122,6 +122,28 @@ data class BatchesFolder(
         }
     }
 
+    suspend fun exportToOneFile(
+        recordingStart: LocalDateTime,
+        extension: String,
+        disableCache: Boolean = false,
+    ) {
+        if (!disableCache && checkIfOutputAlreadyExists(recordingStart, extension)) {
+            return
+        }
+
+        val filePaths = getBatchesForFFmpeg()
+        val outputFile = getOutputFileForFFmpeg(
+            date = recordingStart,
+            extension = extension,
+        )
+
+        MediaConverter.concatenate(
+            inputFiles = filePaths,
+            outputFile = outputFile,
+            extraCommand = " -acodec copy"
+        ).await()
+    }
+
     fun exportFolderForSettings(): String {
         return when (type) {
             BatchType.INTERNAL -> "_'internal"

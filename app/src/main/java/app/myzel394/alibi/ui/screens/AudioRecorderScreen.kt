@@ -33,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -45,7 +44,6 @@ import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
@@ -131,16 +129,13 @@ fun AudioRecorderScreen(
                     ?: settings.lastRecording
                     ?: throw Exception("No recording information available")
                 val batchesFolder = BatchesFolder.importFromFolder(recording.folderPath, context)
-                val outputFile = batchesFolder.getOutputFileForFFmpeg(
+
+                batchesFolder.exportToOneFile(
                     recording.recordingStart,
-                    recording.fileExtension
+                    recording.fileExtension,
                 )
 
-                AudioRecorderExporter(recording).concatenateFiles(
-                    batchesFolder,
-                    outputFile,
-                )
-
+                // Save file
                 val name = batchesFolder.getName(
                     recording.recordingStart,
                     recording.fileExtension,
