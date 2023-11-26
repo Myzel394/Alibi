@@ -92,7 +92,7 @@ class AudioRecorderModel : ViewModel() {
                     }
                     recorder.batchesFolder = batchesFolder ?: recorder.batchesFolder
                     recorder.settings =
-                        IntervalRecorderService.Settings.from(settings.audioRecorderSettings)
+                        AudioRecorderService.Settings.from(settings.audioRecorderSettings)
 
                     recorder.clearAllRecordings()
                 }.also {

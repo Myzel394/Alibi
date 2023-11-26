@@ -43,9 +43,7 @@ abstract class IntervalRecorderService<S : IntervalRecorderService.Settings, I> 
     private fun createTimer() {
         cycleTimer = Executors.newSingleThreadScheduledExecutor().also {
             it.scheduleAtFixedRate(
-                {
-                    startNewCycle()
-                },
+                ::startNewCycle,
                 0,
                 settings.intervalDuration,
                 TimeUnit.MILLISECONDS

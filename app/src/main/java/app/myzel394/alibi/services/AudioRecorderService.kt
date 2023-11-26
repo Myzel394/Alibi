@@ -289,7 +289,7 @@ class AudioRecorderService :
             }
 
         companion object {
-            fun from(audioRecorderSettings: AudioRecorderSettings): IntervalRecorderService.Settings {
+            fun from(audioRecorderSettings: AudioRecorderSettings): Settings {
                 return Settings(
                     intervalDuration = audioRecorderSettings.intervalDuration,
                     bitRate = audioRecorderSettings.bitRate,
