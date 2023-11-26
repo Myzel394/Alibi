@@ -1,6 +1,7 @@
 package app.myzel394.alibi.services
 
 import android.annotation.SuppressLint
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.FileOutputOptions
@@ -9,7 +10,6 @@ import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
-import androidx.camera.video.VideoCapture.withOutput
 import androidx.core.content.ContextCompat
 import app.myzel394.alibi.db.RecordingInformation
 import kotlinx.coroutines.CompletableDeferred
@@ -25,6 +25,7 @@ class VideoRecorderService :
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
+    private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private var videoCapture: VideoCapture<Recorder>? = null
     private var activeRecording: Recording? = null
@@ -48,14 +49,15 @@ class VideoRecorderService :
         }
 
         val recorder = Recorder.Builder()
-            .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
+            .setQualitySelector(settings.quality)
             .build()
-        videoCapture = withOutput(recorder)
+        videoCapture = VideoCapture.Builder(recorder)
+            .build()
 
         runInMain {
-            cameraProvider!!.bindToLifecycle(
+            camera = cameraProvider!!.bindToLifecycle(
                 this,
-                settings.camera,
+                settings.cameraSelector,
                 videoCapture
             )
 
@@ -75,6 +77,7 @@ class VideoRecorderService :
 
         cameraProvider = null
         videoCapture = null
+        camera = null
     }
 
     override fun start() {
@@ -108,7 +111,6 @@ class VideoRecorderService :
         super.startNewCycle()
 
         fun action() {
-            println("=======================")
             activeRecording?.stop()
             val newRecording = prepareVideoRecording()
 
@@ -139,7 +141,9 @@ class VideoRecorderService :
         override val maxDuration: Long,
         override val intervalDuration: Long,
         val folder: String? = null,
-        val camera: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA,
+        val targetVideoBitRate: Int? = null,
+        val cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA,
+        val quality: QualitySelector = QualitySelector.from(Quality.HIGHEST),
     ) : IntervalRecorderService.Settings(
         maxDuration = maxDuration,
         intervalDuration = intervalDuration

@@ -3,20 +3,18 @@ package app.myzel394.alibi.db
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
+import androidx.camera.video.Quality
+import androidx.camera.video.QualitySelector
 import app.myzel394.alibi.R
-import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.helpers.BatchesFolder
-import com.arthenica.ffmpegkit.FFmpegKit
-import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.io.File
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter.ISO_DATE_TIME
 
 @Serializable
 data class AppSettings(
-    val audioRecorderSettings: AudioRecorderSettings = AudioRecorderSettings(),
+    val audioRecorderSettings: AudioRecorderSettings = AudioRecorderSettings.getDefaultInstance(),
+    val videoRecorderSettings: VideoRecorderSettings = VideoRecorderSettings.getDefaultInstance(),
     val notificationSettings: NotificationSettings? = null,
     val hasSeenOnboarding: Boolean = false,
     val showAdvancedSettings: Boolean = false,
@@ -162,24 +160,6 @@ data class AudioRecorderSettings(
         MediaRecorder.AudioEncoder.AAC
     else
         MediaRecorder.AudioEncoder.AMR_NB
-
-    fun getSaveFolder(context: Context): File {
-        val defaultFolder = AudioRecorderExporter.getFolder(context)
-
-        if (saveFolder == null) {
-            return defaultFolder
-        }
-
-        runCatching {
-            return File(saveFolder!!).apply {
-                if (!exists()) {
-                    mkdirs()
-                }
-            }
-        }
-
-        return defaultFolder
-    }
 
     fun setIntervalDuration(duration: Long): AudioRecorderSettings {
         if (duration < 10 * 1000L || duration > 60 * 60 * 1000L) {
@@ -365,6 +345,45 @@ data class AudioRecorderSettings(
                 }
             }
         }).toMap()
+    }
+}
+
+@Serializable
+data class VideoRecorderSettings(
+    val targetedVideoBitRate: Int? = null,
+    val quality: String? = null,
+    val targetFrameRate: Int? = null,
+) {
+    fun setTargetedVideoBitRate(bitRate: Int?): VideoRecorderSettings {
+        return copy(targetedVideoBitRate = bitRate)
+    }
+
+    fun setQuality(quality: String): VideoRecorderSettings {
+        return copy(quality = quality)
+    }
+
+    fun setTargetFrameRate(frameRate: Int?): VideoRecorderSettings {
+        return copy(targetFrameRate = frameRate)
+    }
+
+    fun getQualitySelector(): QualitySelector? =
+        quality?.let {
+            QualitySelector.from(
+                QUALITY_NAME_QUALITY_MAP[it]!!
+            )
+        }
+
+    companion object {
+        fun getDefaultInstance() = VideoRecorderSettings()
+
+        val QUALITY_NAME_QUALITY_MAP: Map<String, Quality> = mapOf(
+            "LOWEST" to Quality.LOWEST,
+            "HIGHEST" to Quality.HIGHEST,
+            "SD" to Quality.SD,
+            "HD" to Quality.HD,
+            "FHD" to Quality.FHD,
+            "UHD" to Quality.UHD,
+        )
     }
 }
 
