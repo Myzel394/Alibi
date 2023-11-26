@@ -33,6 +33,7 @@ abstract class RecorderService : LifecycleService() {
         private set
 
     var onStateChange: ((RecorderState) -> Unit)? = null
+    var onError: () -> Unit = {}
 
     var recordingTime = 0L
         private set

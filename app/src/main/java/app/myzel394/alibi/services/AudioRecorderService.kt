@@ -26,7 +26,6 @@ class AudioRecorderService :
 
     var recorder: MediaRecorder? = null
         private set
-    var onError: () -> Unit = {}
     var onSelectedMicrophoneChange: (MicrophoneInfo?) -> Unit = {}
     var onMicrophoneDisconnected: () -> Unit = {}
     var onMicrophoneReconnected: () -> Unit = {}

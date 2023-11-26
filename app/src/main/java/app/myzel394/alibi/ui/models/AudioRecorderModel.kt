@@ -24,36 +24,16 @@ import app.myzel394.alibi.services.RecorderService
 import kotlinx.serialization.json.Json
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 
-class AudioRecorderModel : ViewModel() {
-    var recorderState by mutableStateOf(RecorderState.IDLE)
-        private set
-    var recordingTime by mutableStateOf<Long?>(null)
-        private set
+class AudioRecorderModel :
+    BaseRecorderModel<AudioRecorderService.Settings, RecordingInformation, AudioRecorderService>() {
+    override val intentClass = AudioRecorderService::class.java
+
     var amplitudes by mutableStateOf<List<Int>>(emptyList())
         private set
     var selectedMicrophone by mutableStateOf<MicrophoneInfo?>(null)
         private set
 
     var onAmplitudeChange: () -> Unit = {}
-
-    val isInRecording: Boolean
-        get() = recorderState !== RecorderState.IDLE && recordingTime != null
-
-    val isPaused: Boolean
-        get() = recorderState === RecorderState.PAUSED
-
-    val progress: Float
-        get() = (recordingTime!! / recorderService!!.settings!!.maxDuration).toFloat()
-
-    var recorderService: AudioRecorderService? = null
-        private set
-
-    var onRecordingSave: () -> Unit = {}
-    var onError: () -> Unit = {}
-    var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
-    var batchesFolder: BatchesFolder? = null
-
-    private lateinit var settings: AppSettings
 
     var microphoneStatus: MicrophoneConnectivityStatus = MicrophoneConnectivityStatus.CONNECTED
         private set
@@ -63,78 +43,29 @@ class AudioRecorderModel : ViewModel() {
         DISCONNECTED
     }
 
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            recorderService =
-                ((service as RecorderService.RecorderBinder).getService() as AudioRecorderService).also { recorder ->
-                    // Init variables from us to the service
-                    recorder.onStateChange = { state ->
-                        recorderState = state
-                    }
-                    recorder.onRecordingTimeChange = { time ->
-                        recordingTime = time
-                    }
-                    recorder.onAmplitudeChange = { amps ->
-                        amplitudes = amps
-                        onAmplitudeChange()
-                    }
-                    recorder.onError = {
-                        onError()
-                    }
-                    recorder.onSelectedMicrophoneChange = { microphone ->
-                        selectedMicrophone = microphone
-                    }
-                    recorder.onMicrophoneDisconnected = {
-                        microphoneStatus = MicrophoneConnectivityStatus.DISCONNECTED
-                    }
-                    recorder.onMicrophoneReconnected = {
-                        microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
-                    }
-                    recorder.batchesFolder = batchesFolder ?: recorder.batchesFolder
-                    recorder.settings =
-                        AudioRecorderService.Settings.from(settings.audioRecorderSettings)
-
-                    recorder.clearAllRecordings()
-                }.also {
-                    // Init UI from the service
-                    it.startRecording()
-
-                    recorderState = it.state
-                    recordingTime = it.recordingTime
-                    amplitudes = it.amplitudes
-                    selectedMicrophone = it.selectedMicrophone
-                }
+    override fun onServiceConnected(service: AudioRecorderService) {
+        service.onSelectedMicrophoneChange = { microphone ->
+            selectedMicrophone = microphone
         }
-
-        override fun onServiceDisconnected(arg0: ComponentName) {
-            recorderService = null
-            reset()
+        service.onMicrophoneDisconnected = {
+            microphoneStatus = MicrophoneConnectivityStatus.DISCONNECTED
         }
+        service.onMicrophoneReconnected = {
+            microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
+        }
+        service.settings =
+            AudioRecorderService.Settings.from(settings.audioRecorderSettings)
+
+        service.clearAllRecordings()
+        service.startRecording()
+
+        recorderState = service.state
+        recordingTime = service.recordingTime
+        amplitudes = service.amplitudes
+        selectedMicrophone = service.selectedMicrophone
     }
 
-    fun reset() {
-        recorderState = RecorderState.IDLE
-        recordingTime = null
-        amplitudes = emptyList()
-        selectedMicrophone = null
-        microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
-    }
-
-    fun startRecording(context: Context, settings: AppSettings) {
-        runCatching {
-            recorderService?.clearAllRecordings()
-            context.unbindService(connection)
-        }
-
-        notificationDetails = settings.notificationSettings.let {
-            if (it == null)
-                null
-            else
-                RecorderNotificationHelper.NotificationDetails.fromNotificationSettings(
-                    context,
-                    it
-                )
-        }
+    override fun startRecording(context: Context, settings: AppSettings) {
         batchesFolder = if (settings.audioRecorderSettings.saveFolder == null)
             BatchesFolder.viaInternalFolder(context)
         else
@@ -145,42 +76,15 @@ class AudioRecorderModel : ViewModel() {
                     Uri.parse(settings.audioRecorderSettings.saveFolder)
                 )!!
             )
-        this.settings = settings
 
-        val intent = Intent(context, AudioRecorderService::class.java).apply {
-            action = "init"
-
-            if (notificationDetails != null) {
-                putExtra(
-                    "notificationDetails",
-                    Json.encodeToString(
-                        RecorderNotificationHelper.NotificationDetails.serializer(),
-                        notificationDetails!!,
-                    ),
-                )
-            }
-        }
-        ContextCompat.startForegroundService(context, intent)
-        context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        super.startRecording(context, settings)
     }
 
-    fun stopRecording(context: Context) {
-        runCatching {
-            context.unbindService(connection)
-        }
-
-        val intent = Intent(context, AudioRecorderService::class.java)
-        context.stopService(intent)
-
-        reset()
-    }
-
-    fun pauseRecording() {
-        recorderService!!.changeState(RecorderState.PAUSED)
-    }
-
-    fun resumeRecording() {
-        recorderService!!.changeState(RecorderState.RECORDING)
+    override fun reset() {
+        super.reset()
+        amplitudes = emptyList()
+        selectedMicrophone = null
+        microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
     }
 
     fun setMaxAmplitudesAmount(amount: Int) {
@@ -192,18 +96,6 @@ class AudioRecorderModel : ViewModel() {
 
         if (microphone == null) {
             microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
-        }
-    }
-
-    fun bindToService(context: Context) {
-        Intent(context, AudioRecorderService::class.java).also { intent ->
-            context.bindService(intent, connection, 0)
-        }
-    }
-
-    fun unbindFromService(context: Context) {
-        runCatching {
-            context.unbindService(connection)
         }
     }
 }

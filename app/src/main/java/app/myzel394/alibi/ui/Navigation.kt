@@ -21,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.models.AudioRecorderModel
+import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.screens.AboutScreen
 import app.myzel394.alibi.ui.screens.AudioRecorderScreen
 import app.myzel394.alibi.ui.screens.CustomRecordingNotificationsScreen
@@ -32,7 +33,8 @@ const val SCALE_IN = 1.25f
 
 @Composable
 fun Navigation(
-    audioRecorder: AudioRecorderModel = viewModel()
+    audioRecorder: AudioRecorderModel = viewModel(),
+    videoRecorder: VideoRecorderModel = viewModel(),
 ) {
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -71,7 +73,7 @@ fun Navigation(
                 scaleOut(targetScale = SCALE_IN) + fadeOut(tween(durationMillis = 150))
             }
         ) {
-            POCVideo()
+            POCVideo(videoRecorder = videoRecorder, settings = settings)
         }
         composable(
             Screen.Settings.route,
