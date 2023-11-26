@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.pm.ServiceInfo
 import android.os.Build
-import android.os.Environment
 import android.provider.MediaStore
 import androidx.camera.core.CameraSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -183,100 +182,5 @@ class VideoService : IntervalRecorderService<VideoService.Settings, RecordingInf
                 intervalDuration = 10_000,
             )
         }
-    }
-}
-
-class OldVideoService : LifecycleService() {
-    private var job = SupervisorJob()
-    private var scope = CoroutineScope(Dispatchers.IO + job)
-
-    private var counter = 0
-    private lateinit var cycleTimer: ScheduledExecutorService
-    private var recording: Recording? = null
-
-    private fun createMediaStoreOutputOptions(): MediaStoreOutputOptions {
-        val name = "CameraX-recording-$counter.mp4"
-        val contentValues = ContentValues().apply {
-            put(MediaStore.Video.Media.DISPLAY_NAME, name)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/Recorded Videos")
-            }
-        }
-        return MediaStoreOutputOptions.Builder(
-            contentResolver,
-            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        )
-            .setContentValues(contentValues)
-            .build()
-    }
-
-    @SuppressLint("MissingPermission")
-    override fun onCreate() {
-        super.onCreate()
-
-        val notification = NotificationCompat.Builder(
-            this,
-            NotificationHelper.RECORDER_CHANNEL_ID
-        ).setContentTitle("Video Recorder")
-            .setContentText("Recording video")
-            .setSmallIcon(android.R.drawable.ic_media_play)
-            .build()
-
-        ServiceCompat.startForeground(
-            this,
-            NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID,
-            notification,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA + ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
-            else
-                0,
-        )
-
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        cameraProviderFuture.addListener({
-            // Used to bind the lifecycle of cameras to the lifecycle owner
-            val cameraProvider = cameraProviderFuture.get()
-            val recorder = Recorder.Builder()
-                .setQualitySelector(QualitySelector.from(Quality.LOWEST))
-                .build()
-            val videoCapture = withOutput(recorder)
-            // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-            // Unbind use cases before rebinding
-            cameraProvider?.unbindAll()
-            // Bind use cases to camera
-            cameraProvider?.bindToLifecycle(
-                this@OldVideoService,
-                cameraSelector,
-                videoCapture
-            )
-
-            val options = createMediaStoreOutputOptions()
-
-            cycleTimer = Executors.newSingleThreadScheduledExecutor().also {
-                it.scheduleAtFixedRate(
-                    {
-                        val mainHandler = ContextCompat.getMainExecutor(this@OldVideoService)
-
-                        mainHandler.execute {
-                            runCatching {
-                                recording?.stop()
-                            }
-
-                            val r =
-                                videoCapture.output.prepareRecording(this@OldVideoService, options)
-                                    .withAudioEnabled()
-
-                            recording =
-                                r.start(ContextCompat.getMainExecutor(this@OldVideoService), {})
-                        }
-                    },
-                    0,
-                    10_000,
-                    TimeUnit.MILLISECONDS
-                )
-            }
-        }, ContextCompat.getMainExecutor(this))
     }
 }
