@@ -31,7 +31,7 @@ class VideoRecorderService :
     private var activeRecording: Recording? = null
 
     // Used to listen and check if the camera is available
-    private var _cameraAvailableListener = CompletableDeferred<Boolean>()
+    private var _cameraAvailableListener = CompletableDeferred<Unit>()
 
     // Runs a function in the main thread
     private fun runInMain(callback: () -> Unit) {
@@ -61,7 +61,7 @@ class VideoRecorderService :
                 videoCapture
             )
 
-            _cameraAvailableListener.complete(true)
+            _cameraAvailableListener.complete(Unit)
         }
     }
 
