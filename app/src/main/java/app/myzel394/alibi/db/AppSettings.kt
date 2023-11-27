@@ -6,7 +6,8 @@ import android.os.Build
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import app.myzel394.alibi.R
-import app.myzel394.alibi.helpers.BatchesFolder
+import app.myzel394.alibi.helpers.AudioBatchesFolder
+import app.myzel394.alibi.helpers.VideoBatchesFolder
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
@@ -75,9 +76,21 @@ data class RecordingInformation(
     val maxDuration: Long,
     val intervalDuration: Long,
     val fileExtension: String,
+    val type: Type,
 ) {
     fun hasRecordingsAvailable(context: Context): Boolean =
-        BatchesFolder.importFromFolder(folderPath, context).hasRecordingsAvailable()
+        when (type) {
+            Type.AUDIO -> AudioBatchesFolder.importFromFolder(folderPath, context)
+                .hasRecordingsAvailable()
+
+            Type.VIDEO -> VideoBatchesFolder.importFromFolder(folderPath, context)
+                .hasRecordingsAvailable()
+        }
+
+    enum class Type {
+        AUDIO,
+        VIDEO,
+    }
 }
 
 @Serializable

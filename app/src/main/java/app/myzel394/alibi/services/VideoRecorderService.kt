@@ -58,7 +58,7 @@ class VideoRecorderService :
         runInMain {
             camera = cameraProvider!!.bindToLifecycle(
                 this,
-                settings.cameraSelector,
+                CameraSelector.DEFAULT_BACK_CAMERA,
                 videoCapture
             )
 
@@ -136,6 +136,7 @@ class VideoRecorderService :
         maxDuration = settings.maxDuration,
         fileExtension = settings.fileExtension,
         intervalDuration = settings.intervalDuration,
+        type = RecordingInformation.Type.VIDEO,
     )
 
     data class Settings(
@@ -143,7 +144,6 @@ class VideoRecorderService :
         override val intervalDuration: Long,
         val folder: String? = null,
         val targetVideoBitRate: Int? = null,
-        val cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA,
         val quality: QualitySelector = QualitySelector.from(Quality.HIGHEST),
     ) : IntervalRecorderService.Settings(
         maxDuration = maxDuration,
@@ -162,9 +162,16 @@ class VideoRecorderService :
         }
 
         companion object {
-            fun from() = Settings(
-                maxDuration = 60_000,
-                intervalDuration = 10_000,
+            fun from(appSettings: AppSettings) = Settings(
+                // TODO: Migrate audioSettings
+                maxDuration = appSettings.audioRecorderSettings.maxDuration,
+                intervalDuration = appSettings.audioRecorderSettings.intervalDuration,
+                folder = appSettings.audioRecorderSettings.saveFolder,
+                targetVideoBitRate = appSettings.videoRecorderSettings.targetedVideoBitRate,
+                quality = appSettings.videoRecorderSettings.getQualitySelector()
+                    ?: QualitySelector.from(
+                        Quality.HIGHEST
+                    ),
             )
         }
     }

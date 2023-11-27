@@ -142,6 +142,7 @@ class AudioRecorderService :
         maxDuration = settings.maxDuration,
         fileExtension = settings.fileExtension,
         intervalDuration = settings.intervalDuration,
+        type = RecordingInformation.Type.AUDIO,
     )
 
     override fun startNewCycle() {
@@ -214,7 +215,7 @@ class AudioRecorderService :
             super.onAudioDevicesAdded(addedDevices)
 
             if (selectedMicrophone == null) {
-                return;
+                return
             }
 
             // We can't compare the ID, as it seems to be changing on each reconnect
@@ -238,7 +239,7 @@ class AudioRecorderService :
             super.onAudioDevicesRemoved(removedDevices)
 
             if (selectedMicrophone == null) {
-                return;
+                return
             }
 
             if (removedDevices?.find { it.id == selectedMicrophone!!.deviceInfo.id } != null) {
