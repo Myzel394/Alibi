@@ -44,6 +44,7 @@ import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
@@ -128,9 +129,10 @@ fun AudioRecorderScreen(
                 val recording = audioRecorder.recorderService?.getRecordingInformation()
                     ?: settings.lastRecording
                     ?: throw Exception("No recording information available")
-                val batchesFolder = BatchesFolder.importFromFolder(recording.folderPath, context)
+                val batchesFolder =
+                    AudioBatchesFolder.importFromFolder(recording.folderPath, context)
 
-                batchesFolder.exportToOneFile(
+                batchesFolder.concatenate(
                     recording.recordingStart,
                     recording.fileExtension,
                 )

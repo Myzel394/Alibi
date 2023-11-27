@@ -11,11 +11,11 @@ import android.net.Uri
 import android.os.ParcelFileDescriptor
 import java.io.FileDescriptor
 
-data class BatchesFolder(
-    val context: Context,
-    val type: BatchType,
-    val customFolder: DocumentFile? = null,
-    val subfolderName: String = ".recordings",
+abstract class BatchesFolder(
+    open val context: Context,
+    open val type: BatchType,
+    open val customFolder: DocumentFile? = null,
+    open val subfolderName: String = ".recordings",
 ) {
     private var customFileFileDescriptor: ParcelFileDescriptor? = null
 
@@ -24,7 +24,7 @@ data class BatchesFolder(
             BatchType.INTERNAL -> getFolder(context).mkdirs()
             BatchType.CUSTOM -> {
                 if (customFolder!!.findFile(subfolderName) == null) {
-                    customFolder.createDirectory(subfolderName)
+                    customFolder!!.createDirectory(subfolderName)
                 }
             }
         }
@@ -89,22 +89,6 @@ data class BatchesFolder(
         return getCustomDefinedFolder().createFile("audio/$extension", getName(date, extension))!!
     }
 
-    fun getOutputFileForFFmpeg(
-        date: LocalDateTime,
-        extension: String,
-    ): String {
-        return when (type) {
-            BatchType.INTERNAL -> asInternalGetOutputFile(date, extension).absolutePath
-            BatchType.CUSTOM -> FFmpegKitConfig.getSafParameterForWrite(
-                context,
-                customFolder!!.createFile(
-                    "audio/${extension}",
-                    getName(date, extension),
-                )!!.uri
-            )!!
-        }
-    }
-
     fun checkIfOutputAlreadyExists(
         date: LocalDateTime,
         extension: String
@@ -122,27 +106,16 @@ data class BatchesFolder(
         }
     }
 
-    suspend fun exportToOneFile(
+    abstract fun getOutputFileForFFmpeg(
+        date: LocalDateTime,
+        extension: String,
+    ): String
+
+    abstract suspend fun concatenate(
         recordingStart: LocalDateTime,
         extension: String,
         disableCache: Boolean = false,
-    ) {
-        if (!disableCache && checkIfOutputAlreadyExists(recordingStart, extension)) {
-            return
-        }
-
-        val filePaths = getBatchesForFFmpeg()
-        val outputFile = getOutputFileForFFmpeg(
-            date = recordingStart,
-            extension = extension,
-        )
-
-        MediaConverter.concatenate(
-            inputFiles = filePaths,
-            outputFile = outputFile,
-            extraCommand = " -acodec copy"
-        ).await()
-    }
+    )
 
     fun exportFolderForSettings(): String {
         return when (type) {
@@ -218,20 +191,7 @@ data class BatchesFolder(
     }
 
     companion object {
-        fun viaInternalFolder(context: Context): BatchesFolder {
-            return BatchesFolder(context, BatchType.INTERNAL)
-        }
-
-        fun viaCustomFolder(context: Context, folder: DocumentFile): BatchesFolder {
-            return BatchesFolder(context, BatchType.CUSTOM, folder)
-        }
-
         fun getFolder(context: Context) = File(context.filesDir, RECORDER_SUBFOLDER_NAME)
-
-        fun importFromFolder(folder: String, context: Context): BatchesFolder = when (folder) {
-            "_'internal" -> viaInternalFolder(context)
-            else -> viaCustomFolder(context, DocumentFile.fromTreeUri(context, Uri.parse(folder))!!)
-        }
     }
 }
 
