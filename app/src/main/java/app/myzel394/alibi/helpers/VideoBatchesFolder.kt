@@ -10,7 +10,7 @@ class VideoBatchesFolder(
     override val context: Context,
     override val type: BatchesFolder.BatchType,
     override val customFolder: DocumentFile? = null,
-    override val subfolderName: String = ".recordings",
+    override val subfolderName: String = ".video_recordings",
 ) : BatchesFolder(
     context,
     type,
@@ -34,21 +34,22 @@ class VideoBatchesFolder(
         recordingStart: LocalDateTime,
         extension: String,
         disableCache: Boolean
-    ) {
-        if (!disableCache && checkIfOutputAlreadyExists(recordingStart, extension)) {
-            return
-        }
-
-        val filePaths = getBatchesForFFmpeg()
+    ): String {
         val outputFile = getOutputFileForFFmpeg(
             date = recordingStart,
             extension = extension,
         )
 
-        MediaConverter.concatenateAudioFiles(
-            inputFiles = filePaths,
-            outputFile = outputFile,
-        ).await()
+        if (disableCache || !checkIfOutputAlreadyExists(recordingStart, extension)) {
+            val filePaths = getBatchesForFFmpeg()
+
+            MediaConverter.concatenateVideoFiles(
+                inputFiles = filePaths,
+                outputFile = outputFile,
+            ).await()
+        }
+
+        return outputFile
     }
 
     companion object {

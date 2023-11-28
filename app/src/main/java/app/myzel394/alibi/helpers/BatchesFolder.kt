@@ -115,7 +115,7 @@ abstract class BatchesFolder(
         recordingStart: LocalDateTime,
         extension: String,
         disableCache: Boolean = false,
-    )
+    ): String
 
     fun exportFolderForSettings(): String {
         return when (type) {
