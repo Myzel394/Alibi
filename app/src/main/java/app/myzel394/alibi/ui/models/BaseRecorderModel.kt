@@ -66,7 +66,10 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
                     recorder.onError = {
                         onError()
                     }
-                    recorder.batchesFolder = batchesFolder ?: recorder.batchesFolder
+
+                    if (batchesFolder != null) {
+                        recorder.batchesFolder = batchesFolder!!
+                    }
 
                     // Rest should be initialized from the child class
                     onServiceConnected(recorder)

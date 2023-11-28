@@ -1,20 +1,6 @@
 package app.myzel394.alibi.services
 
-import android.media.MediaRecorder
-import android.net.Uri
-import androidx.documentfile.provider.DocumentFile
-import app.myzel394.alibi.dataStore
-import app.myzel394.alibi.db.AudioRecorderSettings
-import app.myzel394.alibi.db.RecordingInformation
-import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.helpers.BatchesFolder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import org.w3c.dom.DocumentFragment
-import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -28,7 +14,7 @@ abstract class IntervalRecorderService<S : IntervalRecorderService.Settings, I> 
 
     private lateinit var cycleTimer: ScheduledExecutorService
 
-    var batchesFolder: BatchesFolder = BatchesFolder.viaInternalFolder(this)
+    abstract var batchesFolder: BatchesFolder
 
     var onCustomOutputFolderNotAccessible: () -> Unit = {}
 
@@ -54,10 +40,8 @@ abstract class IntervalRecorderService<S : IntervalRecorderService.Settings, I> 
     override fun start() {
         batchesFolder.initFolders()
         if (!batchesFolder.checkIfFolderIsAccessible()) {
-            batchesFolder =
-                BatchesFolder.viaInternalFolder(this@IntervalRecorderService)
-            batchesFolder.initFolders()
             onCustomOutputFolderNotAccessible()
+            return
         }
 
         createTimer()

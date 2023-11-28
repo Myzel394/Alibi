@@ -6,21 +6,21 @@ import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.media.MediaRecorder
 import android.media.MediaRecorder.OnErrorListener
-import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.material3.SnackbarDuration
-import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.db.AudioRecorderSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
+import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import java.lang.IllegalStateException
 
 class AudioRecorderService :
     IntervalRecorderService<AudioRecorderService.Settings, RecordingInformation>() {
+    override var batchesFolder: BatchesFolder = AudioBatchesFolder.viaInternalFolder(this)
+
     var amplitudesAmount = 1000
     var selectedMicrophone: MicrophoneInfo? = null
 

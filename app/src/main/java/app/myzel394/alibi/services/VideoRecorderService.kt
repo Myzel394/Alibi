@@ -13,6 +13,8 @@ import androidx.camera.video.VideoCapture
 import androidx.core.content.ContextCompat
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
+import app.myzel394.alibi.helpers.BatchesFolder
+import app.myzel394.alibi.helpers.VideoBatchesFolder
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +25,8 @@ import kotlinx.coroutines.withContext
 
 class VideoRecorderService :
     IntervalRecorderService<VideoRecorderService.Settings, RecordingInformation>() {
+    override var batchesFolder: BatchesFolder = VideoBatchesFolder.viaInternalFolder(this)
+
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
 

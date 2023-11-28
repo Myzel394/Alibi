@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModel
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
+import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.AudioRecorderExporter
 import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.services.AudioRecorderService
@@ -67,9 +68,9 @@ class AudioRecorderModel :
 
     override fun startRecording(context: Context, settings: AppSettings) {
         batchesFolder = if (settings.audioRecorderSettings.saveFolder == null)
-            BatchesFolder.viaInternalFolder(context)
+            AudioBatchesFolder.viaInternalFolder(context)
         else
-            BatchesFolder.viaCustomFolder(
+            AudioBatchesFolder.viaCustomFolder(
                 context,
                 DocumentFile.fromTreeUri(
                     context,
@@ -95,6 +96,8 @@ class AudioRecorderModel :
         recorderService!!.changeMicrophone(microphone)
 
         if (microphone == null) {
+            // Microphone was reset to default,
+            // default is always assumed to be connected
             microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
         }
     }

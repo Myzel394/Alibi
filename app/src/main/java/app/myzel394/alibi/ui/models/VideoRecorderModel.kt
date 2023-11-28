@@ -8,7 +8,7 @@ class VideoRecorderModel :
     override val intentClass = VideoRecorderService::class.java
 
     override fun onServiceConnected(service: VideoRecorderService) {
-        service.settings = VideoRecorderService.Settings.from()
+        service.settings = VideoRecorderService.Settings.from(settings)
 
         service.clearAllRecordings()
         service.startRecording()
