@@ -19,9 +19,10 @@ import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.services.IntervalRecorderService
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.services.RecorderService
+import kotlinx.coroutines.delay
 import kotlinx.serialization.json.Json
 
-abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : IntervalRecorderService<S, I>> :
+abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : IntervalRecorderService<S, I>, B : BatchesFolder?> :
     ViewModel() {
     protected abstract val intentClass: Class<T>
 
@@ -44,7 +45,7 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
 
     var onRecordingSave: () -> Unit = {}
     var onError: () -> Unit = {}
-    var batchesFolder: BatchesFolder? = null
+    abstract var batchesFolder: B
 
     private var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
 
@@ -69,6 +70,8 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
 
                     if (batchesFolder != null) {
                         recorder.batchesFolder = batchesFolder!!
+                    } else {
+                        batchesFolder = recorder.batchesFolder as B
                     }
 
                     // Rest should be initialized from the child class
@@ -123,15 +126,9 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
 
-    fun stopRecording(context: Context) {
-        runCatching {
-            context.unbindService(connection)
-        }
+    suspend fun stopRecording(context: Context) {
+        recorderService!!.stopRecording()
 
-        val intent = Intent(context, intentClass)
-        context.stopService(intent)
-
-        reset()
     }
 
     fun pauseRecording() {

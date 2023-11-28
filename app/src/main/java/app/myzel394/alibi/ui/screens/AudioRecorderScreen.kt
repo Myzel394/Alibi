@@ -178,7 +178,7 @@ fun AudioRecorderScreen(
         audioRecorder.onError = {
             saveAsLastRecording()
 
-            audioRecorder.stopRecording(context)
+            //audioRecorder.stopRecording(context)
             showRecorderError = true
         }
 

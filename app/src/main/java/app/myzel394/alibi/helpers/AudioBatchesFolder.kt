@@ -56,15 +56,12 @@ class AudioBatchesFolder(
     }
 
     companion object {
-        fun viaInternalFolder(context: Context): BatchesFolder {
-            return AudioBatchesFolder(context, BatchType.INTERNAL)
-        }
+        fun viaInternalFolder(context: Context) = AudioBatchesFolder(context, BatchType.INTERNAL)
 
-        fun viaCustomFolder(context: Context, folder: DocumentFile): BatchesFolder {
-            return AudioBatchesFolder(context, BatchType.CUSTOM, folder)
-        }
+        fun viaCustomFolder(context: Context, folder: DocumentFile) =
+            AudioBatchesFolder(context, BatchType.CUSTOM, folder)
 
-        fun importFromFolder(folder: String, context: Context): BatchesFolder = when (folder) {
+        fun importFromFolder(folder: String, context: Context) = when (folder) {
             "_'internal" -> viaInternalFolder(context)
             else -> viaCustomFolder(context, DocumentFile.fromTreeUri(context, Uri.parse(folder))!!)
         }

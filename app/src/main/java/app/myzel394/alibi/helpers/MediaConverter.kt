@@ -67,9 +67,9 @@ class MediaConverter {
             val listFile = createTempFile(inputFiles.joinToString("\n", prefix = "file "))
 
             val command =
-                "-protocol_whitelist saf,concat,content,file,subfile" +
-                        " -f concat" +
+                " -f concat" +
                         " -y" +
+                        " -safe 0" +
                         " -i ${listFile.absolutePath}" +
                         " -c copy" +
                         extraCommand +

@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -16,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.models.VideoRecorderModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @SuppressLint("NewApi")
 @Composable
@@ -29,6 +32,8 @@ fun POCVideo(
         mutableStateOf(false)
     }
 
+    val scope = rememberCoroutineScope()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -38,9 +43,19 @@ fun POCVideo(
             if (!started) {
                 videoRecorder.startRecording(context, settings)
             } else {
-                videoRecorder.stopRecording(context)
+                scope.launch {
+                    val information = videoRecorder.recorderService!!.getRecordingInformation()
+                    val batchesFolder = videoRecorder.batchesFolder!!
+                    videoRecorder.stopRecording(context)
 
-                val folder = "content://media/external/video/media/DCIM/Recordings"
+                    delay(5000)
+
+                    batchesFolder.concatenate(
+                        recordingStart = information.recordingStart,
+                        extension = information.fileExtension,
+                        disableCache = true,
+                    )
+                }
             }
 
             started = !started

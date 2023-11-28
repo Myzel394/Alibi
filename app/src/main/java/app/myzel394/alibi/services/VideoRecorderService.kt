@@ -1,6 +1,7 @@
 package app.myzel394.alibi.services
 
 import android.annotation.SuppressLint
+import android.util.Range
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -38,12 +39,31 @@ class VideoRecorderService :
     // Used to listen and check if the camera is available
     private var _cameraAvailableListener = CompletableDeferred<Unit>()
 
+    private var selectedCamera: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
     // Runs a function in the main thread
     private fun runInMain(callback: () -> Unit) {
         val mainHandler = ContextCompat.getMainExecutor(this)
 
         mainHandler.execute(callback)
     }
+
+    private fun buildRecorder() = Recorder.Builder()
+        .setQualitySelector(settings.quality)
+        .apply {
+            if (settings.targetVideoBitRate != null) {
+                setTargetVideoEncodingBitRate(settings.targetVideoBitRate!!)
+            }
+        }
+        .build()
+
+    private fun buildVideoCapture(recorder: Recorder) = VideoCapture.Builder(recorder)
+        .apply {
+            if (settings.targetFrameRate != null) {
+                setTargetFrameRate(Range(settings.targetFrameRate!!, settings.targetFrameRate!!))
+            }
+        }
+        .build()
 
     // Open the camera.
     // Used to open it for a longer time, shouldn't be called when pausing / resuming.
@@ -53,16 +73,13 @@ class VideoRecorderService :
             ProcessCameraProvider.getInstance(this@VideoRecorderService).get()
         }
 
-        val recorder = Recorder.Builder()
-            .setQualitySelector(settings.quality)
-            .build()
-        videoCapture = VideoCapture.Builder(recorder)
-            .build()
+        val recorder = buildRecorder()
+        videoCapture = buildVideoCapture(recorder)
 
         runInMain {
             camera = cameraProvider!!.bindToLifecycle(
                 this,
-                CameraSelector.DEFAULT_BACK_CAMERA,
+                selectedCamera,
                 videoCapture
             )
 
@@ -74,7 +91,7 @@ class VideoRecorderService :
     // Used to close it finally, shouldn't be called when pausing / resuming.
     // This should only be called after recording has finished.
     private fun closeCamera() {
-        clearOldVideoRecording()
+        stopActiveRecording()
 
         runCatching {
             cameraProvider?.unbindAll()
@@ -99,10 +116,8 @@ class VideoRecorderService :
         closeCamera()
     }
 
-    private fun clearOldVideoRecording() {
-        runCatching {
-            activeRecording?.stop()
-        }
+    private fun stopActiveRecording() {
+        activeRecording?.stop()
     }
 
     @SuppressLint("MissingPermission")
@@ -143,11 +158,13 @@ class VideoRecorderService :
         type = RecordingInformation.Type.VIDEO,
     )
 
+    // TODO: Save camera selector as it doesn't make sense to change the camera midway
     data class Settings(
         override val maxDuration: Long,
         override val intervalDuration: Long,
         val folder: String? = null,
         val targetVideoBitRate: Int? = null,
+        val targetFrameRate: Int? = null,
         val quality: QualitySelector = QualitySelector.from(Quality.HIGHEST),
     ) : IntervalRecorderService.Settings(
         maxDuration = maxDuration,
@@ -172,6 +189,7 @@ class VideoRecorderService :
                 intervalDuration = appSettings.audioRecorderSettings.intervalDuration,
                 folder = appSettings.audioRecorderSettings.saveFolder,
                 targetVideoBitRate = appSettings.videoRecorderSettings.targetedVideoBitRate,
+                targetFrameRate = appSettings.videoRecorderSettings.targetFrameRate,
                 quality = appSettings.videoRecorderSettings.getQualitySelector()
                     ?: QualitySelector.from(
                         Quality.HIGHEST

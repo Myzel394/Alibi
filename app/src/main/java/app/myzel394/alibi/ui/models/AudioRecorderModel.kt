@@ -1,32 +1,20 @@
 package app.myzel394.alibi.ui.models
 
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
 import android.net.Uri
-import android.os.IBinder
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.ViewModel
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
-import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.AudioBatchesFolder
-import app.myzel394.alibi.helpers.AudioRecorderExporter
-import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.services.AudioRecorderService
-import app.myzel394.alibi.services.IntervalRecorderService
-import app.myzel394.alibi.services.RecorderNotificationHelper
-import app.myzel394.alibi.services.RecorderService
-import kotlinx.serialization.json.Json
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 
 class AudioRecorderModel :
-    BaseRecorderModel<AudioRecorderService.Settings, RecordingInformation, AudioRecorderService>() {
+    BaseRecorderModel<AudioRecorderService.Settings, RecordingInformation, AudioRecorderService, AudioBatchesFolder?>() {
+    override var batchesFolder: AudioBatchesFolder? = null
     override val intentClass = AudioRecorderService::class.java
 
     var amplitudes by mutableStateOf<List<Int>>(emptyList())

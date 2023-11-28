@@ -162,11 +162,13 @@ abstract class RecorderService : LifecycleService() {
         changeState(RecorderState.RECORDING)
     }
 
+    fun stopRecording() {
+        changeState(RecorderState.IDLE)
+        stop()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-
-        stop()
-        changeState(RecorderState.IDLE)
 
         stopForeground(STOP_FOREGROUND_REMOVE)
         NotificationManagerCompat.from(this)

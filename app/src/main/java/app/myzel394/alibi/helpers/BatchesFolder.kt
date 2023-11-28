@@ -21,7 +21,7 @@ abstract class BatchesFolder(
 
     fun initFolders() {
         when (type) {
-            BatchType.INTERNAL -> getFolder(context).mkdirs()
+            BatchType.INTERNAL -> getInternalFolder().mkdirs()
             BatchType.CUSTOM -> {
                 if (customFolder!!.findFile(subfolderName) == null) {
                     customFolder!!.createDirectory(subfolderName)
@@ -35,7 +35,7 @@ abstract class BatchesFolder(
     }
 
     fun getInternalFolder(): File {
-        return getFolder(context)
+        return File(context.filesDir, subfolderName)
     }
 
     fun getCustomDefinedFolder(): DocumentFile {
@@ -188,10 +188,6 @@ abstract class BatchesFolder(
     enum class BatchType {
         INTERNAL,
         CUSTOM,
-    }
-
-    companion object {
-        fun getFolder(context: Context) = File(context.filesDir, RECORDER_SUBFOLDER_NAME)
     }
 }
 
