@@ -3,6 +3,7 @@ package app.myzel394.alibi.helpers
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateAudioFiles
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import java.time.LocalDateTime
 
@@ -17,6 +18,9 @@ class AudioBatchesFolder(
     customFolder,
     subfolderName,
 ) {
+    override val concatenateFunction = ::concatenateAudioFiles
+    override val ffmpegParameters = FFMPEG_PARAMETERS
+
     override fun getOutputFileForFFmpeg(
         date: LocalDateTime,
         extension: String,
@@ -33,28 +37,6 @@ class AudioBatchesFolder(
         }
     }
 
-    override suspend fun concatenate(
-        recordingStart: LocalDateTime,
-        extension: String,
-        disableCache: Boolean,
-    ): String {
-        val outputFile = getOutputFileForFFmpeg(
-            date = recordingStart,
-            extension = extension,
-        )
-
-        if (disableCache || checkIfOutputAlreadyExists(recordingStart, extension)) {
-            val filePaths = getBatchesForFFmpeg()
-
-            MediaConverter.concatenateAudioFiles(
-                inputFiles = filePaths,
-                outputFile = outputFile,
-            ).await()
-        }
-
-        return outputFile
-    }
-
     companion object {
         fun viaInternalFolder(context: Context) = AudioBatchesFolder(context, BatchType.INTERNAL)
 
@@ -65,5 +47,18 @@ class AudioBatchesFolder(
             "_'internal" -> viaInternalFolder(context)
             else -> viaCustomFolder(context, DocumentFile.fromTreeUri(context, Uri.parse(folder))!!)
         }
+
+        // Parameters to be passed in descending order
+        // Those parameters first try to concatenate without re-encoding
+        // if that fails, it'll try several fallback methods
+        // this is audio only
+        val FFMPEG_PARAMETERS = arrayOf(
+            " -c copy",
+            " -acodec copy",
+            " -c:a aac",
+            " -c:a libmp3lame",
+            " -c:a libopus",
+            " -c:a libvorbis",
+        )
     }
 }

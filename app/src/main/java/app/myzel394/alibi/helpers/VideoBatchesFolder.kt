@@ -3,7 +3,9 @@ package app.myzel394.alibi.helpers
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateVideoFiles
 import com.arthenica.ffmpegkit.FFmpegKitConfig
+import com.arthenica.ffmpegkit.ReturnCode
 import java.time.LocalDateTime
 
 class VideoBatchesFolder(
@@ -17,6 +19,9 @@ class VideoBatchesFolder(
     customFolder,
     subfolderName,
 ) {
+    override val concatenateFunction = ::concatenateVideoFiles
+    override val ffmpegParameters = FFMPEG_PARAMETERS
+
     override fun getOutputFileForFFmpeg(date: LocalDateTime, extension: String): String {
         return when (type) {
             BatchType.INTERNAL -> asInternalGetOutputFile(date, extension).absolutePath
@@ -28,28 +33,6 @@ class VideoBatchesFolder(
                 )!!.uri
             )!!
         }
-    }
-
-    override suspend fun concatenate(
-        recordingStart: LocalDateTime,
-        extension: String,
-        disableCache: Boolean
-    ): String {
-        val outputFile = getOutputFileForFFmpeg(
-            date = recordingStart,
-            extension = extension,
-        )
-
-        if (disableCache || !checkIfOutputAlreadyExists(recordingStart, extension)) {
-            val filePaths = getBatchesForFFmpeg()
-
-            MediaConverter.concatenateVideoFiles(
-                inputFiles = filePaths,
-                outputFile = outputFile,
-            ).await()
-        }
-
-        return outputFile
     }
 
     companion object {
@@ -65,5 +48,31 @@ class VideoBatchesFolder(
                 DocumentFile.fromTreeUri(context, Uri.parse(folder))!!
             )
         }
+
+        // Parameters to be passed in descending order
+        // Those parameters first try to concatenate without re-encoding
+        // if that fails, it'll try several fallback methods
+        val FFMPEG_PARAMETERS = arrayOf(
+            " -c copy",
+            " -c:v copy",
+            " -c:v copy -c:a aac",
+            " -c:v copy -c:a libmp3lame",
+            " -c:v copy -c:a libopus",
+            " -c:v copy -c:a libvorbis",
+            " -c:a copy",
+            // There's nothing else we can do to avoid re-encoding,
+            // so we'll just have to re-encode the whole thing
+            " -c:v libx264 -c:a copy",
+            " -c:v libx264 -c:a aac",
+            " -c:v libx265 -c:a aac",
+            " -c:v libx264 -c:a libmp3lame",
+            " -c:v libx264 -c:a libopus",
+            " -c:v libx264 -c:a libvorbis",
+            " -c:v libx265 -c:a copy",
+            " -c:v libx265 -c:a aac",
+            " -c:v libx265 -c:a libmp3lame",
+            " -c:v libx265 -c:a libopus",
+            " -c:v libx265 -c:a libvorbis",
+        )
     }
 }

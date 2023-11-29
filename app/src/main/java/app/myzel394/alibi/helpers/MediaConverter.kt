@@ -22,7 +22,6 @@ class MediaConverter {
                 "-protocol_whitelist saf,concat,content,file,subfile" +
                         " -i 'concat:$filePathsConcatenated'" +
                         " -y" +
-                        " -acodec copy" +
                         extraCommand +
                         " $outputFile"
 
@@ -68,16 +67,17 @@ class MediaConverter {
 
             val command =
                 " -f concat" +
-                        " -y" +
                         " -safe 0" +
                         " -i ${listFile.absolutePath}" +
-                        " -c copy" +
                         extraCommand +
+                        " -y" +
                         " $outputFile"
 
             FFmpegKit.executeAsync(
                 command
             ) { session ->
+                listFile.delete()
+
                 if (!ReturnCode.isSuccess(session!!.returnCode)) {
                     Log.d(
                         "Video Concatenation",
@@ -89,7 +89,7 @@ class MediaConverter {
                         )
                     )
 
-                    completer.completeExceptionally(Exception("Failed to concatenate videos"))
+                    completer.completeExceptionally(FFmpegException("Failed to concatenate videos"))
                 } else {
                     completer.complete(Unit)
                 }
@@ -98,4 +98,6 @@ class MediaConverter {
             return completer
         }
     }
+
+    class FFmpegException(message: String) : Exception(message)
 }

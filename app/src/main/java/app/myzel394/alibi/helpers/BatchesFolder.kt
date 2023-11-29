@@ -2,14 +2,14 @@ package app.myzel394.alibi.helpers
 
 import android.content.Context
 import androidx.documentfile.provider.DocumentFile
-import app.myzel394.alibi.ui.RECORDER_SUBFOLDER_NAME
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import com.arthenica.ffmpegkit.FFmpegKitConfig
-import android.net.Uri
 import android.os.ParcelFileDescriptor
+import kotlinx.coroutines.CompletableDeferred
 import java.io.FileDescriptor
+import kotlin.reflect.KFunction3
 
 abstract class BatchesFolder(
     open val context: Context,
@@ -18,6 +18,9 @@ abstract class BatchesFolder(
     open val subfolderName: String = ".recordings",
 ) {
     private var customFileFileDescriptor: ParcelFileDescriptor? = null
+
+    abstract val concatenateFunction: KFunction3<Iterable<String>, String, String, CompletableDeferred<Unit>>
+    abstract val ffmpegParameters: Array<String>
 
     fun initFolders() {
         when (type) {
@@ -111,11 +114,37 @@ abstract class BatchesFolder(
         extension: String,
     ): String
 
-    abstract suspend fun concatenate(
+    open suspend fun concatenate(
         recordingStart: LocalDateTime,
         extension: String,
         disableCache: Boolean = false,
-    ): String
+        onNextParameterTry: (String) -> Unit = {},
+    ): String {
+        val outputFile = getOutputFileForFFmpeg(
+            date = recordingStart,
+            extension = extension,
+        )
+
+        if (disableCache || !checkIfOutputAlreadyExists(recordingStart, extension)) {
+            val filePaths = getBatchesForFFmpeg()
+
+            for (parameter in ffmpegParameters) {
+                onNextParameterTry(parameter)
+
+                try {
+                    concatenateFunction(
+                        filePaths,
+                        outputFile,
+                        parameter,
+                    )
+                } catch (e: MediaConverter.FFmpegException) {
+                    continue
+                }
+            }
+        }
+
+        return outputFile
+    }
 
     fun exportFolderForSettings(): String {
         return when (type) {
