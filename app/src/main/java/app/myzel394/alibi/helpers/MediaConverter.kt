@@ -49,9 +49,9 @@ class MediaConverter {
         }
 
         private fun createTempFile(content: String): File {
-            val name = UUID.randomUUID().toString()
+            val id = UUID.randomUUID().toString()
 
-            return File.createTempFile("temp-$name", ".txt").apply {
+            return File.createTempFile(".temp-ffmpeg-files-$id", ".txt").apply {
                 writeText(content)
             }
         }
@@ -63,7 +63,7 @@ class MediaConverter {
         ): CompletableDeferred<Unit> {
             val completer = CompletableDeferred<Unit>()
 
-            val listFile = createTempFile(inputFiles.joinToString("\n", prefix = "file "))
+            val listFile = createTempFile(inputFiles.joinToString("\n") { "file '$it'" })
 
             val command =
                 " -f concat" +

@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import android.os.ParcelFileDescriptor
+import android.util.Log
 import kotlinx.coroutines.CompletableDeferred
 import java.io.FileDescriptor
 import kotlin.reflect.KFunction3
@@ -129,6 +130,7 @@ abstract class BatchesFolder(
             val filePaths = getBatchesForFFmpeg()
 
             for (parameter in ffmpegParameters) {
+                Log.i("Concatenation", "Trying parameter $parameter")
                 onNextParameterTry(parameter)
 
                 try {
