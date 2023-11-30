@@ -138,14 +138,15 @@ abstract class BatchesFolder(
                         filePaths,
                         outputFile,
                         parameter,
-                    )
+                    ).await()
+                    return outputFile
                 } catch (e: MediaConverter.FFmpegException) {
                     continue
                 }
             }
         }
 
-        return outputFile
+        throw MediaConverter.FFmpegException("Failed to concatenate")
     }
 
     fun exportFolderForSettings(): String {

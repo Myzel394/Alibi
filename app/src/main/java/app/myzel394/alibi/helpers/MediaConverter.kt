@@ -70,13 +70,16 @@ class MediaConverter {
                         " -safe 0" +
                         " -i ${listFile.absolutePath}" +
                         extraCommand +
+                        " -strict normal" +
                         " -y" +
                         " $outputFile"
 
             FFmpegKit.executeAsync(
                 command
             ) { session ->
-                listFile.delete()
+                runCatching {
+                    listFile.delete()
+                }
 
                 if (!ReturnCode.isSuccess(session!!.returnCode)) {
                     Log.d(
