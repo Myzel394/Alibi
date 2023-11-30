@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Range
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.impl.CameraConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Quality
@@ -11,6 +12,7 @@ import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
+import androidx.camera.video.VideoRecordEvent
 import androidx.core.content.ContextCompat
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
@@ -38,11 +40,12 @@ class VideoRecorderService :
 
     // Used to listen and check if the camera is available
     private var _cameraAvailableListener = CompletableDeferred<Unit>()
+    private var _cameraClosedListener = CompletableDeferred<Unit>()
 
     private var selectedCamera: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
     // Runs a function in the main thread
-    private fun runInMain(callback: () -> Unit) {
+    private fun runOnMain(callback: () -> Unit) {
         val mainHandler = ContextCompat.getMainExecutor(this)
 
         mainHandler.execute(callback)
@@ -76,7 +79,7 @@ class VideoRecorderService :
         val recorder = buildRecorder()
         videoCapture = buildVideoCapture(recorder)
 
-        runInMain {
+        runOnMain {
             camera = cameraProvider!!.bindToLifecycle(
                 this,
                 selectedCamera,
@@ -91,10 +94,10 @@ class VideoRecorderService :
     // Used to close it finally, shouldn't be called when pausing / resuming.
     // This should only be called after recording has finished.
     private fun closeCamera() {
-        stopActiveRecording()
-
         runCatching {
-            cameraProvider?.unbindAll()
+            runOnMain {
+                cameraProvider?.unbindAll()
+            }
         }
 
         cameraProvider = null
@@ -110,9 +113,12 @@ class VideoRecorderService :
         }
     }
 
-    override fun stop() {
+    override suspend fun stop() {
         super.stop()
 
+        stopActiveRecording()
+        _cameraClosedListener.await()
+        // Camera can only be closed after the recording has been finalized
         closeCamera()
     }
 
@@ -134,7 +140,12 @@ class VideoRecorderService :
             activeRecording?.stop()
             val newRecording = prepareVideoRecording()
 
-            activeRecording = newRecording.start(ContextCompat.getMainExecutor(this), {})
+            activeRecording = newRecording.start(ContextCompat.getMainExecutor(this)) { event ->
+                // TODO: Add timeout to completer
+                if (event is VideoRecordEvent.Finalize) {
+                    _cameraClosedListener.complete(Unit)
+                }
+            }
         }
 
         if (_cameraAvailableListener.isCompleted) {

@@ -55,7 +55,7 @@ abstract class IntervalRecorderService<S : IntervalRecorderService.Settings, I> 
         createTimer()
     }
 
-    override fun stop() {
+    override suspend fun stop() {
         cycleTimer.shutdown()
     }
 

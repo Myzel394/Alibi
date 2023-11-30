@@ -48,8 +48,6 @@ fun POCVideo(
                     val batchesFolder = videoRecorder.batchesFolder!!
                     videoRecorder.stopRecording(context)
 
-                    delay(5000)
-
                     batchesFolder.concatenate(
                         recordingStart = information.recordingStart,
                         extension = information.fileExtension,

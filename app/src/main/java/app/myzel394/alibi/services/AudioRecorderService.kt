@@ -176,7 +176,7 @@ class AudioRecorderService :
         resetRecorder()
     }
 
-    override fun stop() {
+    override suspend fun stop() {
         super.stop()
 
         resetRecorder()

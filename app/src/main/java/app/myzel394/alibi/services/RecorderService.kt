@@ -44,7 +44,7 @@ abstract class RecorderService : LifecycleService() {
     protected abstract fun start()
     protected abstract fun pause()
     protected abstract fun resume()
-    protected abstract fun stop()
+    protected abstract suspend fun stop()
 
     override fun onBind(intent: Intent): IBinder? {
         super.onBind(intent)
@@ -162,7 +162,7 @@ abstract class RecorderService : LifecycleService() {
         changeState(RecorderState.RECORDING)
     }
 
-    fun stopRecording() {
+    suspend fun stopRecording() {
         changeState(RecorderState.IDLE)
         stop()
     }
