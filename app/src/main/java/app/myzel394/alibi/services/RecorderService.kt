@@ -91,6 +91,14 @@ abstract class RecorderService : LifecycleService() {
         }
     }
 
+    protected fun _changeStateValue(newState: RecorderState) {
+        state = newState
+
+        onStateChange?.invoke(newState)
+    }
+
+    // Used to change the state of the service
+    // will internally call start() / pause() / resume() / stop()
     @SuppressLint("MissingPermission")
     fun changeState(newState: RecorderState) {
         if (state == newState) {
@@ -106,27 +114,23 @@ abstract class RecorderService : LifecycleService() {
                 } else {
                     start()
                 }
+
+                createRecordingTimeTimer()
             }
 
             RecorderState.PAUSED -> {
                 pause()
                 isPaused = true
+
+                recordingTimeTimer.shutdown()
             }
 
-            else -> {}
-        }
-
-        when (newState) {
-            RecorderState.RECORDING -> {
-                createRecordingTimeTimer()
-            }
-
-            RecorderState.PAUSED, RecorderState.IDLE -> {
+            RecorderState.IDLE -> {
                 recordingTimeTimer.shutdown()
             }
         }
 
-
+        // Update notification
         if (
             arrayOf(
                 RecorderState.RECORDING,
@@ -140,7 +144,8 @@ abstract class RecorderService : LifecycleService() {
                 notification
             )
         }
-        onStateChange?.invoke(newState)
+
+        _changeStateValue(newState)
     }
 
     // Must be immediately called after creating the service!
