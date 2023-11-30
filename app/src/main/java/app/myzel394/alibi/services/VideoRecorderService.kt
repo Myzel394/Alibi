@@ -24,7 +24,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 
+const val CAMERA_CLOSE_TIMEOUT = 20000L
 
 class VideoRecorderService :
     IntervalRecorderService<VideoRecorderService.Settings, RecordingInformation>() {
@@ -117,8 +120,12 @@ class VideoRecorderService :
         super.stop()
 
         stopActiveRecording()
-        _cameraClosedListener.await()
-        // Camera can only be closed after the recording has been finalized
+
+        withTimeoutOrNull(CAMERA_CLOSE_TIMEOUT) {
+            // Camera can only be closed after the recording has been finalized
+            _cameraClosedListener.await()
+        }
+
         closeCamera()
     }
 
@@ -141,7 +148,6 @@ class VideoRecorderService :
             val newRecording = prepareVideoRecording()
 
             activeRecording = newRecording.start(ContextCompat.getMainExecutor(this)) { event ->
-                // TODO: Add timeout to completer
                 if (event is VideoRecordEvent.Finalize) {
                     _cameraClosedListener.complete(Unit)
                 }
