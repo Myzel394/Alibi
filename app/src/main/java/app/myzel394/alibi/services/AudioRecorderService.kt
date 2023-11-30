@@ -21,129 +21,22 @@ class AudioRecorderService :
     IntervalRecorderService<AudioRecorderService.Settings, RecordingInformation>() {
     override var batchesFolder: BatchesFolder = AudioBatchesFolder.viaInternalFolder(this)
 
+    private val handler = Handler(Looper.getMainLooper())
+
+    var amplitudes = mutableListOf<Int>()
+        private set
     var amplitudesAmount = 1000
+
     var selectedMicrophone: MicrophoneInfo? = null
 
     var recorder: MediaRecorder? = null
         private set
+
+    // Callbacks
     var onSelectedMicrophoneChange: (MicrophoneInfo?) -> Unit = {}
     var onMicrophoneDisconnected: () -> Unit = {}
     var onMicrophoneReconnected: () -> Unit = {}
-
-    var amplitudes = mutableListOf<Int>()
-        private set
-
-    private val handler = Handler(Looper.getMainLooper())
-
     var onAmplitudeChange: ((List<Int>) -> Unit)? = null
-
-    private fun updateAmplitude() {
-        if (state !== RecorderState.RECORDING) {
-            return
-        }
-
-        amplitudes.add(getAmplitude())
-        onAmplitudeChange?.invoke(amplitudes)
-
-        // Delete old amplitudes
-        if (amplitudes.size > getAmplitudeAmount()) {
-            // Should be more efficient than dropping the elements, getting a new list
-            // clearing old list and adding new elements to it
-            repeat(amplitudes.size - getAmplitudeAmount()) {
-                amplitudes.removeAt(0)
-            }
-        }
-
-        handler.postDelayed(::updateAmplitude, 100)
-    }
-
-    private fun createAmplitudesTimer() {
-        handler.postDelayed(::updateAmplitude, 100)
-    }
-
-    /// Tell Android to use the correct bluetooth microphone, if any selected
-    private fun startAudioDevice() {
-        if (selectedMicrophone == null) {
-            return
-        }
-
-        val audioManger = getSystemService(AUDIO_SERVICE)!! as AudioManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            audioManger.setCommunicationDevice(selectedMicrophone!!.deviceInfo)
-        } else {
-            audioManger.startBluetoothSco()
-        }
-    }
-
-    private fun clearAudioDevice() {
-        val audioManger = getSystemService(AUDIO_SERVICE)!! as AudioManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            audioManger.clearCommunicationDevice()
-        } else {
-            audioManger.stopBluetoothSco()
-        }
-    }
-
-    private fun createRecorder(): MediaRecorder {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            MediaRecorder(this)
-        } else {
-            MediaRecorder()
-        }.apply {
-            // Audio Source is kinda strange, here are my experimental findings using a Pixel 7 Pro
-            // and Redmi Buds 3 Pro:
-            // - MIC: Uses the bottom microphone of the phone (17)
-            // - CAMCORDER: Uses the top microphone of the phone (2)
-            // - VOICE_COMMUNICATION: Uses the bottom microphone of the phone (17)
-            // - DEFAULT: Uses the bottom microphone of the phone (17)
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-
-            when (batchesFolder.type) {
-                BatchesFolder.BatchType.INTERNAL -> {
-                    setOutputFile(
-                        batchesFolder.asInternalGetOutputPath(counter, settings.fileExtension)
-                    )
-                }
-
-                BatchesFolder.BatchType.CUSTOM -> {
-                    setOutputFile(
-                        batchesFolder.asCustomGetFileDescriptor(counter, settings.fileExtension)
-                    )
-                }
-            }
-
-            setOutputFormat(settings.outputFormat)
-
-            setAudioEncoder(settings.encoder)
-            setAudioEncodingBitRate(settings.bitRate)
-            setAudioSamplingRate(settings.samplingRate)
-            setOnErrorListener(OnErrorListener { _, _, _ ->
-                onError()
-            })
-        }
-    }
-
-    private fun resetRecorder() {
-        runCatching {
-            recorder?.let {
-                it.stop()
-                it.release()
-            }
-            clearAudioDevice()
-            batchesFolder.cleanup()
-        }
-    }
-
-    override fun getRecordingInformation() = RecordingInformation(
-        folderPath = batchesFolder.exportFolderForSettings(),
-        recordingStart = recordingStart,
-        maxDuration = settings.maxDuration,
-        fileExtension = settings.fileExtension,
-        intervalDuration = settings.intervalDuration,
-        type = RecordingInformation.Type.AUDIO,
-    )
 
     override fun startNewCycle() {
         super.startNewCycle()
@@ -189,6 +82,7 @@ class AudioRecorderService :
         createAmplitudesTimer()
     }
 
+    // ==== Amplitude related ====
     private fun getAmplitudeAmount(): Int = amplitudesAmount
 
     private fun getAmplitude(): Int {
@@ -198,6 +92,109 @@ class AudioRecorderService :
             0
         } catch (error: RuntimeException) {
             0
+        }
+    }
+
+    private fun updateAmplitude() {
+        if (state !== RecorderState.RECORDING) {
+            return
+        }
+
+        amplitudes.add(getAmplitude())
+        onAmplitudeChange?.invoke(amplitudes)
+
+        // Delete old amplitudes
+        if (amplitudes.size > getAmplitudeAmount()) {
+            // Should be more efficient than dropping the elements, getting a new list
+            // clearing old list and adding new elements to it
+            repeat(amplitudes.size - getAmplitudeAmount()) {
+                amplitudes.removeAt(0)
+            }
+        }
+
+        handler.postDelayed(::updateAmplitude, 100)
+    }
+
+    private fun createAmplitudesTimer() {
+        handler.postDelayed(::updateAmplitude, 100)
+    }
+
+    // ==== Audio device related ====
+
+    /// Tell Android to use the correct bluetooth microphone, if any selected
+    private fun startAudioDevice() {
+        if (selectedMicrophone == null) {
+            return
+        }
+
+        val audioManger = getSystemService(AUDIO_SERVICE)!! as AudioManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            audioManger.setCommunicationDevice(selectedMicrophone!!.deviceInfo)
+        } else {
+            audioManger.startBluetoothSco()
+        }
+    }
+
+    private fun clearAudioDevice() {
+        val audioManger = getSystemService(AUDIO_SERVICE)!! as AudioManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            audioManger.clearCommunicationDevice()
+        } else {
+            audioManger.stopBluetoothSco()
+        }
+    }
+
+    // ==== Actual recording related ====
+    private fun createRecorder(): MediaRecorder {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            MediaRecorder(this)
+        } else {
+            MediaRecorder()
+        }.apply {
+            // Audio Source is kinda strange, here are my experimental findings using a Pixel 7 Pro
+            // and Redmi Buds 3 Pro:
+            // - MIC: Uses the bottom microphone of the phone (17)
+            // - CAMCORDER: Uses the top microphone of the phone (2)
+            // - VOICE_COMMUNICATION: Uses the bottom microphone of the phone (17)
+            // - DEFAULT: Uses the bottom microphone of the phone (17)
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+
+            when (batchesFolder.type) {
+                BatchesFolder.BatchType.INTERNAL -> {
+                    setOutputFile(
+                        batchesFolder.asInternalGetOutputPath(counter, settings.fileExtension)
+                    )
+                }
+
+                BatchesFolder.BatchType.CUSTOM -> {
+                    setOutputFile(
+                        batchesFolder.asCustomGetFileDescriptor(counter, settings.fileExtension)
+                    )
+                }
+            }
+
+            setOutputFormat(settings.outputFormat)
+
+            setAudioEncoder(settings.encoder)
+            setAudioEncodingBitRate(settings.bitRate)
+            setAudioSamplingRate(settings.samplingRate)
+            setOnErrorListener(OnErrorListener { _, _, _ ->
+                onError()
+            })
+        }
+    }
+
+    // ==== Microphone related ====
+    private fun resetRecorder() {
+        runCatching {
+            recorder?.let {
+                it.stop()
+                it.release()
+            }
+            clearAudioDevice()
+            batchesFolder.cleanup()
         }
     }
 
@@ -262,6 +259,16 @@ class AudioRecorderService :
 
         audioManager.unregisterAudioDeviceCallback(audioDeviceCallback)
     }
+
+    // ==== Settings ====
+    override fun getRecordingInformation() = RecordingInformation(
+        folderPath = batchesFolder.exportFolderForSettings(),
+        recordingStart = recordingStart,
+        maxDuration = settings.maxDuration,
+        fileExtension = settings.fileExtension,
+        intervalDuration = settings.intervalDuration,
+        type = RecordingInformation.Type.AUDIO,
+    )
 
     data class Settings(
         override val maxDuration: Long,

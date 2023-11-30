@@ -3,7 +3,9 @@ package app.myzel394.alibi.services
 import android.annotation.SuppressLint
 import android.util.Range
 import androidx.camera.core.Camera
+import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.TorchState
 import androidx.camera.core.impl.CameraConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.FileOutputOptions
@@ -47,6 +49,64 @@ class VideoRecorderService :
 
     private var selectedCamera: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
+    var cameraControl: CameraControl? = null
+        private set
+
+    override fun start() {
+        super.start()
+
+        scope.launch {
+            openCamera()
+        }
+    }
+
+    override suspend fun stop() {
+        super.stop()
+
+        stopActiveRecording()
+
+        withTimeoutOrNull(CAMERA_CLOSE_TIMEOUT) {
+            // Camera can only be closed after the recording has been finalized
+            _cameraClosedListener.await()
+        }
+
+        closeCamera()
+    }
+
+    override fun pause() {
+        super.pause()
+
+        stopActiveRecording()
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun startNewCycle() {
+        super.startNewCycle()
+
+        fun action() {
+            activeRecording?.stop()
+            val newRecording = prepareVideoRecording()
+
+            activeRecording = newRecording.start(ContextCompat.getMainExecutor(this)) { event ->
+                if (event is VideoRecordEvent.Finalize) {
+                    _cameraClosedListener.complete(Unit)
+                }
+            }
+        }
+
+        if (_cameraAvailableListener.isCompleted) {
+            action()
+        } else {
+            // Race condition of `startNewCycle` being called before `invpkeOnCompletion`
+            // has been called can be ignored, as the camera usually opens within 5 seconds
+            // and the interval can't be set shorter than 10 seconds.
+            _cameraAvailableListener.invokeOnCompletion {
+                action()
+            }
+        }
+    }
+
+
     // Runs a function in the main thread
     private fun runOnMain(callback: () -> Unit) {
         val mainHandler = ContextCompat.getMainExecutor(this)
@@ -88,6 +148,7 @@ class VideoRecorderService :
                 selectedCamera,
                 videoCapture
             )
+            cameraControl = CameraControl(camera!!)
 
             _cameraAvailableListener.complete(Unit)
         }
@@ -108,33 +169,6 @@ class VideoRecorderService :
         camera = null
     }
 
-    override fun start() {
-        super.start()
-
-        scope.launch {
-            openCamera()
-        }
-    }
-
-    override suspend fun stop() {
-        super.stop()
-
-        stopActiveRecording()
-
-        withTimeoutOrNull(CAMERA_CLOSE_TIMEOUT) {
-            // Camera can only be closed after the recording has been finalized
-            _cameraClosedListener.await()
-        }
-
-        closeCamera()
-    }
-
-    override fun pause() {
-        super.pause()
-
-        stopActiveRecording()
-    }
-
     // `resume` override not needed as `startNewCycle` is called by `IntervalRecorderService`
 
     private fun stopActiveRecording() {
@@ -146,33 +180,6 @@ class VideoRecorderService :
         videoCapture!!.output
             .prepareRecording(this, settings.getOutputOptions(this))
             .withAudioEnabled()
-
-    @SuppressLint("MissingPermission")
-    override fun startNewCycle() {
-        super.startNewCycle()
-
-        fun action() {
-            activeRecording?.stop()
-            val newRecording = prepareVideoRecording()
-
-            activeRecording = newRecording.start(ContextCompat.getMainExecutor(this)) { event ->
-                if (event is VideoRecordEvent.Finalize) {
-                    _cameraClosedListener.complete(Unit)
-                }
-            }
-        }
-
-        if (_cameraAvailableListener.isCompleted) {
-            action()
-        } else {
-            // Race condition of `startNewCycle` being called before `invpkeOnCompletion`
-            // has been called can be ignored, as the camera usually opens within 5 seconds
-            // and the interval can't be set shorter than 10 seconds.
-            _cameraAvailableListener.invokeOnCompletion {
-                action()
-            }
-        }
-    }
 
     override fun getRecordingInformation(): RecordingInformation = RecordingInformation(
         folderPath = batchesFolder.exportFolderForSettings(),
@@ -220,6 +227,22 @@ class VideoRecorderService :
                         Quality.HIGHEST
                     ),
             )
+        }
+    }
+
+    class CameraControl(
+        private val camera: Camera,
+    ) {
+        fun enableTorch() {
+            camera.cameraControl.enableTorch(true)
+        }
+
+        fun disableTorch() {
+            camera.cameraControl.enableTorch(false)
+        }
+
+        fun isTorchEnabled(): Boolean {
+            return camera.cameraInfo.torchState.value == TorchState.ON
         }
     }
 }
