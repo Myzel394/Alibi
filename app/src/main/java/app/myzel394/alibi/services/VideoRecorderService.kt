@@ -129,6 +129,14 @@ class VideoRecorderService :
         closeCamera()
     }
 
+    override fun pause() {
+        super.pause()
+
+        stopActiveRecording()
+    }
+
+    // `resume` override not needed as `startNewCycle` is called by `IntervalRecorderService`
+
     private fun stopActiveRecording() {
         activeRecording?.stop()
     }
