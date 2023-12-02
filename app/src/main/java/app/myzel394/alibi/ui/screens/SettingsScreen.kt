@@ -38,7 +38,7 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AboutTile
-import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderFrameRate
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderFrameRateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.CustomNotificationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DeleteRecordingsImmediatelyTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DividerTitle
@@ -164,7 +164,7 @@ fun SettingsScreen(
                             description = stringResource(R.string.ui_settings_sections_audio_description),
                         )
                         AudioRecorderShowAllMicrophonesTile(settings = settings)
-                        VideoRecorderFrameRate(settings = settings)
+                        VideoRecorderFrameRateTile(settings = settings)
                         AudioRecorderSamplingRateTile(settings = settings)
                         AudioRecorderEncoderTile(
                             snackbarHostState = snackbarHostState,
@@ -177,7 +177,7 @@ fun SettingsScreen(
                             description = stringResource(R.string.ui_settings_sections_video_description),
                         )
                         VideoRecorderBitrateTile(settings = settings)
-                        VideoRecorderFrameRate(settings = settings)
+                        VideoRecorderFrameRateTile(settings = settings)
                     }
                     Divider(
                         modifier = Modifier
