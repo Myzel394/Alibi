@@ -1,11 +1,13 @@
 package app.myzel394.alibi.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -131,6 +133,11 @@ fun SettingsScreen(
             if (!SUPPORTS_DARK_MODE_NATIVELY) {
                 ThemeSelector()
             }
+            MaxDurationTile(settings = settings)
+            IntervalDurationTile(settings = settings)
+            InAppLanguagePicker()
+            DeleteRecordingsImmediatelyTile(settings = settings)
+            CustomNotificationTile(navController = navController, settings = settings)
             GlobalSwitch(
                 label = stringResource(R.string.ui_settings_advancedSettings_label),
                 checked = settings.showAdvancedSettings,
@@ -142,24 +149,22 @@ fun SettingsScreen(
                     }
                 }
             )
-            MaxDurationTile(settings = settings)
-            IntervalDurationTile(settings = settings)
-            InAppLanguagePicker()
-            DeleteRecordingsImmediatelyTile(settings = settings)
-            CustomNotificationTile(navController = navController, settings = settings)
-            AboutTile(navController = navController)
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
                     Column {
-                        Divider(
+                        SaveFolderTile(settings = settings)
+
+                        DividerTitle(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 32.dp)
+                                .padding(16.dp),
+                            title = stringResource(R.string.ui_settings_sections_audio_title),
+                            description = stringResource(R.string.ui_settings_sections_audio_description),
                         )
-                        SaveFolderTile(settings = settings)
+
                         AudioRecorderShowAllMicrophonesTile(settings = settings)
                         AudioRecorderBitrateTile(settings = settings)
                         AudioRecorderSamplingRateTile(settings = settings)
@@ -176,6 +181,7 @@ fun SettingsScreen(
                     ImportExport(snackbarHostState = snackbarHostState)
                 }
             }
+            AboutTile(navController = navController)
         }
     }
 }

@@ -120,4 +120,6 @@
     <string name="ui_settings_option_saveFolder_action_default_label">Use private, encrypted storage</string>
     <string name="ui_audioRecorder_action_save_success">Recording has been saved successfully!</string>
     <string name="ui_audioRecorder_action_save_openFolder">Open</string>
+    <string name="ui_settings_sections_audio_title">Audio Recording</string>
+    <string name="ui_settings_sections_audio_description">Only applies to audio recordings</string>
 </resources>
