@@ -3,7 +3,6 @@ package app.myzel394.alibi.ui.components.SettingsScreen.Tiles
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BrokenImage
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,7 +34,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VideoFrameRate(
+fun VideoRecorderFrameRate(
     settings: AppSettings,
 ) {
     val scope = rememberCoroutineScope()
