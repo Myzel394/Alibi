@@ -58,7 +58,8 @@ fun VideoFrameRate(
         header = Header.Default(
             title = stringResource(R.string.ui_settings_option_videoTargetedFrameRate_title),
             icon = IconSource(
-                painter = IconResource.fromImageVector(Icons.Default.Tune).asPainterResource(),
+                painter = IconResource.fromImageVector(Icons.Default.BrokenImage)
+                    .asPainterResource(),
                 contentDescription = null,
             )
         ),
