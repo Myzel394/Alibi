@@ -73,7 +73,10 @@ fun Navigation(
                 scaleOut(targetScale = SCALE_IN) + fadeOut(tween(durationMillis = 150))
             }
         ) {
-            POCVideo(videoRecorder = videoRecorder, settings = settings)
+            AudioRecorderScreen(
+                navController = navController,
+                audioRecorder = audioRecorder,
+            )
         }
         composable(
             Screen.Settings.route,

@@ -16,11 +16,21 @@ import java.time.LocalDateTime
 data class AppSettings(
     val audioRecorderSettings: AudioRecorderSettings = AudioRecorderSettings.getDefaultInstance(),
     val videoRecorderSettings: VideoRecorderSettings = VideoRecorderSettings.getDefaultInstance(),
-    val notificationSettings: NotificationSettings? = null,
+
     val hasSeenOnboarding: Boolean = false,
     val showAdvancedSettings: Boolean = false,
     val theme: Theme = Theme.SYSTEM,
     val lastRecording: RecordingInformation? = null,
+
+    /// Recording information
+    // 30 minutes
+    val maxDuration: Long = 30 * 60 * 1000L,
+    // 60 seconds
+    val intervalDuration: Long = 60 * 1000L,
+
+    val notificationSettings: NotificationSettings? = null,
+    val deleteRecordingsImmediately: Boolean = false,
+    val saveFolder: String? = null,
 ) {
     fun setShowAdvancedSettings(showAdvancedSettings: Boolean): AppSettings {
         return copy(showAdvancedSettings = showAdvancedSettings)
@@ -44,6 +54,38 @@ data class AppSettings(
 
     fun setLastRecording(lastRecording: RecordingInformation?): AppSettings {
         return copy(lastRecording = lastRecording)
+    }
+
+    fun setMaxDuration(duration: Long): AppSettings {
+        if (duration < 60 * 1000L || duration > 10 * 24 * 60 * 60 * 1000L) {
+            throw Exception("Max duration must be between 1 minute and 10 days")
+        }
+
+        if (duration < intervalDuration) {
+            throw Exception("Max duration must be greater than interval duration")
+        }
+
+        return copy(maxDuration = duration)
+    }
+
+    fun setIntervalDuration(duration: Long): AppSettings {
+        if (duration < 10 * 1000L || duration > 60 * 60 * 1000L) {
+            throw Exception("Interval duration must be between 10 seconds and 1 hour")
+        }
+
+        if (duration > maxDuration) {
+            throw Exception("Interval duration must be less than max duration")
+        }
+
+        return copy(intervalDuration = duration)
+    }
+
+    fun setDeleteRecordingsImmediately(deleteRecordingsImmediately: Boolean): AppSettings {
+        return copy(deleteRecordingsImmediately = deleteRecordingsImmediately)
+    }
+
+    fun setSaveFolder(saveFolder: String?): AppSettings {
+        return copy(saveFolder = saveFolder)
     }
 
     enum class Theme {
@@ -95,18 +137,12 @@ data class RecordingInformation(
 
 @Serializable
 data class AudioRecorderSettings(
-    // 30 minutes
-    val maxDuration: Long = 30 * 60 * 1000L,
-    // 60 seconds
-    val intervalDuration: Long = 60 * 1000L,
     // 320 Kbps
     val bitRate: Int = 320000,
     val samplingRate: Int? = null,
     val outputFormat: Int? = null,
     val encoder: Int? = null,
     val showAllMicrophones: Boolean = false,
-    val deleteRecordingsImmediately: Boolean = false,
-    val saveFolder: String? = null,
 ) {
     fun getOutputFormat(): Int {
         if (outputFormat != null) {
@@ -174,18 +210,6 @@ data class AudioRecorderSettings(
     else
         MediaRecorder.AudioEncoder.AMR_NB
 
-    fun setIntervalDuration(duration: Long): AudioRecorderSettings {
-        if (duration < 10 * 1000L || duration > 60 * 60 * 1000L) {
-            throw Exception("Interval duration must be between 10 seconds and 1 hour")
-        }
-
-        if (duration > maxDuration) {
-            throw Exception("Interval duration must be less than max duration")
-        }
-
-        return copy(intervalDuration = duration)
-    }
-
     fun setBitRate(bitRate: Int): AudioRecorderSettings {
         if (bitRate !in 1000..320000) {
             throw Exception("Bit rate must be between 1000 and 320000")
@@ -218,28 +242,8 @@ data class AudioRecorderSettings(
         return copy(encoder = encoder)
     }
 
-    fun setMaxDuration(duration: Long): AudioRecorderSettings {
-        if (duration < 60 * 1000L || duration > 10 * 24 * 60 * 60 * 1000L) {
-            throw Exception("Max duration must be between 1 minute and 10 days")
-        }
-
-        if (duration < intervalDuration) {
-            throw Exception("Max duration must be greater than interval duration")
-        }
-
-        return copy(maxDuration = duration)
-    }
-
     fun setShowAllMicrophones(showAllMicrophones: Boolean): AudioRecorderSettings {
         return copy(showAllMicrophones = showAllMicrophones)
-    }
-
-    fun setDeleteRecordingsImmediately(deleteRecordingsImmediately: Boolean): AudioRecorderSettings {
-        return copy(deleteRecordingsImmediately = deleteRecordingsImmediately)
-    }
-
-    fun setSaveFolder(saveFolder: String?): AudioRecorderSettings {
-        return copy(saveFolder = saveFolder)
     }
 
     fun isEncoderCompatible(encoder: Int): Boolean {
