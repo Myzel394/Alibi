@@ -1,4 +1,4 @@
-package app.myzel394.alibi.ui.components.AudioRecorder.molecules
+package app.myzel394.alibi.ui.components.AudioRecorder.organisms
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.AudioRecordingStart
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.VideoRecordingStart
+import app.myzel394.alibi.ui.components.AudioRecorder.molecules.AudioRecordingStart
+import app.myzel394.alibi.ui.components.AudioRecorder.molecules.VideoRecordingStart
 import app.myzel394.alibi.ui.effects.rememberForceUpdateOnLifeCycleChange
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel

@@ -38,7 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import app.myzel394.alibi.ui.components.AudioRecorder.organisms.RecordingStatus
-import app.myzel394.alibi.ui.components.AudioRecorder.molecules.StartRecording
+import app.myzel394.alibi.ui.components.AudioRecorder.organisms.StartRecording
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import app.myzel394.alibi.R
