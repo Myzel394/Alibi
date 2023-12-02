@@ -18,7 +18,7 @@
     <string name="ui_permissions_request">Please grant the permission to continue</string>
     <string name="ui_permissions_permanentlyDenied_message">You will be redirected to the app settings to grant the permission there.</string>
 
-    <string name="ui_audioRecorder_action_start_label">Start Recording</string>
+    <string name="ui_audioRecorder_action_start_label">Start Audio Recording</string>
     <string name="ui_audioRecorder_action_saveOldRecording_label">Save Recording from <xliff:g name="date">%s</xliff:g></string>
     <string name="ui_audioRecorder_action_delete_label">Delete</string>
     <string name="ui_audioRecorder_action_delete_confirm_title">Delete Recording?</string>
@@ -138,4 +138,5 @@
     <string name="ui_settings_value_videoQuality_values_hd">HD</string>
     <string name="ui_settings_value_videoQuality_values_sd">Standard</string>
     <string name="ui_settings_value_videoQuality_values_lowest">Lowest</string>
+    <string name="ui_videoRecorder_action_start_label">Start Video Recording</string>
 </resources>

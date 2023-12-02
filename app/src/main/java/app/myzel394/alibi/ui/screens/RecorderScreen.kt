@@ -48,14 +48,16 @@ import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
+import app.myzel394.alibi.ui.models.VideoRecorderModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AudioRecorderScreen(
+fun RecorderScreen(
     navController: NavController,
     audioRecorder: AudioRecorderModel,
+    videoRecorder: VideoRecorderModel,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -299,7 +301,9 @@ fun AudioRecorderScreen(
                 RecordingStatus(audioRecorder = audioRecorder)
             else
                 StartRecording(
-                    audioRecorder = audioRecorder, appSettings = appSettings,
+                    audioRecorder = audioRecorder,
+                    videoRecorder = videoRecorder,
+                    appSettings = appSettings,
                     onSaveLastRecording = ::saveRecording,
                 )
         }
