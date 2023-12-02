@@ -40,6 +40,10 @@ data class AppSettings(
         return copy(audioRecorderSettings = audioRecorderSettings)
     }
 
+    fun setVideoRecorderSettings(videoRecorderSettings: VideoRecorderSettings): AppSettings {
+        return copy(videoRecorderSettings = videoRecorderSettings)
+    }
+
     fun setNotificationSettings(notificationSettings: NotificationSettings?): AppSettings {
         return copy(notificationSettings = notificationSettings)
     }
@@ -400,6 +404,20 @@ data class VideoRecorderSettings(
             "HD" to Quality.HD,
             "FHD" to Quality.FHD,
             "UHD" to Quality.UHD,
+        )
+
+        val EXAMPLE_BITRATE_VALUES = listOf(
+            null,
+            500 * 1000,
+            // 1 Mbps
+            1 * 1000 * 1000,
+            2 * 1000 * 1000,
+            4 * 1000 * 1000,
+            8 * 1000 * 1000,
+            16 * 1000 * 1000,
+            32 * 1000 * 1000,
+            50 * 1000 * 1000,
+            100 * 1000 * 1000,
         )
     }
 }

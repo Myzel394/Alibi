@@ -122,4 +122,10 @@
     <string name="ui_audioRecorder_action_save_openFolder">Open</string>
     <string name="ui_settings_sections_audio_title">Audio Recording</string>
     <string name="ui_settings_sections_audio_description">Only applies to audio recordings</string>
+    <string name="ui_settings_sections_video_title">Video Recording</string>
+    <string name="ui_settings_sections_video_description">Only applies to video recordings</string>
+    <string name="ui_settings_option_videoTargetedBitrate_title">Targeted Bitrate</string>
+    <string name="ui_settings_option_videoTargetedBitrate_explanation">Bitrate for the video recording. Only applies to the video itself, not the audio. The actual bitrate may be different depending on what you will be recording.</string>
+    <string name="format_mbps">%s MB/s</string>
+    <string name="format_bps">%s B/s</string>
 </resources>

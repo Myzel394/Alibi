@@ -1,13 +1,11 @@
 package app.myzel394.alibi.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -40,7 +38,7 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AboutTile
-import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderBitrateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderBitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.CustomNotificationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DeleteRecordingsImmediatelyTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DividerTitle
@@ -164,15 +162,20 @@ fun SettingsScreen(
                             title = stringResource(R.string.ui_settings_sections_audio_title),
                             description = stringResource(R.string.ui_settings_sections_audio_description),
                         )
-
                         AudioRecorderShowAllMicrophonesTile(settings = settings)
-                        AudioRecorderBitrateTile(settings = settings)
+                        VideoRecorderBitrateTile(settings = settings)
                         AudioRecorderSamplingRateTile(settings = settings)
                         AudioRecorderEncoderTile(
                             snackbarHostState = snackbarHostState,
                             settings = settings
                         )
                         AudioRecorderOutputFormatTile(settings = settings)
+
+                        DividerTitle(
+                            title = stringResource(R.string.ui_settings_sections_video_title),
+                            description = stringResource(R.string.ui_settings_sections_video_description),
+                        )
+                        VideoRecorderBitrateTile(settings = settings)
                     }
                     Divider(
                         modifier = Modifier
