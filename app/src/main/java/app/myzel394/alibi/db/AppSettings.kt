@@ -419,6 +419,15 @@ data class VideoRecorderSettings(
             50 * 1000 * 1000,
             100 * 1000 * 1000,
         )
+
+        val EXAMPLE_FRAME_RATE_VALUES = listOf(
+            null,
+            24,
+            30,
+            60,
+            120,
+            240,
+        )
     }
 }
 

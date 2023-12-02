@@ -128,4 +128,7 @@
     <string name="ui_settings_option_videoTargetedBitrate_explanation">Bitrate for the video recording. Only applies to the video itself, not the audio. The actual bitrate may be different depending on what you will be recording.</string>
     <string name="format_mbps">%s MB/s</string>
     <string name="format_bps">%s B/s</string>
+    <string name="ui_settings_option_videoTargetedFrameRate_title">Targeted Frame Rate</string>
+    <string name="ui_settings_option_videoTargetedFrameRate_description">How many frames per second should be recorded.</string>
+    <string name="ui_settings_option_videoTargetedFrameRate_explanation">The actual frame rate may be different. This can for example happen if the device is not able to record with the specified frame rate.</string>
 </resources>

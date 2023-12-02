@@ -38,7 +38,7 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AboutTile
-import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderBitrateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoFrameRate
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.CustomNotificationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DeleteRecordingsImmediatelyTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DividerTitle
@@ -51,6 +51,7 @@ import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderOutput
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderSamplingRateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.SaveFolderTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderShowAllMicrophonesTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderBitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ThemeSelector
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
 import app.myzel394.alibi.ui.components.atoms.MessageBox
@@ -163,7 +164,7 @@ fun SettingsScreen(
                             description = stringResource(R.string.ui_settings_sections_audio_description),
                         )
                         AudioRecorderShowAllMicrophonesTile(settings = settings)
-                        VideoRecorderBitrateTile(settings = settings)
+                        VideoFrameRate(settings = settings)
                         AudioRecorderSamplingRateTile(settings = settings)
                         AudioRecorderEncoderTile(
                             snackbarHostState = snackbarHostState,
@@ -176,6 +177,7 @@ fun SettingsScreen(
                             description = stringResource(R.string.ui_settings_sections_video_description),
                         )
                         VideoRecorderBitrateTile(settings = settings)
+                        VideoFrameRate(settings = settings)
                     }
                     Divider(
                         modifier = Modifier
