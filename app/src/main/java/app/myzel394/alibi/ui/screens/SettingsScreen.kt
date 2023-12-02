@@ -38,11 +38,12 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AboutTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderEncoderTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderFrameRateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.CustomNotificationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DeleteRecordingsImmediatelyTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DividerTitle
-import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderEncoderTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderQualityTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.ImportExport
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.InAppLanguagePicker
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.IntervalDurationTile
@@ -158,13 +159,11 @@ fun SettingsScreen(
 
                         DividerTitle(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
+                                .fillMaxWidth(),
                             title = stringResource(R.string.ui_settings_sections_audio_title),
                             description = stringResource(R.string.ui_settings_sections_audio_description),
                         )
                         AudioRecorderShowAllMicrophonesTile(settings = settings)
-                        VideoRecorderFrameRateTile(settings = settings)
                         AudioRecorderSamplingRateTile(settings = settings)
                         AudioRecorderEncoderTile(
                             snackbarHostState = snackbarHostState,
@@ -176,6 +175,7 @@ fun SettingsScreen(
                             title = stringResource(R.string.ui_settings_sections_video_title),
                             description = stringResource(R.string.ui_settings_sections_video_description),
                         )
+                        VideoRecorderQualityTile(settings = settings)
                         VideoRecorderBitrateTile(settings = settings)
                         VideoRecorderFrameRateTile(settings = settings)
                     }

@@ -379,13 +379,20 @@ data class VideoRecorderSettings(
         return copy(targetedVideoBitRate = bitRate)
     }
 
-    fun setQuality(quality: String): VideoRecorderSettings {
-        return copy(quality = quality)
+    fun setQuality(quality: Quality?): VideoRecorderSettings {
+        val invertedMap = QUALITY_NAME_QUALITY_MAP.entries.associateBy({ it.value }, { it.key })
+
+        return copy(quality = quality?.let { invertedMap[it] })
     }
 
     fun setTargetFrameRate(frameRate: Int?): VideoRecorderSettings {
         return copy(targetFrameRate = frameRate)
     }
+
+    fun getQuality(): Quality? =
+        quality?.let {
+            QUALITY_NAME_QUALITY_MAP[it]!!
+        }
 
     fun getQualitySelector(): QualitySelector? =
         quality?.let {
@@ -428,6 +435,19 @@ data class VideoRecorderSettings(
             120,
             240,
         )
+
+        val AVAILABLE_QUALITIES = listOf(
+            Quality.HIGHEST,
+            Quality.UHD,
+            Quality.FHD,
+            Quality.HD,
+            Quality.SD,
+            Quality.LOWEST,
+        )
+
+        val EXAMPLE_QUALITY_VALUES = listOf(
+            null,
+        ) + AVAILABLE_QUALITIES
     }
 }
 

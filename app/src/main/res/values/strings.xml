@@ -131,4 +131,11 @@
     <string name="ui_settings_option_videoTargetedFrameRate_title">Targeted Frame Rate</string>
     <string name="ui_settings_option_videoTargetedFrameRate_description">How many frames per second should be recorded.</string>
     <string name="ui_settings_option_videoTargetedFrameRate_explanation">The actual frame rate may be different. This can for example happen if the device is not able to record with the specified frame rate.</string>
+    <string name="ui_settings_option_videoQualityTile_title">Quality</string>
+    <string name="ui_settings_value_videoQuality_values_highest">Highest</string>
+    <string name="ui_settings_value_videoQuality_values_uhd">Ultra HD</string>
+    <string name="ui_settings_value_videoQuality_values_fhd">Full HD</string>
+    <string name="ui_settings_value_videoQuality_values_hd">HD</string>
+    <string name="ui_settings_value_videoQuality_values_sd">Standard</string>
+    <string name="ui_settings_value_videoQuality_values_lowest">Lowest</string>
 </resources>
