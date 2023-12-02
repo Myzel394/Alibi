@@ -3,10 +3,8 @@ package app.myzel394.alibi.services
 import android.annotation.SuppressLint
 import android.util.Range
 import androidx.camera.core.Camera
-import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.TorchState
-import androidx.camera.core.impl.CameraConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Quality
@@ -18,15 +16,16 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.core.content.ContextCompat
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
+import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 
 const val CAMERA_CLOSE_TIMEOUT = 20000L
@@ -45,7 +44,10 @@ class VideoRecorderService :
 
     // Used to listen and check if the camera is available
     private var _cameraAvailableListener = CompletableDeferred<Unit>()
-    private var _cameraClosedListener = CompletableDeferred<Unit>()
+    private var _videoFinalizerListener = CompletableDeferred<Unit>()
+
+    // Absolute last completer that can be awaited to ensure that the camera is closed
+    private var _cameraCloserListener = CompletableDeferred<Unit>()
 
     private var selectedCamera: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
@@ -65,12 +67,16 @@ class VideoRecorderService :
 
         stopActiveRecording()
 
+        // Camera can only be closed after the recording has been finalized
         withTimeoutOrNull(CAMERA_CLOSE_TIMEOUT) {
-            // Camera can only be closed after the recording has been finalized
-            _cameraClosedListener.await()
+            _videoFinalizerListener.await()
         }
 
         closeCamera()
+
+        withTimeoutOrNull(CAMERA_CLOSE_TIMEOUT) {
+            _cameraCloserListener.await()
+        }
     }
 
     override fun pause() {
@@ -88,8 +94,8 @@ class VideoRecorderService :
             val newRecording = prepareVideoRecording()
 
             activeRecording = newRecording.start(ContextCompat.getMainExecutor(this)) { event ->
-                if (event is VideoRecordEvent.Finalize) {
-                    _cameraClosedListener.complete(Unit)
+                if (event is VideoRecordEvent.Finalize && this@VideoRecorderService.state == RecorderState.IDLE) {
+                    _videoFinalizerListener.complete(Unit)
                 }
             }
         }
@@ -158,15 +164,19 @@ class VideoRecorderService :
     // Used to close it finally, shouldn't be called when pausing / resuming.
     // This should only be called after recording has finished.
     private fun closeCamera() {
-        runCatching {
-            runOnMain {
+        runOnMain {
+            runCatching {
                 cameraProvider?.unbindAll()
             }
-        }
+            _cameraCloserListener.complete(Unit)
 
-        cameraProvider = null
-        videoCapture = null
-        camera = null
+            // Doesn't need to run on main thread, but
+            // if it runs outside `runOnMain`, `cameraProvider` is already null
+            // before it's unbound
+            cameraProvider = null
+            videoCapture = null
+            camera = null
+        }
     }
 
     // `resume` override not needed as `startNewCycle` is called by `IntervalRecorderService`
