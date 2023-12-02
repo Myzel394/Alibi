@@ -1,8 +1,7 @@
-package app.myzel394.alibi.ui.components.SettingsScreen.atoms
+package app.myzel394.alibi.ui.components.SettingsScreen.Tiles
 
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -11,7 +10,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -36,32 +34,31 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SamplingRateTile(
+fun AudioRecorderBitrateTile(
     settings: AppSettings,
 ) {
     val scope = rememberCoroutineScope()
     val showDialog = rememberUseCaseState()
     val dataStore = LocalContext.current.dataStore
 
-    fun updateValue(samplingRate: Int?) {
+    fun updateValue(bitRate: Int) {
         scope.launch {
             dataStore.updateData {
                 it.setAudioRecorderSettings(
-                    it.audioRecorderSettings.setSamplingRate(samplingRate)
+                    it.audioRecorderSettings.setBitRate(bitRate)
                 )
             }
         }
     }
 
     val notNumberLabel = stringResource(R.string.form_error_type_notNumber)
-    val mustBeGreaterThanLabel = stringResource(R.string.form_error_value_mustBeGreaterThan, 1000)
+    val notInRangeLabel = stringResource(R.string.form_error_value_notInRange, 1, 320)
     InputDialog(
         state = showDialog,
         header = Header.Default(
-            title = stringResource(R.string.ui_settings_option_samplingRate_title),
+            title = stringResource(R.string.ui_settings_option_bitrate_title),
             icon = IconSource(
-                painter = IconResource.fromImageVector(Icons.Default.RadioButtonChecked)
-                    .asPainterResource(),
+                painter = IconResource.fromImageVector(Icons.Default.Tune).asPainterResource(),
                 contentDescription = null,
             )
         ),
@@ -69,42 +66,43 @@ fun SamplingRateTile(
             input = listOf(
                 InputTextField(
                     header = InputHeader(
-                        title = stringResource(R.string.ui_settings_option_samplingRate_explanation),
+                        title = stringResource(id = R.string.ui_settings_option_bitrate_explanation),
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
                     ),
                     type = InputTextFieldType.OUTLINED,
-                    text = settings.audioRecorderSettings.getSamplingRate().toString(),
+                    text = (settings.audioRecorderSettings.bitRate / 1000).toString(),
                     validationListener = { text ->
-                        val samplingRate = text?.toIntOrNull()
+                        val bitRate = text?.toIntOrNull()
 
-                        if (samplingRate == null) {
+                        if (bitRate == null) {
                             return@InputTextField ValidationResult.Invalid(notNumberLabel)
                         }
 
-                        if (samplingRate <= 1000) {
-                            return@InputTextField ValidationResult.Invalid(mustBeGreaterThanLabel)
+                        if (bitRate !in 1..320) {
+                            return@InputTextField ValidationResult.Invalid(notInRangeLabel)
                         }
 
                         ValidationResult.Valid
                     },
-                    key = "samplingRate",
+                    key = "bitrate",
                 )
             ),
         ) { result ->
-            val samplingRate = result.getString("samplingRate")?.toIntOrNull()
-                ?: throw IllegalStateException("SamplingRate is null")
+            val bitRate = result.getString("bitrate")?.toIntOrNull() ?: throw IllegalStateException(
+                "Bitrate is null"
+            )
 
-            updateValue(samplingRate)
+            updateValue(bitRate * 1000)
         }
     )
     SettingsTile(
-        title = stringResource(R.string.ui_settings_option_samplingRate_title),
-        description = stringResource(R.string.ui_settings_option_samplingRate_description),
+        title = stringResource(R.string.ui_settings_option_bitrate_title),
+        description = stringResource(R.string.ui_settings_option_bitrate_description),
         leading = {
             Icon(
-                Icons.Default.RadioButtonChecked,
+                Icons.Default.Tune,
                 contentDescription = null,
             )
         },
@@ -117,19 +115,23 @@ fun SamplingRateTile(
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Text(
-                    (settings.audioRecorderSettings.samplingRate
-                        ?: stringResource(R.string.ui_settings_value_auto_label)).toString()
+                    stringResource(
+                        R.string.format_kbps,
+                        settings.audioRecorderSettings.bitRate / 1000,
+                    ),
                 )
             }
         },
         extra = {
             ExampleListRoulette(
-                items = AudioRecorderSettings.EXAMPLE_SAMPLING_RATE,
+                items = AudioRecorderSettings.EXAMPLE_BITRATE_VALUES,
                 onItemSelected = ::updateValue,
-            ) { samplingRate ->
+            ) { bitRate ->
                 Text(
-                    (samplingRate
-                        ?: stringResource(R.string.ui_settings_value_auto_label)).toString()
+                    stringResource(
+                        R.string.format_kbps,
+                        bitRate / 1000,
+                    ),
                 )
             }
         }

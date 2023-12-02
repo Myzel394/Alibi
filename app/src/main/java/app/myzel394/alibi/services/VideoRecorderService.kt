@@ -226,10 +226,9 @@ class VideoRecorderService :
 
         companion object {
             fun from(appSettings: AppSettings) = Settings(
-                // TODO: Migrate audioSettings
-                maxDuration = appSettings.audioRecorderSettings.maxDuration,
-                intervalDuration = appSettings.audioRecorderSettings.intervalDuration,
-                folder = appSettings.audioRecorderSettings.saveFolder,
+                maxDuration = appSettings.maxDuration,
+                intervalDuration = appSettings.intervalDuration,
+                folder = appSettings.saveFolder,
                 targetVideoBitRate = appSettings.videoRecorderSettings.targetedVideoBitRate,
                 targetFrameRate = appSettings.videoRecorderSettings.targetFrameRate,
                 quality = appSettings.videoRecorderSettings.getQualitySelector()

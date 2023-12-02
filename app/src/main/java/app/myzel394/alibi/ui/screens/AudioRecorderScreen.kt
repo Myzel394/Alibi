@@ -67,7 +67,7 @@ fun AudioRecorderScreen(
     val saveFile = rememberFileSaverDialog(
         settings.audioRecorderSettings.getMimeType()
     ) {
-        if (settings.audioRecorderSettings.deleteRecordingsImmediately) {
+        if (settings.deleteRecordingsImmediately) {
             audioRecorder.batchesFolder!!.deleteRecordings()
         }
 
@@ -84,7 +84,7 @@ fun AudioRecorderScreen(
     var showRecorderError by remember { mutableStateOf(false) }
 
     fun saveAsLastRecording() {
-        if (!settings.audioRecorderSettings.deleteRecordingsImmediately) {
+        if (!settings.deleteRecordingsImmediately) {
             scope.launch {
                 dataStore.updateData {
                     it.setLastRecording(
@@ -156,7 +156,7 @@ fun AudioRecorderScreen(
                     BatchesFolder.BatchType.CUSTOM -> {
                         showSnackbar(batchesFolder.customFolder!!.uri)
 
-                        if (settings.audioRecorderSettings.deleteRecordingsImmediately) {
+                        if (settings.deleteRecordingsImmediately) {
                             batchesFolder.deleteRecordings()
                         }
                     }

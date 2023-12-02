@@ -43,7 +43,7 @@ class AudioRecorderModel :
             microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
         }
         service.settings =
-            AudioRecorderService.Settings.from(settings.audioRecorderSettings)
+            AudioRecorderService.Settings.from(settings)
 
         service.clearAllRecordings()
         service.startRecording()
@@ -55,14 +55,14 @@ class AudioRecorderModel :
     }
 
     override fun startRecording(context: Context, settings: AppSettings) {
-        batchesFolder = if (settings.audioRecorderSettings.saveFolder == null)
+        batchesFolder = if (settings.saveFolder == null)
             AudioBatchesFolder.viaInternalFolder(context)
         else
             AudioBatchesFolder.viaCustomFolder(
                 context,
                 DocumentFile.fromTreeUri(
                     context,
-                    Uri.parse(settings.audioRecorderSettings.saveFolder)
+                    Uri.parse(settings.saveFolder)
                 )!!
             )
 

@@ -9,6 +9,7 @@ import android.media.MediaRecorder.OnErrorListener
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.AudioRecorderSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
@@ -296,14 +297,14 @@ class AudioRecorderService :
             }
 
         companion object {
-            fun from(audioRecorderSettings: AudioRecorderSettings): Settings {
+            fun from(appSettings: AppSettings): Settings {
                 return Settings(
-                    intervalDuration = audioRecorderSettings.intervalDuration,
-                    bitRate = audioRecorderSettings.bitRate,
-                    samplingRate = audioRecorderSettings.getSamplingRate(),
-                    outputFormat = audioRecorderSettings.getOutputFormat(),
-                    encoder = audioRecorderSettings.getEncoder(),
-                    maxDuration = audioRecorderSettings.maxDuration,
+                    intervalDuration = appSettings.intervalDuration,
+                    maxDuration = appSettings.maxDuration,
+                    bitRate = appSettings.audioRecorderSettings.bitRate,
+                    samplingRate = appSettings.audioRecorderSettings.getSamplingRate(),
+                    outputFormat = appSettings.audioRecorderSettings.getOutputFormat(),
+                    encoder = appSettings.audioRecorderSettings.getEncoder(),
                 )
             }
         }

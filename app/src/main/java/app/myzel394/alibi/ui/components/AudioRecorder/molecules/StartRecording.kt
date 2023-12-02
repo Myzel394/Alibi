@@ -120,7 +120,7 @@ fun StartRecording(
         Text(
             stringResource(
                 R.string.ui_audioRecorder_action_start_description,
-                settings.audioRecorderSettings.maxDuration / 1000 / 60
+                settings.maxDuration / 1000 / 60
             ),
             style = MaterialTheme.typography.bodySmall.copy(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

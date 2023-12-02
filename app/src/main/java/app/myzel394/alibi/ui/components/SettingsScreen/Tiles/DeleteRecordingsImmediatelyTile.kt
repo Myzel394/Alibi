@@ -1,4 +1,4 @@
-package app.myzel394.alibi.ui.components.SettingsScreen.atoms
+package app.myzel394.alibi.ui.components.SettingsScreen.Tiles
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteSweep
@@ -34,13 +34,11 @@ fun DeleteRecordingsImmediatelyTile(
         },
         trailing = {
             Switch(
-                checked = settings.audioRecorderSettings.deleteRecordingsImmediately,
+                checked = settings.deleteRecordingsImmediately,
                 onCheckedChange = {
                     scope.launch {
                         dataStore.updateData {
-                            it.setAudioRecorderSettings(
-                                it.audioRecorderSettings.setDeleteRecordingsImmediately(it.audioRecorderSettings.deleteRecordingsImmediately.not())
-                            )
+                            it.setDeleteRecordingsImmediately(it.deleteRecordingsImmediately.not())
                         }
                     }
                 }

@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -38,19 +37,20 @@ import androidx.navigation.NavController
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.AboutTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BitrateTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.CustomNotificationTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.DeleteRecordingsImmediatelyTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.EncoderTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ImportExport
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AboutTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderBitrateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.CustomNotificationTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DeleteRecordingsImmediatelyTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DividerTitle
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderEncoderTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.ImportExport
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.InAppLanguagePicker
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.IntervalDurationTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.MaxDurationTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.OutputFormatTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.SamplingRateTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.SaveFolderTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ShowAllMicrophonesTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.IntervalDurationTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.MaxDurationTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderOutputFormatTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderSamplingRateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.SaveFolderTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderShowAllMicrophonesTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ThemeSelector
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
 import app.myzel394.alibi.ui.components.atoms.MessageBox
@@ -160,11 +160,14 @@ fun SettingsScreen(
                                 .padding(horizontal = 16.dp, vertical = 32.dp)
                         )
                         SaveFolderTile(settings = settings)
-                        ShowAllMicrophonesTile(settings = settings)
-                        BitrateTile(settings = settings)
-                        SamplingRateTile(settings = settings)
-                        EncoderTile(snackbarHostState = snackbarHostState, settings = settings)
-                        OutputFormatTile(settings = settings)
+                        AudioRecorderShowAllMicrophonesTile(settings = settings)
+                        AudioRecorderBitrateTile(settings = settings)
+                        AudioRecorderSamplingRateTile(settings = settings)
+                        AudioRecorderEncoderTile(
+                            snackbarHostState = snackbarHostState,
+                            settings = settings
+                        )
+                        AudioRecorderOutputFormatTile(settings = settings)
                     }
                     Divider(
                         modifier = Modifier

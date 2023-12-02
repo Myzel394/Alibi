@@ -1,4 +1,4 @@
-package app.myzel394.alibi.ui.components.SettingsScreen.atoms
+package app.myzel394.alibi.ui.components.SettingsScreen.Tiles
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

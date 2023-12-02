@@ -1,8 +1,7 @@
-package app.myzel394.alibi.ui.components.SettingsScreen.atoms
+package app.myzel394.alibi.ui.components.SettingsScreen.Tiles
 
 import android.content.Intent
 import android.net.Uri
-import android.text.TextUtils.split
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -50,10 +49,10 @@ fun SaveFolderTile(
     val dataStore = context.dataStore
 
     fun updateValue(path: String?) {
-        if (settings.audioRecorderSettings.saveFolder != null) {
+        if (settings.saveFolder != null) {
             runCatching {
                 context.contentResolver.releasePersistableUriPermission(
-                    Uri.parse(settings.audioRecorderSettings.saveFolder),
+                    Uri.parse(settings.saveFolder),
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 )
             }
@@ -61,9 +60,7 @@ fun SaveFolderTile(
 
         scope.launch {
             dataStore.updateData {
-                it.setAudioRecorderSettings(
-                    it.audioRecorderSettings.setSaveFolder(path)
-                )
+                it.setSaveFolder(path)
             }
         }
     }
@@ -172,11 +169,11 @@ fun SaveFolderTile(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                if (settings.audioRecorderSettings.saveFolder != null) {
+                if (settings.saveFolder != null) {
                     Text(
                         text = stringResource(
                             R.string.form_value_selected,
-                            splitPath(settings.audioRecorderSettings.saveFolder).joinToString(" > ")
+                            splitPath(settings.saveFolder).joinToString(" > ")
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

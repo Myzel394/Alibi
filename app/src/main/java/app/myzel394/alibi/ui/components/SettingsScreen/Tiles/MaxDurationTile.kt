@@ -1,7 +1,7 @@
-package app.myzel394.alibi.ui.components.SettingsScreen.atoms
+package app.myzel394.alibi.ui.components.SettingsScreen.Tiles
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,22 +31,19 @@ import com.maxkeppeler.sheets.duration.models.DurationFormat
 import com.maxkeppeler.sheets.duration.models.DurationSelection
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IntervalDurationTile(
+fun MaxDurationTile(
     settings: AppSettings,
 ) {
     val scope = rememberCoroutineScope()
     val showDialog = rememberUseCaseState()
     val dataStore = LocalContext.current.dataStore
 
-    fun updateValue(intervalDuration: Long) {
+    fun updateValue(maxDuration: Long) {
         scope.launch {
             dataStore.updateData {
-                it.setAudioRecorderSettings(
-                    it.audioRecorderSettings.setIntervalDuration(intervalDuration)
-                )
+                it.setMaxDuration(maxDuration)
             }
         }
     }
@@ -54,9 +51,9 @@ fun IntervalDurationTile(
     DurationDialog(
         state = showDialog,
         header = Header.Default(
-            title = stringResource(R.string.ui_settings_option_intervalDuration_title),
+            title = stringResource(R.string.ui_settings_option_maxDuration_title),
             icon = IconSource(
-                painter = IconResource.fromImageVector(Icons.Default.Mic).asPainterResource(),
+                painter = IconResource.fromImageVector(Icons.Default.Timer).asPainterResource(),
                 contentDescription = null,
             )
         ),
@@ -64,18 +61,18 @@ fun IntervalDurationTile(
             updateValue(newTimeInSeconds * 1000L)
         },
         config = DurationConfig(
-            timeFormat = DurationFormat.MM_SS,
-            currentTime = settings.audioRecorderSettings.intervalDuration / 1000,
-            minTime = 10,
-            maxTime = 60 * 60,
+            timeFormat = DurationFormat.HH_MM,
+            currentTime = settings.maxDuration / 1000,
+            minTime = 60,
+            maxTime = 10 * 24 * 60 * 60,
         )
     )
     SettingsTile(
-        title = stringResource(R.string.ui_settings_option_intervalDuration_title),
-        description = stringResource(R.string.ui_settings_option_intervalDuration_description),
+        title = stringResource(R.string.ui_settings_option_maxDuration_title),
+        description = stringResource(R.string.ui_settings_option_maxDuration_description),
         leading = {
             Icon(
-                Icons.Default.Mic,
+                Icons.Default.Timer,
                 contentDescription = null,
             )
         },
@@ -87,19 +84,15 @@ fun IntervalDurationTile(
                 ),
                 shape = MaterialTheme.shapes.medium,
             ) {
-                Text(
-                    text = formatDuration(settings.audioRecorderSettings.intervalDuration),
-                )
+                Text(formatDuration(settings.maxDuration))
             }
         },
         extra = {
             ExampleListRoulette(
-                items = AudioRecorderSettings.EXAMPLE_DURATION_TIMES,
+                items = AudioRecorderSettings.EXAMPLE_MAX_DURATIONS,
                 onItemSelected = ::updateValue,
-            ) {duration ->
-                Text(
-                    text = formatDuration(duration),
-                )
+            ) { maxDuration ->
+                Text(formatDuration(maxDuration))
             }
         }
     )
