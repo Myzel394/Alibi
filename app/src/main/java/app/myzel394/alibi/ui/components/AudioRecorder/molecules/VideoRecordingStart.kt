@@ -36,6 +36,9 @@ import app.myzel394.alibi.ui.models.VideoRecorderModel
 fun VideoRecordingStart(
     videoRecorder: VideoRecorderModel,
     appSettings: AppSettings,
+    onHideAudioRecording: () -> Unit,
+    onShowAudioRecording: () -> Unit,
+    showPreview: Boolean,
 ) {
     val context = LocalContext.current
 
@@ -48,6 +51,9 @@ fun VideoRecordingStart(
             onDismiss = {
                 showSheet = false
             },
+            onPreviewVisible = onHideAudioRecording,
+            onPreviewHidden = onShowAudioRecording,
+            showPreview = showPreview,
         )
     }
 

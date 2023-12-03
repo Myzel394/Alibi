@@ -253,6 +253,14 @@ fun RecorderScreen(
                 }
             }
         )
+
+
+    // TopAppBar and AudioRecordingStart should be hidden when
+    // the video preview is visible.
+    // We need to preview the video inline to
+    // be able to capture the touch release event.
+    var topBarVisible by remember { mutableStateOf(true) }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(
@@ -270,23 +278,24 @@ fun RecorderScreen(
             )
         },
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(stringResource(R.string.app_name))
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            navController.navigate(Screen.Settings.route)
-                        },
-                    ) {
-                        Icon(
-                            Icons.Default.Settings,
-                            contentDescription = null
-                        )
+            if (topBarVisible)
+                return@Scaffold TopAppBar(
+                    title = {
+                        Text(stringResource(R.string.app_name))
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                navController.navigate(Screen.Settings.route)
+                            },
+                        ) {
+                            Icon(
+                                Icons.Default.Settings,
+                                contentDescription = null
+                            )
+                        }
                     }
-                }
-            )
+                )
         },
     ) { padding ->
         Box(
@@ -305,6 +314,13 @@ fun RecorderScreen(
                     videoRecorder = videoRecorder,
                     appSettings = appSettings,
                     onSaveLastRecording = ::saveRecording,
+                    showAudioRecorder = topBarVisible,
+                    onHideTopBar = {
+                        topBarVisible = false
+                    },
+                    onShowTopBar = {
+                        topBarVisible = true
+                    },
                 )
         }
     }

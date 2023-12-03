@@ -46,6 +46,9 @@ fun StartRecording(
     // settings will be used, instead of the actual settings.
     appSettings: AppSettings,
     onSaveLastRecording: () -> Unit,
+    onHideTopBar: () -> Unit,
+    onShowTopBar: () -> Unit,
+    showAudioRecorder: Boolean,
 ) {
     val context = LocalContext.current
 
@@ -56,13 +59,17 @@ fun StartRecording(
     ) {
         Spacer(modifier = Modifier.weight(1f))
 
-        AudioRecordingStart(
-            audioRecorder = audioRecorder,
-            appSettings = appSettings,
-        )
+        if (showAudioRecorder)
+            AudioRecordingStart(
+                audioRecorder = audioRecorder,
+                appSettings = appSettings,
+            )
         VideoRecordingStart(
             videoRecorder = videoRecorder,
             appSettings = appSettings,
+            onHideAudioRecording = onHideTopBar,
+            onShowAudioRecording = onShowTopBar,
+            showPreview = !showAudioRecorder,
         )
 
         Text(
