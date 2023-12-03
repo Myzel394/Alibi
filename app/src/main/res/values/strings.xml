@@ -139,4 +139,12 @@
     <string name="ui_settings_value_videoQuality_values_sd">Standard</string>
     <string name="ui_settings_value_videoQuality_values_lowest">Lowest</string>
     <string name="ui_videoRecorder_action_start_label">Start Video Recording</string>
+    <string name="ui_videoRecorder_action_start_settings_enableAudio_label">Record with Audio</string>
+    <string name="ui_videoRecorder_action_start_settings_cameraLens_back_label">Back facing</string>
+    <string name="ui_videoRecorder_action_start_settings_cameraLens_front_label">Front facing</string>
+    <string name="ui_videoRecorder_action_start_settings_cameraLens_external_label">External Camera</string>
+    <string name="ui_videoRecorder_action_start_settings_cameraLens_label">Camera %s</string>
+    <string name="ui_videoRecorder_action_start_settings_start_label">Start Recording</string>
+    <string name="ui_videoRecorder_action_start_settings_label">Prepare your recording</string>
+    <string name="ui_videoRecorder_action_start_settings_cameraLens_selection_label">Select camera</string>
 </resources>

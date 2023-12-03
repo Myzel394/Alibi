@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
-import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
 
 @Composable
@@ -41,24 +39,24 @@ fun VideoRecordingStart(
 ) {
     val context = LocalContext.current
 
-    // We can't get the current `notificationDetails` inside the
-    // `onPermissionAvailable` function. We'll instead use this hack
-    // with `LaunchedEffect` to get the current value.
-    var startRecording by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(startRecording) {
-        if (startRecording) {
-            startRecording = false
+    var showSheet by rememberSaveable {
+        mutableStateOf(false)
+    }
 
-            videoRecorder.startRecording(context, appSettings)
-        }
+    if (showSheet) {
+        VideoRecorderPreparationSheet(
+            onDismiss = {
+                showSheet = false
+            },
+        )
     }
 
     PermissionRequester(
         permission = Manifest.permission.RECORD_AUDIO,
         icon = Icons.Default.Mic,
         onPermissionAvailable = {
-            startRecording = true
-        }
+            showSheet = true
+        },
     ) { trigger ->
         val label = stringResource(R.string.ui_videoRecorder_action_start_label)
 
