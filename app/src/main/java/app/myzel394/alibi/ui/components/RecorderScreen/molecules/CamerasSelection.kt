@@ -1,10 +1,13 @@
 package app.myzel394.alibi.ui.components.RecorderScreen.molecules
 
+import CameraSelectionButton
+import androidx.annotation.OptIn
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalLensFacing
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import app.myzel394.alibi.R
-import app.myzel394.alibi.ui.components.RecorderScreen.atoms.CameraSelectionButton
 import app.myzel394.alibi.ui.models.VideoRecorderSettingsModel
 import app.myzel394.alibi.ui.utils.CameraInfo
 
@@ -24,23 +27,23 @@ fun CamerasSelection(
             CameraSelectionButton(
                 cameraID = CameraInfo.Lens.BACK,
                 label = stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_back_label),
-                selected = videoSettings.cameraID == 0,
+                selected = videoSettings.cameraID == CameraInfo.Lens.BACK.androidValue,
                 onSelected = {
-                    videoSettings.cameraID = 0
+                    videoSettings.cameraID = CameraInfo.Lens.BACK.androidValue
                 },
             )
             CameraSelectionButton(
                 cameraID = CameraInfo.Lens.FRONT,
                 label = stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_front_label),
-                selected = videoSettings.cameraID == 1,
+                selected = videoSettings.cameraID == CameraInfo.Lens.FRONT.androidValue,
                 onSelected = {
-                    videoSettings.cameraID = 1
+                    videoSettings.cameraID = CameraInfo.Lens.FRONT.androidValue
                 },
             )
         } else {
             cameras.forEach { camera ->
                 CameraSelectionButton(
-                    cameraID = CameraInfo.CAMERA_INT_TO_LENS_MAP[camera.id]!!,
+                    cameraID = camera.lens,
                     selected = videoSettings.cameraID == camera.id,
                     onSelected = {
                         videoSettings.cameraID = camera.id

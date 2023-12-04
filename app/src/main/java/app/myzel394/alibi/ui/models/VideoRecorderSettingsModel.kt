@@ -11,14 +11,18 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import app.myzel394.alibi.ui.utils.CameraInfo
 import app.myzel394.alibi.ui.utils.PermissionHelper
 
 class VideoRecorderSettingsModel : ViewModel() {
     var enableAudio by mutableStateOf(true)
-    var cameraID by mutableIntStateOf(CameraSelector.LENS_FACING_BACK)
+    var cameraID by mutableIntStateOf(CameraInfo.Lens.BACK.androidValue)
+
+    val cameraSelector: CameraSelector
+        get() = CameraSelector.Builder().requireLensFacing(cameraID).build()
 
     fun init(context: Context) {
         enableAudio = PermissionHelper.hasGranted(context, Manifest.permission.RECORD_AUDIO)
-        cameraID = CameraSelector.LENS_FACING_BACK
+        cameraID = CameraInfo.Lens.BACK.androidValue
     }
 }
