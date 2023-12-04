@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -27,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import app.myzel394.alibi.R
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
@@ -48,12 +48,13 @@ fun VideoRecordingStart(
 
     if (showSheet) {
         VideoRecorderPreparationSheet(
+            showPreview = showPreview,
+            videoSettings = videoRecorder,
             onDismiss = {
                 showSheet = false
             },
             onPreviewVisible = onHideAudioRecording,
             onPreviewHidden = onShowAudioRecording,
-            showPreview = showPreview,
             onStartRecording = {
                 videoRecorder.startRecording(context, appSettings)
             },

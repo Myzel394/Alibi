@@ -1,8 +1,10 @@
 package app.myzel394.alibi.services
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.util.Range
 import androidx.camera.core.Camera
+import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.TorchState
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -27,6 +29,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.properties.Delegates
 
 const val CAMERA_CLOSE_TIMEOUT = 20000L
 
@@ -49,10 +52,22 @@ class VideoRecorderService :
     // Absolute last completer that can be awaited to ensure that the camera is closed
     private var _cameraCloserListener = CompletableDeferred<Unit>()
 
-    private var selectedCamera: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private lateinit var selectedCamera: CameraSelector
+    private var enableAudio by Delegates.notNull<Boolean>()
 
     var cameraControl: CameraControl? = null
         private set
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == "init") {
+            selectedCamera = CameraSelector.Builder().requireLensFacing(
+                intent.getIntExtra("cameraID", CameraSelector.LENS_FACING_BACK)
+            ).build()
+            enableAudio = intent.getBooleanExtra("enableAudio", true)
+        }
+
+        return super.onStartCommand(intent, flags, startId)
+    }
 
     override fun start() {
         super.start()
@@ -189,7 +204,13 @@ class VideoRecorderService :
     private fun prepareVideoRecording() =
         videoCapture!!.output
             .prepareRecording(this, settings.getOutputOptions(this))
-            .withAudioEnabled()
+            .run {
+                if (enableAudio) {
+                    return@run withAudioEnabled()
+                }
+
+                this
+            }
 
     override fun getRecordingInformation(): RecordingInformation = RecordingInformation(
         folderPath = batchesFolder.exportFolderForSettings(),

@@ -8,13 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import app.myzel394.alibi.R
-import app.myzel394.alibi.ui.models.VideoRecorderSettingsModel
+import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.utils.CameraInfo
 
 @Composable
 fun CamerasSelection(
     cameras: Iterable<CameraInfo>,
-    videoSettings: VideoRecorderSettingsModel
+    videoSettings: VideoRecorderModel,
 ) {
     val CAMERA_LENS_TEXT_MAP = mapOf(
         CameraInfo.Lens.BACK to stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_back_label),

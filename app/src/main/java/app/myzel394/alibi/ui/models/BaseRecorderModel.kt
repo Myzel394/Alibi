@@ -90,8 +90,13 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
         recordingTime = null
     }
 
+    protected open fun handleIntent(intent: Intent) = intent
+
     // If override, call `super` AFTER setting the settings
-    open fun startRecording(context: Context, settings: AppSettings) {
+    open fun startRecording(
+        context: Context,
+        settings: AppSettings,
+    ) {
         this.settings = settings
 
         runCatching {
@@ -121,7 +126,7 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
                     ),
                 )
             }
-        }
+        }.let(::handleIntent)
         ContextCompat.startForegroundService(context, intent)
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }

@@ -38,7 +38,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -53,19 +55,20 @@ import app.myzel394.alibi.ui.components.RecorderScreen.atoms.CameraPreview
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.effects.rememberPrevious
-import app.myzel394.alibi.ui.models.VideoRecorderSettingsModel
+import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.utils.CameraInfo
+import kotlin.math.abs
 
 @OptIn(
     ExperimentalMaterial3Api::class,
 )
 @Composable
 fun VideoRecorderPreparationSheet(
+    showPreview: Boolean,
+    videoSettings: VideoRecorderModel,
     onDismiss: () -> Unit,
-    videoSettings: VideoRecorderSettingsModel = viewModel(),
     onPreviewVisible: () -> Unit,
     onPreviewHidden: () -> Unit,
-    showPreview: Boolean,
     onStartRecording: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(true) { sheetValue ->
@@ -87,7 +90,7 @@ fun VideoRecorderPreparationSheet(
                 Unit
             else
                 BottomSheetDefaults.DragHandle()
-        }
+        },
     ) {
         Box(
             modifier = Modifier
@@ -184,6 +187,9 @@ fun VideoRecorderPreparationSheet(
                                         onLongPress = {
                                             onPreviewVisible()
                                         },
+                                        onTap = {
+                                            onStartRecording()
+                                        }
                                     )
                                 },
                             horizontalArrangement = Arrangement.Center,
