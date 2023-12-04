@@ -82,7 +82,7 @@ fun RecorderScreen(
         }
     }
 
-    var isProcessingAudio by remember { mutableStateOf(false) }
+    var isProcessing by remember { mutableStateOf(false) }
     var showRecorderError by remember { mutableStateOf(false) }
 
     fun saveAsLastRecording() {
@@ -122,7 +122,7 @@ fun RecorderScreen(
 
     fun saveRecording() {
         scope.launch {
-            isProcessingAudio = true
+            isProcessing = true
 
             // Give the user some time to see the processing dialog
             delay(100)
@@ -166,7 +166,7 @@ fun RecorderScreen(
             } catch (error: Exception) {
                 Log.getStackTraceString(error)
             } finally {
-                isProcessingAudio = false
+                isProcessing = false
             }
         }
     }
@@ -190,7 +190,7 @@ fun RecorderScreen(
         }
     }
 
-    if (isProcessingAudio)
+    if (isProcessing)
         AlertDialog(
             onDismissRequest = { },
             icon = {

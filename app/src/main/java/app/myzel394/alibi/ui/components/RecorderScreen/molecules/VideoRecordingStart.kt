@@ -54,6 +54,9 @@ fun VideoRecordingStart(
             onPreviewVisible = onHideAudioRecording,
             onPreviewHidden = onShowAudioRecording,
             showPreview = showPreview,
+            onStartRecording = {
+                videoRecorder.startRecording(context, appSettings)
+            },
         )
     }
 
