@@ -1,5 +1,6 @@
 package app.myzel394.alibi.ui.components.RecorderScreen.molecules
 
+import android.Manifest
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +25,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -41,6 +44,7 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.CameraPreview
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
+import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.models.VideoRecorderSettingsModel
 import app.myzel394.alibi.ui.utils.CameraInfo
 
@@ -60,6 +64,10 @@ fun VideoRecorderPreparationSheet(
 
     val context = LocalContext.current
     val cameras = CameraInfo.queryAvailableCameras(context)
+
+    LaunchedEffect(Unit) {
+        videoSettings.init(context)
+    }
 
     if (showPreview)
         CameraPreview(
@@ -95,13 +103,21 @@ fun VideoRecorderPreparationSheet(
                             style = MaterialTheme.typography.labelLarge,
                         )
                     }
-                    GlobalSwitch(
-                        label = stringResource(R.string.ui_videoRecorder_action_start_settings_enableAudio_label),
-                        checked = videoSettings.enableAudio,
-                        onCheckedChange = {
-                            videoSettings.enableAudio = it
-                        }
-                    )
+                    PermissionRequester(
+                        permission = Manifest.permission.RECORD_AUDIO,
+                        icon = Icons.Default.Mic,
+                        onPermissionAvailable = {
+                            videoSettings.enableAudio = !videoSettings.enableAudio
+                        },
+                    ) { trigger ->
+                        GlobalSwitch(
+                            label = stringResource(R.string.ui_videoRecorder_action_start_settings_enableAudio_label),
+                            checked = videoSettings.enableAudio,
+                            onCheckedChange = {
+                                trigger()
+                            }
+                        )
+                    }
 
                     Text(
                         stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_selection_label),

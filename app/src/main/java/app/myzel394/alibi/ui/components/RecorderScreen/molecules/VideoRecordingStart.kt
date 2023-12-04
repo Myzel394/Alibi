@@ -58,8 +58,8 @@ fun VideoRecordingStart(
     }
 
     PermissionRequester(
-        permission = Manifest.permission.RECORD_AUDIO,
-        icon = Icons.Default.Mic,
+        permission = Manifest.permission.CAMERA,
+        icon = Icons.Default.CameraAlt,
         onPermissionAvailable = {
             showSheet = true
         },
