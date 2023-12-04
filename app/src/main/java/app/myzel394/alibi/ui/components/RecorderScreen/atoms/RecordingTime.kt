@@ -1,4 +1,4 @@
-package app.myzel394.alibi.ui.components.AudioRecorder.atoms
+package app.myzel394.alibi.ui.components.RecorderScreen.atoms
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.ui.components.atoms.Pulsating
-import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.utils.formatDuration
 
 @Composable

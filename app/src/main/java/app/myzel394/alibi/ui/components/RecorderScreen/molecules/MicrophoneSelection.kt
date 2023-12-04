@@ -1,13 +1,10 @@
-package app.myzel394.alibi.ui.components.AudioRecorder.molecules
+package app.myzel394.alibi.ui.components.RecorderScreen.molecules
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneSelectionButton
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneTypeInfo
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.MicrophoneSelectionButton
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.MicrophoneTypeInfo
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
 import app.myzel394.alibi.ui.models.AudioRecorderModel

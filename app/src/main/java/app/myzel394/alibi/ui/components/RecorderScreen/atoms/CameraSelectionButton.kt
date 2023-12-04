@@ -1,4 +1,4 @@
-package app.myzel394.alibi.ui.components.AudioRecorder.atoms
+package app.myzel394.alibi.ui.components.RecorderScreen.atoms
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -25,9 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import app.myzel394.alibi.R
 import app.myzel394.alibi.ui.utils.CameraInfo
 
 @Composable

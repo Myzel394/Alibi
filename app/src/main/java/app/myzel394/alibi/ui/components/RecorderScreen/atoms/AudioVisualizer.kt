@@ -1,4 +1,4 @@
-package app.myzel394.alibi.ui.components.AudioRecorder.atoms
+package app.myzel394.alibi.ui.components.RecorderScreen.atoms
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,7 +29,7 @@ fun AudioVisualizer(
         val width = this.size.width
         val boxWidth = width / amplitudes.size
 
-        amplitudes.forEachIndexed {index, amplitude ->
+        amplitudes.forEachIndexed { index, amplitude ->
             val x = boxWidth * index
             val amplitudePercentage = (amplitude.toFloat() / MAX_AMPLITUDE).coerceAtMost(1f)
             val boxHeight = height * amplitudePercentage

@@ -1,8 +1,7 @@
-package app.myzel394.alibi.ui.components.AudioRecorder.atoms
+package app.myzel394.alibi.ui.components.RecorderScreen.atoms
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MicOff
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,7 +17,7 @@ import app.myzel394.alibi.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MicrophoneReconnectedDialog(
+fun MicrophoneDisconnectedDialog(
     microphoneName: String,
     onClose: () -> Unit,
 ) {
@@ -27,7 +26,7 @@ fun MicrophoneReconnectedDialog(
         title = {
             Text(
                 stringResource(
-                    R.string.ui_audioRecorder_error_microphoneReconnected_title,
+                    R.string.ui_audioRecorder_error_microphoneDisconnected_title,
                 ),
                 textAlign = TextAlign.Center,
             )
@@ -35,14 +34,15 @@ fun MicrophoneReconnectedDialog(
         text = {
             Text(
                 stringResource(
-                    R.string.ui_audioRecorder_error_microphoneReconnected_message,
+                    R.string.ui_audioRecorder_error_microphoneDisconnected_message,
+                    microphoneName,
                     microphoneName,
                 )
             )
         },
         icon = {
             Icon(
-                Icons.Default.Star,
+                Icons.Default.MicOff,
                 contentDescription = null,
             )
         },

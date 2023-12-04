@@ -1,21 +1,15 @@
-package app.myzel394.alibi.ui.components.AudioRecorder.molecules
+package app.myzel394.alibi.ui.components.RecorderScreen.molecules
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import app.myzel394.alibi.dataStore
-import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneDisconnectedDialog
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneReconnectedDialog
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.MicrophoneDisconnectedDialog
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.MicrophoneReconnectedDialog
 import app.myzel394.alibi.ui.effects.rememberPrevious
 import app.myzel394.alibi.ui.models.AudioRecorderModel
-import app.myzel394.alibi.ui.utils.MicrophoneInfo
 
 @Composable
 fun MicrophoneStatus(

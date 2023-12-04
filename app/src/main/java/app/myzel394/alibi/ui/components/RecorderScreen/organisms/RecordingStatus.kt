@@ -1,4 +1,4 @@
-package app.myzel394.alibi.ui.components.AudioRecorder.organisms
+package app.myzel394.alibi.ui.components.RecorderScreen.organisms
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,21 +23,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import app.myzel394.alibi.dataStore
-import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.DeleteButton
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneDisconnectedDialog
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.MicrophoneReconnectedDialog
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.PauseResumeButton
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.RealtimeAudioVisualizer
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.RecordingTime
-import app.myzel394.alibi.ui.components.AudioRecorder.atoms.SaveButton
-import app.myzel394.alibi.ui.components.AudioRecorder.molecules.MicrophoneSelection
-import app.myzel394.alibi.ui.components.AudioRecorder.molecules.MicrophoneStatus
-import app.myzel394.alibi.ui.effects.rememberPrevious
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.DeleteButton
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.PauseResumeButton
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RealtimeAudioVisualizer
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RecordingTime
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.SaveButton
+import app.myzel394.alibi.ui.components.RecorderScreen.molecules.MicrophoneStatus
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.utils.KeepScreenOn
-import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 
