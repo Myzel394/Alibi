@@ -42,6 +42,10 @@ class AudioRecorderModel :
         service.onMicrophoneReconnected = {
             microphoneStatus = MicrophoneConnectivityStatus.CONNECTED
         }
+        service.onAmplitudeChange = { amps ->
+            amplitudes = amps
+            onAmplitudeChange()
+        }
         service.settings =
             AudioRecorderService.Settings.from(settings)
 
