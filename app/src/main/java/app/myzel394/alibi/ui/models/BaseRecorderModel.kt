@@ -133,6 +133,11 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
 
     suspend fun stopRecording(context: Context) {
         recorderService!!.stopRecording()
+
+        val intent = Intent(context, intentClass)
+
+        context.unbindService(connection)
+        context.stopService(intent)
     }
 
     fun pauseRecording() {
