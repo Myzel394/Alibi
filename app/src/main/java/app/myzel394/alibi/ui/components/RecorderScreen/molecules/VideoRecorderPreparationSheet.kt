@@ -71,9 +71,7 @@ fun VideoRecorderPreparationSheet(
     onPreviewHidden: () -> Unit,
     onStartRecording: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(true) { sheetValue ->
-        false
-    }
+    val sheetState = rememberModalBottomSheetState(true)
 
     val context = LocalContext.current
     val cameras = CameraInfo.queryAvailableCameras(context)
