@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ import app.myzel394.alibi.ui.components.RecorderScreen.molecules.MicrophoneStatu
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.utils.KeepScreenOn
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 @Composable
@@ -39,6 +41,8 @@ fun RecordingStatus(
     audioRecorder: AudioRecorderModel,
 ) {
     val context = LocalContext.current
+
+    val scope = rememberCoroutineScope()
 
     var now by remember { mutableStateOf(LocalDateTime.now()) }
 
@@ -97,8 +101,10 @@ fun RecordingStatus(
             ) {
                 DeleteButton(
                     onDelete = {
-                        //audioRecorder.stopRecording(context)
-                        audioRecorder.batchesFolder!!.deleteRecordings();
+                        scope.launch {
+                            audioRecorder.stopRecording(context)
+                            audioRecorder.batchesFolder!!.deleteRecordings()
+                        }
                     }
                 )
             }
@@ -126,10 +132,12 @@ fun RecordingStatus(
             ) {
                 SaveButton(
                     onSave = {
-                        runCatching {
-                            //audioRecorder.stopRecording(context)
+                        scope.launch {
+                            runCatching {
+                                audioRecorder.stopRecording(context)
+                            }
+                            audioRecorder.onRecordingSave()
                         }
-                        audioRecorder.onRecordingSave()
                     }
                 )
             }
