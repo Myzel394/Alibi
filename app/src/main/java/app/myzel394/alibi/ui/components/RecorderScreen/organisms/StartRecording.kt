@@ -1,6 +1,7 @@
 package app.myzel394.alibi.ui.components.RecorderScreen.organisms
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,7 +54,9 @@ fun StartRecording(
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 32.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -72,29 +75,14 @@ fun StartRecording(
             showPreview = !showAudioRecorder,
         )
 
-        Text(
-            stringResource(
-                R.string.ui_audioRecorder_action_start_description,
-                appSettings.maxDuration / 1000 / 60
-            ),
-            style = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
-            modifier = Modifier
-                .widthIn(max = 300.dp)
-                .fillMaxWidth(),
-            textAlign = TextAlign.Center,
-        )
-
         val forceUpdate = rememberForceUpdateOnLifeCycleChange()
-        if (appSettings.lastRecording?.hasRecordingsAvailable(context) == true) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .then(forceUpdate),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom,
-            ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .then(forceUpdate),
+            verticalArrangement = Arrangement.Bottom,
+        ) {
+            if (appSettings.lastRecording?.hasRecordingsAvailable(context) == true) {
                 val label = stringResource(
                     R.string.ui_audioRecorder_action_saveOldRecording_label,
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
@@ -119,8 +107,21 @@ fun StartRecording(
                     Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
                     Text(label)
                 }
+            } else {
+                Text(
+                    stringResource(
+                        R.string.ui_audioRecorder_action_start_description,
+                        appSettings.maxDuration / 1000 / 60
+                    ),
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
+                    modifier = Modifier
+                        .widthIn(max = 300.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                )
             }
-        } else
-            Spacer(modifier = Modifier.weight(1f))
+        }
     }
 }
