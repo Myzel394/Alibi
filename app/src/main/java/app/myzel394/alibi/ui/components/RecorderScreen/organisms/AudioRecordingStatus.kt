@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 @Composable
-fun RecordingStatus(
+fun AudioRecordingStatus(
     audioRecorder: AudioRecorderModel,
 ) {
     val context = LocalContext.current

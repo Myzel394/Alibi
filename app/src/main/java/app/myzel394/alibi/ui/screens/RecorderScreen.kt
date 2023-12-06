@@ -37,7 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import app.myzel394.alibi.ui.components.RecorderScreen.organisms.RecordingStatus
+import app.myzel394.alibi.ui.components.RecorderScreen.organisms.AudioRecordingStatus
 import app.myzel394.alibi.ui.components.RecorderScreen.organisms.StartRecording
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
@@ -306,7 +306,7 @@ fun RecorderScreen(
                 context.dataStore.data.collectAsState(AppSettings.getDefaultInstance()).value
 
             if (audioRecorder.isInRecording)
-                RecordingStatus(audioRecorder = audioRecorder)
+                AudioRecordingStatus(audioRecorder = audioRecorder)
             else
                 StartRecording(
                     audioRecorder = audioRecorder,
