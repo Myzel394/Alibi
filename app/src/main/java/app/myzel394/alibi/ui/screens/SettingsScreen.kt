@@ -158,8 +158,6 @@ fun SettingsScreen(
                         SaveFolderTile(settings = settings)
 
                         DividerTitle(
-                            modifier = Modifier
-                                .fillMaxWidth(),
                             title = stringResource(R.string.ui_settings_sections_audio_title),
                             description = stringResource(R.string.ui_settings_sections_audio_description),
                         )
