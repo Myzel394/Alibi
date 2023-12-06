@@ -50,9 +50,4 @@ class VideoRecorderModel :
             putExtra("cameraID", cameraID)
             putExtra("enableAudio", enableAudio)
         }
-
-
-    override fun startRecording(context: Context, settings: AppSettings) {
-        super.startRecording(context, settings)
-    }
 }

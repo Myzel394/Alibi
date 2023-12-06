@@ -75,7 +75,9 @@ fun AudioRecordingStatus(
             isPaused = audioRecorder.isPaused,
             onDelete = {
                 scope.launch {
-                    audioRecorder.stopRecording(context)
+                    runCatching {
+                        audioRecorder.stopRecording(context)
+                    }
                     audioRecorder.batchesFolder!!.deleteRecordings()
                 }
             },
@@ -88,9 +90,7 @@ fun AudioRecordingStatus(
             },
             onSave = {
                 scope.launch {
-                    runCatching {
-                        audioRecorder.stopRecording(context)
-                    }
+                    audioRecorder.stopRecording(context)
                     audioRecorder.onRecordingSave()
                 }
             }

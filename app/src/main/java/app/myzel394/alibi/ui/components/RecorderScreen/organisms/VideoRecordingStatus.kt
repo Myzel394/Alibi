@@ -78,8 +78,6 @@ fun VideoRecordingStatus(
             modifier = Modifier.padding(bottom = 32.dp),
         ) {
             val cameraControl = videoRecorder.recorderService!!.cameraControl!!
-            println("cameraControl.hasTorchAvailable(): ${cameraControl.hasTorchAvailable()}")
-            println("videoRecorder: ${videoRecorder.recorderService?.cameraControl}")
             if (cameraControl.hasTorchAvailable()) {
                 val isTorchEnabled = cameraControl.isTorchEnabled()
 
@@ -101,7 +99,9 @@ fun VideoRecordingStatus(
                 isPaused = videoRecorder.isPaused,
                 onDelete = {
                     scope.launch {
-                        videoRecorder.stopRecording(context)
+                        runCatching {
+                            videoRecorder.stopRecording(context)
+                        }
                         videoRecorder.batchesFolder!!.deleteRecordings()
                     }
                 },
@@ -114,9 +114,7 @@ fun VideoRecordingStatus(
                 },
                 onSave = {
                     scope.launch {
-                        runCatching {
-                            videoRecorder.stopRecording(context)
-                        }
+                        videoRecorder.stopRecording(context)
                         videoRecorder.onRecordingSave()
                     }
                 }

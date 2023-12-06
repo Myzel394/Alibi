@@ -253,9 +253,7 @@ class VideoRecorderService :
                 targetVideoBitRate = appSettings.videoRecorderSettings.targetedVideoBitRate,
                 targetFrameRate = appSettings.videoRecorderSettings.targetFrameRate,
                 quality = appSettings.videoRecorderSettings.getQualitySelector()
-                    ?: QualitySelector.from(
-                        Quality.HIGHEST
-                    ),
+                    ?: QualitySelector.from(Quality.HIGHEST),
             )
         }
     }
