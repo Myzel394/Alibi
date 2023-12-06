@@ -31,8 +31,8 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
     var recordingTime by mutableStateOf<Long?>(null)
         protected set
 
-    val isInRecording: Boolean
-        get() = recorderState !== RecorderState.IDLE && recordingTime != null
+    open val isInRecording: Boolean
+        get() = recorderState !== RecorderState.IDLE && recordingTime != null && recorderService != null
 
     val isPaused: Boolean
         get() = recorderState === RecorderState.PAUSED

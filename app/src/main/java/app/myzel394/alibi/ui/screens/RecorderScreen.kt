@@ -46,6 +46,7 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.BatchesFolder
+import app.myzel394.alibi.ui.components.RecorderScreen.organisms.VideoRecordingStatus
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
@@ -307,6 +308,8 @@ fun RecorderScreen(
 
             if (audioRecorder.isInRecording)
                 AudioRecordingStatus(audioRecorder = audioRecorder)
+            else if (videoRecorder.isInRecording)
+                VideoRecordingStatus(videoRecorder = videoRecorder)
             else
                 StartRecording(
                     audioRecorder = audioRecorder,

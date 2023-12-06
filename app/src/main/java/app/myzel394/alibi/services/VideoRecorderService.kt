@@ -274,5 +274,7 @@ class VideoRecorderService :
         fun isTorchEnabled(): Boolean {
             return camera.cameraInfo.torchState.value == TorchState.ON
         }
+
+        fun hasTorchAvailable() = camera.cameraInfo.hasFlashUnit()
     }
 }
