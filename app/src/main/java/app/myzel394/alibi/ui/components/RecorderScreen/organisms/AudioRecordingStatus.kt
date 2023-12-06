@@ -27,9 +27,12 @@ import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.DeleteButton
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.PauseResumeButton
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RealtimeAudioVisualizer
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RecordingProgress
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RecordingTime
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.SaveButton
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.MicrophoneStatus
+import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingControl
+import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingStatus
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.utils.KeepScreenOn
 import kotlinx.coroutines.delay
@@ -53,15 +56,7 @@ fun AudioRecordingStatus(
         }
     }
 
-    // Only show animation when the recording has just started
-    val recordingJustStarted = audioRecorder.recordingTime!! <= 1000L
-    var progressVisible by remember { mutableStateOf(!recordingJustStarted) }
-    LaunchedEffect(Unit) {
-        progressVisible = true
-    }
-
     KeepScreenOn()
-
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -70,78 +65,36 @@ fun AudioRecordingStatus(
     ) {
         Box {}
         RealtimeAudioVisualizer(audioRecorder = audioRecorder)
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            RecordingTime(audioRecorder.recordingTime!!)
-            Spacer(modifier = Modifier.height(16.dp))
-            AnimatedVisibility(
-                visible = progressVisible,
-                enter = expandHorizontally(
-                    tween(1000)
-                )
-            ) {
-                LinearProgressIndicator(
-                    progress = audioRecorder.progress,
-                    modifier = Modifier
-                        .width(300.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-        }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center,
-            ) {
-                DeleteButton(
-                    onDelete = {
-                        scope.launch {
-                            audioRecorder.stopRecording(context)
-                            audioRecorder.batchesFolder!!.deleteRecordings()
-                        }
+        RecordingStatus(
+            recordingTime = audioRecorder.recordingTime!!,
+            progress = audioRecorder.progress,
+        )
+
+        RecordingControl(
+            isPaused = audioRecorder.isPaused,
+            onDelete = {
+                scope.launch {
+                    audioRecorder.stopRecording(context)
+                    audioRecorder.batchesFolder!!.deleteRecordings()
+                }
+            },
+            onPauseResume = {
+                if (audioRecorder.isPaused) {
+                    audioRecorder.resumeRecording()
+                } else {
+                    audioRecorder.pauseRecording()
+                }
+            },
+            onSave = {
+                scope.launch {
+                    runCatching {
+                        audioRecorder.stopRecording(context)
                     }
-                )
+                    audioRecorder.onRecordingSave()
+                }
             }
-
-            Box(
-                contentAlignment = Alignment.Center,
-            ) {
-                PauseResumeButton(
-                    isPaused = audioRecorder.isPaused,
-                    onChange = {
-                        if (audioRecorder.isPaused) {
-                            audioRecorder.resumeRecording()
-                        } else {
-                            audioRecorder.pauseRecording()
-                        }
-                    },
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center,
-            ) {
-                SaveButton(
-                    onSave = {
-                        scope.launch {
-                            runCatching {
-                                audioRecorder.stopRecording(context)
-                            }
-                            audioRecorder.onRecordingSave()
-                        }
-                    }
-                )
-            }
-        }
+        )
 
         MicrophoneStatus(audioRecorder)
     }
