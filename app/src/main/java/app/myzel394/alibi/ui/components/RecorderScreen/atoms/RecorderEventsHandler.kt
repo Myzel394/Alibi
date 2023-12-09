@@ -54,12 +54,16 @@ fun RecorderEventsHandler(
         settings.audioRecorderSettings.getMimeType()
     ) {
         if (settings.deleteRecordingsImmediately) {
-            audioRecorder.batchesFolder!!.deleteRecordings()
-            videoRecorder.batchesFolder!!.deleteRecordings()
+            runCatching {
+                audioRecorder.batchesFolder?.deleteRecordings()
+            }
+            runCatching {
+                videoRecorder.batchesFolder?.deleteRecordings()
+            }
         }
 
-        if (!audioRecorder.batchesFolder!!.hasRecordingsAvailable()
-            || !videoRecorder.batchesFolder!!.hasRecordingsAvailable()
+        if (audioRecorder.batchesFolder?.hasRecordingsAvailable() == false
+            && videoRecorder.batchesFolder?.hasRecordingsAvailable() == false
         ) {
             scope.launch {
                 dataStore.updateData {
