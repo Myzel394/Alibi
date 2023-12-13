@@ -105,11 +105,11 @@ class VideoRecorderService :
         super.startNewCycle()
 
         fun action() {
-            activeRecording?.stop()
+            stopActiveRecording()
             val newRecording = prepareVideoRecording()
 
             activeRecording = newRecording.start(ContextCompat.getMainExecutor(this)) { event ->
-                if (event is VideoRecordEvent.Finalize && this@VideoRecorderService.state == RecorderState.IDLE) {
+                if (event is VideoRecordEvent.Finalize && this@VideoRecorderService._newState == RecorderState.IDLE) {
                     _videoFinalizerListener.complete(Unit)
                 }
             }
@@ -197,7 +197,9 @@ class VideoRecorderService :
     // `resume` override not needed as `startNewCycle` is called by `IntervalRecorderService`
 
     private fun stopActiveRecording() {
-        activeRecording?.stop()
+        runCatching {
+            activeRecording?.stop()
+        }
     }
 
     @SuppressLint("MissingPermission")

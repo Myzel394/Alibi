@@ -136,7 +136,7 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
 
         val intent = Intent(context, intentClass)
 
-        context.unbindService(connection)
+        unbindFromService(context)
         context.stopService(intent)
     }
 

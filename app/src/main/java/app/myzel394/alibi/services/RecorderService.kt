@@ -32,6 +32,9 @@ abstract class RecorderService : LifecycleService() {
     var state = RecorderState.IDLE
         private set
 
+    protected var _newState = RecorderState.IDLE
+        private set
+
     var onStateChange: ((RecorderState) -> Unit)? = null
     var onError: () -> Unit = {}
 
@@ -168,8 +171,9 @@ abstract class RecorderService : LifecycleService() {
     }
 
     suspend fun stopRecording() {
-        changeState(RecorderState.IDLE)
+        _newState = RecorderState.IDLE
         stop()
+        changeState(RecorderState.IDLE)
     }
 
     override fun onDestroy() {
