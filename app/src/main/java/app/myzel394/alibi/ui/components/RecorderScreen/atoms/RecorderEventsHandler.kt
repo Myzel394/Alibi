@@ -21,6 +21,7 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.BatchesFolder
+import app.myzel394.alibi.helpers.VideoBatchesFolder
 import app.myzel394.alibi.services.IntervalRecorderService
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.BaseRecorderModel
@@ -50,21 +51,29 @@ fun RecorderEventsHandler(
     var isProcessing by remember { mutableStateOf(false) }
     var showRecorderError by remember { mutableStateOf(false) }
 
-    val saveFile = rememberFileSaverDialog(
-        settings.audioRecorderSettings.getMimeType()
-    ) {
+    val saveAudioFile = rememberFileSaverDialog(settings.audioRecorderSettings.getMimeType()) {
         if (settings.deleteRecordingsImmediately) {
             runCatching {
                 audioRecorder.batchesFolder?.deleteRecordings()
             }
+        }
+
+        if (audioRecorder.batchesFolder?.hasRecordingsAvailable() == false) {
+            scope.launch {
+                dataStore.updateData {
+                    it.setLastRecording(null)
+                }
+            }
+        }
+    }
+    val saveVideoFile = rememberFileSaverDialog(settings.videoRecorderSettings.getMimeType()) {
+        if (settings.deleteRecordingsImmediately) {
             runCatching {
                 videoRecorder.batchesFolder?.deleteRecordings()
             }
         }
 
-        if (audioRecorder.batchesFolder?.hasRecordingsAvailable() == false
-            && videoRecorder.batchesFolder?.hasRecordingsAvailable() == false
-        ) {
+        if (videoRecorder.batchesFolder?.hasRecordingsAvailable() == false) {
             scope.launch {
                 dataStore.updateData {
                     it.setLastRecording(null)
@@ -126,7 +135,10 @@ fun RecorderEventsHandler(
                         ?: settings.lastRecording
                         ?: throw Exception("No recording information available")
                 val batchesFolder =
-                    AudioBatchesFolder.importFromFolder(recording.folderPath, context)
+                    if (recorder.javaClass == AudioRecorderModel::class.java)
+                        AudioBatchesFolder.importFromFolder(recording.folderPath, context)
+                    else
+                        VideoBatchesFolder.importFromFolder(recording.folderPath, context)
 
                 batchesFolder.concatenate(
                     recording.recordingStart,
@@ -141,12 +153,21 @@ fun RecorderEventsHandler(
 
                 when (batchesFolder.type) {
                     BatchesFolder.BatchType.INTERNAL -> {
-                        saveFile(
-                            batchesFolder.asInternalGetOutputFile(
-                                recording.recordingStart,
-                                recording.fileExtension,
-                            ), name
-                        )
+                        if (batchesFolder is AudioBatchesFolder) {
+                            saveAudioFile(
+                                batchesFolder.asInternalGetOutputFile(
+                                    recording.recordingStart,
+                                    recording.fileExtension,
+                                ), name
+                            )
+                        } else if (batchesFolder is VideoBatchesFolder) {
+                            saveVideoFile(
+                                batchesFolder.asInternalGetOutputFile(
+                                    recording.recordingStart,
+                                    recording.fileExtension,
+                                ), name
+                            )
+                        }
                     }
 
                     BatchesFolder.BatchType.CUSTOM -> {

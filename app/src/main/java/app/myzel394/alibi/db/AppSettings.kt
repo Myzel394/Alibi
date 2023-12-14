@@ -401,6 +401,8 @@ data class VideoRecorderSettings(
             )
         }
 
+    fun getMimeType() = "video/mp4"
+
     companion object {
         fun getDefaultInstance() = VideoRecorderSettings()
 
