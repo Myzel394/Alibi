@@ -142,4 +142,7 @@ dependencies {
 
     implementation "androidx.camera:camera-view:${camerax_version}"
     implementation "androidx.camera:camera-extensions:${camerax_version}"
+
+
+    implementation "com.valentinilk.shimmer:compose-shimmer:1.2.0"
 }

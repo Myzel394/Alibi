@@ -23,7 +23,7 @@ fun CamerasSelection(
     )
 
     Column {
-        if (cameras.count() == 2 && cameras.elementAt(0).id == 0 && cameras.elementAt(1).id == 1) {
+        if (CameraInfo.checkHasNormalCameras(cameras)) {
             CameraSelectionButton(
                 cameraID = CameraInfo.Lens.BACK,
                 label = stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_back_label),

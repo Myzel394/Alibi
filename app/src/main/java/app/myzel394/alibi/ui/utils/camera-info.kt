@@ -45,5 +45,9 @@ data class CameraInfo(
                 id = cameraId.toInt(),
             )
         }
+
+        // "normal cameras" means the device has a front and back camera
+        fun checkHasNormalCameras(cameras: Iterable<CameraInfo>) =
+            cameras.count() == 2 && cameras.elementAt(0).id == 0 && cameras.elementAt(1).id == 1
     }
 }

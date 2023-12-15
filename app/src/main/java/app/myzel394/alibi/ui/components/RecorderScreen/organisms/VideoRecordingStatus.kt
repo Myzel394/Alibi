@@ -3,6 +3,7 @@ package app.myzel394.alibi.ui.components.RecorderScreen.organisms
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,8 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,7 +32,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.util.TypedValueCompat
+import app.myzel394.alibi.R
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.DeleteButton
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.PauseResumeButton
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RecordingProgress
@@ -39,7 +46,9 @@ import app.myzel394.alibi.ui.components.RecorderScreen.atoms.TorchStatus
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingControl
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingStatus
 import app.myzel394.alibi.ui.models.VideoRecorderModel
+import app.myzel394.alibi.ui.utils.CameraInfo
 import app.myzel394.alibi.ui.utils.KeepScreenOn
+import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,6 +57,7 @@ fun VideoRecordingStatus(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val availableCameras = CameraInfo.queryAvailableCameras(context)
 
     KeepScreenOn()
     Column(
@@ -58,16 +68,57 @@ fun VideoRecordingStatus(
     ) {
         Box {}
 
-        Column {
+        Column(
+            verticalArrangement = Arrangement
+                .spacedBy(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             Icon(
                 Icons.Default.CameraAlt,
                 contentDescription = null,
                 modifier = Modifier.size(64.dp)
             )
+
+            if (videoRecorder.isStartingRecording) {
+                Box(
+                    modifier = Modifier
+                        .width(128.dp)
+                        .height(
+                            with(LocalDensity.current) {
+                                MaterialTheme.typography.labelMedium.fontSize.toDp()
+                            }
+                        )
+                        .shimmer()
+                        .background(
+                            MaterialTheme.colorScheme.surfaceVariant,
+                            MaterialTheme.shapes.small
+                        )
+                )
+            } else {
+                Text(
+                    stringResource(
+                        R.string.form_value_selected,
+                        if (CameraInfo.checkHasNormalCameras(availableCameras)) {
+                            videoRecorder.cameraID.let {
+                                if (it == CameraInfo.Lens.BACK.androidValue)
+                                    stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_back_label)
+                                else
+                                    stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_front_label)
+                            }
+                        } else {
+                            stringResource(
+                                R.string.ui_videoRecorder_action_start_settings_cameraLens_label,
+                                videoRecorder.cameraID
+                            )
+                        }
+                    ),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
         }
 
         RecordingStatus(
-            recordingTime = videoRecorder.recordingTime!!,
+            recordingTime = videoRecorder.recordingTime,
             progress = videoRecorder.progress,
         )
 
