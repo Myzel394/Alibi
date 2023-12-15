@@ -77,20 +77,22 @@ fun VideoRecordingStatus(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(bottom = 32.dp),
         ) {
-            val cameraControl = videoRecorder.recorderService!!.cameraControl!!
-            if (cameraControl.hasTorchAvailable()) {
-                val isTorchEnabled = cameraControl.isTorchEnabled()
+            if (!videoRecorder.isStartingRecording) {
+                val cameraControl = videoRecorder.recorderService!!.cameraControl!!
+                if (cameraControl.hasTorchAvailable()) {
+                    val isTorchEnabled = cameraControl.isTorchEnabled()
 
-                TorchStatus(
-                    enabled = isTorchEnabled,
-                    onChange = {
-                        if (isTorchEnabled) {
-                            cameraControl.disableTorch()
-                        } else {
-                            cameraControl.enableTorch()
-                        }
-                    },
-                )
+                    TorchStatus(
+                        enabled = isTorchEnabled,
+                        onChange = {
+                            if (isTorchEnabled) {
+                                cameraControl.disableTorch()
+                            } else {
+                                cameraControl.enableTorch()
+                            }
+                        },
+                    )
+                }
             }
 
             Divider()

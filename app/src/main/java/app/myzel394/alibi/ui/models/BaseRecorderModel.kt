@@ -77,6 +77,8 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
+            // `onServiceDisconnected` is called when the connection is unexpectedly lost,
+            // so we need to make sure to manually call `reset` to clean up in other places
             reset()
         }
     }
@@ -135,8 +137,13 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
         recorderService!!.stopRecording()
 
         val intent = Intent(context, intentClass)
-        context.unbindService(connection)
-        context.stopService(intent)
+        runCatching {
+            context.unbindService(connection)
+        }
+        runCatching {
+            context.stopService(intent)
+        }
+        reset()
     }
 
     fun pauseRecording() {

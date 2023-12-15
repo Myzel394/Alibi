@@ -25,7 +25,10 @@ class VideoRecorderModel :
     var cameraID by mutableIntStateOf(CameraInfo.Lens.BACK.androidValue)
 
     override val isInRecording: Boolean
-        get() = super.isInRecording && recorderService!!.cameraControl != null
+        get() = super.isInRecording
+
+    val isStartingRecording: Boolean
+        get() = recorderService?.cameraControl == null
 
     val cameraSelector: CameraSelector
         get() = CameraSelector.Builder().requireLensFacing(cameraID).build()

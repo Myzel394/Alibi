@@ -39,21 +39,27 @@ abstract class RecorderService : LifecycleService() {
     var recordingTime = 0L
         private set
 
-    protected abstract fun start()
-
-    protected abstract fun pause()
-
-    // TODO: Move pause / recording here
-    protected abstract fun resume()
-    protected open suspend fun stop() {
+    protected open fun start() {
+        createRecordingTimeTimer()
     }
 
-    override fun onDestroy() {
+    protected open fun pause() {
+        isPaused = true
+
+        recordingTimeTimer.shutdown()
+    }
+
+    protected open fun resume() {
+        createRecordingTimeTimer()
+    }
+
+    protected open suspend fun stop() {
+        recordingTimeTimer.shutdown()
+
         NotificationManagerCompat.from(this)
             .cancel(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID)
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
-        super.onDestroy()
     }
 
     protected abstract fun startForegroundService()
@@ -141,20 +147,9 @@ abstract class RecorderService : LifecycleService() {
                     isPaused = false
                 }
                 // `start` is handled by `startRecording`
-
-                createRecordingTimeTimer()
             }
 
-            RecorderState.PAUSED -> {
-                isPaused = true
-
-                recordingTimeTimer.shutdown()
-                pause()
-            }
-
-            RecorderState.STOPPED -> {
-                recordingTimeTimer.shutdown()
-            }
+            RecorderState.PAUSED -> pause()
 
             else -> {}
         }

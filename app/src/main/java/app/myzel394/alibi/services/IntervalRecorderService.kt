@@ -38,6 +38,7 @@ abstract class IntervalRecorderService<S : IntervalRecorderService.Settings, I> 
     }
 
     override fun start() {
+        super.start()
         batchesFolder.initFolders()
         if (!batchesFolder.checkIfFolderIsAccessible()) {
             onCustomOutputFolderNotAccessible()
@@ -48,10 +49,12 @@ abstract class IntervalRecorderService<S : IntervalRecorderService.Settings, I> 
     }
 
     override fun pause() {
+        super.pause()
         cycleTimer.shutdown()
     }
 
     override fun resume() {
+        super.resume()
         createTimer()
     }
 

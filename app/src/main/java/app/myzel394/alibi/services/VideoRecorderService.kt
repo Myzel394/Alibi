@@ -33,8 +33,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.properties.Delegates
 
-const val CAMERA_CLOSE_TIMEOUT = 20000L
-
 class VideoRecorderService :
     IntervalRecorderService<VideoRecorderService.Settings, RecordingInformation>() {
     override var batchesFolder: BatchesFolder = VideoBatchesFolder.viaInternalFolder(this)
@@ -238,7 +236,10 @@ class VideoRecorderService :
         type = RecordingInformation.Type.VIDEO,
     )
 
-    // TODO: Save camera selector as it doesn't make sense to change the camera midway
+    companion object {
+        const val CAMERA_CLOSE_TIMEOUT = 20000L
+    }
+
     data class Settings(
         override val maxDuration: Long,
         override val intervalDuration: Long,
