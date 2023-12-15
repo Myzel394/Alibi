@@ -150,4 +150,5 @@
     <string name="ui_videoRecorder_action_preview_label">Hold down on button to preview your camera</string>
     <string name="ui_videoRecorder_action_torch_off">Disable Torch</string>
     <string name="ui_videoRecorder_action_torch_on">Enable Torch</string>
+    <string name="ui_videoRecorder_action_configure_label">Press long for configuration</string>
 </resources>

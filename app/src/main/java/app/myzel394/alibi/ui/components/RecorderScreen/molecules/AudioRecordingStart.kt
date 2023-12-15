@@ -66,7 +66,7 @@ fun AudioRecordingStart(
                 .semantics {
                     contentDescription = label
                 }
-                .size(200.dp)
+                .size(250.dp)
                 .clip(shape = CircleShape),
             colors = ButtonDefaults.outlinedButtonColors(),
         ) {
