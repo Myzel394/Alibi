@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,6 +42,7 @@ import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,11 +75,17 @@ fun MicrophoneSelection(
         visibleMicrophones
     }
 
+    val scope = rememberCoroutineScope()
+    fun hideSheet() {
+        scope.launch {
+            sheetState.hide()
+            showSelection = false
+        }
+    }
+
     if (showSelection) {
         ModalBottomSheet(
-            onDismissRequest = {
-                showSelection = false
-            },
+            onDismissRequest = ::hideSheet,
             sheetState = sheetState,
         ) {
             Column(
@@ -114,7 +122,7 @@ fun MicrophoneSelection(
                             selectedAsFallback = isTryingToReconnect,
                             onSelect = {
                                 audioRecorder.changeMicrophone(null)
-                                showSelection = false
+                                hideSheet()
                             }
                         )
                     }
@@ -128,7 +136,7 @@ fun MicrophoneSelection(
                             disabled = isTryingToReconnect && microphone == audioRecorder.selectedMicrophone,
                             onSelect = {
                                 audioRecorder.changeMicrophone(microphone)
-                                showSelection = false
+                                hideSheet()
                             }
                         )
                     }
@@ -165,7 +173,7 @@ fun MicrophoneSelection(
                                 selected = audioRecorder.selectedMicrophone == microphone,
                                 onSelect = {
                                     audioRecorder.changeMicrophone(microphone)
-                                    showSelection = false
+                                    hideSheet()
                                 }
                             )
                         }
@@ -181,7 +189,10 @@ fun MicrophoneSelection(
     if (shownMicrophones.isNotEmpty() || (settings.audioRecorderSettings.showAllMicrophones && hiddenMicrophones.isNotEmpty())) {
         Button(
             onClick = {
-                showSelection = true
+                scope.launch {
+                    showSelection = true
+                    sheetState.show()
+                }
             },
             colors = ButtonDefaults.textButtonColors(),
         ) {

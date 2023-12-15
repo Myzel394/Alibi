@@ -156,7 +156,6 @@ fun StartRecording(
 
                     if (showQuickMaxDurationSelector) {
                         QuickMaxDurationSelector(
-                            settings = appSettings,
                             onDismiss = {
                                 showQuickMaxDurationSelector = false
                             },
