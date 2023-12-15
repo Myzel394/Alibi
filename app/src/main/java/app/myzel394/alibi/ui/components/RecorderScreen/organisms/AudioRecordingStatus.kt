@@ -78,6 +78,9 @@ fun AudioRecordingStatus(
                     runCatching {
                         audioRecorder.stopRecording(context)
                     }
+                    runCatching {
+                        audioRecorder.destroyService(context)
+                    }
                     audioRecorder.batchesFolder!!.deleteRecordings()
                 }
             },

@@ -104,6 +104,9 @@ fun VideoRecordingStatus(
                         runCatching {
                             videoRecorder.stopRecording(context)
                         }
+                        runCatching {
+                            videoRecorder.destroyService(context)
+                        }
                         videoRecorder.batchesFolder!!.deleteRecordings()
                     }
                 },
