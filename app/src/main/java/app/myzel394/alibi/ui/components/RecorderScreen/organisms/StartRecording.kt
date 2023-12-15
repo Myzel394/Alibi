@@ -66,6 +66,36 @@ fun StartRecording(
 ) {
     val context = LocalContext.current
 
+    val label = stringResource(
+        R.string.ui_audioRecorder_action_start_description_2,
+        appSettings.maxDuration / 1000 / 60
+    )
+    val annotatedDescription = buildAnnotatedString {
+        append(stringResource(R.string.ui_audioRecorder_action_start_description_1))
+
+        withStyle(SpanStyle(background = MaterialTheme.colorScheme.surfaceVariant)) {
+            pushStringAnnotation(
+                tag = "minutes",
+                annotation = label,
+            )
+            append(label)
+        }
+
+        append(stringResource(R.string.ui_audioRecorder_action_start_description_3))
+    }
+
+    var showQuickMaxDurationSelector by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (showQuickMaxDurationSelector) {
+        QuickMaxDurationSelector(
+            onDismiss = {
+                showQuickMaxDurationSelector = false
+            },
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -129,38 +159,11 @@ fun StartRecording(
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(ButtonDefaults.IconSize)
                     )
 
-                    val label = stringResource(
-                        R.string.ui_audioRecorder_action_start_description_2,
-                        appSettings.maxDuration / 1000 / 60
-                    )
-                    val annotatedDescription = buildAnnotatedString {
-                        append(stringResource(R.string.ui_audioRecorder_action_start_description_1))
+                    Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
 
-                        withStyle(SpanStyle(background = MaterialTheme.colorScheme.surfaceVariant)) {
-                            pushStringAnnotation(
-                                tag = "minutes",
-                                annotation = label,
-                            )
-                            append(label)
-                        }
-
-                        append(stringResource(R.string.ui_audioRecorder_action_start_description_3))
-                    }
-
-                    var showQuickMaxDurationSelector by rememberSaveable {
-                        mutableStateOf(false)
-                    }
-
-                    if (showQuickMaxDurationSelector) {
-                        QuickMaxDurationSelector(
-                            onDismiss = {
-                                showQuickMaxDurationSelector = false
-                            },
-                        )
-                    }
                     ClickableText(
                         text = annotatedDescription,
                         onClick = { textIndex ->
