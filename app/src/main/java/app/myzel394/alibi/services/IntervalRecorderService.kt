@@ -57,6 +57,7 @@ abstract class IntervalRecorderService<S : IntervalRecorderService.Settings, I> 
 
     override suspend fun stop() {
         cycleTimer.shutdown()
+        super.stop()
     }
 
     fun clearAllRecordings() {

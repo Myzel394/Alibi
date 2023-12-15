@@ -113,6 +113,7 @@ fun RecorderScreen(
                     videoRecorder = videoRecorder,
                     appSettings = appSettings,
                     onSaveLastRecording = {
+                        // TODO: Improve onSave!
                     },
                     showAudioRecorder = topBarVisible,
                     onHideTopBar = {

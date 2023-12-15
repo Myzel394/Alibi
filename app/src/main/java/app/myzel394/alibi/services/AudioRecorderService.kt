@@ -1,6 +1,7 @@
 package app.myzel394.alibi.services
 
 import android.content.Context
+import android.content.pm.ServiceInfo
 import android.media.AudioDeviceCallback
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
@@ -9,6 +10,8 @@ import android.media.MediaRecorder.OnErrorListener
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.core.app.ServiceCompat
+import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.AudioRecorderSettings
 import app.myzel394.alibi.db.RecordingInformation
@@ -71,16 +74,28 @@ class AudioRecorderService :
     }
 
     override suspend fun stop() {
-        super.stop()
-
         resetRecorder()
-        selectedMicrophone = null
         unregisterMicrophoneListener()
+
+        super.stop()
     }
 
     override fun resume() {
         super.resume()
         createAmplitudesTimer()
+    }
+
+    override fun startForegroundService() {
+        ServiceCompat.startForeground(
+            this,
+            NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID,
+            getNotificationHelper().buildStartingNotification(),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+            } else {
+                0
+            },
+        )
     }
 
     // ==== Amplitude related ====

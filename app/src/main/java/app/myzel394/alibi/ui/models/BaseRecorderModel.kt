@@ -4,22 +4,19 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.net.Uri
 import android.os.IBinder
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.BatchesFolder
-import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.services.IntervalRecorderService
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.services.RecorderService
-import kotlinx.coroutines.delay
 import kotlinx.serialization.json.Json
 
 abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : IntervalRecorderService<S, I>, B : BatchesFolder?> :
@@ -28,19 +25,19 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
 
     var recorderState by mutableStateOf(RecorderState.IDLE)
         protected set
-    var recordingTime by mutableStateOf<Long?>(null)
+    var recordingTime by mutableLongStateOf(0)
         protected set
 
     open val isInRecording: Boolean
-        get() = recorderState !== RecorderState.IDLE && recordingTime != null && recorderService != null
+        get() = recorderService != null
 
     val isPaused: Boolean
         get() = recorderState === RecorderState.PAUSED
 
     val progress: Float
-        get() = (recordingTime!! / recorderService!!.settings.maxDuration).toFloat()
+        get() = (recordingTime / recorderService!!.settings.maxDuration).toFloat()
 
-    var recorderService: T? = null
+    var recorderService by mutableStateOf<T?>(null)
         protected set
 
     var onRecordingSave: () -> Unit = {}
@@ -80,14 +77,14 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-            recorderService = null
             reset()
         }
     }
 
     open fun reset() {
+        recorderService = null
         recorderState = RecorderState.IDLE
-        recordingTime = null
+        recordingTime = 0
     }
 
     protected open fun handleIntent(intent: Intent) = intent
@@ -99,6 +96,7 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
     ) {
         this.settings = settings
 
+        // Clean up
         runCatching {
             recorderService?.clearAllRecordings()
             context.unbindService(connection)
@@ -132,22 +130,25 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
     }
 
     suspend fun stopRecording(context: Context) {
+        // TODO: Make modal on video only appear on long press and by default use back camera
+        // TODO: Also show what camera is in use while recording
         recorderService!!.stopRecording()
 
         val intent = Intent(context, intentClass)
-
-        unbindFromService(context)
+        context.unbindService(connection)
         context.stopService(intent)
     }
 
     fun pauseRecording() {
-        recorderService!!.changeState(RecorderState.PAUSED)
+        recorderService!!.pauseRecording()
     }
 
     fun resumeRecording() {
-        recorderService!!.changeState(RecorderState.RECORDING)
+        recorderService!!.resumeRecording()
     }
 
+    // Bind functions used to manually bind to the service if the app
+    // is closed and reopened for example
     fun bindToService(context: Context) {
         Intent(context, intentClass).also { intent ->
             context.bindService(intent, connection, 0)

@@ -112,7 +112,7 @@ data class RecorderNotificationHelper(
             .addAction(
                 R.drawable.ic_cancel,
                 context.getString(R.string.ui_audioRecorder_action_delete_label),
-                getNotificationChangeStateIntent(RecorderState.IDLE, 1),
+                getNotificationChangeStateIntent(RecorderState.STOPPED, 1),
             )
             .addAction(
                 R.drawable.ic_pause,

@@ -2,9 +2,10 @@ package app.myzel394.alibi.services
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.util.Range
 import androidx.camera.core.Camera
-import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.TorchState
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -15,7 +16,9 @@ import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
+import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
+import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
@@ -25,7 +28,6 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
@@ -100,6 +102,19 @@ class VideoRecorderService :
         stopActiveRecording()
     }
 
+    override fun startForegroundService() {
+        ServiceCompat.startForeground(
+            this,
+            NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID,
+            getNotificationHelper().buildStartingNotification(),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+            } else {
+                0
+            },
+        )
+    }
+
     @SuppressLint("MissingPermission")
     override fun startNewCycle() {
         super.startNewCycle()
@@ -109,7 +124,7 @@ class VideoRecorderService :
             val newRecording = prepareVideoRecording()
 
             activeRecording = newRecording.start(ContextCompat.getMainExecutor(this)) { event ->
-                if (event is VideoRecordEvent.Finalize && this@VideoRecorderService._newState == RecorderState.IDLE) {
+                if (event is VideoRecordEvent.Finalize && this@VideoRecorderService.state == RecorderState.STOPPED) {
                     _videoFinalizerListener.complete(Unit)
                 }
             }
