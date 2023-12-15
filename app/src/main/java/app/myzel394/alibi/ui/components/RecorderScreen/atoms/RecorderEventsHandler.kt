@@ -82,16 +82,14 @@ fun RecorderEventsHandler(
         }
     }
 
-    fun saveAsLastRecording(
+    suspend fun saveAsLastRecording(
         recorder: RecorderModel
     ) {
         if (!settings.deleteRecordingsImmediately) {
-            scope.launch {
-                dataStore.updateData {
-                    it.setLastRecording(
-                        recorder.recorderService!!.getRecordingInformation()
-                    )
-                }
+            dataStore.updateData {
+                it.setLastRecording(
+                    recorder.recorderService!!.getRecordingInformation()
+                )
             }
         }
     }
@@ -189,14 +187,24 @@ fun RecorderEventsHandler(
     // Register audio recorder events
     DisposableEffect(key1 = audioRecorder, key2 = settings) {
         audioRecorder.onRecordingSave = {
-            saveAsLastRecording(audioRecorder as RecorderModel)
+            scope.launch {
+                audioRecorder.stopRecording(context)
 
-            saveRecording(audioRecorder)
+                kotlin.runCatching {
+                    saveAsLastRecording(audioRecorder as RecorderModel)
+
+                    saveRecording(audioRecorder)
+                }
+
+                audioRecorder.destroyService(context)
+            }
         }
         audioRecorder.onError = {
-            saveAsLastRecording(audioRecorder as RecorderModel)
+            scope.launch {
+                saveAsLastRecording(audioRecorder as RecorderModel)
 
-            showRecorderError = true
+                showRecorderError = true
+            }
         }
 
         onDispose {
@@ -208,14 +216,24 @@ fun RecorderEventsHandler(
     // Register video recorder events
     DisposableEffect(key1 = videoRecorder, key2 = settings) {
         videoRecorder.onRecordingSave = {
-            saveAsLastRecording(videoRecorder as RecorderModel)
+            scope.launch {
+                videoRecorder.stopRecording(context)
 
-            saveRecording(videoRecorder)
+                kotlin.runCatching {
+                    saveAsLastRecording(videoRecorder as RecorderModel)
+
+                    saveRecording(videoRecorder)
+                }
+
+                videoRecorder.destroyService(context)
+            }
         }
         videoRecorder.onError = {
-            saveAsLastRecording(videoRecorder as RecorderModel)
+            scope.launch {
+                saveAsLastRecording(videoRecorder as RecorderModel)
 
-            showRecorderError = true
+                showRecorderError = true
+            }
         }
 
         onDispose {

@@ -89,10 +89,7 @@ fun AudioRecordingStatus(
                 }
             },
             onSave = {
-                scope.launch {
-                    audioRecorder.stopRecording(context)
-                    audioRecorder.onRecordingSave()
-                }
+                audioRecorder.onRecordingSave()
             }
         )
 

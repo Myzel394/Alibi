@@ -55,11 +55,6 @@ abstract class RecorderService : LifecycleService() {
 
     protected open suspend fun stop() {
         recordingTimeTimer.shutdown()
-
-        NotificationManagerCompat.from(this)
-            .cancel(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID)
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
     }
 
     protected abstract fun startForegroundService()
@@ -83,6 +78,13 @@ abstract class RecorderService : LifecycleService() {
 
     fun resumeRecording() {
         changeState(RecorderState.RECORDING)
+    }
+
+    fun destroy() {
+        NotificationManagerCompat.from(this)
+            .cancel(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID)
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     override fun onBind(intent: Intent): IBinder? {

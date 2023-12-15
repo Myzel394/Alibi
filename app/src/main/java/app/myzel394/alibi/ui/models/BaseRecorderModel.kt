@@ -136,14 +136,9 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
         // TODO: Also show what camera is in use while recording
         recorderService!!.stopRecording()
 
-        val intent = Intent(context, intentClass)
         runCatching {
             context.unbindService(connection)
         }
-        runCatching {
-            context.stopService(intent)
-        }
-        reset()
     }
 
     fun pauseRecording() {
@@ -152,6 +147,16 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
 
     fun resumeRecording() {
         recorderService!!.resumeRecording()
+    }
+
+    fun destroyService(context: Context) {
+        recorderService!!.destroy()
+        reset()
+        val intent = Intent(context, intentClass)
+
+        runCatching {
+            context.stopService(intent)
+        }
     }
 
     // Bind functions used to manually bind to the service if the app

@@ -115,10 +115,7 @@ fun VideoRecordingStatus(
                     }
                 },
                 onSave = {
-                    scope.launch {
-                        videoRecorder.stopRecording(context)
-                        videoRecorder.onRecordingSave()
-                    }
+                    videoRecorder.onRecordingSave()
                 }
             )
         }
