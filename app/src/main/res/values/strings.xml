@@ -26,7 +26,11 @@
     <string name="ui_audioRecorder_action_pause_label">Pause</string>
     <string name="ui_audioRecorder_action_resume_label">Resume</string>
     <string name="ui_audioRecorder_action_save_label">Save Recording</string>
-    <string name="ui_audioRecorder_action_start_description">Alibi will continue recording in the background and store the last <xliff:g name="durationInMinutes">%s</xliff:g> minutes at your request</string>
+
+    <string name="ui_audioRecorder_action_start_description_1">Alibi will continue recording in the background and store the last\u0020</string>
+    <string name="ui_audioRecorder_action_start_description_2"><xliff:g name="durationInMinutes">%s</xliff:g> minutes</string>
+    <string name="ui_audioRecorder_action_start_description_3">\u0020at your request</string>
+
     <string name="ui_audioRecorder_action_save_processing_dialog_title">Processing</string>
     <string name="ui_audioRecorder_action_save_processing_dialog_description">Processing your recording, do not close Alibi! You will automatically be prompted to save the file once it\'s ready</string>
 
@@ -151,4 +155,5 @@
     <string name="ui_videoRecorder_action_torch_off">Disable Torch</string>
     <string name="ui_videoRecorder_action_torch_on">Enable Torch</string>
     <string name="ui_videoRecorder_action_configure_label">Press long for configuration</string>
+    <string name="ui_recorder_action_changeMaxDuration_title">When stopped, save the last...</string>
 </resources>
