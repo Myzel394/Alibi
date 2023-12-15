@@ -169,7 +169,7 @@ fun VideoRecordingStatus(
                     }
                 },
                 onSave = {
-                    videoRecorder.onRecordingSave()
+                    videoRecorder.onRecordingSave(false)
                 }
             )
         }

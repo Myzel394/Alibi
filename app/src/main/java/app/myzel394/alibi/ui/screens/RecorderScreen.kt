@@ -27,6 +27,7 @@ import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RecorderEventsHandler
 import app.myzel394.alibi.ui.components.RecorderScreen.organisms.VideoRecordingStatus
 import app.myzel394.alibi.ui.effects.rememberSettings
@@ -113,7 +114,13 @@ fun RecorderScreen(
                     videoRecorder = videoRecorder,
                     appSettings = appSettings,
                     onSaveLastRecording = {
-                        // TODO: Improve onSave!
+                        when (settings.lastRecording!!.type) {
+                            RecordingInformation.Type.AUDIO ->
+                                audioRecorder.onRecordingSave(true)
+
+                            RecordingInformation.Type.VIDEO ->
+                                videoRecorder.onRecordingSave(true)
+                        }
                     },
                     showAudioRecorder = topBarVisible,
                     onHideTopBar = {

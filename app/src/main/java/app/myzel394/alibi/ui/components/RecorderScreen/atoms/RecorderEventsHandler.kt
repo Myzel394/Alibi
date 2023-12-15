@@ -132,11 +132,19 @@ fun RecorderEventsHandler(
                     // When recording is loaded from lastRecording
                         ?: settings.lastRecording
                         ?: throw Exception("No recording information available")
-                val batchesFolder =
-                    if (recorder.javaClass == AudioRecorderModel::class.java)
-                        AudioBatchesFolder.importFromFolder(recording.folderPath, context)
-                    else
-                        VideoBatchesFolder.importFromFolder(recording.folderPath, context)
+                val batchesFolder = when (recorder.javaClass) {
+                    AudioRecorderModel::class.java -> AudioBatchesFolder.importFromFolder(
+                        recording.folderPath,
+                        context
+                    )
+
+                    VideoRecorderModel::class.java -> VideoBatchesFolder.importFromFolder(
+                        recording.folderPath,
+                        context
+                    )
+
+                    else -> throw Exception("Unknown recorder type")
+                }
 
                 batchesFolder.concatenate(
                     recording.recordingStart,
@@ -151,20 +159,24 @@ fun RecorderEventsHandler(
 
                 when (batchesFolder.type) {
                     BatchesFolder.BatchType.INTERNAL -> {
-                        if (batchesFolder is AudioBatchesFolder) {
-                            saveAudioFile(
-                                batchesFolder.asInternalGetOutputFile(
-                                    recording.recordingStart,
-                                    recording.fileExtension,
-                                ), name
-                            )
-                        } else if (batchesFolder is VideoBatchesFolder) {
-                            saveVideoFile(
-                                batchesFolder.asInternalGetOutputFile(
-                                    recording.recordingStart,
-                                    recording.fileExtension,
-                                ), name
-                            )
+                        when (batchesFolder) {
+                            is AudioBatchesFolder -> {
+                                saveAudioFile(
+                                    batchesFolder.asInternalGetOutputFile(
+                                        recording.recordingStart,
+                                        recording.fileExtension,
+                                    ), name
+                                )
+                            }
+
+                            is VideoBatchesFolder -> {
+                                saveVideoFile(
+                                    batchesFolder.asInternalGetOutputFile(
+                                        recording.recordingStart,
+                                        recording.fileExtension,
+                                    ), name
+                                )
+                            }
                         }
                     }
 
@@ -186,17 +198,21 @@ fun RecorderEventsHandler(
 
     // Register audio recorder events
     DisposableEffect(key1 = audioRecorder, key2 = settings) {
-        audioRecorder.onRecordingSave = {
+        audioRecorder.onRecordingSave = { justSave ->
             scope.launch {
-                audioRecorder.stopRecording(context)
+                if (justSave) {
+                    saveRecording(audioRecorder as RecorderModel)
+                } else {
+                    audioRecorder.stopRecording(context)
 
-                kotlin.runCatching {
-                    saveAsLastRecording(audioRecorder as RecorderModel)
+                    runCatching {
+                        saveAsLastRecording(audioRecorder as RecorderModel)
 
-                    saveRecording(audioRecorder)
+                        saveRecording(audioRecorder)
+                    }
+
+                    audioRecorder.destroyService(context)
                 }
-
-                audioRecorder.destroyService(context)
             }
         }
         audioRecorder.onError = {
@@ -215,17 +231,21 @@ fun RecorderEventsHandler(
 
     // Register video recorder events
     DisposableEffect(key1 = videoRecorder, key2 = settings) {
-        videoRecorder.onRecordingSave = {
+        videoRecorder.onRecordingSave = { justSave ->
             scope.launch {
-                videoRecorder.stopRecording(context)
+                if (justSave) {
+                    saveRecording(videoRecorder as RecorderModel)
+                } else {
+                    videoRecorder.stopRecording(context)
 
-                kotlin.runCatching {
-                    saveAsLastRecording(videoRecorder as RecorderModel)
+                    runCatching {
+                        saveAsLastRecording(videoRecorder as RecorderModel)
 
-                    saveRecording(videoRecorder)
+                        saveRecording(videoRecorder)
+                    }
+
+                    videoRecorder.destroyService(context)
                 }
-
-                videoRecorder.destroyService(context)
             }
         }
         videoRecorder.onError = {

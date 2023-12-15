@@ -40,7 +40,9 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
     var recorderService by mutableStateOf<T?>(null)
         protected set
 
-    var onRecordingSave: () -> Unit = {}
+    // If `isSavingAsOldRecording` is true, the user is saving an old recording,
+    // thus the service is not running and thus doesn't need to be stopped or destroyed
+    var onRecordingSave: (isSavingAsOldRecording: Boolean) -> Unit = {}
     var onError: () -> Unit = {}
     abstract var batchesFolder: B
 
@@ -132,8 +134,6 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
     }
 
     suspend fun stopRecording(context: Context) {
-        // TODO: Make modal on video only appear on long press and by default use back camera
-        // TODO: Also show what camera is in use while recording
         recorderService!!.stopRecording()
 
         runCatching {

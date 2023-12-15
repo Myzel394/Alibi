@@ -126,23 +126,25 @@ abstract class BatchesFolder(
             extension = extension,
         )
 
-        if (disableCache || !checkIfOutputAlreadyExists(recordingStart, extension)) {
-            val filePaths = getBatchesForFFmpeg()
+        if (!disableCache && checkIfOutputAlreadyExists(recordingStart, extension)) {
+            return outputFile
+        }
 
-            for (parameter in ffmpegParameters) {
-                Log.i("Concatenation", "Trying parameter $parameter")
-                onNextParameterTry(parameter)
+        val filePaths = getBatchesForFFmpeg()
 
-                try {
-                    concatenateFunction(
-                        filePaths,
-                        outputFile,
-                        parameter,
-                    ).await()
-                    return outputFile
-                } catch (e: MediaConverter.FFmpegException) {
-                    continue
-                }
+        for (parameter in ffmpegParameters) {
+            Log.i("Concatenation", "Trying parameter $parameter")
+            onNextParameterTry(parameter)
+
+            try {
+                concatenateFunction(
+                    filePaths,
+                    outputFile,
+                    parameter,
+                ).await()
+                return outputFile
+            } catch (e: MediaConverter.FFmpegException) {
+                continue
             }
         }
 

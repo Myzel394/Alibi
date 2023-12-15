@@ -92,7 +92,7 @@ fun AudioRecordingStatus(
                 }
             },
             onSave = {
-                audioRecorder.onRecordingSave()
+                audioRecorder.onRecordingSave(false)
             }
         )
 
