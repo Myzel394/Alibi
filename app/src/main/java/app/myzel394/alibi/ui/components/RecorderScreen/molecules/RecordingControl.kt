@@ -70,8 +70,7 @@ fun RecordingControl(
             val stack = RandomStack.of(arrayOf(1, 2, 3).asIterable())
 
             while (!stack.isEmpty()) {
-                val next = stack.popRandom()
-                when (next) {
+                when (stack.popRandom()) {
                     1 -> {
                         deleteButtonAlphaIsIn = true
                     }
