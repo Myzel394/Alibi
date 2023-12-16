@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RealtimeAudioVisualizer
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.MicrophoneStatus
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingControl
@@ -45,7 +47,8 @@ fun AudioRecordingStatus(
     KeepScreenOn()
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(bottom = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -59,34 +62,41 @@ fun AudioRecordingStatus(
             maxDuration = audioRecorder.settings!!.maxDuration,
         )
 
-        MicrophoneStatus(audioRecorder)
+        Column(
+            verticalArrangement = Arrangement
+                .spacedBy(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(bottom = 32.dp),
+        ) {
+            MicrophoneStatus(audioRecorder)
 
-        Divider()
+            Divider()
 
-        RecordingControl(
-            isPaused = audioRecorder.isPaused,
-            recordingTime = audioRecorder.recordingTime,
-            onDelete = {
-                scope.launch {
-                    runCatching {
-                        audioRecorder.stopRecording(context)
+            RecordingControl(
+                isPaused = audioRecorder.isPaused,
+                recordingTime = audioRecorder.recordingTime,
+                onDelete = {
+                    scope.launch {
+                        runCatching {
+                            audioRecorder.stopRecording(context)
+                        }
+                        runCatching {
+                            audioRecorder.destroyService(context)
+                        }
+                        audioRecorder.batchesFolder!!.deleteRecordings()
                     }
-                    runCatching {
-                        audioRecorder.destroyService(context)
+                },
+                onPauseResume = {
+                    if (audioRecorder.isPaused) {
+                        audioRecorder.resumeRecording()
+                    } else {
+                        audioRecorder.pauseRecording()
                     }
-                    audioRecorder.batchesFolder!!.deleteRecordings()
+                },
+                onSave = {
+                    audioRecorder.onRecordingSave(false)
                 }
-            },
-            onPauseResume = {
-                if (audioRecorder.isPaused) {
-                    audioRecorder.resumeRecording()
-                } else {
-                    audioRecorder.pauseRecording()
-                }
-            },
-            onSave = {
-                audioRecorder.onRecordingSave(false)
-            }
-        )
+            )
+        }
     }
 }
