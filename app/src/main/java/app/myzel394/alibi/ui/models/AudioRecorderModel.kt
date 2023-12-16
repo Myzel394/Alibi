@@ -13,7 +13,7 @@ import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 
 class AudioRecorderModel :
-    BaseRecorderModel<AudioRecorderService.Settings, RecordingInformation, AudioRecorderService, AudioBatchesFolder?>() {
+    BaseRecorderModel<RecordingInformation, AudioRecorderService, AudioBatchesFolder?>() {
     override var batchesFolder: AudioBatchesFolder? = null
     override val intentClass = AudioRecorderService::class.java
 
@@ -46,8 +46,6 @@ class AudioRecorderModel :
             amplitudes = amps
             onAmplitudeChange()
         }
-        service.settings =
-            AudioRecorderService.Settings.from(settings)
 
         service.clearAllRecordings()
         service.startRecording()

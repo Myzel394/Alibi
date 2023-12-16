@@ -13,7 +13,6 @@ import android.os.Looper
 import androidx.core.app.ServiceCompat
 import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.db.AppSettings
-import app.myzel394.alibi.db.AudioRecorderSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.AudioBatchesFolder
@@ -22,7 +21,7 @@ import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import java.lang.IllegalStateException
 
 class AudioRecorderService :
-    IntervalRecorderService<AudioRecorderService.Settings, RecordingInformation>() {
+    IntervalRecorderService<RecordingInformation>() {
     override var batchesFolder: BatchesFolder = AudioBatchesFolder.viaInternalFolder(this)
 
     private val handler = Handler(Looper.getMainLooper())
@@ -169,6 +168,8 @@ class AudioRecorderService :
         } else {
             MediaRecorder()
         }.apply {
+            val audioSettings = settings.audioRecorderSettings
+
             // Audio Source is kinda strange, here are my experimental findings using a Pixel 7 Pro
             // and Redmi Buds 3 Pro:
             // - MIC: Uses the bottom microphone of the phone (17)
@@ -180,22 +181,25 @@ class AudioRecorderService :
             when (batchesFolder.type) {
                 BatchesFolder.BatchType.INTERNAL -> {
                     setOutputFile(
-                        batchesFolder.asInternalGetOutputPath(counter, settings.fileExtension)
+                        batchesFolder.asInternalGetOutputPath(counter, audioSettings.fileExtension)
                     )
                 }
 
                 BatchesFolder.BatchType.CUSTOM -> {
                     setOutputFile(
-                        batchesFolder.asCustomGetFileDescriptor(counter, settings.fileExtension)
+                        batchesFolder.asCustomGetFileDescriptor(
+                            counter,
+                            audioSettings.fileExtension
+                        )
                     )
                 }
             }
 
-            setOutputFormat(settings.outputFormat)
+            setOutputFormat(audioSettings.getOutputFormat())
 
-            setAudioEncoder(settings.encoder)
-            setAudioEncodingBitRate(settings.bitRate)
-            setAudioSamplingRate(settings.samplingRate)
+            setAudioEncoder(audioSettings.getEncoder())
+            setAudioEncodingBitRate(audioSettings.bitRate)
+            setAudioSamplingRate(audioSettings.getSamplingRate())
             setOnErrorListener(OnErrorListener { _, _, _ ->
                 onError()
             })
@@ -281,47 +285,8 @@ class AudioRecorderService :
         folderPath = batchesFolder.exportFolderForSettings(),
         recordingStart = recordingStart,
         maxDuration = settings.maxDuration,
-        fileExtension = settings.fileExtension,
+        fileExtension = settings.audioRecorderSettings.fileExtension,
         intervalDuration = settings.intervalDuration,
         type = RecordingInformation.Type.AUDIO,
     )
-
-    data class Settings(
-        override val maxDuration: Long,
-        override val intervalDuration: Long,
-        val bitRate: Int,
-        val samplingRate: Int,
-        val outputFormat: Int,
-        val encoder: Int,
-        val folder: String? = null,
-    ) : IntervalRecorderService.Settings(
-        maxDuration = maxDuration,
-        intervalDuration = intervalDuration
-    ) {
-        val fileExtension: String
-            get() = when (outputFormat) {
-                MediaRecorder.OutputFormat.AAC_ADTS -> "aac"
-                MediaRecorder.OutputFormat.THREE_GPP -> "3gp"
-                MediaRecorder.OutputFormat.MPEG_4 -> "mp4"
-                MediaRecorder.OutputFormat.MPEG_2_TS -> "ts"
-                MediaRecorder.OutputFormat.WEBM -> "webm"
-                MediaRecorder.OutputFormat.AMR_NB -> "amr"
-                MediaRecorder.OutputFormat.AMR_WB -> "awb"
-                MediaRecorder.OutputFormat.OGG -> "ogg"
-                else -> "raw"
-            }
-
-        companion object {
-            fun from(appSettings: AppSettings): Settings {
-                return Settings(
-                    intervalDuration = appSettings.intervalDuration,
-                    maxDuration = appSettings.maxDuration,
-                    bitRate = appSettings.audioRecorderSettings.bitRate,
-                    samplingRate = appSettings.audioRecorderSettings.getSamplingRate(),
-                    outputFormat = appSettings.audioRecorderSettings.getOutputFormat(),
-                    encoder = appSettings.audioRecorderSettings.getEncoder(),
-                )
-            }
-        }
-    }
 }

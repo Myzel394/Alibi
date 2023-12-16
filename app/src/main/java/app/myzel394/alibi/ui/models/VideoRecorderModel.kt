@@ -17,7 +17,7 @@ import app.myzel394.alibi.ui.utils.CameraInfo
 import app.myzel394.alibi.ui.utils.PermissionHelper
 
 class VideoRecorderModel :
-    BaseRecorderModel<VideoRecorderService.Settings, RecordingInformation, VideoRecorderService, VideoBatchesFolder?>() {
+    BaseRecorderModel<RecordingInformation, VideoRecorderService, VideoBatchesFolder?>() {
     override var batchesFolder: VideoBatchesFolder? = null
     override val intentClass = VideoRecorderService::class.java
 
@@ -39,8 +39,6 @@ class VideoRecorderModel :
     }
 
     override fun onServiceConnected(service: VideoRecorderService) {
-        service.settings = VideoRecorderService.Settings.from(settings)
-
         service.clearAllRecordings()
         service.startRecording()
 

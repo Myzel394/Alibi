@@ -56,7 +56,7 @@ fun AudioRecordingStatus(
             recordingTime = audioRecorder.recordingTime,
             progress = audioRecorder.progress,
             recordingStart = audioRecorder.recordingStart,
-            maxDuration = audioRecorder.settings.maxDuration,
+            maxDuration = audioRecorder.settings!!.maxDuration,
         )
 
         MicrophoneStatus(audioRecorder)

@@ -3,11 +3,13 @@ package app.myzel394.alibi.db
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
+import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import app.myzel394.alibi.R
 import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
+import app.myzel394.alibi.services.VideoRecorderService
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
@@ -260,6 +262,19 @@ data class AudioRecorderSettings(
         return supportedFormats.contains(outputFormat)
     }
 
+    val fileExtension: String
+        get() = when (outputFormat) {
+            MediaRecorder.OutputFormat.AAC_ADTS -> "aac"
+            MediaRecorder.OutputFormat.THREE_GPP -> "3gp"
+            MediaRecorder.OutputFormat.MPEG_4 -> "mp4"
+            MediaRecorder.OutputFormat.MPEG_2_TS -> "ts"
+            MediaRecorder.OutputFormat.WEBM -> "webm"
+            MediaRecorder.OutputFormat.AMR_NB -> "amr"
+            MediaRecorder.OutputFormat.AMR_WB -> "awb"
+            MediaRecorder.OutputFormat.OGG -> "ogg"
+            else -> "raw"
+        }
+
     companion object {
         fun getDefaultInstance(): AudioRecorderSettings = AudioRecorderSettings()
         val EXAMPLE_MAX_DURATIONS = listOf(
@@ -402,6 +417,9 @@ data class VideoRecorderSettings(
         }
 
     fun getMimeType() = "video/mp4"
+
+    val fileExtension
+        get() = "mp4"
 
     companion object {
         fun getDefaultInstance() = VideoRecorderSettings()

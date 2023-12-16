@@ -19,7 +19,6 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import app.myzel394.alibi.NotificationHelper
-import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.BatchesFolder
@@ -34,7 +33,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.properties.Delegates
 
 class VideoRecorderService :
-    IntervalRecorderService<VideoRecorderService.Settings, RecordingInformation>() {
+    IntervalRecorderService<RecordingInformation>() {
     override var batchesFolder: BatchesFolder = VideoBatchesFolder.viaInternalFolder(this)
 
     private val job = SupervisorJob()
@@ -149,18 +148,22 @@ class VideoRecorderService :
     }
 
     private fun buildRecorder() = Recorder.Builder()
-        .setQualitySelector(settings.quality)
+        .setQualitySelector(
+            settings.videoRecorderSettings.getQualitySelector()
+                ?: QualitySelector.from(Quality.HIGHEST)
+        )
         .apply {
-            if (settings.targetVideoBitRate != null) {
-                setTargetVideoEncodingBitRate(settings.targetVideoBitRate!!)
+            if (settings.videoRecorderSettings.targetedVideoBitRate != null) {
+                setTargetVideoEncodingBitRate(settings.videoRecorderSettings.targetedVideoBitRate!!)
             }
         }
         .build()
 
     private fun buildVideoCapture(recorder: Recorder) = VideoCapture.Builder(recorder)
         .apply {
-            if (settings.targetFrameRate != null) {
-                setTargetFrameRate(Range(settings.targetFrameRate!!, settings.targetFrameRate!!))
+            val frameRate = settings.videoRecorderSettings.targetFrameRate
+            if (frameRate != null) {
+                setTargetFrameRate(Range(frameRate, frameRate))
             }
         }
         .build()
@@ -218,7 +221,7 @@ class VideoRecorderService :
     @SuppressLint("MissingPermission")
     private fun prepareVideoRecording() =
         videoCapture!!.output
-            .prepareRecording(this, settings.getOutputOptions(this))
+            .prepareRecording(this, getOutputOptions())
             .run {
                 if (enableAudio) {
                     return@run withAudioEnabled()
@@ -231,49 +234,22 @@ class VideoRecorderService :
         folderPath = batchesFolder.exportFolderForSettings(),
         recordingStart = recordingStart,
         maxDuration = settings.maxDuration,
-        fileExtension = settings.fileExtension,
+        fileExtension = settings.videoRecorderSettings.fileExtension,
         intervalDuration = settings.intervalDuration,
         type = RecordingInformation.Type.VIDEO,
     )
 
-    companion object {
-        const val CAMERA_CLOSE_TIMEOUT = 20000L
+    fun getOutputOptions(): FileOutputOptions {
+        val fileName = "${counter}.${settings.videoRecorderSettings.fileExtension}"
+        val file = batchesFolder.getInternalFolder().resolve(fileName).apply {
+            createNewFile()
+        }
+
+        return FileOutputOptions.Builder(file).build()
     }
 
-    data class Settings(
-        override val maxDuration: Long,
-        override val intervalDuration: Long,
-        val folder: String? = null,
-        val targetVideoBitRate: Int? = null,
-        val targetFrameRate: Int? = null,
-        val quality: QualitySelector = QualitySelector.from(Quality.HIGHEST),
-    ) : IntervalRecorderService.Settings(
-        maxDuration = maxDuration,
-        intervalDuration = intervalDuration
-    ) {
-        val fileExtension
-            get() = "mp4"
-
-        fun getOutputOptions(video: VideoRecorderService): FileOutputOptions {
-            val fileName = "${video.counter}.$fileExtension"
-            val file = video.batchesFolder.getInternalFolder().resolve(fileName).apply {
-                createNewFile()
-            }
-
-            return FileOutputOptions.Builder(file).build()
-        }
-
-        companion object {
-            fun from(appSettings: AppSettings) = Settings(
-                maxDuration = appSettings.maxDuration,
-                intervalDuration = appSettings.intervalDuration,
-                folder = appSettings.saveFolder,
-                targetVideoBitRate = appSettings.videoRecorderSettings.targetedVideoBitRate,
-                targetFrameRate = appSettings.videoRecorderSettings.targetFrameRate,
-                quality = appSettings.videoRecorderSettings.getQualitySelector()
-                    ?: QualitySelector.from(Quality.HIGHEST),
-            )
-        }
+    companion object {
+        const val CAMERA_CLOSE_TIMEOUT = 20000L
     }
 
     class CameraControl(

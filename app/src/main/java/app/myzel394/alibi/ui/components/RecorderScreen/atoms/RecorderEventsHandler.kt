@@ -31,9 +31,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 typealias RecorderModel = BaseRecorderModel<
-        IntervalRecorderService.Settings,
         RecordingInformation,
-        IntervalRecorderService<IntervalRecorderService.Settings, RecordingInformation>,
+        IntervalRecorderService<RecordingInformation>,
         BatchesFolder?
         >
 

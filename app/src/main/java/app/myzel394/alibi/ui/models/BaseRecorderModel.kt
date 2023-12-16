@@ -19,7 +19,7 @@ import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.services.RecorderService
 import kotlinx.serialization.json.Json
 
-abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : IntervalRecorderService<S, I>, B : BatchesFolder?> :
+abstract class BaseRecorderModel<I, T : IntervalRecorderService<I>, B : BatchesFolder?> :
     ViewModel() {
     protected abstract val intentClass: Class<T>
 
@@ -51,7 +51,7 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
 
     private var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
 
-    lateinit var settings: AppSettings
+    var settings: AppSettings? = null
         protected set
 
     protected abstract fun onServiceConnected(service: T)
@@ -75,6 +75,14 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
                         recorder.batchesFolder = batchesFolder!!
                     } else {
                         batchesFolder = recorder.batchesFolder as B
+                    }
+
+                    if (settings != null) {
+                        // If `settings` is set, it means we started the recording, so it should be
+                        // properly set on the service
+                        recorder.settings = settings!!
+                    } else {
+                        settings = recorder.settings
                     }
 
                     // Rest should be initialized from the child class

@@ -1,16 +1,17 @@
 package app.myzel394.alibi.services
 
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.helpers.BatchesFolder
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-abstract class IntervalRecorderService<S : IntervalRecorderService.Settings, I> :
+abstract class IntervalRecorderService<I> :
     RecorderService() {
     protected var counter = 0L
         private set
 
-    lateinit var settings: S
+    lateinit var settings: AppSettings
 
     private lateinit var cycleTimer: ScheduledExecutorService
 
