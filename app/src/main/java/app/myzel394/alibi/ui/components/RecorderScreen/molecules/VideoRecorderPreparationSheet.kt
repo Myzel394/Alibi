@@ -170,34 +170,42 @@ fun VideoRecorderPreparationSheet(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(BIG_PRIMARY_BUTTON_SIZE)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary)
-                                .padding(16.dp)
-                                .semantics {
-                                    contentDescription = label
-                                }
-                                .pointerInput(Unit) {
-                                    detectTapGestures(
-                                        onLongPress = {
-                                            onPreviewVisible()
-                                        },
-                                        onTap = {
-                                            onStartRecording()
-                                        }
-                                    )
-                                },
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                label,
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
+                        PermissionRequester(
+                            permission = Manifest.permission.CAMERA,
+                            icon = Icons.Default.CameraAlt,
+                            onPermissionAvailable = {
+                                onStartRecording()
+                            }
+                        ) { trigger ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(BIG_PRIMARY_BUTTON_SIZE)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.primary)
+                                    .padding(16.dp)
+                                    .semantics {
+                                        contentDescription = label
+                                    }
+                                    .pointerInput(Unit) {
+                                        detectTapGestures(
+                                            onLongPress = {
+                                                onPreviewVisible()
+                                            },
+                                            onTap = {
+                                                trigger()
+                                            }
+                                        )
+                                    },
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    label,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
                         }
                         Text(
                             stringResource(

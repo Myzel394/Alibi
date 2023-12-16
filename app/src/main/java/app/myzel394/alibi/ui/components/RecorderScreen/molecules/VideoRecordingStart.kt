@@ -46,6 +46,7 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.models.VideoRecorderModel
+import app.myzel394.alibi.ui.utils.PermissionHelper
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -97,7 +98,18 @@ fun VideoRecordingStart(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(color = MaterialTheme.colorScheme.primary),
                     onClick = {
-                        videoRecorder.startRecording(context, appSettings)
+                        if (PermissionHelper.hasGranted(
+                                context,
+                                Manifest.permission.CAMERA
+                            ) && PermissionHelper.hasGranted(
+                                context,
+                                Manifest.permission.RECORD_AUDIO
+                            )
+                        ) {
+                            videoRecorder.startRecording(context, appSettings)
+                        } else {
+                            showSheet = true
+                        }
                     },
                     onLongClick = {
                         showSheet = true
