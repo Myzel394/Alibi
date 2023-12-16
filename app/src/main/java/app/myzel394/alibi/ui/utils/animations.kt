@@ -11,7 +11,7 @@ import androidx.compose.runtime.setValue
 @Composable
 fun rememberInitialRecordingAnimation(recordingTime: Long): Boolean {
     // Only show animation when the recording has just started
-    val recordingJustStarted = recordingTime <= 1L
+    val recordingJustStarted = recordingTime <= 3L
     var progressVisible by rememberSaveable { mutableStateOf(!recordingJustStarted) }
 
     LaunchedEffect(Unit) {

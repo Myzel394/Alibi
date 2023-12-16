@@ -159,4 +159,5 @@
     <string name="ui_recorder_info_startTime_short">Recording started at %s</string>
     <string name="ui_recorder_info_startTime_full">Recording started %s</string>
     <string name="ui_recorder_info_saveNowTime">Saving now will save until %s</string>
+    <string name="ui_videoRecorder_info_starting">Video Recorder is starting...</string>
 </resources>
