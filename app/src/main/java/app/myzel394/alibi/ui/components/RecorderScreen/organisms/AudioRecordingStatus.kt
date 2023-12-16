@@ -66,7 +66,6 @@ fun AudioRecordingStatus(
             verticalArrangement = Arrangement
                 .spacedBy(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(bottom = 32.dp),
         ) {
             MicrophoneStatus(audioRecorder)
 
