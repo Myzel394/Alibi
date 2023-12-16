@@ -140,31 +140,35 @@ fun VideoRecordingStatus(
 
             Divider()
 
-            RecordingControl(
-                isPaused = videoRecorder.isPaused,
-                recordingTime = videoRecorder.recordingTime,
-                onDelete = {
-                    scope.launch {
-                        runCatching {
-                            videoRecorder.stopRecording(context)
+            if (!videoRecorder.isStartingRecording) {
+                RecordingControl(
+                    isPaused = videoRecorder.isPaused,
+                    recordingTime = videoRecorder.recordingTime,
+                    onDelete = {
+                        scope.launch {
+                            runCatching {
+                                videoRecorder.stopRecording(context)
+                            }
+                            runCatching {
+                                videoRecorder.destroyService(context)
+                            }
+                            videoRecorder.batchesFolder!!.deleteRecordings()
                         }
-                        runCatching {
-                            videoRecorder.destroyService(context)
+                    },
+                    onPauseResume = {
+                        if (videoRecorder.isPaused) {
+                            videoRecorder.resumeRecording()
+                        } else {
+                            videoRecorder.pauseRecording()
                         }
-                        videoRecorder.batchesFolder!!.deleteRecordings()
+                    },
+                    onSave = {
+                        videoRecorder.onRecordingSave(false)
                     }
-                },
-                onPauseResume = {
-                    if (videoRecorder.isPaused) {
-                        videoRecorder.resumeRecording()
-                    } else {
-                        videoRecorder.pauseRecording()
-                    }
-                },
-                onSave = {
-                    videoRecorder.onRecordingSave(false)
-                }
-            )
+                )
+            } else {
+                Box {}
+            }
         }
     }
 }
