@@ -66,7 +66,6 @@ fun QuickMaxDurationSelector(
                     Button(
                         onClick = {
                             scope.launch {
-                                // TODO: Add hide to microphone selection
                                 sheetState.hide()
                                 onDismiss()
                             }
@@ -76,14 +75,14 @@ fun QuickMaxDurationSelector(
                                 }
                             }
                         },
-                        colors = ButtonDefaults.textButtonColors(),
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                        ),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(64.dp),
                     ) {
-                        Text(
-                            formatDuration(duration)
-                        )
+                        Text(formatDuration(duration))
                     }
                 }
             }
