@@ -51,9 +51,11 @@ fun Navigation(
 
     DisposableEffect(Unit) {
         audioRecorder.bindToService(context)
+        videoRecorder.bindToService(context)
 
         onDispose {
             audioRecorder.unbindFromService(context)
+            videoRecorder.unbindFromService(context)
         }
     }
 

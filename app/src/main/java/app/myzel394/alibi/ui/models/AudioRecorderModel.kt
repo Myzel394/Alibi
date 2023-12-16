@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
+import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
@@ -47,8 +48,13 @@ class AudioRecorderModel :
             onAmplitudeChange()
         }
 
-        service.clearAllRecordings()
-        service.startRecording()
+        // `onServiceConnected` may be called when reconnecting to the service,
+        // so we only want to actually start the recording if the service is idle and thus
+        // not already recording
+        if (service.state == RecorderState.IDLE) {
+            service.clearAllRecordings()
+            service.startRecording()
+        }
 
         recorderState = service.state
         recordingTime = service.recordingTime

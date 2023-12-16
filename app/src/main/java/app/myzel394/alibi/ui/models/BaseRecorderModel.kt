@@ -105,6 +105,17 @@ abstract class BaseRecorderModel<I, T : IntervalRecorderService<I>, B : BatchesF
 
     protected open fun handleIntent(intent: Intent) = intent
 
+    private fun stopOldServices(context: Context) {
+        runCatching {
+            context.unbindService(connection)
+        }
+
+        val intent = Intent(context, intentClass)
+        runCatching {
+            context.stopService(intent)
+        }
+    }
+
     // If override, call `super` AFTER setting the settings
     open fun startRecording(
         context: Context,
@@ -113,10 +124,7 @@ abstract class BaseRecorderModel<I, T : IntervalRecorderService<I>, B : BatchesF
         this.settings = settings
 
         // Clean up
-        runCatching {
-            recorderService?.clearAllRecordings()
-            context.unbindService(connection)
-        }
+        stopOldServices(context)
 
         notificationDetails = settings.notificationSettings.let {
             if (it == null)
@@ -147,10 +155,6 @@ abstract class BaseRecorderModel<I, T : IntervalRecorderService<I>, B : BatchesF
 
     suspend fun stopRecording(context: Context) {
         recorderService!!.stopRecording()
-
-        runCatching {
-            context.unbindService(connection)
-        }
     }
 
     fun pauseRecording() {
@@ -164,11 +168,8 @@ abstract class BaseRecorderModel<I, T : IntervalRecorderService<I>, B : BatchesF
     fun destroyService(context: Context) {
         recorderService!!.destroy()
         reset()
-        val intent = Intent(context, intentClass)
 
-        runCatching {
-            context.stopService(intent)
-        }
+        stopOldServices(context)
     }
 
     // Bind functions used to manually bind to the service if the app

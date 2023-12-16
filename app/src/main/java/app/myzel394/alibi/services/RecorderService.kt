@@ -29,7 +29,7 @@ abstract class RecorderService : LifecycleService() {
     private lateinit var recordingTimeTimer: ScheduledExecutorService
     private var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
 
-    var state = RecorderState.STOPPED
+    var state = RecorderState.IDLE
         private set
 
     var onStateChange: ((RecorderState) -> Unit)? = null

@@ -39,8 +39,13 @@ class VideoRecorderModel :
     }
 
     override fun onServiceConnected(service: VideoRecorderService) {
-        service.clearAllRecordings()
-        service.startRecording()
+        // `onServiceConnected` may be called when reconnecting to the service,
+        // so we only want to actually start the recording if the service is idle and thus
+        // not already recording
+        if (service.state == RecorderState.IDLE) {
+            service.clearAllRecordings()
+            service.startRecording()
+        }
 
         recorderState = service.state
         recordingTime = service.recordingTime
