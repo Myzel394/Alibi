@@ -120,6 +120,8 @@ fun VideoRecordingStatus(
         RecordingStatus(
             recordingTime = videoRecorder.recordingTime,
             progress = videoRecorder.progress,
+            recordingStart = videoRecorder.recordingStart,
+            maxDuration = videoRecorder.settings.maxDuration,
         )
 
         Column(

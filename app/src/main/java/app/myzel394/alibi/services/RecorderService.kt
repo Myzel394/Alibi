@@ -122,12 +122,12 @@ abstract class RecorderService : LifecycleService() {
         recordingTimeTimer = Executors.newSingleThreadScheduledExecutor().also {
             it.scheduleAtFixedRate(
                 {
-                    recordingTime += 1000
+                    recordingTime += 1
                     onRecordingTimeChange?.invoke(recordingTime)
                 },
                 0,
-                1000,
-                TimeUnit.MILLISECONDS
+                1,
+                TimeUnit.SECONDS
             )
         }
     }

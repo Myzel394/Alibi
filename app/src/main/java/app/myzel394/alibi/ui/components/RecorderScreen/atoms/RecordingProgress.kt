@@ -20,7 +20,7 @@ fun RecordingProgress(
     progress: Float,
 ) {
     // Only show animation when the recording has just started
-    val recordingJustStarted = recordingTime <= 1000L
+    val recordingJustStarted = recordingTime <= 1L
     var progressVisible by remember { mutableStateOf(!recordingJustStarted) }
 
     LaunchedEffect(Unit) {

@@ -35,10 +35,13 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
         get() = recorderState === RecorderState.PAUSED
 
     val progress: Float
-        get() = (recordingTime / recorderService!!.settings.maxDuration).toFloat()
+        get() = (recordingTime / (recorderService!!.settings.maxDuration / 1000)).toFloat()
 
     var recorderService by mutableStateOf<T?>(null)
         protected set
+
+    val recordingStart
+        get() = recorderService!!.recordingStart
 
     // If `isSavingAsOldRecording` is true, the user is saving an old recording,
     // thus the service is not running and thus doesn't need to be stopped or destroyed
@@ -48,7 +51,8 @@ abstract class BaseRecorderModel<S : IntervalRecorderService.Settings, I, T : In
 
     private var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
 
-    protected lateinit var settings: AppSettings
+    lateinit var settings: AppSettings
+        protected set
 
     protected abstract fun onServiceConnected(service: T)
 

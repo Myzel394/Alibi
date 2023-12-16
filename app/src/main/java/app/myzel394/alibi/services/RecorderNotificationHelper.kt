@@ -105,7 +105,7 @@ data class RecorderNotificationHelper(
                 Date.from(
                     Calendar
                         .getInstance()
-                        .also { it.add(Calendar.MILLISECOND, -recordingTime.toInt()) }
+                        .also { it.add(Calendar.SECOND, -recordingTime.toInt()) }
                         .toInstant()
                 ).time,
             )

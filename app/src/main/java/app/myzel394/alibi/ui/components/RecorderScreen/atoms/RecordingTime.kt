@@ -37,7 +37,7 @@ fun RecordingTime(
         }
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = formatDuration(time),
+            text = formatDuration(time * 1000),
             style = MaterialTheme.typography.headlineLarge,
         )
     }

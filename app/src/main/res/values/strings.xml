@@ -156,4 +156,7 @@
     <string name="ui_videoRecorder_action_torch_on">Enable Torch</string>
     <string name="ui_videoRecorder_action_configure_label">Press long for configuration</string>
     <string name="ui_recorder_action_changeMaxDuration_title">When stopped, save the last...</string>
+    <string name="ui_recorder_info_startTime_short">Recording started at %s</string>
+    <string name="ui_recorder_info_startTime_full">Recording started %s</string>
+    <string name="ui_recorder_info_saveNowTime">Saving now will save until %s</string>
 </resources>

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Divider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,9 +68,15 @@ fun AudioRecordingStatus(
         RealtimeAudioVisualizer(audioRecorder = audioRecorder)
 
         RecordingStatus(
-            recordingTime = audioRecorder.recordingTime!!,
+            recordingTime = audioRecorder.recordingTime,
             progress = audioRecorder.progress,
+            recordingStart = audioRecorder.recordingStart,
+            maxDuration = audioRecorder.settings.maxDuration,
         )
+
+        MicrophoneStatus(audioRecorder)
+
+        Divider()
 
         RecordingControl(
             isPaused = audioRecorder.isPaused,
@@ -95,7 +102,5 @@ fun AudioRecordingStatus(
                 audioRecorder.onRecordingSave(false)
             }
         )
-
-        MicrophoneStatus(audioRecorder)
     }
 }
