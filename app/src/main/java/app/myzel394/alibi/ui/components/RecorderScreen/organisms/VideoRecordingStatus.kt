@@ -142,6 +142,10 @@ fun VideoRecordingStatus(
 
             if (!videoRecorder.isStartingRecording) {
                 RecordingControl(
+                    // There may be some edge cases where the app may crash if the
+                    // user stops or pauses the recording too soon, so we simply add a
+                    // small delay to prevent that
+                    initialDelay = 1000L,
                     isPaused = videoRecorder.isPaused,
                     recordingTime = videoRecorder.recordingTime,
                     onDelete = {

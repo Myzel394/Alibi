@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RecordingControl(
+    initialDelay: Long = 0L,
     isPaused: Boolean,
     recordingTime: Long,
     onDelete: () -> Unit,
@@ -67,6 +68,8 @@ fun RecordingControl(
 
     LaunchedEffect(animateIn) {
         if (animateIn) {
+            delay(initialDelay)
+
             val stack = RandomStack.of(arrayOf(1, 2, 3).asIterable())
 
             while (!stack.isEmpty()) {
