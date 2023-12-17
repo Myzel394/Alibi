@@ -42,8 +42,12 @@ class VideoRecorderModel :
         // so we only want to actually start the recording if the service is idle and thus
         // not already recording
         if (service.state == RecorderState.IDLE) {
+            isStartingRecording = true
+
             service.clearAllRecordings()
             service.startRecording()
+        } else {
+            isStartingRecording = false
         }
 
         service.onCameraControlAvailable = {
