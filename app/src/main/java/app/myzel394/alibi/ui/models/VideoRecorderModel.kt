@@ -26,8 +26,8 @@ class VideoRecorderModel :
     override val isInRecording: Boolean
         get() = super.isInRecording
 
-    val isStartingRecording: Boolean
-        get() = recorderService?.cameraControl == null
+    var isStartingRecording by mutableStateOf(true)
+        private set
 
     val cameraSelector: CameraSelector
         get() = CameraSelector.Builder().requireLensFacing(cameraID).build()
@@ -44,6 +44,10 @@ class VideoRecorderModel :
         if (service.state == RecorderState.IDLE) {
             service.clearAllRecordings()
             service.startRecording()
+        }
+
+        service.onCameraControlAvailable = {
+            isStartingRecording = false
         }
 
         recorderState = service.state

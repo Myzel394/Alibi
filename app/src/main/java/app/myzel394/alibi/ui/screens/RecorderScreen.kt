@@ -28,7 +28,7 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
-import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RecorderEventsHandler
+import app.myzel394.alibi.ui.components.RecorderScreen.organisms.RecorderEventsHandler
 import app.myzel394.alibi.ui.components.RecorderScreen.organisms.VideoRecordingStatus
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel

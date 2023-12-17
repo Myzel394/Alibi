@@ -263,7 +263,7 @@ data class AudioRecorderSettings(
     }
 
     val fileExtension: String
-        get() = when (outputFormat) {
+        get() = when (getOutputFormat()) {
             MediaRecorder.OutputFormat.AAC_ADTS -> "aac"
             MediaRecorder.OutputFormat.THREE_GPP -> "3gp"
             MediaRecorder.OutputFormat.MPEG_4 -> "mp4"

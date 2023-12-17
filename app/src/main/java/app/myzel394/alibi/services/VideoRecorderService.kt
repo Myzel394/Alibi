@@ -54,6 +54,8 @@ class VideoRecorderService :
     private lateinit var selectedCamera: CameraSelector
     private var enableAudio by Delegates.notNull<Boolean>()
 
+    var onCameraControlAvailable = {}
+
     var cameraControl: CameraControl? = null
         private set
 
@@ -186,6 +188,7 @@ class VideoRecorderService :
                 videoCapture
             )
             cameraControl = CameraControl(camera!!)
+            onCameraControlAvailable()
 
             _cameraAvailableListener.complete(Unit)
         }
