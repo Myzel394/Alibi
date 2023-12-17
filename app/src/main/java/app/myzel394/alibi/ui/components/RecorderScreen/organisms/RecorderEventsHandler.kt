@@ -203,13 +203,11 @@ fun RecorderEventsHandler(
                 } else {
                     audioRecorder.stopRecording(context)
 
-                    runCatching {
-                        saveAsLastRecording(audioRecorder as RecorderModel)
+                    saveAsLastRecording(audioRecorder as RecorderModel)
 
-                        saveRecording(audioRecorder)
+                    saveRecording(audioRecorder)
 
-                        audioRecorder.destroyService(context)
-                    }
+                    audioRecorder.destroyService(context)
                 }
             }
         }
@@ -236,13 +234,11 @@ fun RecorderEventsHandler(
                 } else {
                     videoRecorder.stopRecording(context)
 
-                    runCatching {
-                        saveAsLastRecording(videoRecorder as RecorderModel)
+                    saveAsLastRecording(videoRecorder as RecorderModel)
 
-                        saveRecording(videoRecorder)
+                    saveRecording(videoRecorder)
 
-                        videoRecorder.destroyService(context)
-                    }
+                    videoRecorder.destroyService(context)
                 }
             }
         }
