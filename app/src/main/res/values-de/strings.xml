@@ -8,7 +8,7 @@
     <string name="form_error_type_notNumber">Bitte eine gültige Nummer eingeben</string>
     <string name="form_error_value_notInRange">Bitte gib eine Nummer zwischen<xliff:g name="min">%s</xliff:g> und <xliff:g name="max">%s</xliff:g>ein</string>
     <string name="form_error_value_mustBeGreaterThan">Bitte gib eine Zahl größer als <xliff:g name="min">%s</xliff:g> ein</string>
-    <string name="form_value_selected">Selected: %s</string>
+    <string name="form_value_selected">%s ausgewählt</string>
     <string name="notificationChannels_recorder_name">Aufnahme</string>
     <string name="notificationChannels_recorder_description">Zeigt den aktuellen Status der Aufnahme an</string>
     <string name="ui_permissions_request_title">Berechtigung verweigert</string>
