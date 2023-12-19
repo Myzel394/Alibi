@@ -103,14 +103,14 @@
     <string name="ui_about_contribute_donation_githubSponsors">Werde ein Github Sponsor</string>
     <string name="ui_settings_option_deleteRecordingsImmediately_title">Aufnahmen sofort löschen</string>
     <string name="ui_settings_option_deleteRecordingsImmediately_description">Falls aktiviert, löscht Alibi sofort Aufnahmen, nachdem Sie die Datei gespeichert haben.</string>
-    <string name="ui_settings_option_saveFolder_title">Batches folder</string>
-    <string name="ui_settings_option_saveFolder_explanation">Where Alibi should store the temporary batches of your recordings.</string>
-    <string name="ui_settings_option_saveFolder_action_select_label">Select</string>
-    <string name="ui_settings_option_saveFolder_defaultValue">Encrypted Internal Storage</string>
-    <string name="ui_settings_option_saveFolder_warning_title">Are you sure you want to change the folder?</string>
-    <string name="ui_settings_option_saveFolder_warning_text">By default, Alibi will save the recording batches into its private, encrypted file storage. You can change this and specify an external, unencrypted folder. This will allow you to access the batches manually. ONLY DO THIS IF YOU KNOW WHAT YOU ARE DOING!</string>
-    <string name="ui_settings_option_saveFolder_warning_action_confirm">Yes, change folder</string>
-    <string name="ui_settings_option_saveFolder_action_default_label">Use private, encrypted storage</string>
-    <string name="ui_audioRecorder_action_save_success">Recording has been saved successfully!</string>
-    <string name="ui_audioRecorder_action_save_openFolder">Open</string>
+    <string name="ui_settings_option_saveFolder_title">Batch-Ordner</string>
+    <string name="ui_settings_option_saveFolder_explanation">Wo Alibi die temporären Batches Ihrer Aufnahmen speichern soll.</string>
+    <string name="ui_settings_option_saveFolder_action_select_label">Auswählen</string>
+    <string name="ui_settings_option_saveFolder_defaultValue">Interner Speicher verschlüsselt</string>
+    <string name="ui_settings_option_saveFolder_warning_title">Sind Sie sicher, dass Sie den Ordner ändern möchten?</string>
+    <string name="ui_settings_option_saveFolder_warning_text">Standardmäßig speichert Alibi die Aufzeichnung in seinem privaten, verschlüsselten Speicher. Sie können dies ändern und einen extern, unverschlüsselten Ordner angeben. Dadurch kannst du manuell auf die Batches zugreifen. NUR VERWENDEN, WENN DU WEIẞT, WAS DU TUST!</string>
+    <string name="ui_settings_option_saveFolder_warning_action_confirm">Ja, Ordner ändern</string>
+    <string name="ui_settings_option_saveFolder_action_default_label">Privaten, verschlüsselten Speicher verwenden</string>
+    <string name="ui_audioRecorder_action_save_success">Aufnahme wurde erfolgreich gespeichert!</string>
+    <string name="ui_audioRecorder_action_save_openFolder">Öffnen</string>
 </resources>
