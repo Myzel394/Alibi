@@ -14,6 +14,7 @@ import androidx.core.view.WindowCompat
 import androidx.datastore.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.AppSettingsSerializer
+import app.myzel394.alibi.ui.LockedApp
 import app.myzel394.alibi.ui.Navigation
 import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
 import app.myzel394.alibi.ui.theme.AlibiTheme
@@ -31,24 +32,6 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            val dataStore = LocalContext.current.dataStore
-            val settings = dataStore
-                .data
-                .collectAsState(initial = AppSettings.getDefaultInstance())
-                .value
-
-            LaunchedEffect(settings.theme) {
-                if (!SUPPORTS_DARK_MODE_NATIVELY) {
-                    val currentValue = AppCompatDelegate.getDefaultNightMode()
-
-                    if (settings.theme == AppSettings.Theme.LIGHT && currentValue != AppCompatDelegate.MODE_NIGHT_NO) {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    } else if (settings.theme == AppSettings.Theme.DARK && currentValue != AppCompatDelegate.MODE_NIGHT_YES) {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
-                }
-            }
-
             AlibiTheme {
                 Navigation()
             }

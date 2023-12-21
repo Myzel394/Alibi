@@ -160,4 +160,6 @@
     <string name="ui_recorder_info_startTime_full">Recording started %s</string>
     <string name="ui_recorder_info_saveNowTime">Saving now will save until %s</string>
     <string name="ui_videoRecorder_info_starting">Video Recorder is starting...</string>
+    <string name="ui_locked_title">Alibi is locked</string>
+    <string name="ui_locked_unlocked">Unlock</string>
 </resources>

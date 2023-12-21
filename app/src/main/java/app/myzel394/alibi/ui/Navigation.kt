@@ -3,6 +3,7 @@ package app.myzel394.alibi.ui
 import android.content.Context
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.camera.core.CameraX
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -24,6 +25,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.myzel394.alibi.dataStore
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
@@ -59,6 +61,18 @@ fun Navigation(
         }
     }
 
+    LaunchedEffect(settings.theme) {
+        if (!SUPPORTS_DARK_MODE_NATIVELY) {
+            val currentValue = AppCompatDelegate.getDefaultNightMode()
+
+            if (settings.theme == AppSettings.Theme.LIGHT && currentValue != AppCompatDelegate.MODE_NIGHT_NO) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            } else if (settings.theme == AppSettings.Theme.DARK && currentValue != AppCompatDelegate.MODE_NIGHT_YES) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
+        }
+    }
+
     NavHost(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background),
@@ -84,6 +98,7 @@ fun Navigation(
                 navController = navController,
                 audioRecorder = audioRecorder,
                 videoRecorder = videoRecorder,
+                settings = settings,
             )
         }
         composable(
