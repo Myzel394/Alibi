@@ -1,8 +1,16 @@
 package app.myzel394.alibi.ui
 
 import android.content.Context
+import android.hardware.biometrics.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import android.hardware.biometrics.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+import android.hardware.biometrics.BiometricPrompt
+import android.hardware.biometrics.BiometricPrompt.CryptoObject
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
+import android.os.Build
+import android.os.CancellationSignal
+import android.widget.Button
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.camera.core.CameraX
 import androidx.compose.animation.core.tween
@@ -20,10 +28,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.enums.Screen
@@ -58,6 +68,39 @@ fun Navigation(
         onDispose {
             audioRecorder.unbindFromService(context)
             videoRecorder.unbindFromService(context)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val executor = ContextCompat.getMainExecutor(context)
+            val promptInfo = BiometricPrompt.Builder(context)
+                .setTitle("Biometric login for my app")
+                .setSubtitle("Log in using your biometric credential")
+                .setAllowedAuthenticators(
+                    BIOMETRIC_STRONG or DEVICE_CREDENTIAL
+                )
+                .build()
+
+            // Prompt appears when user clicks "Log in".
+            // Consider integrating with the keystore to unlock cryptographic operations,
+            // if needed by your app.
+            promptInfo.authenticate(
+                CancellationSignal(),
+                executor,
+                object : BiometricPrompt.AuthenticationCallback() {
+                    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                        super.onAuthenticationError(errorCode, errString)
+                    }
+
+                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                        super.onAuthenticationSucceeded(result)
+                    }
+
+                    override fun onAuthenticationFailed() {
+                        super.onAuthenticationFailed()
+                    }
+                })
         }
     }
 

@@ -1,11 +1,14 @@
 package app.myzel394.alibi.db
 
 import android.content.Context
+import android.content.Intent
 import android.media.MediaRecorder
 import android.os.Build
-import androidx.camera.video.FileOutputOptions
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
+import androidx.core.app.ActivityCompat.startActivityForResult
 import app.myzel394.alibi.R
 import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
@@ -545,5 +548,21 @@ data class NotificationSettings(
             Preset.Browser,
             Preset.VPN,
         )
+    }
+}
+
+@Serializable
+class AppLockSettings {
+    val isEnabled
+        get() = true
+
+    companion object {
+        fun getDefaultInstance(): AppLockSettings = AppLockSettings()
+
+        fun isSupported(context: Context): Boolean {
+            val biometricManager = BiometricManager.from(context)
+            when (biometricManager.canAuthenticate(Authenticators.BIOMETRIC_STRONG or Authenticators.DEVICE_CREDENTIAL)) {
+
+            }
     }
 }
