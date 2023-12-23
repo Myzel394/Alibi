@@ -45,6 +45,7 @@ import app.myzel394.alibi.ui.screens.CustomRecordingNotificationsScreen
 import app.myzel394.alibi.ui.screens.SettingsScreen
 import app.myzel394.alibi.ui.screens.WelcomeScreen
 import app.myzel394.alibi.ui.utils.CameraInfo
+import app.myzel394.alibi.helpers.AppLockHelper
 
 const val SCALE_IN = 1.25f
 
@@ -73,34 +74,7 @@ fun Navigation(
 
     LaunchedEffect(Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val executor = ContextCompat.getMainExecutor(context)
-            val promptInfo = BiometricPrompt.Builder(context)
-                .setTitle("Biometric login for my app")
-                .setSubtitle("Log in using your biometric credential")
-                .setAllowedAuthenticators(
-                    BIOMETRIC_STRONG or DEVICE_CREDENTIAL
-                )
-                .build()
-
-            // Prompt appears when user clicks "Log in".
-            // Consider integrating with the keystore to unlock cryptographic operations,
-            // if needed by your app.
-            promptInfo.authenticate(
-                CancellationSignal(),
-                executor,
-                object : BiometricPrompt.AuthenticationCallback() {
-                    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                        super.onAuthenticationError(errorCode, errString)
-                    }
-
-                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                        super.onAuthenticationSucceeded(result)
-                    }
-
-                    override fun onAuthenticationFailed() {
-                        super.onAuthenticationFailed()
-                    }
-                })
+            AppLockHelper.authenticate(context, "Title", "Subtitle")
         }
     }
 

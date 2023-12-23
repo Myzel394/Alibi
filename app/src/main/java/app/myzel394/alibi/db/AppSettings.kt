@@ -553,16 +553,8 @@ data class NotificationSettings(
 
 @Serializable
 class AppLockSettings {
+    // If the object is present, biometric authentication is enabled.
+    // To disable biometric authentication, set the instance to null.
     val isEnabled
         get() = true
-
-    companion object {
-        fun getDefaultInstance(): AppLockSettings = AppLockSettings()
-
-        fun isSupported(context: Context): Boolean {
-            val biometricManager = BiometricManager.from(context)
-            when (biometricManager.canAuthenticate(Authenticators.BIOMETRIC_STRONG or Authenticators.DEVICE_CREDENTIAL)) {
-
-            }
-    }
 }
