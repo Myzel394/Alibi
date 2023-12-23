@@ -15,13 +15,13 @@ class AppLockHelper {
     }
 
     companion object {
-        fun isSupported(context: Context): SupportType {
+        fun getSupportType(context: Context): SupportType {
             val biometricManager = BiometricManager.from(context)
-            when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)) {
-                BiometricManager.BIOMETRIC_SUCCESS -> return SupportType.AVAILABLE
-                BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> return SupportType.NONE_ENROLLED
+            return when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)) {
+                BiometricManager.BIOMETRIC_SUCCESS -> SupportType.AVAILABLE
+                BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> SupportType.NONE_ENROLLED
 
-                else -> return SupportType.UNAVAILABLE
+                else -> SupportType.UNAVAILABLE
             }
         }
 
@@ -29,23 +29,23 @@ class AppLockHelper {
             context: Context,
             title: String,
             subtitle: String
-        ): CompletableDeferred<Unit> {
-            val deferred = CompletableDeferred<Unit>()
+        ): CompletableDeferred<Boolean> {
+            val deferred = CompletableDeferred<Boolean>()
 
             val mainExecutor = ContextCompat.getMainExecutor(context)
             val biometricPrompt = BiometricPrompt(
                 context as FragmentActivity,
                 object : BiometricPrompt.AuthenticationCallback() {
                     override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                        deferred.completeExceptionally(Exception(errString.toString()))
+                        deferred.complete(false)
                     }
 
                     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                        deferred.complete(Unit)
+                        deferred.complete(true)
                     }
 
                     override fun onAuthenticationFailed() {
-                        deferred.completeExceptionally(Exception("Authentication failed"))
+                        deferred.complete(false)
                     }
                 }
             )

@@ -22,6 +22,8 @@ data class AppSettings(
     val audioRecorderSettings: AudioRecorderSettings = AudioRecorderSettings.getDefaultInstance(),
     val videoRecorderSettings: VideoRecorderSettings = VideoRecorderSettings.getDefaultInstance(),
 
+    val appLockSettings: AppLockSettings? = null,
+
     val hasSeenOnboarding: Boolean = false,
     val showAdvancedSettings: Boolean = false,
     val theme: Theme = Theme.SYSTEM,
@@ -96,6 +98,14 @@ data class AppSettings(
     fun setSaveFolder(saveFolder: String?): AppSettings {
         return copy(saveFolder = saveFolder)
     }
+
+    fun setAppLockSettings(appLockSettings: AppLockSettings?): AppSettings {
+        return copy(appLockSettings = appLockSettings)
+    }
+
+    // If the object is present, biometric authentication is enabled.
+    // To disable biometric authentication, set the instance to null.
+    fun isAppLockEnabled() = appLockSettings != null
 
     enum class Theme {
         SYSTEM,
@@ -553,8 +563,7 @@ data class NotificationSettings(
 
 @Serializable
 class AppLockSettings {
-    // If the object is present, biometric authentication is enabled.
-    // To disable biometric authentication, set the instance to null.
-    val isEnabled
-        get() = true
+    companion object {
+        fun getDefaultInstance() = AppLockSettings()
+    }
 }
