@@ -20,17 +20,88 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
+import app.myzel394.alibi.dataStore
+import app.myzel394.alibi.helpers.AppLockHelper
+import kotlinx.coroutines.launch
 
 // After this amount, close the app
-const val MAX_TRIES = 5
+const val MAX_TRIES = 10
 
 @Composable
-fun LockedApp() {
+fun AsLockedApp(
+    content: (@Composable () -> Unit),
+) {
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    val settings = context
+        .dataStore
+        .data
+        .collectAsState(initial = null)
+        .value ?: return
+
+    // -1 = Unlocked, any other value = locked
+    var tries by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(settings.isAppLockEnabled()) {
+        if (!settings.isAppLockEnabled()) {
+            tries = -1
+        }
+    }
+
+    if (tries == -1) {
+        return content()
+    }
+
+    val title = stringResource(R.string.identityVerificationRequired_title)
+    val subtitle = stringResource(R.string.identityVerificationRequired_subtitle)
+
+    fun openAuthentication() {
+        if (tries >= MAX_TRIES) {
+            AppLockHelper.closeApp(context)
+            return
+        }
+
+        scope.launch {
+            val successful = AppLockHelper.authenticate(
+                context,
+                title,
+                subtitle,
+            ).await()
+
+            if (successful) {
+                tries = -1
+                return@launch
+            }
+
+            tries++
+
+            if (tries >= MAX_TRIES) {
+                AppLockHelper.closeApp(context)
+            }
+        }
+    }
+
+    LaunchedEffect(settings.isAppLockEnabled()) {
+        if (settings.isAppLockEnabled()) {
+            openAuthentication()
+        }
+    }
+
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
@@ -60,7 +131,7 @@ fun LockedApp() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(BIG_PRIMARY_BUTTON_SIZE),
-                onClick = {},
+                onClick = ::openAuthentication,
                 colors = ButtonDefaults.filledTonalButtonColors(),
             ) {
                 Icon(

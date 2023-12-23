@@ -72,12 +72,6 @@ fun Navigation(
         }
     }
 
-    LaunchedEffect(Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            AppLockHelper.authenticate(context, "Title", "Subtitle")
-        }
-    }
-
     LaunchedEffect(settings.theme) {
         if (!SUPPORTS_DARK_MODE_NATIVELY) {
             val currentValue = AppCompatDelegate.getDefaultNightMode()

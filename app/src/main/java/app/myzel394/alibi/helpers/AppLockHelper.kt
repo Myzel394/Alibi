@@ -1,11 +1,13 @@
 package app.myzel394.alibi.helpers
 
+import android.app.Activity
 import android.content.Context
 import androidx.biometric.BiometricManager
 import androidx.core.content.ContextCompat
 import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.FragmentActivity
 import kotlinx.coroutines.CompletableDeferred
+import kotlin.system.exitProcess
 
 class AppLockHelper {
     enum class SupportType {
@@ -59,6 +61,16 @@ class AppLockHelper {
             biometricPrompt.authenticate(promptInfo)
 
             return deferred
+        }
+
+        fun closeApp(context: Context) {
+            (context as? Activity)?.let {
+                it.finishAndRemoveTask()
+                it.finishAffinity()
+                it.finish()
+            }
+
+            exitProcess(0)
         }
     }
 }
