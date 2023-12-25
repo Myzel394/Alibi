@@ -40,11 +40,10 @@ fun RecorderScreen(
     navController: NavController,
     audioRecorder: AudioRecorderModel,
     videoRecorder: VideoRecorderModel,
+    settings: AppSettings,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
-
-    val settings = rememberSettings()
 
     RecorderEventsHandler(
         settings = settings,

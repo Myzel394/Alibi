@@ -1,8 +1,17 @@
 package app.myzel394.alibi.ui
 
 import android.content.Context
+import android.hardware.biometrics.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import android.hardware.biometrics.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+import android.hardware.biometrics.BiometricPrompt
+import android.hardware.biometrics.BiometricPrompt.CryptoObject
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
+import android.os.Build
+import android.os.CancellationSignal
+import android.widget.Button
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.camera.core.CameraX
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -19,11 +28,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
@@ -33,6 +45,7 @@ import app.myzel394.alibi.ui.screens.CustomRecordingNotificationsScreen
 import app.myzel394.alibi.ui.screens.SettingsScreen
 import app.myzel394.alibi.ui.screens.WelcomeScreen
 import app.myzel394.alibi.ui.utils.CameraInfo
+import app.myzel394.alibi.helpers.AppLockHelper
 
 const val SCALE_IN = 1.25f
 
@@ -84,6 +97,7 @@ fun Navigation(
                 navController = navController,
                 audioRecorder = audioRecorder,
                 videoRecorder = videoRecorder,
+                settings = settings,
             )
         }
         composable(

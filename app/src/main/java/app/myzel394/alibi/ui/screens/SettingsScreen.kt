@@ -52,6 +52,7 @@ import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderOutput
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderSamplingRateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.SaveFolderTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderShowAllMicrophonesTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.EnableAppLockTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderBitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ThemeSelector
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
@@ -138,6 +139,7 @@ fun SettingsScreen(
             InAppLanguagePicker()
             DeleteRecordingsImmediatelyTile(settings = settings)
             CustomNotificationTile(navController = navController, settings = settings)
+            EnableAppLockTile(settings = settings)
             GlobalSwitch(
                 label = stringResource(R.string.ui_settings_advancedSettings_label),
                 checked = settings.showAdvancedSettings,

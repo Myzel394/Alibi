@@ -1,11 +1,14 @@
 package app.myzel394.alibi.db
 
 import android.content.Context
+import android.content.Intent
 import android.media.MediaRecorder
 import android.os.Build
-import androidx.camera.video.FileOutputOptions
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
+import androidx.core.app.ActivityCompat.startActivityForResult
 import app.myzel394.alibi.R
 import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
@@ -18,6 +21,8 @@ import java.time.LocalDateTime
 data class AppSettings(
     val audioRecorderSettings: AudioRecorderSettings = AudioRecorderSettings.getDefaultInstance(),
     val videoRecorderSettings: VideoRecorderSettings = VideoRecorderSettings.getDefaultInstance(),
+
+    val appLockSettings: AppLockSettings? = null,
 
     val hasSeenOnboarding: Boolean = false,
     val showAdvancedSettings: Boolean = false,
@@ -93,6 +98,14 @@ data class AppSettings(
     fun setSaveFolder(saveFolder: String?): AppSettings {
         return copy(saveFolder = saveFolder)
     }
+
+    fun setAppLockSettings(appLockSettings: AppLockSettings?): AppSettings {
+        return copy(appLockSettings = appLockSettings)
+    }
+
+    // If the object is present, biometric authentication is enabled.
+    // To disable biometric authentication, set the instance to null.
+    fun isAppLockEnabled() = appLockSettings != null
 
     enum class Theme {
         SYSTEM,
@@ -545,5 +558,12 @@ data class NotificationSettings(
             Preset.Browser,
             Preset.VPN,
         )
+    }
+}
+
+@Serializable
+class AppLockSettings {
+    companion object {
+        fun getDefaultInstance() = AppLockSettings()
     }
 }
