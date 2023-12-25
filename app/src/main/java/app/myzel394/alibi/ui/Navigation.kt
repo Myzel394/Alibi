@@ -72,18 +72,6 @@ fun Navigation(
         }
     }
 
-    LaunchedEffect(settings.theme) {
-        if (!SUPPORTS_DARK_MODE_NATIVELY) {
-            val currentValue = AppCompatDelegate.getDefaultNightMode()
-
-            if (settings.theme == AppSettings.Theme.LIGHT && currentValue != AppCompatDelegate.MODE_NIGHT_NO) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            } else if (settings.theme == AppSettings.Theme.DARK && currentValue != AppCompatDelegate.MODE_NIGHT_YES) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }
-        }
-    }
-
     NavHost(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background),

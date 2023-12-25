@@ -39,8 +39,9 @@ import app.myzel394.alibi.helpers.AppLockHelper
 import kotlinx.coroutines.launch
 
 // After this amount, close the app
-const val MAX_TRIES = 10
+const val MAX_TRIES = 5
 
+// Makes sure the app needs to be unlocked first, if app lock is enabled
 @Composable
 fun AsLockedApp(
     content: (@Composable () -> Unit),
