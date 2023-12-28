@@ -30,21 +30,7 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            AlibiTheme {
-                LockedAppHandlers()
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            MaterialTheme.colorScheme.background
-                        )
-                ) {
-                    AsLockedApp {
-                        Navigation()
-                    }
-                }
-            }
+            AlibiApp()
         }
     }
 }

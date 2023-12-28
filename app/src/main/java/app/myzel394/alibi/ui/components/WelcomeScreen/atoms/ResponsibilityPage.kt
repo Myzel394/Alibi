@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
@@ -63,7 +64,8 @@ fun ResponsibilityPage(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
-                .height(BIG_PRIMARY_BUTTON_SIZE),
+                .height(BIG_PRIMARY_BUTTON_SIZE)
+                .testTag("ResponsibilityContinueButton"),
         ) {
             Icon(
                 Icons.Default.Check,

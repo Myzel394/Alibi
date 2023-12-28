@@ -35,17 +35,17 @@ fun WelcomeScreen(
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f,
-        pageCount = {2}
+        pageCount = { 2 }
     )
 
-    Scaffold() {padding ->
+    Scaffold() { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            HorizontalPager(state = pagerState) {position ->
+            HorizontalPager(state = pagerState) { position ->
                 when (position) {
                     0 -> ExplanationPage(
                         onContinue = {
@@ -54,12 +54,12 @@ fun WelcomeScreen(
                             }
                         }
                     )
+
                     1 -> ResponsibilityPage {
                         scope.launch {
                             dataStore.updateData {
                                 settings.setHasSeenOnboarding(true)
                             }
-                            navController.navigate(Screen.AudioRecorder.route)
                         }
                     }
                 }
