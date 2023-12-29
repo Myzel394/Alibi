@@ -19,7 +19,7 @@ import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.services.RecorderService
 import kotlinx.serialization.json.Json
 
-abstract class BaseRecorderModel<I, T : IntervalRecorderService<I>, B : BatchesFolder?> :
+abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderService<I, B>> :
     ViewModel() {
     protected abstract val intentClass: Class<T>
 
@@ -47,7 +47,7 @@ abstract class BaseRecorderModel<I, T : IntervalRecorderService<I>, B : BatchesF
     // thus the service is not running and thus doesn't need to be stopped or destroyed
     var onRecordingSave: (isSavingAsOldRecording: Boolean) -> Unit = {}
     var onError: () -> Unit = {}
-    abstract var batchesFolder: B
+    abstract var batchesFolder: B?
 
     private var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
 

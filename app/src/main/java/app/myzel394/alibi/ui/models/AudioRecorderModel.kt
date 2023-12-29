@@ -14,7 +14,7 @@ import app.myzel394.alibi.services.AudioRecorderService
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 
 class AudioRecorderModel :
-    BaseRecorderModel<RecordingInformation, AudioRecorderService, AudioBatchesFolder?>() {
+    BaseRecorderModel<RecordingInformation, AudioBatchesFolder, AudioRecorderService>() {
     override var batchesFolder: AudioBatchesFolder? = null
     override val intentClass = AudioRecorderService::class.java
 
