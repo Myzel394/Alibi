@@ -4,12 +4,17 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
+import android.os.ParcelFileDescriptor
 import android.util.Range
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.TorchState
+import androidx.camera.core.processing.SurfaceProcessorNode.Out
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.video.FileDescriptorOutputOptions
 import androidx.camera.video.FileOutputOptions
+import androidx.camera.video.MediaStoreOutputOptions
+import androidx.camera.video.OutputOptions
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
@@ -30,11 +35,12 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import java.nio.file.Files.createFile
 import kotlin.properties.Delegates
 
 class VideoRecorderService :
-    IntervalRecorderService<RecordingInformation>() {
-    override var batchesFolder: BatchesFolder = VideoBatchesFolder.viaInternalFolder(this)
+    IntervalRecorderService<RecordingInformation, VideoBatchesFolder>() {
+    override var batchesFolder = VideoBatchesFolder.viaInternalFolder(this)
 
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
@@ -224,7 +230,32 @@ class VideoRecorderService :
     @SuppressLint("MissingPermission")
     private fun prepareVideoRecording() =
         videoCapture!!.output
-            .prepareRecording(this, getOutputOptions())
+            .let {
+                // TODO: Add hint
+                if (batchesFolder.type == BatchesFolder.BatchType.CUSTOM && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    it.prepareRecording(
+                        this,
+                        FileDescriptorOutputOptions.Builder(
+                            batchesFolder.asCustomGetParcelFileDescriptor(
+                                counter,
+                                settings.videoRecorderSettings.fileExtension
+                            )
+                        ).build()
+                    )
+                } else {
+                    it.prepareRecording(
+                        this,
+                        FileOutputOptions.Builder(
+                            batchesFolder.asInternalGetFile(
+                                counter,
+                                settings.videoRecorderSettings.fileExtension
+                            ).apply {
+                                createNewFile()
+                            }
+                        ).build()
+                    )
+                }
+            }
             .run {
                 if (enableAudio) {
                     return@run withAudioEnabled()
@@ -241,15 +272,6 @@ class VideoRecorderService :
         intervalDuration = settings.intervalDuration,
         type = RecordingInformation.Type.VIDEO,
     )
-
-    fun getOutputOptions(): FileOutputOptions {
-        val fileName = "${counter}.${settings.videoRecorderSettings.fileExtension}"
-        val file = batchesFolder.getInternalFolder().resolve(fileName).apply {
-            createNewFile()
-        }
-
-        return FileOutputOptions.Builder(file).build()
-    }
 
     companion object {
         const val CAMERA_CLOSE_TIMEOUT = 20000L
