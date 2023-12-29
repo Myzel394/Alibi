@@ -1,20 +1,14 @@
 package app.myzel394.alibi.ui.components.RecorderScreen.molecules
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.EaseOutElastic
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -26,7 +20,6 @@ import app.myzel394.alibi.ui.components.RecorderScreen.atoms.SaveButton
 import app.myzel394.alibi.ui.utils.RandomStack
 import app.myzel394.alibi.ui.utils.rememberInitialRecordingAnimation
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun RecordingControl(

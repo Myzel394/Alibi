@@ -33,13 +33,6 @@ fun SaveButton(
         onClick = onSave,
         colors = ButtonDefaults.textButtonColors(),
     ) {
-        Icon(
-            Icons.Default.Save,
-            contentDescription = null,
-            modifier = Modifier
-                .size(ButtonDefaults.IconSize)
-        )
-        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
         Text(
             label,
             fontSize = MaterialTheme.typography.bodySmall.fontSize,
