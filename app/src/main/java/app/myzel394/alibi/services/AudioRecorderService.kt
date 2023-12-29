@@ -1,6 +1,7 @@
 package app.myzel394.alibi.services
 
 import android.content.Context
+import android.content.Context.AUDIO_SERVICE
 import android.content.pm.ServiceInfo
 import android.media.AudioDeviceCallback
 import android.media.AudioDeviceInfo
@@ -11,6 +12,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat.getSystemService
 import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
@@ -21,8 +23,8 @@ import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import java.lang.IllegalStateException
 
 class AudioRecorderService :
-    IntervalRecorderService<RecordingInformation>() {
-    override var batchesFolder: BatchesFolder = AudioBatchesFolder.viaInternalFolder(this)
+    IntervalRecorderService<RecordingInformation, AudioBatchesFolder>() {
+    override var batchesFolder = AudioBatchesFolder.viaInternalFolder(this)
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -181,7 +183,10 @@ class AudioRecorderService :
             when (batchesFolder.type) {
                 BatchesFolder.BatchType.INTERNAL -> {
                     setOutputFile(
-                        batchesFolder.asInternalGetOutputPath(counter, audioSettings.fileExtension)
+                        batchesFolder.asInternalGetFile(
+                            counter,
+                            audioSettings.fileExtension
+                        ).absolutePath
                     )
                 }
 
