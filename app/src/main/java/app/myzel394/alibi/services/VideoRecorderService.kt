@@ -28,6 +28,7 @@ import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
+import app.myzel394.alibi.ui.VIDEO_RECORDER_SUPPORTS_CUSTOM_FOLDER
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -227,12 +228,12 @@ class VideoRecorderService :
         }
     }
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission", "NewApi")
     private fun prepareVideoRecording() =
         videoCapture!!.output
             .let {
                 // TODO: Add hint
-                if (batchesFolder.type == BatchesFolder.BatchType.CUSTOM && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (batchesFolder.type == BatchesFolder.BatchType.CUSTOM && VIDEO_RECORDER_SUPPORTS_CUSTOM_FOLDER) {
                     it.prepareRecording(
                         this,
                         FileDescriptorOutputOptions.Builder(
