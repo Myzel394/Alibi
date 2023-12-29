@@ -6,7 +6,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
-abstract class IntervalRecorderService<I> :
+abstract class IntervalRecorderService<I, B : BatchesFolder> :
     RecorderService() {
     protected var counter = 0L
         private set
@@ -15,7 +15,7 @@ abstract class IntervalRecorderService<I> :
 
     private lateinit var cycleTimer: ScheduledExecutorService
 
-    abstract var batchesFolder: BatchesFolder
+    abstract var batchesFolder: B
 
     var onCustomOutputFolderNotAccessible: () -> Unit = {}
 
@@ -61,6 +61,7 @@ abstract class IntervalRecorderService<I> :
 
     override suspend fun stop() {
         cycleTimer.shutdown()
+        batchesFolder.cleanup()
         super.stop()
     }
 
