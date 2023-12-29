@@ -167,4 +167,6 @@
     <string name="ui_settings_option_enableAppLock_enrollmentRequired">Please enroll a password or a biometric unlock method first</string>
     <string name="identityVerificationRequired_title">Verification required</string>
     <string name="identityVerificationRequired_subtitle">You need to verify your identity to continue</string>
+    <string name="ui_settings_option_saveFolder_videoUnsupported">Custom folders for Video Recordings aren\'t supported by your Android version. Alibi will fallback to the internal folder instead for Video Recordings.</string>
+    <string name="ui_minApiRequired">You will need an Android phone running at least Android %s (API-Level: %s) to use this feature</string>
 </resources>
