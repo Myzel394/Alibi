@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Alibi</string>
-    <string name="dialog_close_cancel_label">Cancel</string>
-    <string name="dialog_close_neutral_label">OK</string>
-    <string name="continue_label">Continue</string>
-    <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
-    <string name="form_error_type_notNumber">Please enter a valid number</string>
-    <string name="form_error_value_notInRange">Please enter a number between <xliff:g name="min">%s</xliff:g> and <xliff:g name="max">%s</xliff:g></string>
-    <string name="form_error_value_mustBeGreaterThan">Please enter a number greater than <xliff:g name="min">%s</xliff:g></string>
-    <string name="form_value_selected">Selected: %s</string>
-    <string name="notificationChannels_recorder_name">Recorder</string>
-    <string name="notificationChannels_recorder_description">Shows the current recording status</string>
-    <string name="ui_permissions_request_title">Permission denied</string>
-    <string name="ui_permissions_request">Please grant the permission to continue</string>
-    <string name="ui_permissions_permanentlyDenied_message">You will be redirected to the app settings to grant the permission there.</string>
+    <string name="dialog_close_cancel_label">Annuler</string>
+    <string name="dialog_close_neutral_label">Ok</string>
+    <string name="continue_label">Continuer</string>
+    <string name="format_kbps"><xliff:g name="value">%s</xliff:g> Ko/s</string>
+    <string name="form_error_type_notNumber">Veuillez saisir un nombre valide</string>
+    <string name="form_error_value_notInRange">Veuillez saisir un nombre entre <xliff:g name="min">%s</xliff:g> et <xliff:g name="max">%s</xliff:g></string>
+    <string name="form_error_value_mustBeGreaterThan">Veuillez saisir un nombre supérieur à <xliff:g name="min">%s</xliff:g></string>
+    <string name="form_value_selected">Sélectionné : %s</string>
+    <string name="notificationChannels_recorder_name">Enregistreur</string>
+    <string name="notificationChannels_recorder_description">Affiche l\'état actuel de l\'enregistrement</string>
+    <string name="ui_permissions_request_title">Autorisation refusée</string>
+    <string name="ui_permissions_request">Veuillez accorder l\'autorisation pour continuer</string>
+    <string name="ui_permissions_permanentlyDenied_message">Vous allez être redirigé vers les paramètres de l\'application pour y accorder l\'autorisation.</string>
     <string name="ui_audioRecorder_action_start_label">Start Recording</string>
     <string name="ui_audioRecorder_action_saveOldRecording_label">Save Recording from <xliff:g name="date">%s</xliff:g></string>
     <string name="ui_audioRecorder_action_delete_label">Delete</string>
