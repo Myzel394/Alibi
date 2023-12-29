@@ -32,13 +32,17 @@ class AudioBatchesFolder(
     ): String {
         return when (type) {
             BatchType.INTERNAL -> asInternalGetOutputFile(date, extension).absolutePath
-            BatchType.CUSTOM -> FFmpegKitConfig.getSafParameterForWrite(
-                context,
-                customFolder!!.createFile(
-                    "audio/${extension}",
-                    getName(date, extension),
-                )!!.uri
-            )!!
+            BatchType.CUSTOM -> {
+                val name = getName(date, extension)
+
+                FFmpegKitConfig.getSafParameterForWrite(
+                    context,
+                    (customFolder!!.findFile(name) ?: customFolder.createFile(
+                        "audio/${extension}",
+                        getName(date, extension),
+                    )!!).uri
+                )!!
+            }
         }
     }
 

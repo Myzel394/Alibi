@@ -28,13 +28,17 @@ class VideoBatchesFolder(
     override fun getOutputFileForFFmpeg(date: LocalDateTime, extension: String): String {
         return when (type) {
             BatchType.INTERNAL -> asInternalGetOutputFile(date, extension).absolutePath
-            BatchType.CUSTOM -> FFmpegKitConfig.getSafParameterForWrite(
-                context,
-                customFolder!!.createFile(
-                    "video/${extension}",
-                    getName(date, extension),
-                )!!.uri
-            )!!
+            BatchType.CUSTOM -> {
+                val name = getName(date, extension)
+
+                FFmpegKitConfig.getSafParameterForWrite(
+                    context,
+                    (customFolder!!.findFile(name) ?: customFolder.createFile(
+                        "video/${extension}",
+                        getName(date, extension),
+                    )!!).uri
+                )!!
+            }
         }
     }
 

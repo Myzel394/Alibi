@@ -1,8 +1,11 @@
 package app.myzel394.alibi.helpers
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
+import androidx.documentfile.provider.DocumentFile
 import com.arthenica.ffmpegkit.FFmpegKit
+import com.arthenica.ffmpegkit.FFmpegKitConfig
 import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.coroutines.CompletableDeferred
 import java.io.File
@@ -66,7 +69,8 @@ class MediaConverter {
             val listFile = createTempFile(inputFiles.joinToString("\n") { "file '$it'" })
 
             val command =
-                " -f concat" +
+                "-protocol_whitelist saf,concat,content,file,subfile" +
+                        " -f concat" +
                         " -safe 0" +
                         " -i ${listFile.absolutePath}" +
                         extraCommand +
@@ -78,7 +82,6 @@ class MediaConverter {
                 command
             ) { session ->
                 runCatching {
-                    listFile.delete()
                 }
 
                 if (!ReturnCode.isSuccess(session!!.returnCode)) {
