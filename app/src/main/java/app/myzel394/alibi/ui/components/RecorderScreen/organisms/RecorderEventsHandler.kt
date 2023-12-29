@@ -34,8 +34,8 @@ import kotlinx.coroutines.launch
 
 typealias RecorderModel = BaseRecorderModel<
         RecordingInformation,
-        IntervalRecorderService<RecordingInformation>,
-        BatchesFolder?
+        BatchesFolder,
+        IntervalRecorderService<RecordingInformation, BatchesFolder>,
         >
 
 @Composable
