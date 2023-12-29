@@ -2,9 +2,12 @@ package app.myzel394.alibi.helpers
 
 import android.content.Context
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateAudioFiles
+import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateVideoFiles
 import com.arthenica.ffmpegkit.FFmpegKitConfig
+import java.io.FileDescriptor
 import java.time.LocalDateTime
 
 class AudioBatchesFolder(
@@ -18,8 +21,10 @@ class AudioBatchesFolder(
     customFolder,
     subfolderName,
 ) {
-    override val concatenateFunction = ::concatenateAudioFiles
+    override val concatenationFunction = ::concatenateVideoFiles
     override val ffmpegParameters = FFMPEG_PARAMETERS
+
+    private var customFileFileDescriptor: ParcelFileDescriptor? = null
 
     override fun getOutputFileForFFmpeg(
         date: LocalDateTime,
@@ -35,6 +40,28 @@ class AudioBatchesFolder(
                 )!!.uri
             )!!
         }
+    }
+
+    override fun cleanup() {
+        runCatching {
+            customFileFileDescriptor?.close()
+        }
+    }
+
+    fun asCustomGetFileDescriptor(
+        counter: Long,
+        fileExtension: String,
+    ): FileDescriptor {
+        runCatching {
+            customFileFileDescriptor?.close()
+        }
+
+        val file =
+            getCustomDefinedFolder().createFile("audio/$fileExtension", "$counter.$fileExtension")!!
+
+        customFileFileDescriptor = context.contentResolver.openFileDescriptor(file.uri, "w")!!
+
+        return customFileFileDescriptor!!.fileDescriptor
     }
 
     companion object {

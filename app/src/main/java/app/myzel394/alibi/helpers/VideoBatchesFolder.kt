@@ -2,6 +2,7 @@ package app.myzel394.alibi.helpers
 
 import android.content.Context
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateVideoFiles
 import com.arthenica.ffmpegkit.FFmpegKitConfig
@@ -19,8 +20,10 @@ class VideoBatchesFolder(
     customFolder,
     subfolderName,
 ) {
-    override val concatenateFunction = ::concatenateVideoFiles
+    override val concatenationFunction = ::concatenateVideoFiles
     override val ffmpegParameters = FFMPEG_PARAMETERS
+
+    private var customParcelFileDescriptor: ParcelFileDescriptor? = null
 
     override fun getOutputFileForFFmpeg(date: LocalDateTime, extension: String): String {
         return when (type) {
@@ -32,6 +35,34 @@ class VideoBatchesFolder(
                     getName(date, extension),
                 )!!.uri
             )!!
+        }
+    }
+
+    override fun cleanup() {
+        runCatching {
+            customParcelFileDescriptor?.close()
+        }
+    }
+
+    fun asCustomGetParcelFileDescriptor(
+        counter: Long,
+        fileExtension: String,
+    ): ParcelFileDescriptor {
+        runCatching {
+            customParcelFileDescriptor?.close()
+        }
+
+        val file =
+            getCustomDefinedFolder().createFile(
+                "video/$fileExtension",
+                "$counter.$fileExtension"
+            )!!
+        val resolver = context.contentResolver.acquireContentProviderClient(file.uri)!!
+
+        resolver.use {
+            customParcelFileDescriptor = it.openFile(file.uri, "w")!!
+
+            return customParcelFileDescriptor!!
         }
     }
 

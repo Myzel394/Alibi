@@ -1,6 +1,7 @@
 package app.myzel394.alibi.helpers
 
 import android.content.Context
+import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import java.io.File
 import java.time.LocalDateTime
@@ -18,9 +19,7 @@ abstract class BatchesFolder(
     open val customFolder: DocumentFile? = null,
     open val subfolderName: String = ".recordings",
 ) {
-    private var customFileFileDescriptor: ParcelFileDescriptor? = null
-
-    abstract val concatenateFunction: KFunction3<Iterable<String>, String, String, CompletableDeferred<Unit>>
+    abstract val concatenationFunction: KFunction3<Iterable<String>, String, String, CompletableDeferred<Unit>>
     abstract val ffmpegParameters: Array<String>
 
     fun initFolders() {
@@ -32,10 +31,6 @@ abstract class BatchesFolder(
                 }
             }
         }
-    }
-
-    fun cleanup() {
-        customFileFileDescriptor?.close()
     }
 
     fun getInternalFolder(): File {
@@ -115,29 +110,33 @@ abstract class BatchesFolder(
         extension: String,
     ): String
 
+    abstract fun cleanup()
+
     open suspend fun concatenate(
         recordingStart: LocalDateTime,
         extension: String,
         disableCache: Boolean = false,
         onNextParameterTry: (String) -> Unit = {},
     ): String {
-        val outputFile = getOutputFileForFFmpeg(
-            date = recordingStart,
-            extension = extension,
-        )
-
         if (!disableCache && checkIfOutputAlreadyExists(recordingStart, extension)) {
-            return outputFile
+            return getOutputFileForFFmpeg(
+                date = recordingStart,
+                extension = extension,
+            )
         }
-
-        val filePaths = getBatchesForFFmpeg()
 
         for (parameter in ffmpegParameters) {
             Log.i("Concatenation", "Trying parameter $parameter")
             onNextParameterTry(parameter)
 
             try {
-                concatenateFunction(
+                val filePaths = getBatchesForFFmpeg()
+                val outputFile = getOutputFileForFFmpeg(
+                    date = recordingStart,
+                    extension = extension,
+                )
+
+                concatenationFunction(
                     filePaths,
                     outputFile,
                     parameter,
@@ -203,20 +202,8 @@ abstract class BatchesFolder(
         }
     }
 
-    fun asInternalGetOutputPath(counter: Long, fileExtension: String): String {
-        return getInternalFolder().absolutePath + "/$counter.$fileExtension"
-    }
-
-    fun asCustomGetFileDescriptor(
-        counter: Long,
-        fileExtension: String,
-    ): FileDescriptor {
-        val file =
-            getCustomDefinedFolder().createFile("audio/$fileExtension", "$counter.$fileExtension")!!
-
-        customFileFileDescriptor = context.contentResolver.openFileDescriptor(file.uri, "w")!!
-
-        return customFileFileDescriptor!!.fileDescriptor
+    fun asInternalGetFile(counter: Long, fileExtension: String): File {
+        return File(getInternalFolder(), "$counter.$fileExtension")
     }
 
     enum class BatchType {
