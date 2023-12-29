@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
@@ -58,6 +59,13 @@ fun SaveFolderTile(
             }
         }
 
+        if (path != null) {
+            context.contentResolver.takePersistableUriPermission(
+                Uri.parse(path),
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
+        }
+
         scope.launch {
             dataStore.updateData {
                 it.setSaveFolder(path)
@@ -69,11 +77,6 @@ fun SaveFolderTile(
         if (folder == null) {
             return@rememberFolderSelectorDialog
         }
-
-        context.contentResolver.takePersistableUriPermission(
-            folder,
-            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-        )
 
         updateValue(folder.toString())
     }
