@@ -3,20 +3,25 @@ package app.myzel394.alibi.ui.models
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.camera.core.CameraSelector
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.documentfile.provider.DocumentFile
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
+import app.myzel394.alibi.helpers.AudioBatchesFolder
+import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
 import app.myzel394.alibi.services.VideoRecorderService
 import app.myzel394.alibi.ui.utils.CameraInfo
 import app.myzel394.alibi.ui.utils.PermissionHelper
 
 class VideoRecorderModel :
-    BaseRecorderModel<RecordingInformation, VideoRecorderService, VideoBatchesFolder?>() {
+    BaseRecorderModel<RecordingInformation, VideoBatchesFolder, VideoRecorderService>() {
     override var batchesFolder: VideoBatchesFolder? = null
     override val intentClass = VideoRecorderService::class.java
 
@@ -35,6 +40,21 @@ class VideoRecorderModel :
     fun init(context: Context) {
         enableAudio = PermissionHelper.hasGranted(context, Manifest.permission.RECORD_AUDIO)
         cameraID = CameraInfo.Lens.BACK.androidValue
+    }
+
+    override fun startRecording(context: Context, settings: AppSettings) {
+        batchesFolder = if (settings.saveFolder == null)
+            VideoBatchesFolder.viaInternalFolder(context)
+        else
+            VideoBatchesFolder.viaCustomFolder(
+                context,
+                DocumentFile.fromTreeUri(
+                    context,
+                    Uri.parse(settings.saveFolder)
+                )!!
+            )
+
+        super.startRecording(context, settings)
     }
 
     override fun onServiceConnected(service: VideoRecorderService) {
