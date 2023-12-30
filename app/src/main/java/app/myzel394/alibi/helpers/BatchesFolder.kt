@@ -1,16 +1,18 @@
 package app.myzel394.alibi.helpers
 
+import app.myzel394.alibi.ui.MEDIA_RECORDINGS_PREFIX
+
 import android.content.Context
+import android.database.Cursor
 import android.net.Uri
+import android.provider.MediaStore.Video.Media
 import androidx.documentfile.provider.DocumentFile
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import com.arthenica.ffmpegkit.FFmpegKitConfig
-import android.os.ParcelFileDescriptor
 import android.util.Log
 import kotlinx.coroutines.CompletableDeferred
-import java.io.FileDescriptor
 import kotlin.reflect.KFunction3
 
 abstract class BatchesFolder(
@@ -21,14 +23,23 @@ abstract class BatchesFolder(
 ) {
     abstract val concatenationFunction: KFunction3<Iterable<String>, String, String, CompletableDeferred<Unit>>
     abstract val ffmpegParameters: Array<String>
+    abstract val mediaContentUri: Uri
+
+    val mediaPrefix
+        get() = MEDIA_RECORDINGS_PREFIX + subfolderName
 
     fun initFolders() {
         when (type) {
             BatchType.INTERNAL -> getInternalFolder().mkdirs()
+
             BatchType.CUSTOM -> {
                 if (customFolder!!.findFile(subfolderName) == null) {
                     customFolder!!.createDirectory(subfolderName)
                 }
+            }
+
+            BatchType.MEDIA -> {
+                // Add support for < Android 10
             }
         }
     }
@@ -39,6 +50,52 @@ abstract class BatchesFolder(
 
     fun getCustomDefinedFolder(): DocumentFile {
         return customFolder!!.findFile(subfolderName)!!
+    }
+
+    protected fun queryMediaContent(
+        callback: (rawName: String, counter: Int, uri: Uri, cursor: Cursor) -> Any?,
+    ) {
+        context.contentResolver.query(
+            mediaContentUri,
+            null,
+            null,
+            null,
+            null,
+        )!!.use { cursor ->
+            while (cursor.moveToNext()) {
+                val rawName = cursor.getColumnIndex(Media.DISPLAY_NAME).let { id ->
+                    if (id == -1) "" else cursor.getString(id)
+                }
+
+                if (rawName == "" || rawName == null) {
+                    continue
+                }
+
+                if (!rawName.startsWith(mediaPrefix)) {
+                    continue
+                }
+
+                val counter =
+                    rawName.substringAfter(mediaPrefix).substringBeforeLast(".").toIntOrNull()
+                        ?: continue
+
+                val id = cursor.getColumnIndex(Media._ID).let { id ->
+                    if (id == -1) "" else cursor.getString(id)
+                }
+
+                if (id == "" || id == null) {
+                    continue
+                }
+
+                val uri = Uri.withAppendedPath(mediaContentUri, id)
+
+                val result = callback(rawName, counter, uri, cursor)
+
+                if (result != null) {
+                    return
+                }
+            }
+        }
     }
 
     fun getBatchesForFFmpeg(): List<String> {
@@ -64,6 +121,21 @@ abstract class BatchesFolder(
                         it.uri,
                     )!!
                 }
+
+            BatchType.MEDIA -> {
+                val filePaths = mutableListOf<String>()
+
+                queryMediaContent { _, _, uri, _ ->
+                    filePaths.add(
+                        FFmpegKitConfig.getSafParameterForRead(
+                            context,
+                            uri,
+                        )!!
+                    )
+                }
+
+                filePaths
+            }
         }
     }
 
@@ -81,27 +153,36 @@ abstract class BatchesFolder(
         return File(getInternalFolder(), getName(date, extension))
     }
 
-    fun asCustomGetOutputFile(
-        date: LocalDateTime,
-        extension: String,
-    ): DocumentFile {
-        return getCustomDefinedFolder().createFile("audio/$extension", getName(date, extension))!!
-    }
-
     fun checkIfOutputAlreadyExists(
         date: LocalDateTime,
         extension: String
     ): Boolean {
-        val name = date
+        val stem = date
             .format(DateTimeFormatter.ISO_DATE_TIME)
             .toString()
             .replace(":", "-")
             .replace(".", "_")
+        val fileName = "$stem.$extension"
 
         return when (type) {
-            BatchType.INTERNAL -> File(getInternalFolder(), "$name.$extension").exists()
+            BatchType.INTERNAL -> File(getInternalFolder(), fileName).exists()
+
             BatchType.CUSTOM ->
-                getCustomDefinedFolder().findFile("${name}.${extension}")?.exists() ?: false
+                getCustomDefinedFolder().findFile(fileName)?.exists() ?: false
+
+            BatchType.MEDIA -> {
+                var exists = false
+
+                queryMediaContent { rawName, _, _, _ ->
+                    if (rawName == fileName) {
+                        exists = true
+                        return@queryMediaContent true
+                    } else {
+                    }
+                }
+
+                exists
+            }
         }
     }
 
@@ -154,24 +235,48 @@ abstract class BatchesFolder(
         return when (type) {
             BatchType.INTERNAL -> "_'internal"
             BatchType.CUSTOM -> customFolder!!.uri.toString()
+            BatchType.MEDIA -> "_'media"
         }
     }
 
     fun deleteRecordings() {
         when (type) {
             BatchType.INTERNAL -> getInternalFolder().deleteRecursively()
+
             BatchType.CUSTOM -> customFolder?.findFile(subfolderName)?.delete()
                 ?: customFolder?.findFile(subfolderName)?.listFiles()?.forEach {
                     it.delete()
                 }
+
+            BatchType.MEDIA -> {
+                queryMediaContent { _, _, uri, _ ->
+                    context.contentResolver.delete(
+                        uri,
+                        null,
+                        null,
+                    )
+                }
+            }
         }
     }
 
     fun hasRecordingsAvailable(): Boolean {
         return when (type) {
             BatchType.INTERNAL -> getInternalFolder().listFiles()?.isNotEmpty() ?: false
+
             BatchType.CUSTOM -> customFolder?.findFile(subfolderName)?.listFiles()?.isNotEmpty()
                 ?: false
+
+            BatchType.MEDIA -> {
+                var hasRecordings = false
+
+                queryMediaContent { _, _, _, _ ->
+                    hasRecordings = true
+                    return@queryMediaContent true
+                }
+
+                hasRecordings
+            }
         }
     }
 
@@ -192,6 +297,18 @@ abstract class BatchesFolder(
                     it.delete()
                 }
             }
+
+            BatchType.MEDIA -> {
+                queryMediaContent { _, counter, uri, _ ->
+                    if (counter < earliestCounter) {
+                        context.contentResolver.delete(
+                            uri,
+                            null,
+                            null,
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -199,6 +316,8 @@ abstract class BatchesFolder(
         return when (type) {
             BatchType.INTERNAL -> true
             BatchType.CUSTOM -> getCustomDefinedFolder().canWrite() && getCustomDefinedFolder().canRead()
+            // Add support for < Android 10
+            BatchType.MEDIA -> true
         }
     }
 
@@ -209,6 +328,7 @@ abstract class BatchesFolder(
     enum class BatchType {
         INTERNAL,
         CUSTOM,
+        MEDIA,
     }
 }
 

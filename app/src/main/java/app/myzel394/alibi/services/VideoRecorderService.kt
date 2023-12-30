@@ -1,20 +1,20 @@
 package app.myzel394.alibi.services
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
-import android.os.ParcelFileDescriptor
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Range
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.TorchState
-import androidx.camera.core.processing.SurfaceProcessorNode.Out
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.FileDescriptorOutputOptions
 import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.MediaStoreOutputOptions
-import androidx.camera.video.OutputOptions
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
@@ -36,7 +36,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
-import java.nio.file.Files.createFile
 import kotlin.properties.Delegates
 
 class VideoRecorderService :
@@ -232,7 +231,6 @@ class VideoRecorderService :
     private fun prepareVideoRecording() =
         videoCapture!!.output
             .let {
-                // TODO: Add hint
                 if (batchesFolder.type == BatchesFolder.BatchType.CUSTOM && VIDEO_RECORDER_SUPPORTS_CUSTOM_FOLDER) {
                     it.prepareRecording(
                         this,
@@ -241,6 +239,39 @@ class VideoRecorderService :
                                 counter,
                                 settings.videoRecorderSettings.fileExtension
                             )
+                        ).build()
+                    )
+                } else if (batchesFolder.type == BatchesFolder.BatchType.MEDIA) {
+                    it.prepareRecording(
+                        this,
+                        MediaStoreOutputOptions.Builder(
+                            contentResolver,
+                            batchesFolder.mediaContentUri,
+                        ).setContentValues(
+                            ContentValues().apply {
+                                val name =
+                                    "${batchesFolder.mediaPrefix}$counter.${settings.videoRecorderSettings.fileExtension}"
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                    put(
+                                        MediaStore.Video.Media.IS_PENDING,
+                                        1
+                                    )
+                                    put(
+                                        MediaStore.Video.Media.RELATIVE_PATH,
+                                        Environment.DIRECTORY_DCIM + "/alibi/video_recordings"
+                                    )
+                                    put(
+                                        MediaStore.Video.Media.DISPLAY_NAME,
+                                        name
+                                    )
+                                } else {
+                                    put(
+                                        MediaStore.Video.Media.DISPLAY_NAME,
+                                        name
+                                    )
+                                }
+                            }
                         ).build()
                     )
                 } else {

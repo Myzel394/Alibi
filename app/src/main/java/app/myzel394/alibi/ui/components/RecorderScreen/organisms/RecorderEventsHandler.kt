@@ -104,6 +104,15 @@ fun RecorderEventsHandler(
         context.startActivity(intent)
     }
 
+    fun showSnackbar() {
+        scope.launch {
+            snackbarHostState.showSnackbar(
+                message = successMessage,
+                duration = SnackbarDuration.Short,
+            )
+        }
+    }
+
     fun showSnackbar(uri: Uri) {
         scope.launch {
             val result = snackbarHostState.showSnackbar(
@@ -181,6 +190,14 @@ fun RecorderEventsHandler(
 
                 BatchesFolder.BatchType.CUSTOM -> {
                     showSnackbar(batchesFolder.customFolder!!.uri)
+
+                    if (settings.deleteRecordingsImmediately) {
+                        batchesFolder.deleteRecordings()
+                    }
+                }
+
+                BatchesFolder.BatchType.MEDIA -> {
+                    showSnackbar()
 
                     if (settings.deleteRecordingsImmediately) {
                         batchesFolder.deleteRecordings()

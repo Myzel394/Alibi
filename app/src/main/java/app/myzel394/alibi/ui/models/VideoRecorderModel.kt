@@ -13,10 +13,9 @@ import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
-import app.myzel394.alibi.helpers.AudioBatchesFolder
-import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
 import app.myzel394.alibi.services.VideoRecorderService
+import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.utils.CameraInfo
 import app.myzel394.alibi.ui.utils.PermissionHelper
 
@@ -43,16 +42,17 @@ class VideoRecorderModel :
     }
 
     override fun startRecording(context: Context, settings: AppSettings) {
-        batchesFolder = if (settings.saveFolder == null)
-            VideoBatchesFolder.viaInternalFolder(context)
-        else
-            VideoBatchesFolder.viaCustomFolder(
+        batchesFolder = when (settings.saveFolder) {
+            null -> VideoBatchesFolder.viaInternalFolder(context)
+            RECORDER_MEDIA_SELECTED_VALUE -> VideoBatchesFolder.viaMediaFolder(context)
+            else -> VideoBatchesFolder.viaCustomFolder(
                 context,
                 DocumentFile.fromTreeUri(
                     context,
                     Uri.parse(settings.saveFolder)
                 )!!
             )
+        }
 
         super.startRecording(context, settings)
     }

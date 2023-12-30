@@ -3,8 +3,8 @@ package app.myzel394.alibi.helpers
 import android.content.Context
 import android.net.Uri
 import android.os.ParcelFileDescriptor
+import android.provider.MediaStore
 import androidx.documentfile.provider.DocumentFile
-import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateAudioFiles
 import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateVideoFiles
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import java.io.FileDescriptor
@@ -23,6 +23,7 @@ class AudioBatchesFolder(
 ) {
     override val concatenationFunction = ::concatenateVideoFiles
     override val ffmpegParameters = FFMPEG_PARAMETERS
+    override val mediaContentUri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
     private var customFileFileDescriptor: ParcelFileDescriptor? = null
 
@@ -32,6 +33,7 @@ class AudioBatchesFolder(
     ): String {
         return when (type) {
             BatchType.INTERNAL -> asInternalGetOutputFile(date, extension).absolutePath
+
             BatchType.CUSTOM -> {
                 val name = getName(date, extension)
 
@@ -42,6 +44,10 @@ class AudioBatchesFolder(
                         getName(date, extension),
                     )!!).uri
                 )!!
+            }
+
+            BatchType.MEDIA -> {
+                return ""
             }
         }
     }

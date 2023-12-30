@@ -1,17 +1,20 @@
 package app.myzel394.alibi.helpers
 
+import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
+import android.os.Environment
 import android.os.ParcelFileDescriptor
+import android.provider.MediaStore
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateVideoFiles
+import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import com.arthenica.ffmpegkit.FFmpegKitConfig
-import com.arthenica.ffmpegkit.ReturnCode
 import java.time.LocalDateTime
 
 class VideoBatchesFolder(
     override val context: Context,
-    override val type: BatchesFolder.BatchType,
+    override val type: BatchType,
     override val customFolder: DocumentFile? = null,
     override val subfolderName: String = ".video_recordings",
 ) : BatchesFolder(
@@ -22,12 +25,14 @@ class VideoBatchesFolder(
 ) {
     override val concatenationFunction = ::concatenateVideoFiles
     override val ffmpegParameters = FFMPEG_PARAMETERS
+    override val mediaContentUri: Uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
 
     private var customParcelFileDescriptor: ParcelFileDescriptor? = null
 
     override fun getOutputFileForFFmpeg(date: LocalDateTime, extension: String): String {
         return when (type) {
             BatchType.INTERNAL -> asInternalGetOutputFile(date, extension).absolutePath
+
             BatchType.CUSTOM -> {
                 val name = getName(date, extension)
 
@@ -37,6 +42,72 @@ class VideoBatchesFolder(
                         "video/${extension}",
                         getName(date, extension),
                     )!!).uri
+                )!!
+            }
+
+            BatchType.MEDIA -> {
+                val name = getName(date, extension)
+
+                // Check if already exists
+                var uri: Uri? = null
+                context.contentResolver.query(
+                    mediaContentUri,
+                    null,
+                    // TODO: Improve
+                    null,
+                    null,
+                    null,
+                )!!.use { cursor ->
+                    while (cursor.moveToNext()) {
+                        val id = cursor.getColumnIndex(MediaStore.MediaColumns._ID)
+
+                        if (id == -1) {
+                            continue
+                        }
+
+                        val nameID = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+
+                        if (nameID == -1) {
+                            continue
+                        }
+
+                        val cursorName = cursor.getString(nameID)
+
+                        if (cursorName != name) {
+                            continue
+                        }
+
+                        uri = ContentUris.withAppendedId(
+                            mediaContentUri,
+                            cursor.getLong(id)
+                        )
+                        return@use
+                    }
+                }
+
+                if (uri == null) {
+                    uri = context.contentResolver.insert(
+                        mediaContentUri,
+                        android.content.ContentValues().apply {
+                            put(
+                                MediaStore.MediaColumns.DISPLAY_NAME,
+                                name
+                            )
+                            put(
+                                MediaStore.MediaColumns.MIME_TYPE,
+                                "video/$extension"
+                            )
+                            put(
+                                MediaStore.Video.Media.RELATIVE_PATH,
+                                Environment.DIRECTORY_DCIM + "/alibi/video_recordings"
+                            )
+                        }
+                    )!!
+                }
+
+                FFmpegKitConfig.getSafParameterForWrite(
+                    context,
+                    uri
                 )!!
             }
         }
@@ -76,8 +147,11 @@ class VideoBatchesFolder(
         fun viaCustomFolder(context: Context, folder: DocumentFile) =
             VideoBatchesFolder(context, BatchType.CUSTOM, folder)
 
+        fun viaMediaFolder(context: Context) = VideoBatchesFolder(context, BatchType.MEDIA)
+
         fun importFromFolder(folder: String, context: Context) = when (folder) {
             "_'internal" -> viaInternalFolder(context)
+            RECORDER_MEDIA_SELECTED_VALUE -> viaMediaFolder(context)
             else -> viaCustomFolder(
                 context,
                 DocumentFile.fromTreeUri(context, Uri.parse(folder))!!

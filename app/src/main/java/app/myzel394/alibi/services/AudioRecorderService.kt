@@ -1,7 +1,6 @@
 package app.myzel394.alibi.services
 
 import android.content.Context
-import android.content.Context.AUDIO_SERVICE
 import android.content.pm.ServiceInfo
 import android.media.AudioDeviceCallback
 import android.media.AudioDeviceInfo
@@ -12,9 +11,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.core.app.ServiceCompat
-import androidx.core.content.ContextCompat.getSystemService
 import app.myzel394.alibi.NotificationHelper
-import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.AudioBatchesFolder
@@ -198,6 +195,9 @@ class AudioRecorderService :
                         )
                     )
                 }
+
+                // TODO: Add media
+                else -> {}
             }
 
             setOutputFormat(audioSettings.getOutputFormat())
