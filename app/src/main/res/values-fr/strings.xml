@@ -14,18 +14,18 @@
     <string name="ui_permissions_request_title">Autorisation refusée</string>
     <string name="ui_permissions_request">Veuillez accorder l\'autorisation pour continuer</string>
     <string name="ui_permissions_permanentlyDenied_message">Vous allez être redirigé vers les paramètres de l\'application pour y accorder l\'autorisation.</string>
-    <string name="ui_audioRecorder_action_start_label">Start Recording</string>
+    <string name="ui_audioRecorder_action_start_label">Lancer l\'enregistrement</string>
     <string name="ui_audioRecorder_action_saveOldRecording_label">Save Recording from <xliff:g name="date">%s</xliff:g></string>
-    <string name="ui_audioRecorder_action_delete_label">Delete</string>
-    <string name="ui_audioRecorder_action_delete_confirm_title">Delete Recording?</string>
-    <string name="ui_audioRecorder_action_delete_confirm_message">Are you sure you want to delete this recording?</string>
-    <string name="ui_audioRecorder_action_pause_label">Pause</string>
-    <string name="ui_audioRecorder_action_resume_label">Resume</string>
-    <string name="ui_audioRecorder_action_save_label">Save Recording</string>
-    <string name="ui_audioRecorder_action_start_description">Alibi will continue recording in the background and store the last <xliff:g name="durationInMinutes">%s</xliff:g> minutes at your request</string>
-    <string name="ui_audioRecorder_action_save_processing_dialog_title">Processing</string>
-    <string name="ui_audioRecorder_action_save_processing_dialog_description">Processing Audio, do not close Alibi! You will be automatically prompted to save the file once it\'s ready</string>
-    <string name="ui_audioRecorder_state_recording_title">Recording Audio</string>
+    <string name="ui_audioRecorder_action_delete_label">Supprimer</string>
+    <string name="ui_audioRecorder_action_delete_confirm_title">Supprimer l’enregistrement ?</string>
+    <string name="ui_audioRecorder_action_delete_confirm_message">Êtes-vous sûr de vouloir supprimer cet enregistrement ?</string>
+    <string name="ui_audioRecorder_action_pause_label">Suspendre</string>
+    <string name="ui_audioRecorder_action_resume_label">Reprendre</string>
+    <string name="ui_audioRecorder_action_save_label">Sauvegarder l\'enregistrement</string>
+    <string name="ui_audioRecorder_action_start_description">Alibi continuera à enregistrer en arrière-plan et conservera les dernières minutes <xliff:g name="durationInMinutes">%s</xliff:g> à votre demande</string>
+    <string name="ui_audioRecorder_action_save_processing_dialog_title">Traitement en cours</string>
+    <string name="ui_audioRecorder_action_save_processing_dialog_description">Traitement de l\'audio en cours, ne fermez pas Alibi ! Vous serez automatiquement invité à sauvegarder le fichier une fois qu\'il sera prêt</string>
+    <string name="ui_audioRecorder_state_recording_title">En cours d\'enregistrement audio</string>
     <string name="ui_audioRecorder_state_recording_description">Alibi keeps recording in the background</string>
     <string name="ui_audioRecorder_state_recording_fake_weather_title">Current Weather</string>
     <string name="ui_audioRecorder_state_recording_fake_weather_description">14° with light chance of rain</string>
