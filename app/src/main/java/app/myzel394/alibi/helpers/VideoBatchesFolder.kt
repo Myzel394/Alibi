@@ -3,6 +3,7 @@ package app.myzel394.alibi.helpers
 import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
@@ -52,40 +53,29 @@ class VideoBatchesFolder(
                 var uri: Uri? = null
                 context.contentResolver.query(
                     mediaContentUri,
-                    null,
+                    arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DISPLAY_NAME),
                     // TODO: Improve
-                    null,
+                    "${MediaStore.MediaColumns.DISPLAY_NAME} = '$name'",
                     null,
                     null,
                 )!!.use { cursor ->
-                    while (cursor.moveToNext()) {
+                    if (cursor.moveToFirst()) {
+                        // No need to check for the name since the query already did that
                         val id = cursor.getColumnIndex(MediaStore.MediaColumns._ID)
 
                         if (id == -1) {
-                            continue
-                        }
-
-                        val nameID = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
-
-                        if (nameID == -1) {
-                            continue
-                        }
-
-                        val cursorName = cursor.getString(nameID)
-
-                        if (cursorName != name) {
-                            continue
+                            return@use
                         }
 
                         uri = ContentUris.withAppendedId(
                             mediaContentUri,
                             cursor.getLong(id)
                         )
-                        return@use
                     }
                 }
 
                 if (uri == null) {
+                    // Create empty output file to be able to write to it
                     uri = context.contentResolver.insert(
                         mediaContentUri,
                         android.content.ContentValues().apply {
@@ -97,10 +87,13 @@ class VideoBatchesFolder(
                                 MediaStore.MediaColumns.MIME_TYPE,
                                 "video/$extension"
                             )
-                            put(
-                                MediaStore.Video.Media.RELATIVE_PATH,
-                                Environment.DIRECTORY_DCIM + "/alibi/video_recordings"
-                            )
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                put(
+                                    MediaStore.Video.Media.RELATIVE_PATH,
+                                    MEDIA_RELATIVE_PATH,
+                                )
+                            }
                         }
                     )!!
                 }
@@ -157,6 +150,8 @@ class VideoBatchesFolder(
                 DocumentFile.fromTreeUri(context, Uri.parse(folder))!!
             )
         }
+
+        val MEDIA_RELATIVE_PATH = Environment.DIRECTORY_DCIM + "/alibi/video_recordings"
 
         // Parameters to be passed in descending order
         // Those parameters first try to concatenate without re-encoding
