@@ -82,6 +82,7 @@ class MediaConverter {
                 command
             ) { session ->
                 runCatching {
+                    listFile.delete()
                 }
 
                 if (!ReturnCode.isSuccess(session!!.returnCode)) {
