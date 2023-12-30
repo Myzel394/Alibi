@@ -39,6 +39,7 @@ import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.VIDEO_RECORDER_SUPPORTS_CUSTOM_FOLDER
 import app.myzel394.alibi.ui.components.atoms.SettingsTile
 import app.myzel394.alibi.ui.utils.rememberFolderSelectorDialog
@@ -54,7 +55,7 @@ fun SaveFolderTile(
     val dataStore = context.dataStore
 
     fun updateValue(path: String?) {
-        if (settings.saveFolder != null) {
+        if (settings.saveFolder != null && settings.saveFolder != RECORDER_MEDIA_SELECTED_VALUE) {
             runCatching {
                 context.contentResolver.releasePersistableUriPermission(
                     Uri.parse(settings.saveFolder),
@@ -63,7 +64,7 @@ fun SaveFolderTile(
             }
         }
 
-        if (path != null) {
+        if (path != null && path != RECORDER_MEDIA_SELECTED_VALUE) {
             context.contentResolver.takePersistableUriPermission(
                 Uri.parse(path),
                 Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -248,6 +249,12 @@ fun SaveFolderTile(
                             )
                         }
                     }
+                }
+
+                Button(
+                    onClick = { updateValue(RECORDER_MEDIA_SELECTED_VALUE) }
+                ) {
+                    Text("Use Media")
                 }
             }
         }
