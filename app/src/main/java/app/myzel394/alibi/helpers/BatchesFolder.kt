@@ -1,10 +1,13 @@
 package app.myzel394.alibi.helpers
 
+import android.content.ContentUris
 import app.myzel394.alibi.ui.MEDIA_RECORDINGS_PREFIX
 
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.provider.MediaStore.Video.Media
 import androidx.documentfile.provider.DocumentFile
 import java.io.File
@@ -323,6 +326,63 @@ abstract class BatchesFolder(
 
     fun asInternalGetFile(counter: Long, fileExtension: String): File {
         return File(getInternalFolder(), "$counter.$fileExtension")
+    }
+
+    protected fun getOrCreateMediaFile(
+        name: String,
+        mimeType: String,
+        relativePath: String,
+    ): Uri {
+        // Check if already exists
+        var uri: Uri? = null
+
+        context.contentResolver.query(
+            mediaContentUri,
+            arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DISPLAY_NAME),
+            "${MediaStore.MediaColumns.DISPLAY_NAME} = '$name'",
+            null,
+            null,
+        )!!.use { cursor ->
+            if (cursor.moveToFirst()) {
+                // No need to check for the name since the query already did that
+                val id = cursor.getColumnIndex(MediaStore.MediaColumns._ID)
+
+                if (id == -1) {
+                    return@use
+                }
+
+                uri = ContentUris.withAppendedId(
+                    mediaContentUri,
+                    cursor.getLong(id)
+                )
+            }
+        }
+
+        if (uri == null) {
+            // Create empty output file to be able to write to it
+            uri = context.contentResolver.insert(
+                mediaContentUri,
+                android.content.ContentValues().apply {
+                    put(
+                        MediaStore.MediaColumns.DISPLAY_NAME,
+                        name
+                    )
+                    put(
+                        MediaStore.MediaColumns.MIME_TYPE,
+                        mimeType
+                    )
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        put(
+                            Media.RELATIVE_PATH,
+                            relativePath,
+                        )
+                    }
+                }
+            )!!
+        }
+
+        return uri!!
     }
 
     enum class BatchType {

@@ -1,9 +1,7 @@
 package app.myzel394.alibi.helpers
 
-import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
@@ -47,60 +45,15 @@ class VideoBatchesFolder(
             }
 
             BatchType.MEDIA -> {
-                val name = getName(date, extension)
-
-                // Check if already exists
-                var uri: Uri? = null
-                context.contentResolver.query(
-                    mediaContentUri,
-                    arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DISPLAY_NAME),
-                    // TODO: Improve
-                    "${MediaStore.MediaColumns.DISPLAY_NAME} = '$name'",
-                    null,
-                    null,
-                )!!.use { cursor ->
-                    if (cursor.moveToFirst()) {
-                        // No need to check for the name since the query already did that
-                        val id = cursor.getColumnIndex(MediaStore.MediaColumns._ID)
-
-                        if (id == -1) {
-                            return@use
-                        }
-
-                        uri = ContentUris.withAppendedId(
-                            mediaContentUri,
-                            cursor.getLong(id)
-                        )
-                    }
-                }
-
-                if (uri == null) {
-                    // Create empty output file to be able to write to it
-                    uri = context.contentResolver.insert(
-                        mediaContentUri,
-                        android.content.ContentValues().apply {
-                            put(
-                                MediaStore.MediaColumns.DISPLAY_NAME,
-                                name
-                            )
-                            put(
-                                MediaStore.MediaColumns.MIME_TYPE,
-                                "video/$extension"
-                            )
-
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                put(
-                                    MediaStore.Video.Media.RELATIVE_PATH,
-                                    MEDIA_RELATIVE_PATH,
-                                )
-                            }
-                        }
-                    )!!
-                }
+                val mediaUri = getOrCreateMediaFile(
+                    name = getName(date, extension),
+                    mimeType = "video/$extension",
+                    relativePath = MEDIA_RELATIVE_PATH,
+                )
 
                 FFmpegKitConfig.getSafParameterForWrite(
                     context,
-                    uri
+                    mediaUri
                 )!!
             }
         }
