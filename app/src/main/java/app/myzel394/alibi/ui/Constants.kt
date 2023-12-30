@@ -11,6 +11,7 @@ val RECORDER_SUBFOLDER_NAME = ".recordings"
 val VIDEO_RECORDER_SUPPORTS_CUSTOM_FOLDER = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 val MEDIA_RECORDINGS_PREFIX = "alibi-recording-"
 val RECORDER_MEDIA_SELECTED_VALUE = "_'media"
+val RECORDER_INTERNAL_SELECTED_VALUE = "_'internal"
 
 // You are not allowed to change the constants below.
 // If you do so, you will be blocked on GitHub.

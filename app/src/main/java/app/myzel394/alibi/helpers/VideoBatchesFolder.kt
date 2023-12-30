@@ -7,6 +7,7 @@ import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateVideoFiles
+import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import java.time.LocalDateTime
@@ -96,7 +97,7 @@ class VideoBatchesFolder(
         fun viaMediaFolder(context: Context) = VideoBatchesFolder(context, BatchType.MEDIA)
 
         fun importFromFolder(folder: String, context: Context) = when (folder) {
-            "_'internal" -> viaInternalFolder(context)
+            RECORDER_INTERNAL_SELECTED_VALUE -> viaInternalFolder(context)
             RECORDER_MEDIA_SELECTED_VALUE -> viaMediaFolder(context)
             else -> viaCustomFolder(
                 context,

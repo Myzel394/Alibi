@@ -15,6 +15,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import android.util.Log
+import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
+import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import kotlinx.coroutines.CompletableDeferred
 import kotlin.reflect.KFunction3
 
@@ -236,9 +238,9 @@ abstract class BatchesFolder(
 
     fun exportFolderForSettings(): String {
         return when (type) {
-            BatchType.INTERNAL -> "_'internal"
+            BatchType.INTERNAL -> RECORDER_INTERNAL_SELECTED_VALUE
+            BatchType.MEDIA -> RECORDER_MEDIA_SELECTED_VALUE
             BatchType.CUSTOM -> customFolder!!.uri.toString()
-            BatchType.MEDIA -> "_'media"
         }
     }
 
