@@ -429,10 +429,10 @@ data class VideoRecorderSettings(
             )
         }
 
-    fun getMimeType() = "video/mp4"
+    fun getMimeType() = "video/$fileExtension"
 
     val fileExtension
-        get() = "mp4"
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) "mp4" else "3gp"
 
     companion object {
         fun getDefaultInstance() = VideoRecorderSettings()

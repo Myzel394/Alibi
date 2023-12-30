@@ -1,6 +1,7 @@
 package app.myzel394.alibi.helpers
 
 import android.content.ContentUris
+import android.content.ContentValues
 import app.myzel394.alibi.ui.MEDIA_RECORDINGS_PREFIX
 
 import android.content.Context
@@ -31,7 +32,7 @@ abstract class BatchesFolder(
     abstract val mediaContentUri: Uri
 
     val mediaPrefix
-        get() = MEDIA_RECORDINGS_PREFIX + subfolderName + "-"
+        get() = MEDIA_RECORDINGS_PREFIX + subfolderName.substring(1) + "-"
 
     fun initFolders() {
         when (type) {
@@ -69,14 +70,10 @@ abstract class BatchesFolder(
         )!!.use { cursor ->
             while (cursor.moveToNext()) {
                 val rawName = cursor.getColumnIndex(Media.DISPLAY_NAME).let { id ->
-                    if (id == -1) "" else cursor.getString(id)
+                    if (id == -1) null else cursor.getString(id)
                 }
 
-                if (rawName == "" || rawName == null) {
-                    continue
-                }
-
-                if (!rawName.startsWith(mediaPrefix)) {
+                if (rawName.isNullOrBlank() || !rawName.startsWith(mediaPrefix)) {
                     continue
                 }
 
@@ -85,10 +82,10 @@ abstract class BatchesFolder(
                         ?: continue
 
                 val id = cursor.getColumnIndex(Media._ID).let { id ->
-                    if (id == -1) "" else cursor.getString(id)
+                    if (id == -1) null else cursor.getString(id)
                 }
 
-                if (id == "" || id == null) {
+                if (id.isNullOrBlank()) {
                     continue
                 }
 
@@ -330,7 +327,7 @@ abstract class BatchesFolder(
         return File(getInternalFolder(), "$counter.$fileExtension")
     }
 
-    protected fun getOrCreateMediaFile(
+    fun getOrCreateMediaFile(
         name: String,
         mimeType: String,
         relativePath: String,
@@ -364,7 +361,7 @@ abstract class BatchesFolder(
             // Create empty output file to be able to write to it
             uri = context.contentResolver.insert(
                 mediaContentUri,
-                android.content.ContentValues().apply {
+                ContentValues().apply {
                     put(
                         MediaStore.MediaColumns.DISPLAY_NAME,
                         name
