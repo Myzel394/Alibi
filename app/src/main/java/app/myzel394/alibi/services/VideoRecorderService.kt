@@ -259,18 +259,14 @@ class VideoRecorderService :
                                     )
                                     put(
                                         MediaStore.Video.Media.RELATIVE_PATH,
-                                        Environment.DIRECTORY_DCIM + "/alibi/video_recordings"
-                                    )
-                                    put(
-                                        MediaStore.Video.Media.DISPLAY_NAME,
-                                        name
-                                    )
-                                } else {
-                                    put(
-                                        MediaStore.Video.Media.DISPLAY_NAME,
-                                        name
+                                        VideoBatchesFolder.MEDIA_RELATIVE_PATH,
                                     )
                                 }
+
+                                put(
+                                    MediaStore.Video.Media.DISPLAY_NAME,
+                                    name
+                                )
                             }
                         ).build()
                     )
