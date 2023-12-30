@@ -26,7 +26,7 @@ abstract class BatchesFolder(
     abstract val mediaContentUri: Uri
 
     val mediaPrefix
-        get() = MEDIA_RECORDINGS_PREFIX + subfolderName
+        get() = MEDIA_RECORDINGS_PREFIX + subfolderName + "-"
 
     fun initFolders() {
         when (type) {
