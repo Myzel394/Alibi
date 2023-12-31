@@ -169,4 +169,6 @@
     <string name="identityVerificationRequired_subtitle">You need to verify your identity to continue</string>
     <string name="ui_settings_option_saveFolder_videoUnsupported">Custom folders for Video Recordings aren\'t supported by your Android version. Alibi will fallback to the internal folder instead for Video Recordings.</string>
     <string name="ui_minApiRequired">You will need an Android phone running at least Android %s (API-Level: %s) to use this feature</string>
+    <string name="ui_settings_option_saveFolder_action_custom_label">Select a custom location</string>
+    <string name="ui_settings_option_saveFolder_action_dcim_label">Use the DCIM folder</string>
 </resources>

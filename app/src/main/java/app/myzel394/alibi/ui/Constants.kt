@@ -4,6 +4,9 @@ import android.os.Build
 import androidx.compose.ui.unit.dp
 
 val BIG_PRIMARY_BUTTON_SIZE = 64.dp
+
+// TODO: Add everywhere
+val SHEET_BOTTOM_OFFSET = 56.dp
 val MAX_AMPLITUDE = 20000
 val SUPPORTS_DARK_MODE_NATIVELY = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 val RECORDER_SUBFOLDER_NAME = ".recordings"
