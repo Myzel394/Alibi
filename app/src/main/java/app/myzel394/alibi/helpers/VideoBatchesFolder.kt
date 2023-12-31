@@ -27,7 +27,6 @@ class VideoBatchesFolder(
     customFolder,
     subfolderName,
 ) {
-    // TODO: Sort batches!
     override val concatenationFunction = ::concatenateVideoFiles
     override val ffmpegParameters = FFMPEG_PARAMETERS
     override val scopedMediaContentUri: Uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI

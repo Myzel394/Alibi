@@ -79,10 +79,4 @@ abstract class IntervalRecorderService<I, B : BatchesFolder> :
 
         batchesFolder.deleteOldRecordings(earliestCounter)
     }
-
-    // TODO
-    abstract class Settings(
-        open val maxDuration: Long,
-        open val intervalDuration: Long,
-    )
 }
