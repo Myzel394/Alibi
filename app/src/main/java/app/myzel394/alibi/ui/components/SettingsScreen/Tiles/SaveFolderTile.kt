@@ -187,15 +187,15 @@ fun SelectionSheet(
 
     var showCustomFolderWarning by remember { mutableStateOf(false) }
 
-    if (showCustomFolderWarning) {
-        val selectFolder = rememberFolderSelectorDialog { folder ->
-            if (folder == null) {
-                return@rememberFolderSelectorDialog
-            }
-
-            updateValue(folder.toString())
+    val selectFolder = rememberFolderSelectorDialog { folder ->
+        if (folder == null) {
+            return@rememberFolderSelectorDialog
         }
 
+        updateValue(folder.toString())
+    }
+
+    if (showCustomFolderWarning) {
         CustomFolderWarningDialog(
             onDismiss = {
                 showCustomFolderWarning = false
@@ -252,7 +252,9 @@ fun SelectionSheet(
                 label = stringResource(R.string.ui_settings_option_saveFolder_action_dcim_label),
                 icon = Icons.Default.PermMedia,
                 onClick = {
-                    if (PermissionHelper.hasGranted(
+                    if (
+                        SUPPORTS_SCOPED_STORAGE ||
+                        PermissionHelper.hasGranted(
                             context,
                             Manifest.permission.READ_EXTERNAL_STORAGE
                         )
