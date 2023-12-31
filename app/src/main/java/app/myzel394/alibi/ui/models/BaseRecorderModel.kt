@@ -35,7 +35,7 @@ abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderServi
         get() = recorderState === RecorderState.PAUSED
 
     val progress: Float
-        get() = (recordingTime / (recorderService!!.settings.maxDuration / 1000)).toFloat()
+        get() = recordingTime.toFloat() / (recorderService!!.settings.maxDuration / 1000)
 
     var recorderService by mutableStateOf<T?>(null)
         protected set
