@@ -348,7 +348,9 @@ abstract class BatchesFolder(
                     }
                 } else {
                     legacyMediaFolder.listFiles()?.forEach {
-                        val fileCounter = it.nameWithoutExtension.toIntOrNull() ?: return@forEach
+                        val fileCounter =
+                            it.nameWithoutExtension.substring(mediaPrefix.length).toIntOrNull()
+                                ?: return@forEach
 
                         if (fileCounter < earliestCounter) {
                             it.delete()
