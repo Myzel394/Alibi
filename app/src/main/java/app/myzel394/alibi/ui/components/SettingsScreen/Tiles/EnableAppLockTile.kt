@@ -1,5 +1,7 @@
 package app.myzel394.alibi.ui.components.SettingsScreen.Tiles
 
+import android.os.Message
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.magnifier
 import androidx.compose.material.icons.Icons
@@ -20,7 +22,10 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppLockSettings
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.helpers.AppLockHelper
+import app.myzel394.alibi.ui.components.atoms.MessageBox
+import app.myzel394.alibi.ui.components.atoms.MessageType
 import app.myzel394.alibi.ui.components.atoms.SettingsTile
+import app.myzel394.alibi.ui.components.atoms.VisualDensity
 import kotlinx.coroutines.launch
 
 @Composable
@@ -43,12 +48,15 @@ fun EnableAppLockTile(
         description = stringResource(R.string.ui_settings_option_enableAppLock_description),
         tertiaryLine = {
             if (appLockSupport === AppLockHelper.SupportType.NONE_ENROLLED) {
-                Text(
-                    stringResource(R.string.ui_settings_option_enableAppLock_enrollmentRequired),
-                    color = Color.Yellow,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+                Box(
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    MessageBox(
+                        type = MessageType.WARNING,
+                        message = stringResource(R.string.ui_settings_option_enableAppLock_enrollmentRequired),
+                        density = VisualDensity.COMPACT,
+                    )
+                }
             }
         },
         leading = {

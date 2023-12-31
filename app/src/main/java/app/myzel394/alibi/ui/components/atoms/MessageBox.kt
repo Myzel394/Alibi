@@ -3,6 +3,7 @@ package app.myzel394.alibi.ui.components.atoms
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -27,6 +28,7 @@ fun MessageBox(
     type: MessageType,
     message: String,
     title: String? = null,
+    density: VisualDensity = VisualDensity.COMFORTABLE,
 ) {
     val isDark = rememberIsInDarkMode()
     val containerColor = when (type) {
@@ -51,33 +53,43 @@ fun MessageBox(
         modifier = Modifier
             .clip(MaterialTheme.shapes.medium)
             .background(backgroundColor)
-            .padding(horizontal = 8.dp, vertical = 16.dp)
+            .let {
+                if (density == VisualDensity.COMFORTABLE) {
+                    it.padding(horizontal = 8.dp, vertical = 16.dp)
+                } else {
+                    it.padding(8.dp)
+                }
+            }
             .then(modifier)
     ) {
-        Icon(
-            imageVector = when (type) {
-                MessageType.ERROR -> Icons.Default.Error
-                MessageType.INFO -> Icons.Default.Info
-                MessageType.SURFACE -> Icons.Default.Info
-                MessageType.SUCCESS -> Icons.Default.Check
-                MessageType.WARNING -> Icons.Default.Warning
-            },
-            contentDescription = null,
-            tint = textColor,
-            modifier = Modifier.padding(16.dp)
-        )
+        if (density == VisualDensity.COMFORTABLE) {
+            Icon(
+                imageVector = when (type) {
+                    MessageType.ERROR -> Icons.Default.Error
+                    MessageType.INFO -> Icons.Default.Info
+                    MessageType.SURFACE -> Icons.Default.Info
+                    MessageType.SUCCESS -> Icons.Default.Check
+                    MessageType.WARNING -> Icons.Default.Warning
+                },
+                contentDescription = null,
+                tint = textColor,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
         Column {
             if (title != null) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyLarge,
                     color = textColor,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyMedium,
                 color = textColor,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -90,4 +102,9 @@ enum class MessageType {
     SURFACE,
     SUCCESS,
     WARNING,
+}
+
+enum class VisualDensity {
+    COMPACT,
+    COMFORTABLE,
 }
