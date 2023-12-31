@@ -17,7 +17,7 @@ abstract class IntervalRecorderService<I, B : BatchesFolder> :
 
     abstract var batchesFolder: B
 
-    var onCustomOutputFolderNotAccessible: () -> Unit = {}
+    var onBatchesFolderNotAccessible: () -> Unit = {}
 
     abstract fun getRecordingInformation(): I
 
@@ -42,8 +42,8 @@ abstract class IntervalRecorderService<I, B : BatchesFolder> :
         super.start()
         batchesFolder.initFolders()
         if (!batchesFolder.checkIfFolderIsAccessible()) {
-            onCustomOutputFolderNotAccessible()
-            return
+            // TODO: Add handler
+            onBatchesFolderNotAccessible()
         }
 
         createTimer()

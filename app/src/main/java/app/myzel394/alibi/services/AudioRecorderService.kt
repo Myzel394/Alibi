@@ -212,7 +212,6 @@ class AudioRecorderService :
                         val name = getNameForMediaFile()
                         val file = batchesFolder.asMediaGetLegacyFile(name)
 
-                        // TODO: Ask permission on settings screen
                         setOutputFile(file.absolutePath)
                     }
                 }
