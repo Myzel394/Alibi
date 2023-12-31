@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.net.toFile
+import androidx.core.net.toUri
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
@@ -112,21 +112,28 @@ abstract class BatchesFolder(
     }
 
     fun getBatchesForFFmpeg(): List<String> {
+        // TODO: There is probably a better way to do this iteratively, look at it if you have time
         return when (type) {
             BatchType.INTERNAL ->
-                (getInternalFolder()
+                ((getInternalFolder()
                     .listFiles()
                     ?.filter {
                         it.nameWithoutExtension.toIntOrNull() != null
                     }
                     ?.toList()
-                    ?: emptyList())
+                    ?: emptyList()) as List<File>)
+                    .sortedBy {
+                        it.nameWithoutExtension.toInt()
+                    }
                     .map { it.absolutePath }
 
             BatchType.CUSTOM -> getCustomDefinedFolder()
                 .listFiles()
                 .filter {
                     it.name?.substringBeforeLast(".")?.toIntOrNull() != null
+                }
+                .sortedBy {
+                    it.name!!.substringBeforeLast(".").toInt()
                 }
                 .map {
                     FFmpegKitConfig.getSafParameterForRead(
@@ -136,24 +143,32 @@ abstract class BatchesFolder(
                 }
 
             BatchType.MEDIA -> {
-                val filePaths = mutableListOf<String>()
+                val fileUris = mutableListOf<Uri>()
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     queryMediaContent { _, _, uri, _ ->
-                        filePaths.add(
-                            FFmpegKitConfig.getSafParameterForRead(
-                                context,
-                                uri,
-                            )!!
-                        )
+                        fileUris.add(uri)
                     }
                 } else {
                     legacyMediaFolder.listFiles()?.forEach {
-                        filePaths.add(it.absolutePath)
+                        fileUris.add(it.toUri())
                     }
                 }
 
-                filePaths
+                fileUris
+                    .sortedBy {
+                        return@sortedBy it
+                            .lastPathSegment!!
+                            .substring(mediaPrefix.length)
+                            .substringBeforeLast(".")
+                            .toInt()
+                    }
+                    .map { uri ->
+                        FFmpegKitConfig.getSafParameterForRead(
+                            context,
+                            uri,
+                        )!!
+                    }
             }
         }
     }
@@ -367,6 +382,7 @@ abstract class BatchesFolder(
                         null,
                     )
                 } else {
+                    // TODO: Fix "would you like to try saving" -> Save button
                     legacyMediaFolder.listFiles()?.forEach {
                         val fileCounter =
                             it.nameWithoutExtension.substring(mediaPrefix.length).toIntOrNull()
