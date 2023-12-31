@@ -1,5 +1,6 @@
 package app.myzel394.alibi.helpers
 
+import android.Manifest
 import android.content.ContentUris
 import android.content.ContentValues
 import app.myzel394.alibi.ui.MEDIA_RECORDINGS_PREFIX
@@ -21,6 +22,7 @@ import androidx.core.net.toFile
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
+import app.myzel394.alibi.ui.utils.PermissionHelper
 import kotlinx.coroutines.CompletableDeferred
 import kotlin.reflect.KFunction3
 
@@ -286,6 +288,7 @@ abstract class BatchesFolder(
             BatchType.MEDIA -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     // TODO: Also delete pending recordings
+                    // --> Doesn't seem to be possible :/
                     context.contentResolver.delete(
                         scopedMediaContentUri,
                         "${MediaStore.MediaColumns.DISPLAY_NAME} LIKE '$mediaPrefix%'",
@@ -382,8 +385,20 @@ abstract class BatchesFolder(
         return when (type) {
             BatchType.INTERNAL -> true
             BatchType.CUSTOM -> getCustomDefinedFolder().canWrite() && getCustomDefinedFolder().canRead()
-            // TODO: Add support for < Android 10
-            BatchType.MEDIA -> true
+            BatchType.MEDIA -> {
+                if (SUPPORTS_SCOPED_STORAGE) {
+                    return true
+                }
+
+                return PermissionHelper.hasGranted(
+                    context,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) &&
+                        PermissionHelper.hasGranted(
+                            context,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        )
+            }
         }
     }
 
