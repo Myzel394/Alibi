@@ -1,5 +1,6 @@
 package app.myzel394.alibi.ui.components.SettingsScreen.Tiles
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
@@ -28,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -41,7 +43,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -57,9 +58,10 @@ import app.myzel394.alibi.ui.SHEET_BOTTOM_OFFSET
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
+import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.components.atoms.SettingsTile
+import app.myzel394.alibi.ui.utils.PermissionHelper
 import app.myzel394.alibi.ui.utils.rememberFolderSelectorDialog
-import com.maxkeppeker.sheets.core.models.base.SelectionButton
 import kotlinx.coroutines.launch
 import java.net.URLDecoder
 
@@ -102,67 +104,6 @@ fun SaveFolderTile(
         }
     }
 
-    val selectFolder = rememberFolderSelectorDialog { folder ->
-        if (folder == null) {
-            return@rememberFolderSelectorDialog
-        }
-
-        updateValue(folder.toString())
-    }
-
-    var showWarning by remember { mutableStateOf(false) }
-
-    if (showWarning) {
-        val title = stringResource(R.string.ui_settings_option_saveFolder_warning_title)
-        val text = stringResource(R.string.ui_settings_option_saveFolder_warning_text)
-
-        AlertDialog(
-            icon = {
-                Icon(
-                    Icons.Default.Warning,
-                    contentDescription = null,
-                )
-            },
-            onDismissRequest = {
-                showWarning = false
-            },
-            title = {
-                Text(text = title)
-            },
-            text = {
-                Text(text = text)
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showWarning = false
-                        selectFolder()
-                    },
-                ) {
-                    Text(
-                        text = stringResource(R.string.ui_settings_option_saveFolder_warning_action_confirm),
-                    )
-                }
-            },
-            dismissButton = {
-                Button(
-                    onClick = {
-                        showWarning = false
-                    },
-                    colors = ButtonDefaults.textButtonColors(),
-                ) {
-                    Icon(
-                        Icons.Default.Cancel,
-                        contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize),
-                    )
-                    Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                    Text(stringResource(R.string.dialog_close_cancel_label))
-                }
-            }
-        )
-    }
-
     var selectionVisible by remember { mutableStateOf(false) }
     val selectionSheetState = rememberModalBottomSheetState(true)
 
@@ -174,75 +115,16 @@ fun SaveFolderTile(
     }
 
     if (selectionVisible) {
-        ModalBottomSheet(
+        SelectionSheet(
             sheetState = selectionSheetState,
-            onDismissRequest = ::hideSheet,
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = SHEET_BOTTOM_OFFSET),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-            ) {
-                Text(
-                    stringResource(R.string.ui_settings_option_saveFolder_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    textAlign = TextAlign.Center,
-                )
-
-                SelectionButton(
-                    label = stringResource(R.string.ui_settings_option_saveFolder_action_default_label),
-                    icon = Icons.Default.Lock,
-                    onClick = {
-                        hideSheet()
-                        updateValue(null)
-                    },
-                )
-
-                Divider()
-
-                SelectionButton(
-                    label = stringResource(R.string.ui_settings_option_saveFolder_action_dcim_label),
-                    icon = Icons.Default.PermMedia,
-                    onClick = {
-                        hideSheet()
-                        updateValue(RECORDER_MEDIA_SELECTED_VALUE)
-                    },
-                )
-
-                Divider()
-
-                Column {
-                    SelectionButton(
-                        label = stringResource(R.string.ui_settings_option_saveFolder_action_custom_label),
-                        icon = Icons.Default.Folder,
-                        onClick = {
-                            hideSheet()
-                            showWarning = true
-                        },
-                    )
-                    if (!SUPPORTS_SCOPED_STORAGE) {
-                        Column(
-                            modifier = Modifier.padding(horizontal = 32.dp, vertical = 12.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            MessageBox(
-                                type = MessageType.INFO,
-                                message = stringResource(R.string.ui_settings_option_saveFolder_videoUnsupported),
-                            )
-                            Text(
-                                stringResource(R.string.ui_minApiRequired, 8, 26),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                        }
-                    }
-                }
-            }
-        }
+            updateValue = { path ->
+                updateValue(path)
+                hideSheet()
+            },
+            onDismiss = ::hideSheet,
+        )
     }
+
     SettingsTile(
         title = stringResource(R.string.ui_settings_option_saveFolder_title),
         description = stringResource(R.string.ui_settings_option_saveFolder_explanation),
@@ -294,6 +176,126 @@ fun SaveFolderTile(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectionSheet(
+    sheetState: SheetState,
+    updateValue: (String?) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+
+    var showCustomFolderWarning by remember { mutableStateOf(false) }
+
+    if (showCustomFolderWarning) {
+        val selectFolder = rememberFolderSelectorDialog { folder ->
+            if (folder == null) {
+                return@rememberFolderSelectorDialog
+            }
+
+            updateValue(folder.toString())
+        }
+
+        CustomFolderWarningDialog(
+            onDismiss = {
+                showCustomFolderWarning = false
+            },
+            onConfirm = {
+                showCustomFolderWarning = false
+                selectFolder()
+            },
+        )
+    }
+
+    var showExternalPermissionRequired by remember { mutableStateOf(false) }
+
+    if (showExternalPermissionRequired) {
+        ExternalPermissionRequiredDialog(
+            onDismiss = {
+                showExternalPermissionRequired = false
+            },
+            onGranted = {
+                showExternalPermissionRequired = false
+                updateValue(RECORDER_MEDIA_SELECTED_VALUE)
+            },
+        )
+    }
+
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = onDismiss,
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(bottom = SHEET_BOTTOM_OFFSET),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            Text(
+                stringResource(R.string.ui_settings_option_saveFolder_title),
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center,
+            )
+
+            SelectionButton(
+                label = stringResource(R.string.ui_settings_option_saveFolder_action_default_label),
+                icon = Icons.Default.Lock,
+                onClick = {
+                    updateValue(null)
+                },
+            )
+
+            Divider()
+
+            SelectionButton(
+                label = stringResource(R.string.ui_settings_option_saveFolder_action_dcim_label),
+                icon = Icons.Default.PermMedia,
+                onClick = {
+                    if (PermissionHelper.hasGranted(
+                            context,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        )
+                    ) {
+                        updateValue(RECORDER_MEDIA_SELECTED_VALUE)
+                    } else {
+                        showExternalPermissionRequired = true
+                    }
+                },
+            )
+
+            Divider()
+
+            Column {
+                SelectionButton(
+                    label = stringResource(R.string.ui_settings_option_saveFolder_action_custom_label),
+                    icon = Icons.Default.Folder,
+                    onClick = {
+                        showCustomFolderWarning = true
+                    },
+                )
+                if (!SUPPORTS_SCOPED_STORAGE) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 32.dp, vertical = 12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        MessageBox(
+                            type = MessageType.INFO,
+                            message = stringResource(R.string.ui_settings_option_saveFolder_videoUnsupported),
+                        )
+                        Text(
+                            stringResource(R.string.ui_minApiRequired, 8, 26),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun SelectionButton(
     label: String,
@@ -324,6 +326,110 @@ fun SelectionButton(
         Box {}
     }
 }
+
+@Composable
+fun CustomFolderWarningDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    val title = stringResource(R.string.ui_settings_option_saveFolder_warning_title)
+    val text = stringResource(R.string.ui_settings_option_saveFolder_warning_text)
+
+    AlertDialog(
+        icon = {
+            Icon(
+                Icons.Default.Warning,
+                contentDescription = null,
+            )
+        },
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = title)
+        },
+        text = {
+            Text(text = text)
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+            ) {
+                Text(
+                    text = stringResource(R.string.ui_settings_option_saveFolder_warning_action_confirm),
+                )
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(),
+            ) {
+                Icon(
+                    Icons.Default.Cancel,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
+                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                Text(stringResource(R.string.dialog_close_cancel_label))
+            }
+        }
+    )
+}
+
+@Composable
+fun ExternalPermissionRequiredDialog(
+    onDismiss: () -> Unit,
+    onGranted: () -> Unit,
+) {
+    PermissionRequester(
+        icon = Icons.Default.PermMedia,
+        permission = Manifest.permission.READ_EXTERNAL_STORAGE,
+        onPermissionAvailable = onGranted,
+    ) { trigger ->
+        AlertDialog(
+            icon = {
+                Icon(
+                    Icons.Default.Warning,
+                    contentDescription = null,
+                )
+            },
+            onDismissRequest = onDismiss,
+            title = {
+                Text(
+                    stringResource(R.string.ui_settings_option_saveFolder_externalPermissionRequired_title),
+                )
+            },
+            text = {
+                Text(
+                    stringResource(R.string.ui_settings_option_saveFolder_externalPermissionRequired_text),
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = trigger,
+                ) {
+                    Text(
+                        stringResource(R.string.ui_settings_option_saveFolder_externalPermissionRequired_action_confirm),
+                    )
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = onDismiss,
+                    colors = ButtonDefaults.textButtonColors(),
+                ) {
+                    Icon(
+                        Icons.Default.Cancel,
+                        contentDescription = null,
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                    )
+                    Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                    Text(stringResource(R.string.dialog_close_cancel_label))
+                }
+            }
+        )
+    }
+}
+
 
 fun splitPath(path: String): List<String> {
     return try {

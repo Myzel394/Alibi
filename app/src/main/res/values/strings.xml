@@ -173,4 +173,7 @@
     <string name="ui_settings_option_saveFolder_action_dcim_label">Use the DCIM folder</string>
     <string name="ui_settings_option_saveFolder_dcimValue">DCIM Folder</string>
     <string name="ui_settings_option_saveFolder_success">Batches Folder has been changed successfully</string>
+    <string name="ui_settings_option_saveFolder_externalPermissionRequired_title">Permission required</string>
+    <string name="ui_settings_option_saveFolder_externalPermissionRequired_text">To access the DCIM folder, you need to grant Alibi the permission to access external storage. Alibi will only use this permission to write your recordings to the DCIM folder.</string>
+    <string name="ui_settings_option_saveFolder_externalPermissionRequired_action_confirm">Grant permission</string>
 </resources>
