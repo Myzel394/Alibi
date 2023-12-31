@@ -28,6 +28,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -65,11 +67,13 @@ import java.net.URLDecoder
 @Composable
 fun SaveFolderTile(
     settings: AppSettings,
+    snackbarHostState: SnackbarHostState,
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val dataStore = context.dataStore
 
+    val successMessage = stringResource(R.string.ui_settings_option_saveFolder_success)
     fun updateValue(path: String?) {
         if (settings.saveFolder != null && settings.saveFolder != RECORDER_MEDIA_SELECTED_VALUE) {
             runCatching {
@@ -91,6 +95,10 @@ fun SaveFolderTile(
             dataStore.updateData {
                 it.setSaveFolder(path)
             }
+            snackbarHostState.showSnackbar(
+                message = successMessage,
+                duration = SnackbarDuration.Short,
+            )
         }
     }
 

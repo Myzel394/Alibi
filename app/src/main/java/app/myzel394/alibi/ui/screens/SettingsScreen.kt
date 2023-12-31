@@ -157,7 +157,10 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
                     Column {
-                        SaveFolderTile(settings = settings)
+                        SaveFolderTile(
+                            settings = settings,
+                            snackbarHostState = snackbarHostState,
+                        )
 
                         DividerTitle(
                             title = stringResource(R.string.ui_settings_sections_audio_title),
