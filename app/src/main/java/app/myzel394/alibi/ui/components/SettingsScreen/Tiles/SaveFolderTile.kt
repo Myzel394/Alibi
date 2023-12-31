@@ -194,6 +194,17 @@ fun SaveFolderTile(
 
                 Divider()
 
+                SelectionButton(
+                    label = stringResource(R.string.ui_settings_option_saveFolder_action_dcim_label),
+                    icon = Icons.Default.PermMedia,
+                    onClick = {
+                        hideSheet()
+                        updateValue(RECORDER_MEDIA_SELECTED_VALUE)
+                    },
+                )
+
+                Divider()
+
                 Column {
                     SelectionButton(
                         label = stringResource(R.string.ui_settings_option_saveFolder_action_custom_label),
@@ -221,17 +232,6 @@ fun SaveFolderTile(
                         }
                     }
                 }
-
-                Divider()
-
-                SelectionButton(
-                    label = stringResource(R.string.ui_settings_option_saveFolder_action_dcim_label),
-                    icon = Icons.Default.PermMedia,
-                    onClick = {
-                        hideSheet()
-                        updateValue(RECORDER_MEDIA_SELECTED_VALUE)
-                    },
-                )
             }
         }
     }
@@ -267,48 +267,20 @@ fun SaveFolderTile(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                if (settings.saveFolder != null) {
-                    Text(
-                        text = stringResource(
-                            R.string.form_value_selected,
-                            splitPath(settings.saveFolder).joinToString(" > ")
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Button(
-                        colors = ButtonDefaults.filledTonalButtonColors(),
-                        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                        onClick = {
-                            updateValue(null)
+                Text(
+                    text = stringResource(
+                        R.string.form_value_selected,
+                        when (settings.saveFolder) {
+                            RECORDER_MEDIA_SELECTED_VALUE -> stringResource(R.string.ui_settings_option_saveFolder_dcimValue)
+                            null -> stringResource(R.string.ui_settings_option_saveFolder_defaultValue)
+                            else -> splitPath(settings.saveFolder).joinToString(" > ")
                         }
-                    ) {
-                        Icon(
-                            Icons.Default.Lock,
-                            contentDescription = null,
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                        )
-                        Spacer(
-                            modifier = Modifier.size(ButtonDefaults.IconSpacing)
-                        )
-                        Text(
-                            text = stringResource(R.string.ui_settings_option_saveFolder_action_default_label),
-                        )
-                    }
-                } else {
-                    Text(
-                        text = stringResource(
-                            R.string.form_value_selected,
-                            stringResource(R.string.ui_settings_option_saveFolder_defaultValue)
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
         }
     )

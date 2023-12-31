@@ -171,4 +171,5 @@
     <string name="ui_minApiRequired">You will need an Android phone running at least Android %s (API-Level: %s) to use this feature</string>
     <string name="ui_settings_option_saveFolder_action_custom_label">Select a custom location</string>
     <string name="ui_settings_option_saveFolder_action_dcim_label">Use the DCIM folder</string>
+    <string name="ui_settings_option_saveFolder_dcimValue">DCIM Folder</string>
 </resources>
