@@ -4,9 +4,12 @@ import android.content.Context
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
+import androidx.core.net.toFile
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateVideoFiles
+import app.myzel394.alibi.helpers.VideoBatchesFolder.Companion.MEDIA_SUBFOLDER
 import com.arthenica.ffmpegkit.FFmpegKitConfig
+import java.io.File
 import java.io.FileDescriptor
 import java.time.LocalDateTime
 
@@ -23,7 +26,11 @@ class AudioBatchesFolder(
 ) {
     override val concatenationFunction = ::concatenateVideoFiles
     override val ffmpegParameters = FFMPEG_PARAMETERS
-    override val mediaContentUri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+    override val scopedMediaContentUri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+    override val legacyMediaFolder = File(
+        scopedMediaContentUri.toFile(),
+        MEDIA_SUBFOLDER + "/" + subfolderName
+    )
 
     private var customFileFileDescriptor: ParcelFileDescriptor? = null
 

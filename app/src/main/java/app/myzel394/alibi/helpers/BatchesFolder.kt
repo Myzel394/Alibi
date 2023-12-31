@@ -16,8 +16,11 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.core.net.toFile
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
+import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import kotlinx.coroutines.CompletableDeferred
 import kotlin.reflect.KFunction3
 
@@ -29,7 +32,8 @@ abstract class BatchesFolder(
 ) {
     abstract val concatenationFunction: KFunction3<Iterable<String>, String, String, CompletableDeferred<Unit>>
     abstract val ffmpegParameters: Array<String>
-    abstract val mediaContentUri: Uri
+    abstract val scopedMediaContentUri: Uri
+    abstract val legacyMediaFolder: File
 
     val mediaPrefix
         get() = MEDIA_RECORDINGS_PREFIX + subfolderName.substring(1) + "-"
@@ -45,7 +49,11 @@ abstract class BatchesFolder(
             }
 
             BatchType.MEDIA -> {
-                // Add support for < Android 10
+                // Scoped storage works fine on new Android versions,
+                // we need to manually manage the folder on older versions
+                if (!SUPPORTS_SCOPED_STORAGE) {
+                    legacyMediaFolder.mkdirs()
+                }
             }
         }
     }
@@ -58,11 +66,12 @@ abstract class BatchesFolder(
         return customFolder!!.findFile(subfolderName)!!
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     protected fun queryMediaContent(
         callback: (rawName: String, counter: Int, uri: Uri, cursor: Cursor) -> Any?,
     ) {
         context.contentResolver.query(
-            mediaContentUri,
+            scopedMediaContentUri,
             null,
             null,
             null,
@@ -89,7 +98,7 @@ abstract class BatchesFolder(
                     continue
                 }
 
-                val uri = Uri.withAppendedPath(mediaContentUri, id)
+                val uri = Uri.withAppendedPath(scopedMediaContentUri, id)
 
                 val result = callback(rawName, counter, uri, cursor)
 
@@ -127,13 +136,19 @@ abstract class BatchesFolder(
             BatchType.MEDIA -> {
                 val filePaths = mutableListOf<String>()
 
-                queryMediaContent { _, _, uri, _ ->
-                    filePaths.add(
-                        FFmpegKitConfig.getSafParameterForRead(
-                            context,
-                            uri,
-                        )!!
-                    )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    queryMediaContent { _, _, uri, _ ->
+                        filePaths.add(
+                            FFmpegKitConfig.getSafParameterForRead(
+                                context,
+                                uri,
+                            )!!
+                        )
+                    }
+                } else {
+                    legacyMediaFolder.listFiles()?.forEach {
+                        filePaths.add(it.absolutePath)
+                    }
                 }
 
                 filePaths
@@ -175,15 +190,22 @@ abstract class BatchesFolder(
             BatchType.MEDIA -> {
                 var exists = false
 
-                queryMediaContent { rawName, _, _, _ ->
-                    if (rawName == fileName) {
-                        exists = true
-                        return@queryMediaContent true
-                    } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    queryMediaContent { rawName, _, _, _ ->
+                        if (rawName == fileName) {
+                            exists = true
+                            return@queryMediaContent true
+                        } else {
+                        }
                     }
-                }
 
-                exists
+                    return exists
+                } else {
+                    return File(
+                        legacyMediaFolder,
+                        fileName,
+                    ).exists()
+                }
             }
         }
     }
@@ -251,12 +273,16 @@ abstract class BatchesFolder(
                 }
 
             BatchType.MEDIA -> {
-                queryMediaContent { _, _, uri, _ ->
-                    context.contentResolver.delete(
-                        uri,
-                        null,
-                        null,
-                    )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    queryMediaContent { _, _, uri, _ ->
+                        context.contentResolver.delete(
+                            uri,
+                            null,
+                            null,
+                        )
+                    }
+                } else {
+                    legacyMediaFolder.deleteRecursively()
                 }
             }
         }
@@ -272,12 +298,16 @@ abstract class BatchesFolder(
             BatchType.MEDIA -> {
                 var hasRecordings = false
 
-                queryMediaContent { _, _, _, _ ->
-                    hasRecordings = true
-                    return@queryMediaContent true
-                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    queryMediaContent { _, _, _, _ ->
+                        hasRecordings = true
+                        return@queryMediaContent true
+                    }
 
-                hasRecordings
+                    return hasRecordings
+                } else {
+                    return legacyMediaFolder.listFiles()?.isNotEmpty() ?: false
+                }
             }
         }
     }
@@ -301,13 +331,23 @@ abstract class BatchesFolder(
             }
 
             BatchType.MEDIA -> {
-                queryMediaContent { _, counter, uri, _ ->
-                    if (counter < earliestCounter) {
-                        context.contentResolver.delete(
-                            uri,
-                            null,
-                            null,
-                        )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    queryMediaContent { _, counter, uri, _ ->
+                        if (counter < earliestCounter) {
+                            context.contentResolver.delete(
+                                uri,
+                                null,
+                                null,
+                            )
+                        }
+                    }
+                } else {
+                    legacyMediaFolder.listFiles()?.forEach {
+                        val fileCounter = it.nameWithoutExtension.toIntOrNull() ?: return@forEach
+
+                        if (fileCounter < earliestCounter) {
+                            it.delete()
+                        }
                     }
                 }
             }
@@ -327,6 +367,7 @@ abstract class BatchesFolder(
         return File(getInternalFolder(), "$counter.$fileExtension")
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     fun getOrCreateMediaFile(
         name: String,
         mimeType: String,
@@ -336,7 +377,7 @@ abstract class BatchesFolder(
         var uri: Uri? = null
 
         context.contentResolver.query(
-            mediaContentUri,
+            scopedMediaContentUri,
             arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DISPLAY_NAME),
             "${MediaStore.MediaColumns.DISPLAY_NAME} = '$name'",
             null,
@@ -351,7 +392,7 @@ abstract class BatchesFolder(
                 }
 
                 uri = ContentUris.withAppendedId(
-                    mediaContentUri,
+                    scopedMediaContentUri,
                     cursor.getLong(id)
                 )
             }
@@ -360,7 +401,7 @@ abstract class BatchesFolder(
         if (uri == null) {
             // Create empty output file to be able to write to it
             uri = context.contentResolver.insert(
-                mediaContentUri,
+                scopedMediaContentUri,
                 ContentValues().apply {
                     put(
                         MediaStore.MediaColumns.DISPLAY_NAME,

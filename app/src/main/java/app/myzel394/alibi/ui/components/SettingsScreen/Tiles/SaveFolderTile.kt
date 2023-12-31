@@ -35,12 +35,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
-import app.myzel394.alibi.ui.VIDEO_RECORDER_SUPPORTS_CUSTOM_FOLDER
+import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.components.atoms.SettingsTile
 import app.myzel394.alibi.ui.utils.rememberFolderSelectorDialog
 import kotlinx.coroutines.launch
@@ -219,7 +218,7 @@ fun SaveFolderTile(
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
-                if (!VIDEO_RECORDER_SUPPORTS_CUSTOM_FOLDER) {
+                if (!SUPPORTS_SCOPED_STORAGE) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,

@@ -2,6 +2,7 @@ package app.myzel394.alibi.helpers
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
@@ -10,6 +11,7 @@ import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateVideoFiles
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import com.arthenica.ffmpegkit.FFmpegKitConfig
+import java.io.File
 import java.time.LocalDateTime
 
 class VideoBatchesFolder(
@@ -25,7 +27,11 @@ class VideoBatchesFolder(
 ) {
     override val concatenationFunction = ::concatenateVideoFiles
     override val ffmpegParameters = FFMPEG_PARAMETERS
-    override val mediaContentUri: Uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+    override val scopedMediaContentUri: Uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+    override val legacyMediaFolder = File(
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+        MEDIA_SUBFOLDER
+    )
 
     private var customParcelFileDescriptor: ParcelFileDescriptor? = null
 
@@ -46,16 +52,25 @@ class VideoBatchesFolder(
             }
 
             BatchType.MEDIA -> {
-                val mediaUri = getOrCreateMediaFile(
-                    name = getName(date, extension),
-                    mimeType = "video/$extension",
-                    relativePath = MEDIA_RELATIVE_PATH,
-                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val mediaUri = getOrCreateMediaFile(
+                        name = getName(date, extension),
+                        mimeType = "video/$extension",
+                        relativePath = SCOPED_STORAGE_RELATIVE_PATH,
+                    )
 
-                FFmpegKitConfig.getSafParameterForWrite(
-                    context,
-                    mediaUri
-                )!!
+                    return FFmpegKitConfig.getSafParameterForWrite(
+                        context,
+                        mediaUri
+                    )!!
+                } else {
+                    return File(
+                        legacyMediaFolder.parentFile!!,
+                        getName(date, extension)
+                    ).apply {
+                        createNewFile()
+                    }.absolutePath
+                }
             }
         }
     }
@@ -105,7 +120,8 @@ class VideoBatchesFolder(
             )
         }
 
-        val MEDIA_RELATIVE_PATH = Environment.DIRECTORY_DCIM + "/alibi/video_recordings"
+        val MEDIA_SUBFOLDER = "/alibi/.video_recordings"
+        val SCOPED_STORAGE_RELATIVE_PATH = Environment.DIRECTORY_DCIM + MEDIA_SUBFOLDER
 
         // Parameters to be passed in descending order
         // Those parameters first try to concatenate without re-encoding

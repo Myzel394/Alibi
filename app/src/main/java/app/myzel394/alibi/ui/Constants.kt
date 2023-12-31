@@ -2,13 +2,14 @@ package app.myzel394.alibi.ui
 
 import android.os.Build
 import androidx.compose.ui.unit.dp
-import java.io.File
 
 val BIG_PRIMARY_BUTTON_SIZE = 64.dp
 val MAX_AMPLITUDE = 20000
 val SUPPORTS_DARK_MODE_NATIVELY = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 val RECORDER_SUBFOLDER_NAME = ".recordings"
-val VIDEO_RECORDER_SUPPORTS_CUSTOM_FOLDER = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+
+// TODO: Fix!
+val SUPPORTS_SCOPED_STORAGE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 val MEDIA_RECORDINGS_PREFIX = "alibi-recording-"
 val RECORDER_MEDIA_SELECTED_VALUE = "_'media"
 val RECORDER_INTERNAL_SELECTED_VALUE = "_'internal"
