@@ -16,6 +16,7 @@ import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.BatchesFolder
+import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 import java.lang.IllegalStateException
 
@@ -160,6 +161,9 @@ class AudioRecorderService :
         }
     }
 
+    private fun getNameForMediaFile() =
+        "${batchesFolder.mediaPrefix}$counter.${settings.videoRecorderSettings.fileExtension}"
+
     // ==== Actual recording related ====
     private fun createRecorder(): MediaRecorder {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -196,8 +200,22 @@ class AudioRecorderService :
                     )
                 }
 
-                // TODO: Add media
-                else -> {}
+                BatchesFolder.BatchType.MEDIA -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        setOutputFile(
+                            batchesFolder.asMediaGetScopedStorageFileDescriptor(
+                                getNameForMediaFile(),
+                                "audio/${audioSettings.fileExtension}"
+                            )
+                        )
+                    } else {
+                        val name = getNameForMediaFile()
+                        val file = batchesFolder.asMediaGetLegacyFile(name)
+
+                        // TODO: Ask permission on settings screen
+                        setOutputFile(file.absolutePath)
+                    }
+                }
             }
 
             setOutputFormat(audioSettings.getOutputFormat())

@@ -10,7 +10,9 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.AudioBatchesFolder
+import app.myzel394.alibi.helpers.VideoBatchesFolder
 import app.myzel394.alibi.services.AudioRecorderService
+import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
 
 class AudioRecorderModel :
@@ -63,16 +65,17 @@ class AudioRecorderModel :
     }
 
     override fun startRecording(context: Context, settings: AppSettings) {
-        batchesFolder = if (settings.saveFolder == null)
-            AudioBatchesFolder.viaInternalFolder(context)
-        else
-            AudioBatchesFolder.viaCustomFolder(
+        batchesFolder = when (settings.saveFolder) {
+            null -> AudioBatchesFolder.viaInternalFolder(context)
+            RECORDER_MEDIA_SELECTED_VALUE -> AudioBatchesFolder.viaMediaFolder(context)
+            else -> AudioBatchesFolder.viaCustomFolder(
                 context,
                 DocumentFile.fromTreeUri(
                     context,
                     Uri.parse(settings.saveFolder)
                 )!!
             )
+        }
 
         super.startRecording(context, settings)
     }

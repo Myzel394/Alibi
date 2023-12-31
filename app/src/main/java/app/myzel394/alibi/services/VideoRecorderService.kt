@@ -1,11 +1,9 @@
 package app.myzel394.alibi.services
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
-import android.provider.MediaStore
 import android.util.Range
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -35,7 +33,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
-import java.io.File
 import kotlin.properties.Delegates
 
 class VideoRecorderService :
@@ -246,45 +243,30 @@ class VideoRecorderService :
                     )
                 } else if (batchesFolder.type == BatchesFolder.BatchType.MEDIA) {
                     if (SUPPORTS_SCOPED_STORAGE) {
+                        val name = getNameForMediaFile()
+
                         it.prepareRecording(
                             this,
-                            MediaStoreOutputOptions.Builder(
-                                contentResolver,
-                                batchesFolder.scopedMediaContentUri,
-                            ).setContentValues(
-                                ContentValues().apply {
-                                    val name = getNameForMediaFile()
-
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                        put(
-                                            MediaStore.Video.Media.IS_PENDING,
-                                            1
-                                        )
-                                        put(
-                                            MediaStore.Video.Media.RELATIVE_PATH,
-                                            VideoBatchesFolder.SCOPED_STORAGE_RELATIVE_PATH,
-                                        )
-                                    }
-
-                                    put(
-                                        MediaStore.Video.Media.DISPLAY_NAME,
+                            MediaStoreOutputOptions
+                                .Builder(
+                                    contentResolver,
+                                    batchesFolder.scopedMediaContentUri,
+                                )
+                                .setContentValues(
+                                    batchesFolder.asMediaGetScopedStorageContentValues(
                                         name
                                     )
-                                }
-                            ).build()
+                                )
+                                .build()
                         )
                     } else {
                         val name = getNameForMediaFile()
-                        val file = File(
-                            batchesFolder.legacyMediaFolder,
-                            name
-                        ).apply {
-                            createNewFile()
-                        }
 
                         it.prepareRecording(
                             this,
-                            FileOutputOptions.Builder(file).build()
+                            FileOutputOptions
+                                .Builder(batchesFolder.asMediaGetLegacyFile(name))
+                                .build()
                         )
                     }
                 } else {

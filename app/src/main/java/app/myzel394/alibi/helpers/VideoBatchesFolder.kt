@@ -1,21 +1,20 @@
 package app.myzel394.alibi.helpers
 
+import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
-import androidx.core.net.toFile
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateVideoFiles
+import app.myzel394.alibi.ui.MEDIA_SUBFOLDER_NAME
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import java.io.File
-import java.nio.file.Paths
 import java.time.LocalDateTime
-import kotlin.io.path.Path
 
 class VideoBatchesFolder(
     override val context: Context,
@@ -28,6 +27,7 @@ class VideoBatchesFolder(
     customFolder,
     subfolderName,
 ) {
+    // TODO: Sort batches!
     override val concatenationFunction = ::concatenateVideoFiles
     override val ffmpegParameters = FFMPEG_PARAMETERS
     override val scopedMediaContentUri: Uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
@@ -59,7 +59,7 @@ class VideoBatchesFolder(
                     val mediaUri = getOrCreateMediaFile(
                         name = getName(date, extension),
                         mimeType = "video/$extension",
-                        relativePath = Environment.DIRECTORY_DCIM + MEDIA_SUBFOLDER,
+                        relativePath = Environment.DIRECTORY_DCIM + "/" + MEDIA_SUBFOLDER_NAME,
                     )
 
                     return FFmpegKitConfig.getSafParameterForWrite(
@@ -67,12 +67,12 @@ class VideoBatchesFolder(
                         mediaUri
                     )!!
                 } else {
-                    return Paths.get(
-                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI.path,
-                        Environment.DIRECTORY_DCIM,
-                        MEDIA_SUBFOLDER,
+                    val path = arrayOf(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+                        MEDIA_SUBFOLDER_NAME,
                         getName(date, extension)
-                    ).toFile()
+                    ).joinToString("/")
+                    return File(path)
                         .apply {
                             createNewFile()
                         }.absolutePath
@@ -109,6 +109,24 @@ class VideoBatchesFolder(
         }
     }
 
+    fun asMediaGetScopedStorageContentValues(name: String) = ContentValues().apply {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            put(
+                MediaStore.Video.Media.IS_PENDING,
+                1
+            )
+            put(
+                MediaStore.Video.Media.RELATIVE_PATH,
+                SCOPED_STORAGE_RELATIVE_PATH,
+            )
+        }
+
+        put(
+            MediaStore.Video.Media.DISPLAY_NAME,
+            name
+        )
+    }
+
     companion object {
         fun viaInternalFolder(context: Context) = VideoBatchesFolder(context, BatchType.INTERNAL)
 
@@ -126,9 +144,9 @@ class VideoBatchesFolder(
             )
         }
 
-        val MEDIA_SUBFOLDER = "/alibi"
-        val MEDIA_RECORDINGS_SUBFOLDER = MEDIA_SUBFOLDER + "/video_recordings"
-        val SCOPED_STORAGE_RELATIVE_PATH = Environment.DIRECTORY_DCIM + MEDIA_RECORDINGS_SUBFOLDER
+        val MEDIA_RECORDINGS_SUBFOLDER = MEDIA_SUBFOLDER_NAME + "/video_recordings"
+        val SCOPED_STORAGE_RELATIVE_PATH =
+            Environment.DIRECTORY_DCIM + "/" + MEDIA_RECORDINGS_SUBFOLDER
 
         // Parameters to be passed in descending order
         // Those parameters first try to concatenate without re-encoding

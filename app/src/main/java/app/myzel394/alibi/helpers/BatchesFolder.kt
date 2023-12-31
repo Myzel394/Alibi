@@ -170,6 +170,14 @@ abstract class BatchesFolder(
         return File(getInternalFolder(), getName(date, extension))
     }
 
+    fun asMediaGetLegacyFile(name: String): File = File(
+        legacyMediaFolder,
+        name
+    ).apply {
+        createNewFile()
+    }
+
+
     fun checkIfOutputAlreadyExists(
         date: LocalDateTime,
         extension: String
