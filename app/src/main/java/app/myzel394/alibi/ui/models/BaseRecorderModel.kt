@@ -47,6 +47,7 @@ abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderServi
     // thus the service is not running and thus doesn't need to be stopped or destroyed
     var onRecordingSave: (isSavingAsOldRecording: Boolean) -> Unit = {}
     var onError: () -> Unit = {}
+    var onBatchesFolderNotAccessible: () -> Unit = {}
     abstract var batchesFolder: B?
 
     private var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
@@ -70,11 +71,14 @@ abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderServi
                     recorder.onError = {
                         onError()
                     }
+                    recorder.onBatchesFolderNotAccessible = {
+                        onBatchesFolderNotAccessible()
+                    }
 
                     if (batchesFolder != null) {
                         recorder.batchesFolder = batchesFolder!!
                     } else {
-                        batchesFolder = recorder.batchesFolder as B
+                        batchesFolder = recorder.batchesFolder
                     }
 
                     if (settings != null) {
@@ -167,9 +171,9 @@ abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderServi
 
     fun destroyService(context: Context) {
         recorderService!!.destroy()
-        reset()
 
         stopOldServices(context)
+        reset()
     }
 
     // Bind functions used to manually bind to the service if the app

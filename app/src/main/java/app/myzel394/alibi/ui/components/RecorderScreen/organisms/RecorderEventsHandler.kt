@@ -23,6 +23,7 @@ import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
 import app.myzel394.alibi.services.IntervalRecorderService
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.BatchesInaccessibleDialog
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RecorderErrorDialog
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RecorderProcessingDialog
 import app.myzel394.alibi.ui.models.AudioRecorderModel
@@ -51,6 +52,7 @@ fun RecorderEventsHandler(
 
     var isProcessing by remember { mutableStateOf(false) }
     var showRecorderError by remember { mutableStateOf(false) }
+    var showBatchesInaccessibleError by remember { mutableStateOf(false) }
 
     val saveAudioFile = rememberFileSaverDialog(settings.audioRecorderSettings.getMimeType()) {
         if (settings.deleteRecordingsImmediately) {
@@ -235,6 +237,18 @@ fun RecorderEventsHandler(
                 showRecorderError = true
             }
         }
+        audioRecorder.onBatchesFolderNotAccessible = {
+            scope.launch {
+                showBatchesInaccessibleError = true
+
+                runCatching {
+                    audioRecorder.stopRecording(context)
+                }
+                runCatching {
+                    audioRecorder.destroyService(context)
+                }
+            }
+        }
 
         onDispose {
             audioRecorder.onRecordingSave = {}
@@ -266,6 +280,18 @@ fun RecorderEventsHandler(
                 showRecorderError = true
             }
         }
+        videoRecorder.onBatchesFolderNotAccessible = {
+            scope.launch {
+                showBatchesInaccessibleError = true
+
+                runCatching {
+                    videoRecorder.stopRecording(context)
+                }
+                runCatching {
+                    videoRecorder.destroyService(context)
+                }
+            }
+        }
 
         onDispose {
             videoRecorder.onRecordingSave = {}
@@ -282,6 +308,13 @@ fun RecorderEventsHandler(
                 showRecorderError = false
             },
             onSave = {
+            },
+        )
+
+    if (showBatchesInaccessibleError)
+        BatchesInaccessibleDialog(
+            onClose = {
+                showBatchesInaccessibleError = false
             },
         )
 }
