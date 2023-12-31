@@ -67,7 +67,7 @@
     <string name="ui_settings_value_auto_label">Auto</string>
     <string name="ui_audioRecorder_state_paused_title">Recording paused</string>
     <string name="ui_audioRecorder_state_paused_description">Audio Recording has been paused</string>
-    <string name="ui_audioRecorder_error_recording_title">An error occured</string>
+    <string name="ui_audioRecorder_error_recording_title">An error occurred</string>
     <string name="ui_audioRecorder_error_recording_description">Alibi encountered an error during recording. Would you like to try saving the recording?</string>
     <string name="ui_settings_language_title">Language</string>
     <string name="ui_settings_language_update_label">Change</string>
