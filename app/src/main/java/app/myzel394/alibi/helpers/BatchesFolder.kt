@@ -264,6 +264,9 @@ abstract class BatchesFolder(
     }
 
     fun deleteRecordings() {
+        // Currently deletes all recordings.
+        // This is fine, because we are saving the recordings
+        // in a dedicated subfolder
         when (type) {
             BatchType.INTERNAL -> getInternalFolder().deleteRecursively()
 
@@ -274,11 +277,13 @@ abstract class BatchesFolder(
 
             BatchType.MEDIA -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    // TODO: Also delete pending recordings
                     context.contentResolver.delete(
                         scopedMediaContentUri,
                         "${MediaStore.MediaColumns.DISPLAY_NAME} LIKE '$mediaPrefix%'",
                         null,
                     )
+
                 } else {
                     legacyMediaFolder.deleteRecursively()
                 }
@@ -337,15 +342,19 @@ abstract class BatchesFolder(
 
             BatchType.MEDIA -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    queryMediaContent { _, counter, uri, _ ->
+                    val deletableNames = mutableListOf<String>()
+
+                    queryMediaContent { rawName, counter, _, _ ->
                         if (counter < earliestCounter) {
-                            context.contentResolver.delete(
-                                uri,
-                                null,
-                                null,
-                            )
+                            deletableNames.add(rawName)
                         }
                     }
+
+                    context.contentResolver.delete(
+                        scopedMediaContentUri,
+                        "${MediaStore.MediaColumns.DISPLAY_NAME} IN (${deletableNames.joinToString(",")})",
+                        null,
+                    )
                 } else {
                     legacyMediaFolder.listFiles()?.forEach {
                         val fileCounter =
