@@ -73,9 +73,14 @@ abstract class IntervalRecorderService<I, B : BatchesFolder> :
         val timeMultiplier = settings.maxDuration / settings.intervalDuration
         val earliestCounter = counter - timeMultiplier
 
+        if (earliestCounter <= 0) {
+            return
+        }
+
         batchesFolder.deleteOldRecordings(earliestCounter)
     }
 
+    // TODO
     abstract class Settings(
         open val maxDuration: Long,
         open val intervalDuration: Long,
