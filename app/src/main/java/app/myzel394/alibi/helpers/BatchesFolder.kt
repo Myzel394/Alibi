@@ -274,13 +274,11 @@ abstract class BatchesFolder(
 
             BatchType.MEDIA -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    queryMediaContent { _, _, uri, _ ->
-                        context.contentResolver.delete(
-                            uri,
-                            null,
-                            null,
-                        )
-                    }
+                    context.contentResolver.delete(
+                        scopedMediaContentUri,
+                        "${MediaStore.MediaColumns.DISPLAY_NAME} LIKE '$mediaPrefix%'",
+                        null,
+                    )
                 } else {
                     legacyMediaFolder.deleteRecursively()
                 }
@@ -299,9 +297,16 @@ abstract class BatchesFolder(
                 var hasRecordings = false
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    queryMediaContent { _, _, _, _ ->
-                        hasRecordings = true
-                        return@queryMediaContent true
+                    context.contentResolver.query(
+                        scopedMediaContentUri,
+                        arrayOf(MediaStore.MediaColumns.DISPLAY_NAME),
+                        "${MediaStore.MediaColumns.DISPLAY_NAME} LIKE '$mediaPrefix%'",
+                        null,
+                        null,
+                    )!!.use { cursor ->
+                        if (cursor.moveToFirst()) {
+                            hasRecordings = true
+                        }
                     }
 
                     return hasRecordings
@@ -358,7 +363,7 @@ abstract class BatchesFolder(
         return when (type) {
             BatchType.INTERNAL -> true
             BatchType.CUSTOM -> getCustomDefinedFolder().canWrite() && getCustomDefinedFolder().canRead()
-            // Add support for < Android 10
+            // TODO: Add support for < Android 10
             BatchType.MEDIA -> true
         }
     }
