@@ -27,6 +27,7 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.AudioRecorderSettings.Companion.EXAMPLE_MAX_DURATIONS
+import app.myzel394.alibi.ui.SHEET_BOTTOM_OFFSET
 import app.myzel394.alibi.ui.utils.formatDuration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -52,7 +53,8 @@ fun QuickMaxDurationSelector(
             Box(
                 modifier = Modifier
                     .widthIn(max = 400.dp)
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = SHEET_BOTTOM_OFFSET),
             ) {
                 Text(
                     stringResource(R.string.ui_recorder_action_changeMaxDuration_title),

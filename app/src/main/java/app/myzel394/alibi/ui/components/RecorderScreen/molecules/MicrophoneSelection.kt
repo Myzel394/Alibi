@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.ui.SHEET_BOTTOM_OFFSET
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.MicrophoneSelectionButton
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.MicrophoneTypeInfo
 import app.myzel394.alibi.ui.components.atoms.MessageBox
@@ -91,7 +92,7 @@ fun MicrophoneSelection(
             Column(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 24.dp),
+                    .padding(bottom = SHEET_BOTTOM_OFFSET),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(48.dp),
             ) {

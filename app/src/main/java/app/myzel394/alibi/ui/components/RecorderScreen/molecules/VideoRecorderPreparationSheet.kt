@@ -51,6 +51,7 @@ import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import app.myzel394.alibi.R
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
+import app.myzel394.alibi.ui.SHEET_BOTTOM_OFFSET
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.CameraPreview
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
@@ -113,7 +114,8 @@ fun VideoRecorderPreparationSheet(
             } else
                 Column(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 24.dp),
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = SHEET_BOTTOM_OFFSET, top = 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(30.dp),
                 ) {
