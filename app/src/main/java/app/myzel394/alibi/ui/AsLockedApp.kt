@@ -56,12 +56,10 @@ fun AsLockedApp(
         .value ?: return
 
     // -1 = Unlocked, any other value = locked
-    var tries by remember { mutableIntStateOf(0) }
-
-    LaunchedEffect(settings.isAppLockEnabled()) {
-        if (!settings.isAppLockEnabled()) {
-            tries = -1
-        }
+    var tries by remember {
+        mutableIntStateOf(
+            if (settings.isAppLockEnabled()) 0 else -1
+        )
     }
 
     if (tries == -1) {
