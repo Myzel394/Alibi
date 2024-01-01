@@ -19,7 +19,6 @@ data class Doctor(
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         if (intent.resolveActivity(context.packageManager) != null) {
             return true
-
         }
 
         val results =
