@@ -112,6 +112,7 @@ fun Navigation(
             SettingsScreen(
                 navController = navController,
                 audioRecorder = audioRecorder,
+                videoRecorder = videoRecorder,
             )
         }
         composable(

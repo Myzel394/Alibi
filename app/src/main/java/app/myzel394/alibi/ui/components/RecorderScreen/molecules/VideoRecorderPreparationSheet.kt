@@ -111,7 +111,7 @@ fun VideoRecorderPreparationSheet(
                         .fillMaxSize(),
                     cameraSelector = videoSettings.cameraSelector,
                 )
-            } else
+            } else {
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
@@ -218,6 +218,7 @@ fun VideoRecorderPreparationSheet(
                         )
                     }
                 }
+            }
         }
     }
 }

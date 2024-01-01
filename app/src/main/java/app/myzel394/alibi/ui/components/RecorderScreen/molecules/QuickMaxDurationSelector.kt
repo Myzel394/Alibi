@@ -48,13 +48,14 @@ fun QuickMaxDurationSelector(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = SHEET_BOTTOM_OFFSET)
         ) {
             Box(
                 modifier = Modifier
                     .widthIn(max = 400.dp)
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = SHEET_BOTTOM_OFFSET),
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
             ) {
                 Text(
                     stringResource(R.string.ui_recorder_action_changeMaxDuration_title),
@@ -88,8 +89,6 @@ fun QuickMaxDurationSelector(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }

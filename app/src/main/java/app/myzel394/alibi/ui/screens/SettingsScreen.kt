@@ -60,6 +60,7 @@ import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
+import app.myzel394.alibi.ui.models.VideoRecorderModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,6 +68,7 @@ import kotlinx.coroutines.launch
 fun SettingsScreen(
     navController: NavController,
     audioRecorder: AudioRecorderModel,
+    videoRecorder: VideoRecorderModel,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
@@ -120,7 +122,7 @@ fun SettingsScreen(
             val settings = rememberSettings()
 
             // Show alert
-            if (audioRecorder.isInRecording)
+            if (audioRecorder.isInRecording || videoRecorder.isInRecording) {
                 Box(
                     modifier = Modifier
                         .padding(16.dp)
@@ -131,6 +133,7 @@ fun SettingsScreen(
                         message = stringResource(R.string.ui_settings_hint_recordingActive_message),
                     )
                 }
+            }
             if (!SUPPORTS_DARK_MODE_NATIVELY) {
                 ThemeSelector()
             }
@@ -140,6 +143,10 @@ fun SettingsScreen(
             DeleteRecordingsImmediatelyTile(settings = settings)
             CustomNotificationTile(navController = navController, settings = settings)
             EnableAppLockTile(settings = settings)
+            SaveFolderTile(
+                settings = settings,
+                snackbarHostState = snackbarHostState,
+            )
             GlobalSwitch(
                 label = stringResource(R.string.ui_settings_advancedSettings_label),
                 checked = settings.showAdvancedSettings,
@@ -157,11 +164,6 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
                     Column {
-                        SaveFolderTile(
-                            settings = settings,
-                            snackbarHostState = snackbarHostState,
-                        )
-
                         DividerTitle(
                             title = stringResource(R.string.ui_settings_sections_audio_title),
                             description = stringResource(R.string.ui_settings_sections_audio_description),
