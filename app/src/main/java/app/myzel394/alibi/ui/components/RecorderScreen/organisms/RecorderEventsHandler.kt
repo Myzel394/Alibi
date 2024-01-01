@@ -230,6 +230,9 @@ fun RecorderEventsHandler(
                 }
             }
         }
+        audioRecorder.onRecordingStart = {
+            snackbarHostState.currentSnackbarData?.dismiss()
+        }
         audioRecorder.onError = {
             scope.launch {
                 saveAsLastRecording(audioRecorder as RecorderModel)
@@ -272,6 +275,9 @@ fun RecorderEventsHandler(
                     videoRecorder.destroyService(context)
                 }
             }
+        }
+        videoRecorder.onRecordingStart = {
+            snackbarHostState.currentSnackbarData?.dismiss()
         }
         videoRecorder.onError = {
             scope.launch {
