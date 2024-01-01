@@ -2,6 +2,7 @@ package app.myzel394.alibi.ui.components.SettingsScreen.Tiles
 
 import android.media.MediaRecorder
 import androidx.camera.video.Quality
+import androidx.camera.video.Recorder
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HighQuality
 import androidx.compose.material3.Button

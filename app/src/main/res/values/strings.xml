@@ -177,4 +177,6 @@
     <string name="ui_settings_option_saveFolder_externalPermissionRequired_text">To access the DCIM folder, you need to grant Alibi the permission to access external storage. Alibi will only use this permission to write your recordings to the DCIM folder.</string>
     <string name="ui_settings_option_saveFolder_externalPermissionRequired_action_confirm">Grant permission</string>
     <string name="ui_audioRecorder_error_batchesInaccessible_description">Alibi couldn\'t access or write to the batches folder. Try to choose a different folder or use the internal storage instead. The recording has been aborted.</string>
+    <string name="ui_severeError_fileSaverUnavailable_title">File Manager app not found</string>
+    <string name="ui_severeError_fileSaverUnavailable_text">Alibi couldn\'t find a file manager app on your phone. Please install a file manager app and try again. If this message still appears, you can try using a custom batches folder in the advanced settings section. Alibi may not fully work on your device.</string>
 </resources>

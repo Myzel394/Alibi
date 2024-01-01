@@ -305,7 +305,7 @@ class VideoRecorderService :
     }
 
     class CameraControl(
-        private val camera: Camera,
+        val camera: Camera
     ) {
         fun enableTorch() {
             camera.cameraControl.enableTorch(true)

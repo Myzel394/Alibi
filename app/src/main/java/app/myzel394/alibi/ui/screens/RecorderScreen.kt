@@ -30,7 +30,6 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.ui.components.RecorderScreen.organisms.RecorderEventsHandler
 import app.myzel394.alibi.ui.components.RecorderScreen.organisms.VideoRecordingStatus
-import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
 

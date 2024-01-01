@@ -13,6 +13,7 @@ import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
+import app.myzel394.alibi.helpers.Doctor
 import app.myzel394.alibi.helpers.VideoBatchesFolder
 import app.myzel394.alibi.services.VideoRecorderService
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE

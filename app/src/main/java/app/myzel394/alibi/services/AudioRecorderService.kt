@@ -231,9 +231,10 @@ class AudioRecorderService :
     // ==== Microphone related ====
     private fun resetRecorder() {
         runCatching {
-            recorder?.let {
-                it.stop()
-                it.release()
+            recorder?.apply {
+                stop()
+                reset()
+                release()
             }
             clearAudioDevice()
             batchesFolder.cleanup()

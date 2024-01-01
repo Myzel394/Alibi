@@ -40,9 +40,10 @@ abstract class IntervalRecorderService<I, B : BatchesFolder> :
 
     override fun start() {
         super.start()
+
         batchesFolder.initFolders()
+
         if (!batchesFolder.checkIfFolderIsAccessible()) {
-            // TODO: Add handler
             onBatchesFolderNotAccessible()
         }
 
