@@ -46,6 +46,7 @@ abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderServi
     // If `isSavingAsOldRecording` is true, the user is saving an old recording,
     // thus the service is not running and thus doesn't need to be stopped or destroyed
     var onRecordingSave: (isSavingAsOldRecording: Boolean) -> Unit = {}
+    var onRecordingStart: () -> Unit = {}
     var onError: () -> Unit = {}
     var onBatchesFolderNotAccessible: () -> Unit = {}
     abstract var batchesFolder: B?

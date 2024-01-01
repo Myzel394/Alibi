@@ -67,6 +67,7 @@ class VideoRecorderModel :
 
             service.clearAllRecordings()
             service.startRecording()
+            onRecordingStart()
         } else {
             isStartingRecording = false
         }

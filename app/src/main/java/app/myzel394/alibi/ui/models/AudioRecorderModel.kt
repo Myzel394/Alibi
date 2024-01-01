@@ -56,6 +56,7 @@ class AudioRecorderModel :
         if (service.state == RecorderState.IDLE) {
             service.clearAllRecordings()
             service.startRecording()
+            onRecordingStart()
         }
 
         recorderState = service.state
