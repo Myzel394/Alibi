@@ -75,7 +75,7 @@ abstract class BatchesFolder(
         context.contentResolver.query(
             scopedMediaContentUri,
             null,
-            null,
+            "${MediaStore.MediaColumns.DISPLAY_NAME} LIKE '$mediaPrefix%'",
             null,
             null,
         )!!.use { cursor ->
@@ -104,7 +104,7 @@ abstract class BatchesFolder(
 
                 val result = callback(rawName, counter, uri, cursor)
 
-                if (result != null) {
+                if (result == false) {
                     return
                 }
             }
@@ -143,27 +143,30 @@ abstract class BatchesFolder(
                 }
 
             BatchType.MEDIA -> {
-                val fileUris = mutableListOf<Uri>()
+                val fileUris = mutableListOf<Pair<String, Uri>>()
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    queryMediaContent { _, _, uri, _ ->
-                        fileUris.add(uri)
+                    queryMediaContent { rawName, _, uri, _ ->
+                        fileUris.add(Pair(rawName, uri))
                     }
                 } else {
                     legacyMediaFolder.listFiles()?.forEach {
-                        fileUris.add(it.toUri())
+                        fileUris.add(Pair(it.name, it.toUri()))
                     }
                 }
 
                 fileUris
                     .sortedBy {
-                        return@sortedBy it
-                            .lastPathSegment!!
+                        val name = it.first
+
+                        return@sortedBy name
                             .substring(mediaPrefix.length)
                             .substringBeforeLast(".")
                             .toInt()
                     }
-                    .map { uri ->
+                    .map { pair ->
+                        val uri = pair.second
+
                         FFmpegKitConfig.getSafParameterForRead(
                             context,
                             uri,
