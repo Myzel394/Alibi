@@ -1,14 +1,13 @@
 package app.myzel394.alibi.services
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.Notification
 import android.content.Intent
-import android.content.pm.ServiceInfo
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.LifecycleService
 import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.enums.RecorderState

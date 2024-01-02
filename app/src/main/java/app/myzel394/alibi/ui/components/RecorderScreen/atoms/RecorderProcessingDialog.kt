@@ -28,7 +28,7 @@ fun RecorderProcessingDialog() {
         },
         title = {
             Text(
-                stringResource(R.string.ui_audioRecorder_action_save_processing_dialog_title),
+                stringResource(R.string.ui_recorder_action_save_processing_dialog_title),
             )
         },
         text = {
@@ -36,7 +36,7 @@ fun RecorderProcessingDialog() {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    stringResource(R.string.ui_audioRecorder_action_save_processing_dialog_description),
+                    stringResource(R.string.ui_recorder_action_save_processing_dialog_description),
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 LinearProgressIndicator()

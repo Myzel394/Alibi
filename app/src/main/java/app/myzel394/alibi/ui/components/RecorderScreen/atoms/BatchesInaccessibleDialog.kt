@@ -2,7 +2,6 @@ package app.myzel394.alibi.ui.components.RecorderScreen.atoms
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,10 +24,10 @@ fun BatchesInaccessibleDialog(
             )
         },
         title = {
-            Text(stringResource(R.string.ui_audioRecorder_error_recording_title))
+            Text(stringResource(R.string.ui_recorder_error_recording_title))
         },
         text = {
-            Text(stringResource(R.string.ui_audioRecorder_error_batchesInaccessible_description))
+            Text(stringResource(R.string.ui_recorder_error_batchesInaccessible_description))
         },
         confirmButton = {
             Button(

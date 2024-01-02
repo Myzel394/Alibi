@@ -1,13 +1,7 @@
 package app.myzel394.alibi.ui.components.RecorderScreen.atoms
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +16,7 @@ fun SaveButton(
     modifier: Modifier = Modifier,
     onSave: () -> Unit,
 ) {
-    val label = stringResource(R.string.ui_audioRecorder_action_save_label)
+    val label = stringResource(R.string.ui_recorder_action_save_label)
 
     Button(
         modifier = Modifier

@@ -33,7 +33,7 @@ fun DeleteButton(
             },
         )
     }
-    val label = stringResource(R.string.ui_audioRecorder_action_delete_label)
+    val label = stringResource(R.string.ui_recorder_action_delete_label)
     Button(
         modifier = Modifier
             .semantics {

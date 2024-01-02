@@ -18,8 +18,8 @@ fun PauseResumeButton(
     isPaused: Boolean,
     onChange: () -> Unit,
 ) {
-    val pauseLabel = stringResource(R.string.ui_audioRecorder_action_pause_label)
-    val resumeLabel = stringResource(R.string.ui_audioRecorder_action_resume_label)
+    val pauseLabel = stringResource(R.string.ui_recorder_action_pause_label)
+    val resumeLabel = stringResource(R.string.ui_recorder_action_resume_label)
 
     FloatingActionButton(
         modifier = Modifier

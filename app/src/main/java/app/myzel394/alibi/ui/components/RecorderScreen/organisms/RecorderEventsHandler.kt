@@ -97,8 +97,8 @@ fun RecorderEventsHandler(
         }
     }
 
-    val successMessage = stringResource(R.string.ui_audioRecorder_action_save_success)
-    val openMessage = stringResource(R.string.ui_audioRecorder_action_save_openFolder)
+    val successMessage = stringResource(R.string.ui_recorder_action_save_success)
+    val openMessage = stringResource(R.string.ui_recorder_action_save_openFolder)
 
     fun openFolder(uri: Uri) {
         val intent = Intent(Intent.ACTION_VIEW, uri)

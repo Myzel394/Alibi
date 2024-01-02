@@ -1,18 +1,13 @@
 package app.myzel394.alibi.db
 
 import android.content.Context
-import android.content.Intent
 import android.media.MediaRecorder
 import android.os.Build
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricManager.Authenticators
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
-import androidx.core.app.ActivityCompat.startActivityForResult
 import app.myzel394.alibi.R
 import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
-import app.myzel394.alibi.services.VideoRecorderService
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
@@ -502,39 +497,39 @@ data class NotificationSettings(
         @Serializable
         data object Default : Preset(
             R.string.ui_audioRecorder_state_recording_title,
-            R.string.ui_audioRecorder_state_recording_description,
+            R.string.ui_recorder_state_recording_description,
             true,
             R.drawable.launcher_monochrome_noopacity,
         )
 
         @Serializable
         data object Weather : Preset(
-            R.string.ui_audioRecorder_state_recording_fake_weather_title,
-            R.string.ui_audioRecorder_state_recording_fake_weather_description,
+            R.string.ui_recorder_state_recording_fake_weather_title,
+            R.string.ui_recorder_state_recording_fake_weather_description,
             false,
             R.drawable.ic_cloud
         )
 
         @Serializable
         data object Player : Preset(
-            R.string.ui_audioRecorder_state_recording_fake_player_title,
-            R.string.ui_audioRecorder_state_recording_fake_player_description,
+            R.string.ui_recorder_state_recording_fake_player_title,
+            R.string.ui_recorder_state_recording_fake_player_description,
             true,
             R.drawable.ic_note,
         )
 
         @Serializable
         data object Browser : Preset(
-            R.string.ui_audioRecorder_state_recording_fake_browser_title,
-            R.string.ui_audioRecorder_state_recording_fake_browser_description,
+            R.string.ui_recorder_state_recording_fake_browser_title,
+            R.string.ui_recorder_state_recording_fake_browser_description,
             true,
             R.drawable.ic_download,
         )
 
         @Serializable
         data object VPN : Preset(
-            R.string.ui_audioRecorder_state_recording_fake_vpn_title,
-            R.string.ui_audioRecorder_state_recording_fake_vpn_description,
+            R.string.ui_recorder_state_recording_fake_vpn_title,
+            R.string.ui_recorder_state_recording_fake_vpn_description,
             false,
             R.drawable.ic_vpn,
         )

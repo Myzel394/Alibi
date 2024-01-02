@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
@@ -36,7 +35,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
@@ -67,11 +65,11 @@ fun StartRecording(
     val context = LocalContext.current
 
     val label = stringResource(
-        R.string.ui_audioRecorder_action_start_description_2,
+        R.string.ui_recorder_action_start_description_2,
         appSettings.maxDuration / 1000 / 60
     )
     val annotatedDescription = buildAnnotatedString {
-        append(stringResource(R.string.ui_audioRecorder_action_start_description_1))
+        append(stringResource(R.string.ui_recorder_action_start_description_1))
 
         withStyle(SpanStyle(background = MaterialTheme.colorScheme.surfaceVariant)) {
             pushStringAnnotation(
@@ -81,7 +79,7 @@ fun StartRecording(
             append(label)
         }
 
-        append(stringResource(R.string.ui_audioRecorder_action_start_description_3))
+        append(stringResource(R.string.ui_recorder_action_start_description_3))
     }
 
     var showQuickMaxDurationSelector by rememberSaveable {
@@ -127,7 +125,7 @@ fun StartRecording(
         ) {
             if (appSettings.lastRecording?.hasRecordingsAvailable(context) == true) {
                 val label = stringResource(
-                    R.string.ui_audioRecorder_action_saveOldRecording_label,
+                    R.string.ui_recorder_action_saveOldRecording_label,
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
                         .format(appSettings.lastRecording.recordingStart),
                 )

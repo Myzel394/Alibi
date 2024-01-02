@@ -25,10 +25,10 @@ fun RecorderErrorDialog(
             )
         },
         title = {
-            Text(stringResource(R.string.ui_audioRecorder_error_recording_title))
+            Text(stringResource(R.string.ui_recorder_error_recording_title))
         },
         text = {
-            Text(stringResource(R.string.ui_audioRecorder_error_recording_description))
+            Text(stringResource(R.string.ui_recorder_error_recording_description))
         },
         dismissButton = {
             Button(
@@ -43,7 +43,7 @@ fun RecorderErrorDialog(
                 onClick = onSave,
                 colors = ButtonDefaults.textButtonColors(),
             ) {
-                Text(stringResource(R.string.ui_audioRecorder_action_save_label))
+                Text(stringResource(R.string.ui_recorder_action_save_label))
             }
         }
     )

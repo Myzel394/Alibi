@@ -28,10 +28,10 @@ fun ConfirmDeletionDialog(
             onDismiss()
         },
         title = {
-            Text(stringResource(R.string.ui_audioRecorder_action_delete_confirm_title))
+            Text(stringResource(R.string.ui_recorder_action_delete_confirm_title))
         },
         text = {
-            Text(stringResource(R.string.ui_audioRecorder_action_delete_confirm_message))
+            Text(stringResource(R.string.ui_recorder_action_delete_confirm_message))
         },
         icon = {
             Icon(
@@ -40,7 +40,7 @@ fun ConfirmDeletionDialog(
             )
         },
         confirmButton = {
-            val label = stringResource(R.string.ui_audioRecorder_action_delete_label)
+            val label = stringResource(R.string.ui_recorder_action_delete_label)
             Button(
                 modifier = Modifier
                     .semantics {
