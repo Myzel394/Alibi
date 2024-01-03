@@ -17,7 +17,9 @@ import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 
 @Composable
-fun RecorderProcessingDialog() {
+fun RecorderProcessingDialog(
+    progress: Float?,
+) {
     AlertDialog(
         onDismissRequest = { },
         icon = {
@@ -39,7 +41,10 @@ fun RecorderProcessingDialog() {
                     stringResource(R.string.ui_recorder_action_save_processing_dialog_description),
                 )
                 Spacer(modifier = Modifier.height(32.dp))
-                LinearProgressIndicator()
+                if (progress != null)
+                    LinearProgressIndicator(progress = progress)
+                else
+                    LinearProgressIndicator()
             }
         },
         confirmButton = {}

@@ -9,6 +9,8 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,6 +34,8 @@ import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlin.concurrent.thread
 
 typealias RecorderModel = BaseRecorderModel<
         RecordingInformation,
@@ -53,6 +57,8 @@ fun RecorderEventsHandler(
     var isProcessing by remember { mutableStateOf(false) }
     var showRecorderError by remember { mutableStateOf(false) }
     var showBatchesInaccessibleError by remember { mutableStateOf(false) }
+
+    var processingProgress by remember { mutableFloatStateOf(0.0f) }
 
     val saveAudioFile = rememberFileSaverDialog(settings.audioRecorderSettings.getMimeType()) {
         if (settings.deleteRecordingsImmediately) {
@@ -135,81 +141,89 @@ fun RecorderEventsHandler(
         // Give the user some time to see the processing dialog
         delay(100)
 
-        try {
-            val recording =
-                // When new recording created
-                recorder.recorderService?.getRecordingInformation()
-                // When recording is loaded from lastRecording
-                    ?: settings.lastRecording
-                    ?: throw Exception("No recording information available")
-            val batchesFolder = when (recorder.javaClass) {
-                AudioRecorderModel::class.java -> AudioBatchesFolder.importFromFolder(
-                    recording.folderPath,
-                    context
-                )
+        thread {
+            runBlocking {
+                try {
+                    val recording =
+                        // When new recording created
+                        recorder.recorderService?.getRecordingInformation()
+                        // When recording is loaded from lastRecording
+                            ?: settings.lastRecording
+                            ?: throw Exception("No recording information available")
+                    val batchesFolder = when (recorder.javaClass) {
+                        AudioRecorderModel::class.java -> AudioBatchesFolder.importFromFolder(
+                            recording.folderPath,
+                            context
+                        )
 
-                VideoRecorderModel::class.java -> VideoBatchesFolder.importFromFolder(
-                    recording.folderPath,
-                    context
-                )
+                        VideoRecorderModel::class.java -> VideoBatchesFolder.importFromFolder(
+                            recording.folderPath,
+                            context
+                        )
 
-                else -> throw Exception("Unknown recorder type")
-            }
+                        else -> throw Exception("Unknown recorder type")
+                    }
 
-            batchesFolder.concatenate(
-                recording.recordingStart,
-                recording.fileExtension,
-            )
+                    batchesFolder.concatenate(
+                        recording.recordingStart,
+                        recording.fileExtension,
+                        durationPerBatchInMilliseconds = settings.intervalDuration,
+                        onProgress = { percentage ->
+                            processingProgress = percentage
+                        }
+                    )
 
-            // Save file
-            val name = batchesFolder.getName(
-                recording.recordingStart,
-                recording.fileExtension,
-            )
+                    // Save file
+                    val name = batchesFolder.getName(
+                        recording.recordingStart,
+                        recording.fileExtension,
+                    )
 
-            when (batchesFolder.type) {
-                BatchesFolder.BatchType.INTERNAL -> {
-                    when (batchesFolder) {
-                        is AudioBatchesFolder -> {
-                            saveAudioFile(
-                                batchesFolder.asInternalGetOutputFile(
-                                    recording.recordingStart,
-                                    recording.fileExtension,
-                                ), name
-                            )
+                    when (batchesFolder.type) {
+                        BatchesFolder.BatchType.INTERNAL -> {
+                            when (batchesFolder) {
+                                is AudioBatchesFolder -> {
+                                    saveAudioFile(
+                                        batchesFolder.asInternalGetOutputFile(
+                                            recording.recordingStart,
+                                            recording.fileExtension,
+                                        ), name
+                                    )
+                                }
+
+                                is VideoBatchesFolder -> {
+                                    saveVideoFile(
+                                        batchesFolder.asInternalGetOutputFile(
+                                            recording.recordingStart,
+                                            recording.fileExtension,
+                                        ), name
+                                    )
+                                }
+                            }
                         }
 
-                        is VideoBatchesFolder -> {
-                            saveVideoFile(
-                                batchesFolder.asInternalGetOutputFile(
-                                    recording.recordingStart,
-                                    recording.fileExtension,
-                                ), name
-                            )
+                        BatchesFolder.BatchType.CUSTOM -> {
+                            showSnackbar(batchesFolder.customFolder!!.uri)
+
+                            if (settings.deleteRecordingsImmediately) {
+                                batchesFolder.deleteRecordings()
+                            }
+                        }
+
+                        BatchesFolder.BatchType.MEDIA -> {
+                            showSnackbar()
+
+                            if (settings.deleteRecordingsImmediately) {
+                                batchesFolder.deleteRecordings()
+                            }
                         }
                     }
-                }
-
-                BatchesFolder.BatchType.CUSTOM -> {
-                    showSnackbar(batchesFolder.customFolder!!.uri)
-
-                    if (settings.deleteRecordingsImmediately) {
-                        batchesFolder.deleteRecordings()
-                    }
-                }
-
-                BatchesFolder.BatchType.MEDIA -> {
-                    showSnackbar()
-
-                    if (settings.deleteRecordingsImmediately) {
-                        batchesFolder.deleteRecordings()
-                    }
+                } catch (error: Exception) {
+                    Log.getStackTraceString(error)
+                } finally {
+                    isProcessing = false
                 }
             }
-        } catch (error: Exception) {
-            Log.getStackTraceString(error)
-        } finally {
-            isProcessing = false
         }
     }
 
@@ -306,8 +320,11 @@ fun RecorderEventsHandler(
     }
 
     if (isProcessing)
-        RecorderProcessingDialog()
+        RecorderProcessingDialog(
+            progress = processingProgress,
+        )
 
+    // TODO: Add thread for concatenation
     if (showRecorderError)
         RecorderErrorDialog(
             onClose = {

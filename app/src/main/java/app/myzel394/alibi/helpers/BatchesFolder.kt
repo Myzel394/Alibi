@@ -23,8 +23,10 @@ import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.utils.PermissionHelper
+import com.arthenica.ffmpegkit.FFprobeKit
+import com.arthenica.ffmpegkit.FFprobeSession
 import kotlinx.coroutines.CompletableDeferred
-import kotlin.reflect.KFunction3
+import kotlin.reflect.KFunction4
 
 abstract class BatchesFolder(
     open val context: Context,
@@ -32,7 +34,7 @@ abstract class BatchesFolder(
     open val customFolder: DocumentFile? = null,
     open val subfolderName: String = ".recordings",
 ) {
-    abstract val concatenationFunction: KFunction3<Iterable<String>, String, String, CompletableDeferred<Unit>>
+    abstract val concatenationFunction: KFunction4<Iterable<String>, String, String, (Int) -> Unit, CompletableDeferred<Unit>>
     abstract val ffmpegParameters: Array<String>
     abstract val scopedMediaContentUri: Uri
     abstract val legacyMediaFolder: File
@@ -245,11 +247,13 @@ abstract class BatchesFolder(
 
     abstract fun cleanup()
 
-    open suspend fun concatenate(
+    suspend fun concatenate(
         recordingStart: LocalDateTime,
         extension: String,
         disableCache: Boolean = false,
         onNextParameterTry: (String) -> Unit = {},
+        durationPerBatchInMilliseconds: Long = 0,
+        onProgress: (Float) -> Unit = {},
     ): String {
         if (!disableCache && checkIfOutputAlreadyExists(recordingStart, extension)) {
             return getOutputFileForFFmpeg(
@@ -264,6 +268,20 @@ abstract class BatchesFolder(
 
             try {
                 val filePaths = getBatchesForFFmpeg()
+
+                // Casting here to float so it doesn't need to redo it on every progress update
+                var fullTime: Float? = null
+
+                runCatching {
+                    // `fullTime` is not accurate as the last batch might be shorter,
+                    // but it's good enough for the progress bar
+                    val lastBatchTime = (FFprobeKit.execute(
+                        "-i ${filePaths.last()} -show_entries format=duration -v quiet -of csv=\"p=0\"",
+                    ).output.toFloat() * 1000).toLong()
+                    fullTime =
+                        ((durationPerBatchInMilliseconds * (filePaths.size - 1)) + lastBatchTime).toFloat()
+                }
+
                 val outputFile = getOutputFileForFFmpeg(
                     date = recordingStart,
                     extension = extension,
@@ -272,8 +290,12 @@ abstract class BatchesFolder(
                 concatenationFunction(
                     filePaths,
                     outputFile,
-                    parameter,
-                ).await()
+                    parameter
+                ) { time ->
+                    if (fullTime != null) {
+                        onProgress(time / fullTime!!)
+                    }
+                }.await()
                 return outputFile
             } catch (e: MediaConverter.FFmpegException) {
                 continue
