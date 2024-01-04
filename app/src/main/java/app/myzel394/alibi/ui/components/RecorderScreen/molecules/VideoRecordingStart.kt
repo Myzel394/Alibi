@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -44,6 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import app.myzel394.alibi.R
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
+import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.utils.PermissionHelper
@@ -78,65 +80,83 @@ fun VideoRecordingStart(
         )
     }
 
+    val hasGrantedStorage = SUPPORTS_SCOPED_STORAGE || PermissionHelper.hasGranted(
+        context,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+
     PermissionRequester(
-        permission = Manifest.permission.CAMERA,
-        icon = Icons.Default.CameraAlt,
+        permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        icon = Icons.Default.InsertDriveFile,
         onPermissionAvailable = {
             showSheet = true
-        },
-    ) { trigger ->
-        val label = stringResource(R.string.ui_videoRecorder_action_start_label)
+        }
+    ) { triggerExternalStorage ->
+        PermissionRequester(
+            permission = Manifest.permission.CAMERA,
+            icon = Icons.Default.CameraAlt,
+            onPermissionAvailable = {
+                showSheet = true
+            },
+        ) { triggerCamera ->
+            val label = stringResource(R.string.ui_videoRecorder_action_start_label)
 
-        Column(
-            modifier = Modifier
-                .size(250.dp)
-                .clip(CircleShape)
-                .semantics {
-                    contentDescription = label
-                }
-                .combinedClickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(color = MaterialTheme.colorScheme.primary),
-                    onClick = {
-                        if (PermissionHelper.hasGranted(
-                                context,
-                                Manifest.permission.CAMERA
-                            ) && PermissionHelper.hasGranted(
-                                context,
-                                Manifest.permission.RECORD_AUDIO
-                            )
-                        ) {
-                            videoRecorder.startRecording(context, appSettings)
-                        } else {
-                            showSheet = true
-                        }
-                    },
-                    onLongClick = {
-                        showSheet = true
-                    },
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Icon(
-                Icons.Default.CameraAlt,
-                contentDescription = null,
+            Column(
                 modifier = Modifier
-                    .size(80.dp),
-                tint = MaterialTheme.colorScheme.primary,
-            )
-            Spacer(modifier = Modifier.height(ButtonDefaults.IconSpacing))
-            Text(
-                label,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Spacer(modifier = Modifier.height(ButtonDefaults.IconSpacing))
-            Text(
-                stringResource(R.string.ui_videoRecorder_action_configure_label),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+                    .size(250.dp)
+                    .clip(CircleShape)
+                    .semantics {
+                        contentDescription = label
+                    }
+                    .combinedClickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = rememberRipple(color = MaterialTheme.colorScheme.primary),
+                        onClick = {
+                            if (!hasGrantedStorage) {
+                                triggerExternalStorage()
+                                return@combinedClickable
+                            }
+
+                            if (PermissionHelper.hasGranted(
+                                    context,
+                                    Manifest.permission.CAMERA
+                                ) && PermissionHelper.hasGranted(
+                                    context,
+                                    Manifest.permission.RECORD_AUDIO
+                                )
+                            ) {
+                                videoRecorder.startRecording(context, appSettings)
+                            } else {
+                                showSheet = true
+                            }
+                        },
+                        onLongClick = {
+                            showSheet = true
+                        },
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Icon(
+                    Icons.Default.CameraAlt,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(80.dp),
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+                Spacer(modifier = Modifier.height(ButtonDefaults.IconSpacing))
+                Text(
+                    label,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Spacer(modifier = Modifier.height(ButtonDefaults.IconSpacing))
+                Text(
+                    stringResource(R.string.ui_videoRecorder_action_configure_label),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
