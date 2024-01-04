@@ -9,6 +9,7 @@ import com.arthenica.ffmpegkit.FFmpegKitConfig
 import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.coroutines.CompletableDeferred
 import java.io.File
+import java.lang.Compiler.command
 import java.util.UUID
 import kotlin.math.log
 
@@ -90,29 +91,36 @@ class MediaConverter {
             val command =
                 "-protocol_whitelist saf,concat,content,file,subfile" +
                         " -i 'concat:$filePathsConcatenated'" +
-                        " -y" +
                         extraCommand +
+                        " -nostats" +
+                        " -loglevel error" +
+                        " -y" +
                         " $outputFile"
 
             FFmpegKit.executeAsync(
-                command
-            ) { session ->
-                if (!ReturnCode.isSuccess(session!!.returnCode)) {
-                    Log.d(
-                        "Audio Concatenation",
-                        String.format(
-                            "Command failed with state %s and rc %s.%s",
-                            session.state,
-                            session.returnCode,
-                            session.failStackTrace,
+                command,
+                { session ->
+                    if (!ReturnCode.isSuccess(session!!.returnCode)) {
+                        Log.d(
+                            "Audio Concatenation",
+                            String.format(
+                                "Command failed with state %s and rc %s.%s",
+                                session.state,
+                                session.returnCode,
+                                session.failStackTrace,
+                            )
                         )
-                    )
 
-                    completer.completeExceptionally(Exception("Failed to concatenate audios"))
-                } else {
-                    completer.complete(Unit)
+                        completer.completeExceptionally(Exception("Failed to concatenate audios"))
+                    } else {
+                        completer.complete(Unit)
+                    }
+                },
+                {},
+                { statistics ->
+                    onProgress(statistics.time)
                 }
-            }
+            )
 
             return completer
         }
@@ -142,7 +150,6 @@ class MediaConverter {
                         " -i ${listFile.absolutePath}" +
                         extraCommand +
                         " -strict normal" +
-                        // TODO: Check if those params work
                         " -nostats" +
                         " -loglevel error" +
                         " -y" +
