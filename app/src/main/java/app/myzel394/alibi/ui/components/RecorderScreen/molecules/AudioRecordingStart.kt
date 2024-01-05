@@ -59,17 +59,6 @@ fun AudioRecordingStart(
         }
     }
 
-    println("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww app: ${appSettings.saveFolder}")
-    val requiresExternalPerm = rememberSaveable {
-        appSettings.requiresExternalStoragePermission(context)
-    }
-    println("hasGranted ${requiresExternalPerm}")
-    val scope = rememberCoroutineScope()
-
-    fun test() {
-        println("appSäääääääääääääääääääääääääääääääättings ${appSettings.saveFolder}")
-    }
-
     PermissionRequester(
         permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
         icon = Icons.Default.InsertDriveFile,
@@ -81,7 +70,6 @@ fun AudioRecordingStart(
             permission = Manifest.permission.RECORD_AUDIO,
             icon = Icons.Default.Mic,
             onPermissionAvailable = {
-                test()
                 if (appSettings.requiresExternalStoragePermission(context)) {
                     triggerExternalStorage()
                 } else {

@@ -294,13 +294,9 @@ abstract class BatchesFolder(
                     parameter
                 ) { time ->
                     if (fullTime != null) {
-                        println("**************** check24")
-                        println(time)
-                        println(fullTime)
                         onProgress(time / fullTime!!)
                     } else {
                         onProgress(null)
-                        println("----------------- nonono")
                     }
                 }.await()
                 return outputFile

@@ -94,7 +94,6 @@ fun SaveFolderTile(
         }
 
         scope.launch {
-            println("================= Saving saveFolder: $path")
             dataStore.updateData {
                 it.setSaveFolder(path)
             }
