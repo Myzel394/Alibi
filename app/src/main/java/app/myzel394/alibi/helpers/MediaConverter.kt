@@ -92,8 +92,6 @@ class MediaConverter {
                 "-protocol_whitelist saf,concat,content,file,subfile" +
                         " -i 'concat:$filePathsConcatenated'" +
                         extraCommand +
-                        " -nostats" +
-                        " -loglevel error" +
                         " -y" +
                         " $outputFile"
 
@@ -150,8 +148,6 @@ class MediaConverter {
                         " -i ${listFile.absolutePath}" +
                         extraCommand +
                         " -strict normal" +
-                        " -nostats" +
-                        " -loglevel error" +
                         " -y" +
                         " $outputFile"
 

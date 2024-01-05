@@ -80,11 +80,6 @@ fun VideoRecordingStart(
         )
     }
 
-    val hasGrantedStorage = SUPPORTS_SCOPED_STORAGE || PermissionHelper.hasGranted(
-        context,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
-
     PermissionRequester(
         permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
         icon = Icons.Default.InsertDriveFile,
@@ -112,7 +107,7 @@ fun VideoRecordingStart(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(color = MaterialTheme.colorScheme.primary),
                         onClick = {
-                            if (!hasGrantedStorage) {
+                            if (appSettings.requiresExternalStoragePermission(context)) {
                                 triggerExternalStorage()
                                 return@combinedClickable
                             }

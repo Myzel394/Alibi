@@ -58,7 +58,7 @@ fun RecorderEventsHandler(
     var showRecorderError by remember { mutableStateOf(false) }
     var showBatchesInaccessibleError by remember { mutableStateOf(false) }
 
-    var processingProgress by remember { mutableFloatStateOf(0.0f) }
+    var processingProgress by remember { mutableStateOf<Float?>(null) }
 
     val saveAudioFile = rememberFileSaverDialog(settings.audioRecorderSettings.getMimeType()) {
         if (settings.deleteRecordingsImmediately) {

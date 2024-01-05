@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -45,15 +46,22 @@ fun PermissionRequester(
 
     var isGranted by remember { mutableStateOf(PermissionHelper.hasGranted(context, permission)) }
     var visibleDialog by remember { mutableStateOf<VisibleDialog?>(null) }
+
+    var _runFunc by rememberSaveable { mutableStateOf(false) }
+
     val requestPermission = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isPermissionGranted: Boolean ->
             isGranted = isPermissionGranted
 
             if (isGranted) {
-                onPermissionAvailable()
+                _runFunc = true
             } else {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, permission)) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(
+                        context as Activity,
+                        permission
+                    )
+                ) {
                     visibleDialog = VisibleDialog.REQUEST
                 } else {
                     visibleDialog = VisibleDialog.PERMANENTLY_DENIED
@@ -64,9 +72,18 @@ fun PermissionRequester(
 
     fun callback() {
         if (isGranted) {
-            onPermissionAvailable()
+            _runFunc = true
         } else {
             requestPermission.launch(permission)
+        }
+    }
+
+    // No idea but this hacky way is required to make sure the callback
+    // `onPermissionAvailable` can access other values such as the app settings.
+    LaunchedEffect(_runFunc) {
+        if (_runFunc) {
+            _runFunc = false
+            onPermissionAvailable()
         }
     }
 

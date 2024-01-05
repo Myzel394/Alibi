@@ -253,7 +253,7 @@ abstract class BatchesFolder(
         disableCache: Boolean = false,
         onNextParameterTry: (String) -> Unit = {},
         durationPerBatchInMilliseconds: Long = 0,
-        onProgress: (Float) -> Unit = {},
+        onProgress: (Float?) -> Unit = {},
     ): String {
         if (!disableCache && checkIfOutputAlreadyExists(recordingStart, extension)) {
             return getOutputFileForFFmpeg(
@@ -265,6 +265,7 @@ abstract class BatchesFolder(
         for (parameter in ffmpegParameters) {
             Log.i("Concatenation", "Trying parameter $parameter")
             onNextParameterTry(parameter)
+            onProgress(null)
 
             try {
                 val filePaths = getBatchesForFFmpeg()
@@ -293,7 +294,13 @@ abstract class BatchesFolder(
                     parameter
                 ) { time ->
                     if (fullTime != null) {
+                        println("**************** check24")
+                        println(time)
+                        println(fullTime)
                         onProgress(time / fullTime!!)
+                    } else {
+                        onProgress(null)
+                        println("----------------- nonono")
                     }
                 }.await()
                 return outputFile

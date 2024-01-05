@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,6 +35,10 @@ import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.utils.PermissionHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun AudioRecordingStart(
@@ -54,6 +59,17 @@ fun AudioRecordingStart(
         }
     }
 
+    println("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww app: ${appSettings.saveFolder}")
+    val requiresExternalPerm = rememberSaveable {
+        appSettings.requiresExternalStoragePermission(context)
+    }
+    println("hasGranted ${requiresExternalPerm}")
+    val scope = rememberCoroutineScope()
+
+    fun test() {
+        println("appSäääääääääääääääääääääääääääääääättings ${appSettings.saveFolder}")
+    }
+
     PermissionRequester(
         permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
         icon = Icons.Default.InsertDriveFile,
@@ -65,11 +81,8 @@ fun AudioRecordingStart(
             permission = Manifest.permission.RECORD_AUDIO,
             icon = Icons.Default.Mic,
             onPermissionAvailable = {
-                if (!SUPPORTS_SCOPED_STORAGE && !PermissionHelper.hasGranted(
-                        context,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                ) {
+                test()
+                if (appSettings.requiresExternalStoragePermission(context)) {
                     triggerExternalStorage()
                 } else {
                     startRecording = true

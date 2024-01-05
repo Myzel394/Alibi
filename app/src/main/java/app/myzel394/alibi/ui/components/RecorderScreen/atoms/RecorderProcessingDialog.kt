@@ -41,10 +41,10 @@ fun RecorderProcessingDialog(
                     stringResource(R.string.ui_recorder_action_save_processing_dialog_description),
                 )
                 Spacer(modifier = Modifier.height(32.dp))
-                if (progress != null)
-                    LinearProgressIndicator(progress = progress)
-                else
+                if (progress == null)
                     LinearProgressIndicator()
+                else
+                    LinearProgressIndicator(progress = progress)
             }
         },
         confirmButton = {}
