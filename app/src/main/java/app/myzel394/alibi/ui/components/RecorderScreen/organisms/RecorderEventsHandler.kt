@@ -28,6 +28,7 @@ import app.myzel394.alibi.services.IntervalRecorderService
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.BatchesInaccessibleDialog
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RecorderErrorDialog
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RecorderProcessingDialog
+import app.myzel394.alibi.ui.effects.rememberOpenUri
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.BaseRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
@@ -106,11 +107,7 @@ fun RecorderEventsHandler(
     val successMessage = stringResource(R.string.ui_recorder_action_save_success)
     val openMessage = stringResource(R.string.ui_recorder_action_save_openFolder)
 
-    fun openFolder(uri: Uri) {
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-
-        context.startActivity(intent)
-    }
+    val openFolder = rememberOpenUri()
 
     fun showSnackbar() {
         scope.launch {
