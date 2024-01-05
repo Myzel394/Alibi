@@ -50,6 +50,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
@@ -61,6 +63,7 @@ import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.components.atoms.SettingsTile
+import app.myzel394.alibi.ui.effects.rememberOpenUri
 import app.myzel394.alibi.ui.utils.PermissionHelper
 import app.myzel394.alibi.ui.utils.rememberFolderSelectorDialog
 import kotlinx.coroutines.launch
@@ -172,6 +175,38 @@ fun SaveFolderTile(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                 )
+
+
+                val openFolder = rememberOpenUri()
+
+                when (settings.saveFolder) {
+                    null -> {}
+                    RECORDER_MEDIA_SELECTED_VALUE -> {}
+                    // Custom folder
+                    else ->
+                        Button(
+                            onClick = {
+                                openFolder(
+                                    DocumentFile.fromTreeUri(
+                                        context,
+                                        settings.saveFolder.toUri(),
+                                    )!!.uri
+                                )
+                            },
+                            shape = MaterialTheme.shapes.small,
+                            // TODO: Adjust padding everywhere
+                            contentPadding = ButtonDefaults.TextButtonContentPadding,
+                            colors = ButtonDefaults.filledTonalButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            ),
+                        ) {
+                            Text(
+                                stringResource(R.string.ui_settings_option_saveFolder_openFolder_label),
+                                fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                            )
+                        }
+                }
             }
         }
     )

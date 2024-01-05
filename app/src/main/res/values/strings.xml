@@ -182,4 +182,5 @@
     <string name="ui_severeError_fileSaverUnavailable_title">File Manager app not found</string>
     <string name="ui_severeError_fileSaverUnavailable_text">Alibi couldn\'t find a file manager app on your phone. Please install a file manager app and try again. If this message still appears, you can try using a custom batches folder in the advanced settings section. Alibi may not fully work on your device.</string>
     <string name="ui_videoRecorder_state_recording_title">Recording Video</string>
+    <string name="ui_settings_option_saveFolder_openFolder_label">Open Folder in Files</string>
 </resources>
