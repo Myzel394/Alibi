@@ -25,6 +25,7 @@ import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
+import app.myzel394.alibi.ui.SUPPORTS_SAVING_VIDEOS_IN_CUSTOM_FOLDERS
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -231,7 +232,7 @@ class VideoRecorderService :
     private fun prepareVideoRecording() =
         videoCapture!!.output
             .let {
-                if (batchesFolder.type == BatchesFolder.BatchType.CUSTOM && SUPPORTS_SCOPED_STORAGE) {
+                if (batchesFolder.type == BatchesFolder.BatchType.CUSTOM && SUPPORTS_SAVING_VIDEOS_IN_CUSTOM_FOLDERS) {
                     it.prepareRecording(
                         this,
                         FileDescriptorOutputOptions.Builder(

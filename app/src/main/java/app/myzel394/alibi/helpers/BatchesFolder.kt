@@ -250,11 +250,13 @@ abstract class BatchesFolder(
     suspend fun concatenate(
         recordingStart: LocalDateTime,
         extension: String,
-        disableCache: Boolean = false,
+        disableCache: Boolean? = null,
         onNextParameterTry: (String) -> Unit = {},
         durationPerBatchInMilliseconds: Long = 0,
         onProgress: (Float?) -> Unit = {},
     ): String {
+        val disableCache = disableCache ?: (type != BatchType.INTERNAL)
+
         if (!disableCache && checkIfOutputAlreadyExists(recordingStart, extension)) {
             return getOutputFileForFFmpeg(
                 date = recordingStart,
@@ -462,7 +464,7 @@ abstract class BatchesFolder(
         context.contentResolver.query(
             scopedMediaContentUri,
             arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DISPLAY_NAME),
-            "${MediaStore.MediaColumns.DISPLAY_NAME} = '$name'",
+            "${MediaStore.MediaColumns.DISPLAY_NAME} = '$name' AND ${Media.RELATIVE_PATH} = '$relativePath'",
             null,
             null,
         )!!.use { cursor ->
@@ -482,27 +484,29 @@ abstract class BatchesFolder(
         }
 
         if (uri == null) {
-            // Create empty output file to be able to write to it
-            uri = context.contentResolver.insert(
-                scopedMediaContentUri,
-                ContentValues().apply {
-                    put(
-                        MediaStore.MediaColumns.DISPLAY_NAME,
-                        name
-                    )
-                    put(
-                        MediaStore.MediaColumns.MIME_TYPE,
-                        mimeType
-                    )
+            try {
+                // Create empty output file to be able to write to it
+                uri = context.contentResolver.insert(
+                    scopedMediaContentUri,
+                    ContentValues().apply {
+                        put(
+                            MediaStore.MediaColumns.DISPLAY_NAME,
+                            name
+                        )
+                        put(
+                            MediaStore.MediaColumns.MIME_TYPE,
+                            mimeType
+                        )
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         put(
                             Media.RELATIVE_PATH,
                             relativePath,
                         )
                     }
-                }
-            )!!
+                )!!
+            } catch (e: Exception) {
+                Log.e("Media", "Failed to create file", e)
+            }
         }
 
         return uri!!

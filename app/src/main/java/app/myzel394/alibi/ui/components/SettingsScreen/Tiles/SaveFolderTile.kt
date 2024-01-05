@@ -55,6 +55,7 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SHEET_BOTTOM_OFFSET
+import app.myzel394.alibi.ui.SUPPORTS_SAVING_VIDEOS_IN_CUSTOM_FOLDERS
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
@@ -256,7 +257,7 @@ fun SelectionSheet(
                         SUPPORTS_SCOPED_STORAGE ||
                         PermissionHelper.hasGranted(
                             context,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
                         )
                     ) {
                         updateValue(RECORDER_MEDIA_SELECTED_VALUE)
@@ -276,7 +277,7 @@ fun SelectionSheet(
                         showCustomFolderWarning = true
                     },
                 )
-                if (!SUPPORTS_SCOPED_STORAGE) {
+                if (!SUPPORTS_SAVING_VIDEOS_IN_CUSTOM_FOLDERS) {
                     Column(
                         modifier = Modifier.padding(horizontal = 32.dp, vertical = 12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,

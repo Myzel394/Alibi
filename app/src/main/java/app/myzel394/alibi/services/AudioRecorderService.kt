@@ -162,7 +162,7 @@ class AudioRecorderService :
     }
 
     private fun getNameForMediaFile() =
-        "${batchesFolder.mediaPrefix}$counter.${settings.videoRecorderSettings.fileExtension}"
+        "${batchesFolder.mediaPrefix}$counter.${settings.audioRecorderSettings.fileExtension}"
 
     // ==== Actual recording related ====
     private fun createRecorder(): MediaRecorder {

@@ -11,10 +11,13 @@ val SUPPORTS_DARK_MODE_NATIVELY = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
 val MEDIA_SUBFOLDER_NAME = "alibi"
 
-val SUPPORTS_SCOPED_STORAGE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+val SUPPORTS_SCOPED_STORAGE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+val SUPPORTS_SAVING_VIDEOS_IN_CUSTOM_FOLDERS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 val MEDIA_RECORDINGS_PREFIX = "alibi-recording-"
 val RECORDER_MEDIA_SELECTED_VALUE = "_'media"
 val RECORDER_INTERNAL_SELECTED_VALUE = "_'internal"
+
+// TODO: Check API 24
 
 // You are not allowed to change the constants below.
 // If you do so, you will be blocked on GitHub.

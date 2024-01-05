@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateVideoFiles
 import app.myzel394.alibi.ui.MEDIA_SUBFOLDER_NAME
@@ -108,17 +109,16 @@ class VideoBatchesFolder(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     fun asMediaGetScopedStorageContentValues(name: String) = ContentValues().apply {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            put(
-                MediaStore.Video.Media.IS_PENDING,
-                1
-            )
-            put(
-                MediaStore.Video.Media.RELATIVE_PATH,
-                SCOPED_STORAGE_RELATIVE_PATH,
-            )
-        }
+        put(
+            MediaStore.Video.Media.IS_PENDING,
+            1
+        )
+        put(
+            MediaStore.Video.Media.RELATIVE_PATH,
+            SCOPED_STORAGE_RELATIVE_PATH,
+        )
 
         put(
             MediaStore.Video.Media.DISPLAY_NAME,

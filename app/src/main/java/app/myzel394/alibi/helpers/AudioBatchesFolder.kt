@@ -64,7 +64,7 @@ class AudioBatchesFolder(
                     val mediaUri = getOrCreateMediaFile(
                         name = getName(date, extension),
                         mimeType = "audio/$extension",
-                        relativePath = Environment.DIRECTORY_DCIM + "/" + MEDIA_SUBFOLDER_NAME,
+                        relativePath = BASE_SCOPED_STORAGE_RELATIVE_PATH + "/" + MEDIA_SUBFOLDER_NAME,
                     )
 
                     return FFmpegKitConfig.getSafParameterForWrite(
@@ -146,8 +146,13 @@ class AudioBatchesFolder(
         }
 
         val MEDIA_RECORDINGS_SUBFOLDER = MEDIA_SUBFOLDER_NAME + "/audio_recordings"
+        val BASE_SCOPED_STORAGE_RELATIVE_PATH =
+            (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                Environment.DIRECTORY_RECORDINGS
+            else
+                Environment.DIRECTORY_PODCASTS)
         val SCOPED_STORAGE_RELATIVE_PATH =
-            Environment.DIRECTORY_DCIM + "/" + MEDIA_RECORDINGS_SUBFOLDER
+            BASE_SCOPED_STORAGE_RELATIVE_PATH + "/" + MEDIA_RECORDINGS_SUBFOLDER
 
         // Parameters to be passed in descending order
         // Those parameters first try to concatenate without re-encoding
