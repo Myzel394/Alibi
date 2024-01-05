@@ -277,11 +277,21 @@ abstract class BatchesFolder(
                 runCatching {
                     // `fullTime` is not accurate as the last batch might be shorter,
                     // but it's good enough for the progress bar
+
+                    // Using the code below results in a nasty bug:
+                    // since we use ffmpeg to extract the duration, the saf parameter is already
+                    // "used up" and we can't use it again for the actual concatenation
+                    // Since an accurate progress bar is less important than speed,
+                    // we currently don't use this code
+                    /*
                     val lastBatchTime = (FFprobeKit.execute(
                         "-i ${filePaths.last()} -show_entries format=duration -v quiet -of csv=\"p=0\"",
                     ).output.toFloat() * 1000).toLong()
                     fullTime =
                         ((durationPerBatchInMilliseconds * (filePaths.size - 1)) + lastBatchTime).toFloat()
+                     */
+                    // We use an approximation for the duration of the batches
+                    fullTime = (durationPerBatchInMilliseconds * filePaths.size).toFloat()
                 }
 
                 val outputFile = getOutputFileForFFmpeg(
