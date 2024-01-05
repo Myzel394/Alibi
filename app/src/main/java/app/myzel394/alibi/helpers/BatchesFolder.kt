@@ -24,7 +24,6 @@ import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.utils.PermissionHelper
 import com.arthenica.ffmpegkit.FFprobeKit
-import com.arthenica.ffmpegkit.FFprobeSession
 import kotlinx.coroutines.CompletableDeferred
 import kotlin.reflect.KFunction4
 
@@ -464,7 +463,7 @@ abstract class BatchesFolder(
         context.contentResolver.query(
             scopedMediaContentUri,
             arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DISPLAY_NAME),
-            "${MediaStore.MediaColumns.DISPLAY_NAME} = '$name' AND ${Media.RELATIVE_PATH} = '$relativePath'",
+            "${MediaStore.MediaColumns.DISPLAY_NAME} = '$name'",
             null,
             null,
         )!!.use { cursor ->
