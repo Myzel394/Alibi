@@ -1,5 +1,6 @@
 package app.myzel394.alibi.db
 
+import android.Manifest
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
@@ -8,6 +9,9 @@ import androidx.camera.video.QualitySelector
 import app.myzel394.alibi.R
 import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
+import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
+import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
+import app.myzel394.alibi.ui.utils.PermissionHelper
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
@@ -101,6 +105,13 @@ data class AppSettings(
     // If the object is present, biometric authentication is enabled.
     // To disable biometric authentication, set the instance to null.
     fun isAppLockEnabled() = appLockSettings != null
+
+    fun requiresExternalStoragePermission(context: Context): Boolean {
+        return !SUPPORTS_SCOPED_STORAGE && (saveFolder == RECORDER_MEDIA_SELECTED_VALUE && !PermissionHelper.hasGranted(
+            context,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ))
+    }
 
     enum class Theme {
         SYSTEM,
