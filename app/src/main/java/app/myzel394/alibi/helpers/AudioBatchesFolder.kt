@@ -30,11 +30,8 @@ class AudioBatchesFolder(
 ) {
     override val concatenationFunction = ::concatenateAudioFiles
     override val ffmpegParameters = FFMPEG_PARAMETERS
-    override val scopedMediaContentUri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-    override val legacyMediaFolder = File(
-        Environment.getExternalStoragePublicDirectory(BASE_LEGACY_STORAGE_FOLDER),
-        MEDIA_RECORDINGS_SUBFOLDER,
-    )
+    override val scopedMediaContentUri: Uri = SCOPED_MEDIA_CONTENT_URI
+    override val legacyMediaFolder = LEGACY_MEDIA_FOLDER
 
     private var customFileFileDescriptor: ParcelFileDescriptor? = null
     private var mediaFileFileDescriptor: ParcelFileDescriptor? = null
@@ -153,6 +150,15 @@ class AudioBatchesFolder(
                 Environment.DIRECTORY_PODCASTS)
         val SCOPED_STORAGE_RELATIVE_PATH =
             BASE_SCOPED_STORAGE_RELATIVE_PATH + "/" + MEDIA_RECORDINGS_SUBFOLDER
+
+        // Don't use those values directly, use the constants from the instance.
+        // Those values are only used inside the `SaveFolderTile`
+        val SCOPED_MEDIA_CONTENT_URI = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        val LEGACY_MEDIA_FOLDER = File(
+            Environment.getExternalStoragePublicDirectory(BASE_LEGACY_STORAGE_FOLDER),
+            MEDIA_RECORDINGS_SUBFOLDER,
+        )
+
 
         // Parameters to be passed in descending order
         // Those parameters first try to concatenate without re-encoding
