@@ -32,7 +32,7 @@ class VideoBatchesFolder(
     override val ffmpegParameters = FFMPEG_PARAMETERS
     override val scopedMediaContentUri: Uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
     override val legacyMediaFolder = File(
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+        Environment.getExternalStoragePublicDirectory(BASE_LEGACY_STORAGE_FOLDER),
         MEDIA_RECORDINGS_SUBFOLDER,
     )
 
@@ -59,7 +59,7 @@ class VideoBatchesFolder(
                     val mediaUri = getOrCreateMediaFile(
                         name = getName(date, extension),
                         mimeType = "video/$extension",
-                        relativePath = Environment.DIRECTORY_DCIM + "/" + MEDIA_SUBFOLDER_NAME,
+                        relativePath = BASE_SCOPED_STORAGE_RELATIVE_PATH + "/" + MEDIA_SUBFOLDER_NAME,
                     )
 
                     return FFmpegKitConfig.getSafParameterForWrite(
@@ -68,7 +68,7 @@ class VideoBatchesFolder(
                     )!!
                 } else {
                     val path = arrayOf(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+                        Environment.getExternalStoragePublicDirectory(BASE_LEGACY_STORAGE_FOLDER),
                         MEDIA_SUBFOLDER_NAME,
                         getName(date, extension)
                     ).joinToString("/")
@@ -143,9 +143,11 @@ class VideoBatchesFolder(
             )
         }
 
+        val BASE_LEGACY_STORAGE_FOLDER = Environment.DIRECTORY_DCIM
         val MEDIA_RECORDINGS_SUBFOLDER = MEDIA_SUBFOLDER_NAME + "/video_recordings"
+        val BASE_SCOPED_STORAGE_RELATIVE_PATH = Environment.DIRECTORY_DCIM
         val SCOPED_STORAGE_RELATIVE_PATH =
-            Environment.DIRECTORY_DCIM + "/" + MEDIA_RECORDINGS_SUBFOLDER
+            BASE_SCOPED_STORAGE_RELATIVE_PATH + "/" + MEDIA_RECORDINGS_SUBFOLDER
 
         // Parameters to be passed in descending order
         // Those parameters first try to concatenate without re-encoding

@@ -32,8 +32,7 @@ class AudioBatchesFolder(
     override val ffmpegParameters = FFMPEG_PARAMETERS
     override val scopedMediaContentUri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
     override val legacyMediaFolder = File(
-        // TODO: Add support for `DIRECTORY_RECORDINGS`
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+        Environment.getExternalStoragePublicDirectory(BASE_LEGACY_STORAGE_FOLDER),
         MEDIA_RECORDINGS_SUBFOLDER,
     )
 
@@ -73,7 +72,7 @@ class AudioBatchesFolder(
                     )!!
                 } else {
                     val path = arrayOf(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+                        Environment.getExternalStoragePublicDirectory(BASE_LEGACY_STORAGE_FOLDER),
                         MEDIA_SUBFOLDER_NAME,
                         getName(date, extension)
                     ).joinToString("/")
@@ -145,6 +144,7 @@ class AudioBatchesFolder(
             else -> viaCustomFolder(context, DocumentFile.fromTreeUri(context, Uri.parse(folder))!!)
         }
 
+        val BASE_LEGACY_STORAGE_FOLDER = Environment.DIRECTORY_PODCASTS
         val MEDIA_RECORDINGS_SUBFOLDER = MEDIA_SUBFOLDER_NAME + "/audio_recordings"
         val BASE_SCOPED_STORAGE_RELATIVE_PATH =
             (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)

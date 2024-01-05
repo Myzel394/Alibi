@@ -17,8 +17,6 @@ val MEDIA_RECORDINGS_PREFIX = "alibi-recording-"
 val RECORDER_MEDIA_SELECTED_VALUE = "_'media"
 val RECORDER_INTERNAL_SELECTED_VALUE = "_'internal"
 
-// TODO: Check API 24
-
 // You are not allowed to change the constants below.
 // If you do so, you will be blocked on GitHub.
 const val REPO_URL = "https://github.com/Myzel394/Alibi"

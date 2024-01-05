@@ -289,11 +289,14 @@ abstract class BatchesFolder(
                     extension = extension,
                 )
 
+                // TODO: Smoother transition from start to status
                 concatenationFunction(
                     filePaths,
                     outputFile,
                     parameter
                 ) { time ->
+                    // The progressbar for the conversion is calculated based on the
+                    // current time of the conversion and the total time of the batches.
                     if (fullTime != null) {
                         onProgress(time / fullTime!!)
                     } else {

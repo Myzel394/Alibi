@@ -26,7 +26,6 @@
 
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
-    <!-- Todo: Check android permissions -->
     <!-- Starting with Android 29, apps don't need to request the READ_EXTERNAL_STORAGE permission
     for files in their own MediaStore -->
     <uses-permission

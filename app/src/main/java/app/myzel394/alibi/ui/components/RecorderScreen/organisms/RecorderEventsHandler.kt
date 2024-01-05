@@ -324,7 +324,6 @@ fun RecorderEventsHandler(
             progress = processingProgress,
         )
 
-    // TODO: Add thread for concatenation
     if (showRecorderError)
         RecorderErrorDialog(
             onClose = {
