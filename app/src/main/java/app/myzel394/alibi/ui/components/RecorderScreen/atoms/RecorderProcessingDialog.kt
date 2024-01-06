@@ -15,11 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
+import app.myzel394.alibi.ui.utils.KeepScreenOn
 
 @Composable
 fun RecorderProcessingDialog(
     progress: Float?,
 ) {
+    KeepScreenOn()
     AlertDialog(
         onDismissRequest = { },
         icon = {
