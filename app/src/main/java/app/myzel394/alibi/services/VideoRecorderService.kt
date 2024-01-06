@@ -243,7 +243,6 @@ class VideoRecorderService :
                         ).build()
                     )
                 } else if (batchesFolder.type == BatchesFolder.BatchType.MEDIA) {
-                    // TODO: Add screen with help where the recordings are saved
                     if (SUPPORTS_SCOPED_STORAGE) {
                         val name = getNameForMediaFile()
 
