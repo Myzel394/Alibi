@@ -58,6 +58,7 @@ import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.effects.rememberPrevious
 import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.utils.CameraInfo
+import app.myzel394.alibi.ui.utils.PermissionHelper
 import kotlin.math.abs
 
 @OptIn(
@@ -209,13 +210,16 @@ fun VideoRecorderPreparationSheet(
                                 )
                             }
                         }
-                        Text(
-                            stringResource(
-                                R.string.ui_videoRecorder_action_preview_label
-                            ),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+
+                        if (PermissionHelper.hasGranted(context, Manifest.permission.CAMERA)) {
+                            Text(
+                                stringResource(
+                                    R.string.ui_videoRecorder_action_preview_label
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
             }
