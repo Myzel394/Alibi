@@ -46,6 +46,7 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.BigButton
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.utils.PermissionHelper
@@ -87,71 +88,37 @@ fun VideoRecordingStart(
             showSheet = true
         }
     ) { triggerExternalStorage ->
-        PermissionRequester(
-            permission = Manifest.permission.CAMERA,
+        BigButton(
+            label = stringResource(R.string.ui_videoRecorder_action_start_label),
+            description = stringResource(R.string.ui_videoRecorder_action_configure_label),
             icon = Icons.Default.CameraAlt,
-            onPermissionAvailable = {
+            onLongClick = {
+                if (appSettings.requiresExternalStoragePermission(context)) {
+                    triggerExternalStorage()
+                    return@BigButton
+                }
+
                 showSheet = true
             },
-        ) { triggerCamera ->
-            val label = stringResource(R.string.ui_videoRecorder_action_start_label)
+            onClick = {
+                if (appSettings.requiresExternalStoragePermission(context)) {
+                    triggerExternalStorage()
+                    return@BigButton
+                }
 
-            Column(
-                modifier = Modifier
-                    .size(250.dp)
-                    .clip(CircleShape)
-                    .semantics {
-                        contentDescription = label
-                    }
-                    .combinedClickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(color = MaterialTheme.colorScheme.primary),
-                        onClick = {
-                            if (appSettings.requiresExternalStoragePermission(context)) {
-                                triggerExternalStorage()
-                                return@combinedClickable
-                            }
-
-                            if (PermissionHelper.hasGranted(
-                                    context,
-                                    Manifest.permission.CAMERA
-                                ) && PermissionHelper.hasGranted(
-                                    context,
-                                    Manifest.permission.RECORD_AUDIO
-                                )
-                            ) {
-                                videoRecorder.startRecording(context, appSettings)
-                            } else {
-                                showSheet = true
-                            }
-                        },
-                        onLongClick = {
-                            showSheet = true
-                        },
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Icon(
-                    Icons.Default.CameraAlt,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(80.dp),
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-                Spacer(modifier = Modifier.height(ButtonDefaults.IconSpacing))
-                Text(
-                    label,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Spacer(modifier = Modifier.height(ButtonDefaults.IconSpacing))
-                Text(
-                    stringResource(R.string.ui_videoRecorder_action_configure_label),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
+                if (PermissionHelper.hasGranted(
+                        context,
+                        Manifest.permission.CAMERA
+                    ) && PermissionHelper.hasGranted(
+                        context,
+                        Manifest.permission.RECORD_AUDIO
+                    )
+                ) {
+                    videoRecorder.startRecording(context, appSettings)
+                } else {
+                    showSheet = true
+                }
+            },
+        )
     }
 }

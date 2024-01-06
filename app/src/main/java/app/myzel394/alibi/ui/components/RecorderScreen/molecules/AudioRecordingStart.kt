@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.BigButton
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.utils.PermissionHelper
@@ -77,34 +78,11 @@ fun AudioRecordingStart(
                 }
             }
         ) { triggerRecordAudio ->
-            val label = stringResource(R.string.ui_audioRecorder_action_start_label)
-
-            Button(
+            BigButton(
+                label = stringResource(R.string.ui_audioRecorder_action_start_label),
+                icon = Icons.Default.Mic,
                 onClick = triggerRecordAudio,
-                modifier = Modifier
-                    .semantics {
-                        contentDescription = label
-                    }
-                    .size(250.dp)
-                    .clip(shape = CircleShape),
-                colors = ButtonDefaults.outlinedButtonColors(),
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Icon(
-                        Icons.Default.Mic,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(80.dp),
-                    )
-                    Spacer(modifier = Modifier.height(ButtonDefaults.IconSpacing))
-                    Text(
-                        label,
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                }
-            }
+            )
         }
     }
 }

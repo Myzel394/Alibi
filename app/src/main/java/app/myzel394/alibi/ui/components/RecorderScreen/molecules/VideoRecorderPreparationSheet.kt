@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -16,7 +17,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Mic
@@ -113,112 +116,119 @@ fun VideoRecorderPreparationSheet(
                     cameraSelector = videoSettings.cameraSelector,
                 )
             } else {
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = SHEET_BOTTOM_OFFSET, top = 24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(30.dp),
-                ) {
+                BoxWithConstraints {
+                    val constraints = this
+
                     Column(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = SHEET_BOTTOM_OFFSET, top = 24.dp)
+                            .verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(30.dp),
                     ) {
-                        Icon(
-                            Icons.Default.CameraAlt,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(80.dp),
-                        )
-                        Text(
-                            stringResource(R.string.ui_videoRecorder_action_start_settings_label),
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                    }
-                    PermissionRequester(
-                        permission = Manifest.permission.RECORD_AUDIO,
-                        icon = Icons.Default.Mic,
-                        onPermissionAvailable = {
-                            videoSettings.enableAudio = !videoSettings.enableAudio
-                        },
-                    ) { trigger ->
-                        GlobalSwitch(
-                            label = stringResource(R.string.ui_videoRecorder_action_start_settings_enableAudio_label),
-                            checked = videoSettings.enableAudio,
-                            onCheckedChange = {
-                                trigger()
-                            }
-                        )
-                    }
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Text(
-                            stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_selection_label),
-                            style = MaterialTheme.typography.labelLarge,
-                            textAlign = TextAlign.Start,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        CamerasSelection(
-                            cameras = cameras,
-                            videoSettings = videoSettings,
-                        )
-                    }
-
-                    val label =
-                        stringResource(R.string.ui_videoRecorder_action_start_settings_start_label)
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        PermissionRequester(
-                            permission = Manifest.permission.CAMERA,
-                            icon = Icons.Default.CameraAlt,
-                            onPermissionAvailable = {
-                                onStartRecording()
-                            }
-                        ) { trigger ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(BIG_PRIMARY_BUTTON_SIZE)
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .padding(16.dp)
-                                    .semantics {
-                                        contentDescription = label
-                                    }
-                                    .pointerInput(Unit) {
-                                        detectTapGestures(
-                                            onLongPress = {
-                                                onPreviewVisible()
-                                            },
-                                            onTap = {
-                                                trigger()
-                                            }
-                                        )
-                                    },
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
-                                    label,
-                                    style = MaterialTheme.typography.labelLarge,
-                                    color = MaterialTheme.colorScheme.onPrimary,
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            if (constraints.maxHeight > 600.dp) {
+                                Icon(
+                                    Icons.Default.CameraAlt,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(80.dp),
                                 )
                             }
+                            Text(
+                                stringResource(R.string.ui_videoRecorder_action_start_settings_label),
+                                style = MaterialTheme.typography.labelLarge,
+                            )
+                        }
+                        PermissionRequester(
+                            permission = Manifest.permission.RECORD_AUDIO,
+                            icon = Icons.Default.Mic,
+                            onPermissionAvailable = {
+                                videoSettings.enableAudio = !videoSettings.enableAudio
+                            },
+                        ) { trigger ->
+                            GlobalSwitch(
+                                label = stringResource(R.string.ui_videoRecorder_action_start_settings_enableAudio_label),
+                                checked = videoSettings.enableAudio,
+                                onCheckedChange = {
+                                    trigger()
+                                }
+                            )
                         }
 
-                        if (PermissionHelper.hasGranted(context, Manifest.permission.CAMERA)) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
                             Text(
-                                stringResource(
-                                    R.string.ui_videoRecorder_action_preview_label
-                                ),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_selection_label),
+                                style = MaterialTheme.typography.labelLarge,
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier.fillMaxWidth()
                             )
+                            CamerasSelection(
+                                cameras = cameras,
+                                videoSettings = videoSettings,
+                            )
+                        }
+
+                        val label =
+                            stringResource(R.string.ui_videoRecorder_action_start_settings_start_label)
+
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            PermissionRequester(
+                                permission = Manifest.permission.CAMERA,
+                                icon = Icons.Default.CameraAlt,
+                                onPermissionAvailable = {
+                                    onStartRecording()
+                                }
+                            ) { trigger ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(BIG_PRIMARY_BUTTON_SIZE)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.primary)
+                                        .padding(16.dp)
+                                        .semantics {
+                                            contentDescription = label
+                                        }
+                                        .pointerInput(Unit) {
+                                            detectTapGestures(
+                                                onLongPress = {
+                                                    onPreviewVisible()
+                                                },
+                                                onTap = {
+                                                    trigger()
+                                                }
+                                            )
+                                        },
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Text(
+                                        label,
+                                        style = MaterialTheme.typography.labelLarge,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
+
+                            if (PermissionHelper.hasGranted(context, Manifest.permission.CAMERA)) {
+                                Text(
+                                    stringResource(
+                                        R.string.ui_videoRecorder_action_preview_label
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
                         }
                     }
                 }
