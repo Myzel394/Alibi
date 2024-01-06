@@ -4,8 +4,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +32,7 @@ private const val GROW_END = BOX_DIFF * 4
 
 @Composable
 fun RealtimeAudioVisualizer(
+    modifier: Modifier = Modifier,
     audioRecorder: AudioRecorderModel,
 ) {
     val scope = rememberCoroutineScope()
@@ -69,11 +68,7 @@ fun RealtimeAudioVisualizer(
         audioRecorder.setMaxAmplitudesAmount(ceil(screenWidth.toInt() / BOX_DIFF).toInt() + 1)
     }
 
-    Canvas(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp),
-    ) {
+    Canvas(modifier = modifier) {
         val height = this.size.height / 2f
         val width = this.size.width
 
