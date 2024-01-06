@@ -132,7 +132,6 @@ fun StartRecording(
                 )
                 TextButton(
                     modifier = Modifier
-                        .padding(16.dp)
                         .fillMaxWidth()
                         .height(BIG_PRIMARY_BUTTON_SIZE)
                         .semantics {
