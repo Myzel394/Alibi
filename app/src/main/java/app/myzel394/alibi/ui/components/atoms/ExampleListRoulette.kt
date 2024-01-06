@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,13 +28,10 @@ fun<T> ExampleListRoulette(
         items(items.size) {
             val item = items[it]
 
-            Button(
+            TextButton(
                 onClick = {
                     onItemSelected(item)
                 },
-                colors = ButtonDefaults.textButtonColors(),
-                shape = ButtonDefaults.textShape,
-                contentPadding = ButtonDefaults.TextButtonContentPadding,
             ) {
                 renderValue(item)
             }

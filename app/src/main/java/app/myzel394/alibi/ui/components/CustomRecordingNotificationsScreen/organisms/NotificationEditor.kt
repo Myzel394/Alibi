@@ -178,6 +178,7 @@ fun NotificationEditor(
                         notificationModel.asNotificationSettings()
                     )
                 },
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = HORIZONTAL_PADDING)

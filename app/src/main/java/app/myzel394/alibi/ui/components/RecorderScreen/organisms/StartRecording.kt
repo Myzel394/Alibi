@@ -20,6 +20,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -129,7 +130,7 @@ fun StartRecording(
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
                         .format(appSettings.lastRecording.recordingStart),
                 )
-                Button(
+                TextButton(
                     modifier = Modifier
                         .padding(16.dp)
                         .fillMaxWidth()
@@ -137,8 +138,8 @@ fun StartRecording(
                         .semantics {
                             contentDescription = label
                         },
-                    colors = ButtonDefaults.textButtonColors(),
                     onClick = onSaveLastRecording,
+                    contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
                 ) {
                     Icon(
                         Icons.Default.Save,

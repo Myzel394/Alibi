@@ -12,10 +12,12 @@ import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -96,8 +98,8 @@ fun ImportExport(
                                 duration = SnackbarDuration.Short,
                             )
                         }
-
                     },
+                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                 ) {
                     Icon(
                         Icons.Default.CheckCircle,
@@ -109,11 +111,10 @@ fun ImportExport(
                 }
             },
             dismissButton = {
-                Button(
+                TextButton(
                     onClick = {
                         settingsToBeImported = null
                     },
-                    colors = ButtonDefaults.textButtonColors(),
                 ) {
                     Text(stringResource(R.string.dialog_close_cancel_label))
                 }
@@ -126,11 +127,11 @@ fun ImportExport(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Button(
+        FilledTonalButton(
             onClick = {
                 openFile("application/json")
             },
-            colors = ButtonDefaults.filledTonalButtonColors(),
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         ) {
             Icon(
                 Icons.Default.Download,
@@ -140,7 +141,7 @@ fun ImportExport(
             Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
             Text(stringResource(R.string.ui_settings_option_import_label))
         }
-        Button(
+        FilledTonalButton(
             onClick = {
                 val rawContent = settings.exportToString()
 
@@ -149,7 +150,7 @@ fun ImportExport(
 
                 saveFile(tempFile, "alibi_settings.json")
             },
-            colors = ButtonDefaults.filledTonalButtonColors(),
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         ) {
             Icon(
                 Icons.Default.Upload,

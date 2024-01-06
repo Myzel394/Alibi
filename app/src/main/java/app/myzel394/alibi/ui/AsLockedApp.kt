@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -126,12 +127,12 @@ fun AsLockedApp(
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
-            Button(
+            ElevatedButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(BIG_PRIMARY_BUTTON_SIZE),
                 onClick = ::openAuthentication,
-                colors = ButtonDefaults.filledTonalButtonColors(),
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
             ) {
                 Icon(
                     Icons.Default.Lock,

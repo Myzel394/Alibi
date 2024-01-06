@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -109,7 +110,8 @@ fun PermissionRequester(
                     onClick = {
                         visibleDialog = null
                         callback()
-                    }
+                    },
+                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                 ) {
                     Icon(
                         Icons.Default.Check,
@@ -121,11 +123,11 @@ fun PermissionRequester(
                 }
             },
             dismissButton = {
-                Button(
+                TextButton(
                     onClick = {
                         visibleDialog = null
                     },
-                    colors = ButtonDefaults.textButtonColors(),
+                    contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
                 ) {
                     Icon(
                         Icons.Default.Cancel,
@@ -167,7 +169,8 @@ fun PermissionRequester(
                     onClick = {
                         visibleDialog = null
                         context.openAppSystemSettings()
-                    }
+                    },
+                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                 ) {
                     Icon(
                         Icons.Default.OpenInNew,
@@ -179,11 +182,11 @@ fun PermissionRequester(
                 }
             },
             dismissButton = {
-                Button(
+                TextButton(
                     onClick = {
                         visibleDialog = null
                     },
-                    colors = ButtonDefaults.textButtonColors(),
+                    contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
                 ) {
                     Icon(
                         Icons.Default.Cancel,

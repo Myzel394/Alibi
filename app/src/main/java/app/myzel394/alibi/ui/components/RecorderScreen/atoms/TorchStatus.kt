@@ -23,6 +23,7 @@ fun TorchStatus(
     Button(
         onClick = onChange,
         colors = if (enabled) ButtonDefaults.filledTonalButtonColors() else ButtonDefaults.outlinedButtonColors(),
+        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
     ) {
         Icon(
             if (enabled) Icons.Default.FlashlightOff else Icons.Default.FlashlightOn,

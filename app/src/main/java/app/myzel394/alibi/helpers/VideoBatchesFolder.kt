@@ -13,6 +13,7 @@ import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateVideoFiles
 import app.myzel394.alibi.ui.MEDIA_SUBFOLDER_NAME
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
+import app.myzel394.alibi.ui.VIDEO_RECORDING_BATCHES_SUBFOLDER_NAME
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import java.io.File
 import java.time.LocalDateTime
@@ -21,7 +22,7 @@ class VideoBatchesFolder(
     override val context: Context,
     override val type: BatchType,
     override val customFolder: DocumentFile? = null,
-    override val subfolderName: String = ".video_recordings",
+    override val subfolderName: String = VIDEO_RECORDING_BATCHES_SUBFOLDER_NAME,
 ) : BatchesFolder(
     context,
     type,

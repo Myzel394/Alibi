@@ -185,6 +185,6 @@
     <string name="ui_settings_option_saveFolder_openFolder_label">Open Folder in Files</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_label">Where are my batches stored?</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_generalExplanation">To view your batches, open the Files app, go to the internal storage and then you will find your batches in following folders:</string>
-    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">The final merged recordings will be saved in those folders. Each recording creates a subfolder to store the short batches in ("%s" for audio recordings, "%s" for video recordings). To view the individual batches, you may need to enable hidden files in the Files app.</string>
+    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">The final merged recordings will be saved in those folders. Each recording creates a subfolder to store the short batches in (\"%s\" for audio recordings, \"%s\" for video recordings). To view the individual batches, you may need to enable hidden files in the Files app.</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_openFolderExplanation">Tap on a folder to open it in the Files app</string>
 </resources>

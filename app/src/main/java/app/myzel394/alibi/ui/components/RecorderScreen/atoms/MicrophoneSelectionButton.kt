@@ -50,6 +50,7 @@ fun MicrophoneSelectionButton(
             .fillMaxWidth()
             .height(64.dp),
         colors = if (selected) ButtonDefaults.buttonColors() else ButtonDefaults.textButtonColors(),
+        contentPadding = if (selected) ButtonDefaults.ButtonWithIconContentPadding else ButtonDefaults.TextButtonContentPadding,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

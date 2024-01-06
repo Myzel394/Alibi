@@ -39,6 +39,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -63,11 +64,13 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
+import app.myzel394.alibi.ui.AUDIO_RECORDING_BATCHES_SUBFOLDER_NAME
 import app.myzel394.alibi.ui.MEDIA_SUBFOLDER_NAME
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SHEET_BOTTOM_OFFSET
 import app.myzel394.alibi.ui.SUPPORTS_SAVING_VIDEOS_IN_CUSTOM_FOLDERS
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
+import app.myzel394.alibi.ui.VIDEO_RECORDING_BATCHES_SUBFOLDER_NAME
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.FolderBreadcrumbs
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
@@ -235,7 +238,6 @@ fun SaveFolderTile(
                                     )
                                 },
                                 shape = MaterialTheme.shapes.small,
-                                // TODO: Adjust padding everywhere
                                 contentPadding = ButtonDefaults.TextButtonContentPadding,
                                 colors = ButtonDefaults.filledTonalButtonColors(
                                     contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -272,9 +274,7 @@ fun MediaFoldersExplanationDialog(
             Text(stringResource(R.string.ui_settings_option_saveFolder_explainMediaFolder_label))
         },
         confirmButton = {
-            Button(
-                onClick = onDismiss,
-            ) {
+            Button(onClick = onDismiss) {
                 Text(stringResource(R.string.dialog_close_neutral_label))
             }
         },
@@ -348,7 +348,11 @@ fun MediaFoldersExplanationDialog(
                     }
                 }
                 Text(
-                    stringResource(R.string.ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation),
+                    stringResource(
+                        R.string.ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation,
+                        AUDIO_RECORDING_BATCHES_SUBFOLDER_NAME,
+                        VIDEO_RECORDING_BATCHES_SUBFOLDER_NAME
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -533,18 +537,16 @@ fun CustomFolderWarningDialog(
             Text(text = text)
         },
         confirmButton = {
-            Button(
-                onClick = onConfirm,
-            ) {
+            Button(onClick = onConfirm) {
                 Text(
                     text = stringResource(R.string.ui_settings_option_saveFolder_warning_action_confirm),
                 )
             }
         },
         dismissButton = {
-            Button(
+            TextButton(
                 onClick = onDismiss,
-                colors = ButtonDefaults.textButtonColors(),
+                contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
             ) {
                 Icon(
                     Icons.Default.Cancel,
@@ -596,9 +598,9 @@ fun ExternalPermissionRequiredDialog(
                 }
             },
             dismissButton = {
-                Button(
+                TextButton(
                     onClick = onDismiss,
-                    colors = ButtonDefaults.textButtonColors(),
+                    contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
                 ) {
                     Icon(
                         Icons.Default.Cancel,

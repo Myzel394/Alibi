@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateAudioFiles
+import app.myzel394.alibi.ui.AUDIO_RECORDING_BATCHES_SUBFOLDER_NAME
 import app.myzel394.alibi.ui.MEDIA_SUBFOLDER_NAME
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
@@ -21,7 +22,7 @@ class AudioBatchesFolder(
     override val context: Context,
     override val type: BatchType,
     override val customFolder: DocumentFile? = null,
-    override val subfolderName: String = ".audio_recordings",
+    override val subfolderName: String = AUDIO_RECORDING_BATCHES_SUBFOLDER_NAME,
 ) : BatchesFolder(
     context,
     type,

@@ -64,6 +64,7 @@ fun ExplanationPage(
                 .padding(16.dp)
                 .fillMaxWidth()
                 .height(BIG_PRIMARY_BUTTON_SIZE),
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         ) {
             Icon(
                 Icons.Default.ChevronRight,

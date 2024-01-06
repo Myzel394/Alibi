@@ -7,6 +7,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import app.myzel394.alibi.R
@@ -31,18 +32,12 @@ fun RecorderErrorDialog(
             Text(stringResource(R.string.ui_recorder_error_recording_description))
         },
         dismissButton = {
-            Button(
-                onClick = onClose,
-                colors = ButtonDefaults.textButtonColors(),
-            ) {
+            TextButton(onClick = onClose) {
                 Text(stringResource(R.string.dialog_close_cancel_label))
             }
         },
         confirmButton = {
-            Button(
-                onClick = onSave,
-                colors = ButtonDefaults.textButtonColors(),
-            ) {
+            TextButton(onClick = onSave) {
                 Text(stringResource(R.string.ui_recorder_action_save_label))
             }
         }

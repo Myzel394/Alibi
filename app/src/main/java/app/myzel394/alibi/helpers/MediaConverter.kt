@@ -90,7 +90,6 @@ class MediaConverter {
             val filePathsConcatenated = inputFiles.joinToString("|")
             val command =
                 "-protocol_whitelist saf,concat,content,file,subfile" +
-                        " -safe 0" +
                         " -strict normal" +
                         " -i 'concat:$filePathsConcatenated'" +
                         extraCommand +

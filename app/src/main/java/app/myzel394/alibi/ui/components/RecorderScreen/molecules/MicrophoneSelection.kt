@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -188,14 +189,14 @@ fun MicrophoneSelection(
     }
 
     if (shownMicrophones.isNotEmpty() || (settings.audioRecorderSettings.showAllMicrophones && hiddenMicrophones.isNotEmpty())) {
-        Button(
+        TextButton(
             onClick = {
                 scope.launch {
                     showSelection = true
                     sheetState.show()
                 }
             },
-            colors = ButtonDefaults.textButtonColors(),
+            contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
         ) {
             MicrophoneTypeInfo(
                 type = audioRecorder.selectedMicrophone?.type

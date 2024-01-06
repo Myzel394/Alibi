@@ -113,7 +113,6 @@ abstract class BatchesFolder(
     }
 
     fun getBatchesForFFmpeg(): List<String> {
-        // TODO: There is probably a better way to do this iteratively, look at it if you have time
         return when (type) {
             BatchType.INTERNAL ->
                 ((getInternalFolder()
@@ -299,7 +298,6 @@ abstract class BatchesFolder(
                     extension = extension,
                 )
 
-                // TODO: Smoother transition from start to status
                 concatenationFunction(
                     filePaths,
                     outputFile,

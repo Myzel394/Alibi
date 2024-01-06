@@ -11,6 +11,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -46,6 +47,7 @@ fun ConfirmDeletionDialog(
                     .semantics {
                         contentDescription = label
                     },
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                 onClick = {
                     onConfirm()
                 },
@@ -61,15 +63,15 @@ fun ConfirmDeletionDialog(
         },
         dismissButton = {
             val label = stringResource(R.string.dialog_close_cancel_label)
-            Button(
+            TextButton(
                 modifier = Modifier
                     .semantics {
                         contentDescription = label
                     },
+                contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
                 onClick = {
                     onDismiss()
                 },
-                colors = ButtonDefaults.textButtonColors(),
             ) {
                 Icon(
                     Icons.Default.Cancel,
