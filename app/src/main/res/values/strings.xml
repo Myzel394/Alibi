@@ -109,7 +109,7 @@
     <string name="ui_about_title">About Alibi</string>
     <string name="ui_about_contribute_title">Support Alibi</string>
     <string name="ui_about_contribute_message">In my free time I develop Alibi and other free open source software. It would mean the world to me if you could help me in any way :)</string>
-    <string name="ui_about_contribute_development">Developing features or fixing bugs</string>
+    <string name="ui_about_contribute_development">Develop new features or fix bugs</string>
     <string name="accessibility_open_in_browser">Open link in browser: %s</string>
     <string name="ui_about_contribute_translation">Translate Alibi into your language</string>
     <string name="ui_about_contribute_donatation">Make a donation</string>
