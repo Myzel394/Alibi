@@ -3,12 +3,12 @@
 # Alibi
 
 <p float="left" align="center">
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width="30%" />
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width="30%" />
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.png" width="30%" />
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04.png" width="30%" />
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05.png" width="30%" />
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06.png" width="30%" />
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.webp" width="30%" />
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.webp" width="30%" />
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.webp" width="30%" />
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04.webp" width="30%" />
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05.webp" width="30%" />
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06.webp" width="30%" />
 </p>
 
 Alibi keeps recording in the background and saves the last 30 minutes at your request.
@@ -47,7 +47,9 @@ You can donate via:
 * Ethereum: `0xbb5E631c03C65334d1d9EfBCD926DC1265CC20D7`
 * Tether USD: `0xbb5E631c03C65334d1d9EfBCD926DC1265CC20D7`
 *
+
 Monero: `83dm5wyuckG4aPbuMREHCEgLNwVn5i7963SKBhECaA7Ueb7DKBTy639R3QfMtb3DsFHMp8u6WGiCFgbdRDBBcz5sLduUtm8`
+
 * Zcash: `t1ZfvNpzfdaW6csT9Kc7iJA7LUU3hmNj2sx`
 * Litecoin: `LZayhTosZ9ToRvcbeR1gEDgb76Z7ZA2drN`
 * Dash: `XcTkni8CVAXBcuc5VwvHmsYftVK4CPLetU`
@@ -55,7 +57,9 @@ Monero: `83dm5wyuckG4aPbuMREHCEgLNwVn5i7963SKBhECaA7Ueb7DKBTy639R3QfMtb3DsFHMp8u
 * XRP: `rNpfDm8UwDTumCebchBadjVW2FEPteFgNg`
 * Solana: `2h6CB3hz5Vb2nYS1RQiXZ4aWTzc5frBPR7Sp1b4muFqb`
 *
+
 ADA: `addr1q8vy2vcp6lacaw8lkc29gufuzajaytc5qc0c2mxlmw5lndxcg5esr4lm36u0lds523cnc9m96gh3gpsls4kdlkaflx6qf6qpvc`
+
 * Dogecoin: `DUA4j7mVoc7Rvezu8YgeRKwxNuMzKeDoxD`
 * Tron: `THWVLGhne5wDsGjd1CNenHDKQGzvGzrzLb`
 * Polkadot: `1642iaR6AoKyM6qnnMHkfCRfRqRKJ2wC6Cm3UEWEFEz6EtZR`
