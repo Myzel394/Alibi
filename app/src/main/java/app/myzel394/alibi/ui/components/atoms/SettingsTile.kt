@@ -21,6 +21,7 @@ fun SettingsTile(
     firstModifier: Modifier = Modifier,
     title: String,
     description: String? = null,
+    tertiaryLine: (@Composable () -> Unit) = {},
     leading: @Composable () -> Unit = {},
     trailing: @Composable () -> Unit = {},
     extra: (@Composable () -> Unit)? = null,
@@ -49,6 +50,7 @@ fun SettingsTile(
                         text = description,
                         style = MaterialTheme.typography.bodySmall,
                     )
+                tertiaryLine()
             }
             Spacer(modifier = Modifier.width(16.dp))
             trailing()

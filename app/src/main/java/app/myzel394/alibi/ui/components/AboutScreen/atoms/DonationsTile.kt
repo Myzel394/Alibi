@@ -33,8 +33,10 @@ import androidx.compose.material.icons.filled.CurrencyYuan
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -130,11 +132,11 @@ fun DonationsTile() {
         Column {
             val uriHandler = LocalUriHandler.current
 
-            Button(
+            TextButton(
                 onClick = {
                     uriHandler.openUri(GITHUB_SPONSORS_URL)
                 },
-                colors = ButtonDefaults.textButtonColors(),
+                contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Image(

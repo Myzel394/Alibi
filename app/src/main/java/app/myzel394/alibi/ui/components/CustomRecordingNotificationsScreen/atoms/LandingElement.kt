@@ -19,9 +19,11 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,10 +84,7 @@ fun LandingElement(
                     stringResource(R.string.ui_settings_customNotifications_landing_description),
                     style = MaterialTheme.typography.bodySmall,
                 )
-                Button(
-                    onClick = onOpenEditor,
-                    colors = ButtonDefaults.filledTonalButtonColors(),
-                ) {
+                FilledTonalButton(onClick = onOpenEditor) {
                     Icon(
                         Icons.Default.Edit,
                         contentDescription = null,
@@ -100,9 +99,8 @@ fun LandingElement(
                 }
             }
         }
-        Button(
+        TextButton(
             onClick = context::openNotificationsSettings,
-            colors = ButtonDefaults.textButtonColors(),
         ) {
             Text(
                 stringResource(R.string.ui_settings_customNotifications_landing_help_hideNotifications),

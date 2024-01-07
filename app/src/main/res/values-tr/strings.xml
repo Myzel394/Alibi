@@ -14,18 +14,18 @@
     <string name="ui_permissions_request">Devam etmek için izni verin</string>
     <string name="ui_permissions_permanentlyDenied_message">İzin vermek için uygulama ayarlarına yönlendirileceksiniz.</string>
     <string name="ui_audioRecorder_action_start_label">Kayda Başla</string>
-    <string name="ui_audioRecorder_action_saveOldRecording_label"><xliff:g name="date">%s</xliff:g> tarihinden Kaydı Kaydet</string>
-    <string name="ui_audioRecorder_action_delete_label">Sil</string>
-    <string name="ui_audioRecorder_action_delete_confirm_title">Kayıt Silinsin mi?</string>
-    <string name="ui_audioRecorder_action_delete_confirm_message">Bu kaydı silmek istediğinizden emin misiniz?</string>
-    <string name="ui_audioRecorder_action_pause_label">Kaydı Duraklat</string>
-    <string name="ui_audioRecorder_action_resume_label">Kayda Devam Et</string>
-    <string name="ui_audioRecorder_action_save_label">Kaydı Kaydet</string>
+    <string name="ui_recorder_action_saveOldRecording_label"><xliff:g name="date">%s</xliff:g> tarihinden Kaydı Kaydet</string>
+    <string name="ui_recorder_action_delete_label">Sil</string>
+    <string name="ui_recorder_action_delete_confirm_title">Kayıt Silinsin mi?</string>
+    <string name="ui_recorder_action_delete_confirm_message">Bu kaydı silmek istediğinizden emin misiniz?</string>
+    <string name="ui_recorder_action_pause_label">Kaydı Duraklat</string>
+    <string name="ui_recorder_action_resume_label">Kayda Devam Et</string>
+    <string name="ui_recorder_action_save_label">Kaydı Kaydet</string>
     <string name="ui_audioRecorder_action_start_description">Alibi arka planda kayıt yapmaya devam edecek ve son <xliff:g name="durationInMinutes">%s</xliff:g> dakikayı depolayacaktır</string>
-    <string name="ui_audioRecorder_action_save_processing_dialog_title">İşleniyor</string>
-    <string name="ui_audioRecorder_action_save_processing_dialog_description">Ses işleniyor, Alibi\'yi kapatmayın! Dosya hazır olduğunda dosyayı kaydetmeniz istenecektir</string>
+    <string name="ui_recorder_action_save_processing_dialog_title">İşleniyor</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Ses işleniyor, Alibi\'yi kapatmayın! Dosya hazır olduğunda dosyayı kaydetmeniz istenecektir</string>
     <string name="ui_audioRecorder_state_recording_title">Ses Kaydediliyor</string>
-    <string name="ui_audioRecorder_state_recording_description">Alibi arka planda kayıt yapmaya devam eder</string>
+    <string name="ui_recorder_state_recording_description">Alibi arka planda kayıt yapmaya devam eder</string>
     <string name="ui_welcome_explanation_title">Alibi\'ye Hoş Geldiniz!</string>
     <string name="ui_welcome_explanation_message">Alibi, telefonunuz için bir araç kamerası gibidir. Sürekli olarak sesinizi kaydetmenize ve ihtiyaç duyduğunuzda son 30 dakikayı kaydetmenize olanak tanır.</string>
     <string name="ui_welcome_responsibility_title">Bu uygulamanın kullanımından tamamen siz sorumlusunuz</string>
@@ -51,10 +51,10 @@
     <string name="ui_settings_option_encoder_title">Kodlayıcı</string>
     <string name="ui_settings_option_encoder_extra_outputFormatChanged">Çıktı formatı, mevcut kodlayıcıyla uyumsuz olduğu için değiştirildi</string>
     <string name="ui_settings_value_auto_label">Otomatik</string>
-    <string name="ui_audioRecorder_state_paused_title">Kayıt Duraklatıldı</string>
-    <string name="ui_audioRecorder_state_paused_description">Ses Kaydı duraklatıldı</string>
-    <string name="ui_audioRecorder_error_recording_title">Bir hata oluştu</string>
-    <string name="ui_audioRecorder_error_recording_description">Alibi, kayıt sırasında bir hata ile karşılaştı. Ses kaydını kaydetmeyi denemek ister misiniz?</string>
+    <string name="ui_recorder_state_paused_title">Kayıt Duraklatıldı</string>
+    <string name="ui_recorder_state_paused_description">Ses Kaydı duraklatıldı</string>
+    <string name="ui_recorder_error_recording_title">Bir hata oluştu</string>
+    <string name="ui_recorder_error_recording_description">Alibi, kayıt sırasında bir hata ile karşılaştı. Ses kaydını kaydetmeyi denemek ister misiniz?</string>
     <string name="ui_settings_language_title">Dil</string>
     <string name="ui_settings_language_update_label">Değiştir</string>
     <string name="ui_settings_option_import_label">Import Settings</string>

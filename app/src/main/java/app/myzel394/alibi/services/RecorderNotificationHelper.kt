@@ -58,7 +58,7 @@ data class RecorderNotificationHelper(
         return PendingIntent.getService(
             context,
             requestCode,
-            Intent(context, AudioRecorderService::class.java).apply {
+            Intent(context, context::class.java).apply {
                 action = "changeState"
                 putExtra("newState", newState.name)
             },
@@ -89,10 +89,24 @@ data class RecorderNotificationHelper(
             .setChronometerCountDown(false)
     }
 
+    private fun getStringForRecorder(audioRes: Int, videoRes: Int): String =
+        when (context::class.java) {
+            AudioRecorderService::class.java -> context.getString(audioRes)
+
+            VideoRecorderService::class.java -> context.getString(videoRes)
+
+            else -> ""
+        }
+
     fun buildStartingNotification(): Notification {
         return createBaseNotification()
-            .setContentTitle(context.getString(R.string.ui_audioRecorder_state_recording_title))
-            .setContentText(context.getString(R.string.ui_audioRecorder_state_recording_description))
+            .setContentTitle(
+                getStringForRecorder(
+                    R.string.ui_audioRecorder_state_recording_title,
+                    R.string.ui_videoRecorder_state_recording_title,
+                )
+            )
+            .setContentText(context.getString(R.string.ui_recorder_state_recording_description))
             .build()
     }
 
@@ -105,41 +119,39 @@ data class RecorderNotificationHelper(
                 Date.from(
                     Calendar
                         .getInstance()
-                        .also { it.add(Calendar.MILLISECOND, -recordingTime.toInt()) }
+                        .also { it.add(Calendar.SECOND, -recordingTime.toInt()) }
                         .toInstant()
                 ).time,
             )
             .addAction(
-                R.drawable.ic_cancel,
-                context.getString(R.string.ui_audioRecorder_action_delete_label),
-                getNotificationChangeStateIntent(RecorderState.IDLE, 1),
-            )
-            .addAction(
                 R.drawable.ic_pause,
-                context.getString(R.string.ui_audioRecorder_action_pause_label),
+                context.getString(R.string.ui_recorder_action_pause_label),
                 getNotificationChangeStateIntent(RecorderState.PAUSED, 2),
             )
             .setContentTitle(
                 details?.title
-                    ?: context.getString(R.string.ui_audioRecorder_state_recording_title)
+                    ?: getStringForRecorder(
+                        R.string.ui_audioRecorder_state_recording_title,
+                        R.string.ui_videoRecorder_state_recording_title,
+                    )
             )
             .setContentText(
                 details?.description
-                    ?: context.getString(R.string.ui_audioRecorder_state_recording_description)
+                    ?: context.getString(R.string.ui_recorder_state_recording_description)
             )
             .build()
     }
 
     fun buildPausedNotification(start: LocalDateTime): Notification {
         return createBaseNotification()
-            .setContentTitle(context.getString(R.string.ui_audioRecorder_state_paused_title))
-            .setContentText(context.getString(R.string.ui_audioRecorder_state_paused_description))
+            .setContentTitle(context.getString(R.string.ui_recorder_state_paused_title))
+            .setContentText(context.getString(R.string.ui_recorder_state_paused_description))
             .setOngoing(false)
             .setUsesChronometer(false)
             .setWhen(Date.from(start.atZone(ZoneId.systemDefault()).toInstant()).time)
             .addAction(
                 R.drawable.ic_play,
-                context.getString(R.string.ui_audioRecorder_action_resume_label),
+                context.getString(R.string.ui_recorder_action_resume_label),
                 getNotificationChangeStateIntent(RecorderState.RECORDING, 3),
             )
             .build()

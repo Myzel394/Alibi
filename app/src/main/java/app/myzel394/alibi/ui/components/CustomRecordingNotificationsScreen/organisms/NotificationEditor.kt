@@ -90,7 +90,7 @@ fun NotificationEditor(
     } else {
         val defaultTitle = stringResource(R.string.ui_audioRecorder_state_recording_title)
         val defaultDescription =
-            stringResource(R.string.ui_audioRecorder_state_recording_description)
+            stringResource(R.string.ui_recorder_state_recording_description)
 
         LaunchedEffect(Unit) {
             notificationModel.initialize(
@@ -178,6 +178,7 @@ fun NotificationEditor(
                         notificationModel.asNotificationSettings()
                     )
                 },
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = HORIZONTAL_PADDING)

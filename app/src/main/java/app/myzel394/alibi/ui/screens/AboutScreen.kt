@@ -1,5 +1,6 @@
 package app.myzel394.alibi.ui.screens
 
+import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,9 +8,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -150,6 +153,7 @@ fun AboutScreen(
                         contentDescription = null,
                         modifier = Modifier.size(ButtonDefaults.IconSize.times(1.2f))
                     )
+                    Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
                     Text(
                         stringResource(R.string.ui_about_contribute_development),
                         fontWeight = FontWeight.Bold,
@@ -186,6 +190,7 @@ fun AboutScreen(
                         contentDescription = null,
                         modifier = Modifier.size(ButtonDefaults.IconSize.times(1.2f))
                     )
+                    Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
                     Text(
                         stringResource(R.string.ui_about_contribute_translation),
                         fontWeight = FontWeight.Bold,
