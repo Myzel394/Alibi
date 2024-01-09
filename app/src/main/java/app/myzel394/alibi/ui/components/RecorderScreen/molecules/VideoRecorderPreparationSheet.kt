@@ -177,6 +177,8 @@ fun VideoRecorderPreparationSheet(
 
                         val label =
                             stringResource(R.string.ui_videoRecorder_action_start_settings_start_label)
+                        val hasGrantedCameraPermission =
+                            PermissionHelper.hasGranted(context, Manifest.permission.CAMERA)
 
                         Column(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -202,7 +204,9 @@ fun VideoRecorderPreparationSheet(
                                         .pointerInput(Unit) {
                                             detectTapGestures(
                                                 onLongPress = {
-                                                    onPreviewVisible()
+                                                    if (hasGrantedCameraPermission) {
+                                                        onPreviewVisible()
+                                                    }
                                                 },
                                                 onTap = {
                                                     trigger()
@@ -220,7 +224,7 @@ fun VideoRecorderPreparationSheet(
                                 }
                             }
 
-                            if (PermissionHelper.hasGranted(context, Manifest.permission.CAMERA)) {
+                            if (hasGrantedCameraPermission) {
                                 Text(
                                     stringResource(
                                         R.string.ui_videoRecorder_action_preview_label
