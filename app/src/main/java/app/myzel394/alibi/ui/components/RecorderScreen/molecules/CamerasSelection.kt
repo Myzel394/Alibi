@@ -20,6 +20,7 @@ fun CamerasSelection(
         CameraInfo.Lens.BACK to stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_back_label),
         CameraInfo.Lens.FRONT to stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_front_label),
         CameraInfo.Lens.EXTERNAL to stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_external_label),
+        CameraInfo.Lens.UNKNOWN to stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_unknown_label),
     )
 
     Column {

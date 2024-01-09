@@ -16,10 +16,11 @@ data class CameraInfo(
         BACK(CameraSelector.LENS_FACING_BACK),
         FRONT(CameraSelector.LENS_FACING_FRONT),
         EXTERNAL(CameraSelector.LENS_FACING_EXTERNAL),
+        UNKNOWN(999),
     }
 
     val lens: Lens
-        get() = CAMERA_INT_TO_LENS_MAP[id]!!
+        get() = CAMERA_INT_TO_LENS_MAP[id] ?: Lens.UNKNOWN
 
     companion object {
         val CAMERA_INT_TO_LENS_MAP = mapOf(

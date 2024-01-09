@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -98,4 +99,5 @@ val CAMERA_LENS_ICON_MAP = mapOf(
     CameraInfo.Lens.BACK to Icons.Default.Camera,
     CameraInfo.Lens.FRONT to Icons.Default.Person,
     CameraInfo.Lens.EXTERNAL to Icons.Default.Videocam,
+    CameraInfo.Lens.UNKNOWN to Icons.Default.QuestionMark,
 )
