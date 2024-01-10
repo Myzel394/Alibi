@@ -39,4 +39,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          files: app/build/outputs/apk/release/*.(apk|aab)
+          files: app/build/outputs/apk/release/*.apk
+
+      - name: Upload APKs bundles 🚀
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          files: app/build/outputs/bundle/release/*.aab
