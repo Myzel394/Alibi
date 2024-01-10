@@ -14,18 +14,18 @@
     <string name="ui_permissions_request">Please grant the permission to continue</string>
     <string name="ui_permissions_permanentlyDenied_message">You will be redirected to the app settings to grant the permission there.</string>
     <string name="ui_audioRecorder_action_start_label">Start Recording</string>
-    <string name="ui_audioRecorder_action_saveOldRecording_label">Save Recording from <xliff:g name="date">%s</xliff:g></string>
-    <string name="ui_audioRecorder_action_delete_label">Delete</string>
-    <string name="ui_audioRecorder_action_delete_confirm_title">Delete Recording?</string>
-    <string name="ui_audioRecorder_action_delete_confirm_message">Are you sure you want to delete this recording?</string>
-    <string name="ui_audioRecorder_action_pause_label">Pause Recording</string>
-    <string name="ui_audioRecorder_action_resume_label">Resume Recording</string>
-    <string name="ui_audioRecorder_action_save_label">Save Recording</string>
+    <string name="ui_recorder_action_saveOldRecording_label">Save Recording from <xliff:g name="date">%s</xliff:g></string>
+    <string name="ui_recorder_action_delete_label">Delete</string>
+    <string name="ui_recorder_action_delete_confirm_title">Delete Recording?</string>
+    <string name="ui_recorder_action_delete_confirm_message">Are you sure you want to delete this recording?</string>
+    <string name="ui_recorder_action_pause_label">Pause Recording</string>
+    <string name="ui_recorder_action_resume_label">Resume Recording</string>
+    <string name="ui_recorder_action_save_label">Save Recording</string>
     <string name="ui_audioRecorder_action_start_description">Alibi will continue recording in the background and store the last <xliff:g name="durationInMinutes">%s</xliff:g> minutes at your request</string>
-    <string name="ui_audioRecorder_action_save_processing_dialog_title">Processing</string>
-    <string name="ui_audioRecorder_action_save_processing_dialog_description">Processing Audio, do not close Alibi! You will be automatically prompted to save the file once it\'s ready</string>
+    <string name="ui_recorder_action_save_processing_dialog_title">Processing</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Processing Audio, do not close Alibi! You will be automatically prompted to save the file once it\'s ready</string>
     <string name="ui_audioRecorder_state_recording_title">Recording Audio</string>
-    <string name="ui_audioRecorder_state_recording_description">Alibi keeps recording in the background</string>
+    <string name="ui_recorder_state_recording_description">Alibi keeps recording in the background</string>
     <string name="ui_welcome_explanation_title">Welcome to Alibi!</string>
     <string name="ui_welcome_explanation_message">Alibi is like a dashcam for your phone. It allows you to record your audio continuously and save the last 30 minutes when you need it.</string>
     <string name="ui_welcome_responsibility_title">You are solely responsible for the use of this app</string>
@@ -51,10 +51,10 @@
     <string name="ui_settings_option_encoder_title">Encoder</string>
     <string name="ui_settings_option_encoder_extra_outputFormatChanged">Output Format has been changed because the current one was incompatible with this encoder</string>
     <string name="ui_settings_value_auto_label">Auto</string>
-    <string name="ui_audioRecorder_state_paused_title">Recording paused</string>
-    <string name="ui_audioRecorder_state_paused_description">Audio Recording has been paused</string>
-    <string name="ui_audioRecorder_error_recording_title">An error occured</string>
-    <string name="ui_audioRecorder_error_recording_description">Alibi encountered an error during recording. Would you like to try saving the recording?</string>
+    <string name="ui_recorder_state_paused_title">Recording paused</string>
+    <string name="ui_recorder_state_paused_description">Audio Recording has been paused</string>
+    <string name="ui_recorder_error_recording_title">An error occured</string>
+    <string name="ui_recorder_error_recording_description">Alibi encountered an error during recording. Would you like to try saving the recording?</string>
     <string name="ui_settings_language_title">Language</string>
     <string name="ui_settings_language_update_label">Change</string>
     <string name="ui_settings_option_import_label">Import Settings</string>

@@ -1,27 +1,42 @@
 package app.myzel394.alibi.db
 
+import android.Manifest
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
+import androidx.camera.video.Quality
+import androidx.camera.video.QualitySelector
 import app.myzel394.alibi.R
-import app.myzel394.alibi.helpers.AudioRecorderExporter
-import app.myzel394.alibi.helpers.BatchesFolder
-import com.arthenica.ffmpegkit.FFmpegKit
-import com.arthenica.ffmpegkit.ReturnCode
+import app.myzel394.alibi.helpers.AudioBatchesFolder
+import app.myzel394.alibi.helpers.VideoBatchesFolder
+import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
+import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
+import app.myzel394.alibi.ui.utils.PermissionHelper
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.io.File
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter.ISO_DATE_TIME
 
 @Serializable
 data class AppSettings(
-    val audioRecorderSettings: AudioRecorderSettings = AudioRecorderSettings(),
-    val notificationSettings: NotificationSettings? = null,
+    val audioRecorderSettings: AudioRecorderSettings = AudioRecorderSettings.getDefaultInstance(),
+    val videoRecorderSettings: VideoRecorderSettings = VideoRecorderSettings.getDefaultInstance(),
+
+    val appLockSettings: AppLockSettings? = null,
+
     val hasSeenOnboarding: Boolean = false,
     val showAdvancedSettings: Boolean = false,
     val theme: Theme = Theme.SYSTEM,
     val lastRecording: RecordingInformation? = null,
+
+    /// Recording information
+    // 30 minutes
+    val maxDuration: Long = 30 * 60 * 1000L,
+    // 60 seconds
+    val intervalDuration: Long = 60 * 1000L,
+
+    val notificationSettings: NotificationSettings? = null,
+    val deleteRecordingsImmediately: Boolean = false,
+    val saveFolder: String? = null,
 ) {
     fun setShowAdvancedSettings(showAdvancedSettings: Boolean): AppSettings {
         return copy(showAdvancedSettings = showAdvancedSettings)
@@ -29,6 +44,10 @@ data class AppSettings(
 
     fun setAudioRecorderSettings(audioRecorderSettings: AudioRecorderSettings): AppSettings {
         return copy(audioRecorderSettings = audioRecorderSettings)
+    }
+
+    fun setVideoRecorderSettings(videoRecorderSettings: VideoRecorderSettings): AppSettings {
+        return copy(videoRecorderSettings = videoRecorderSettings)
     }
 
     fun setNotificationSettings(notificationSettings: NotificationSettings?): AppSettings {
@@ -45,6 +64,53 @@ data class AppSettings(
 
     fun setLastRecording(lastRecording: RecordingInformation?): AppSettings {
         return copy(lastRecording = lastRecording)
+    }
+
+    fun setMaxDuration(duration: Long): AppSettings {
+        if (duration < 60 * 1000L || duration > 10 * 24 * 60 * 60 * 1000L) {
+            throw Exception("Max duration must be between 1 minute and 10 days")
+        }
+
+        if (duration < intervalDuration) {
+            throw Exception("Max duration must be greater than interval duration")
+        }
+
+        return copy(maxDuration = duration)
+    }
+
+    fun setIntervalDuration(duration: Long): AppSettings {
+        if (duration < 10 * 1000L || duration > 60 * 60 * 1000L) {
+            throw Exception("Interval duration must be between 10 seconds and 1 hour")
+        }
+
+        if (duration > maxDuration) {
+            throw Exception("Interval duration must be less than max duration")
+        }
+
+        return copy(intervalDuration = duration)
+    }
+
+    fun setDeleteRecordingsImmediately(deleteRecordingsImmediately: Boolean): AppSettings {
+        return copy(deleteRecordingsImmediately = deleteRecordingsImmediately)
+    }
+
+    fun setSaveFolder(saveFolder: String?): AppSettings {
+        return copy(saveFolder = saveFolder)
+    }
+
+    fun setAppLockSettings(appLockSettings: AppLockSettings?): AppSettings {
+        return copy(appLockSettings = appLockSettings)
+    }
+
+    // If the object is present, biometric authentication is enabled.
+    // To disable biometric authentication, set the instance to null.
+    fun isAppLockEnabled() = appLockSettings != null
+
+    fun requiresExternalStoragePermission(context: Context): Boolean {
+        return !SUPPORTS_SCOPED_STORAGE && (saveFolder == RECORDER_MEDIA_SELECTED_VALUE && !PermissionHelper.hasGranted(
+            context,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ))
     }
 
     enum class Theme {
@@ -77,25 +143,31 @@ data class RecordingInformation(
     val maxDuration: Long,
     val intervalDuration: Long,
     val fileExtension: String,
+    val type: Type,
 ) {
     fun hasRecordingsAvailable(context: Context): Boolean =
-        BatchesFolder.importFromFolder(folderPath, context).hasRecordingsAvailable()
+        when (type) {
+            Type.AUDIO -> AudioBatchesFolder.importFromFolder(folderPath, context)
+                .hasRecordingsAvailable()
+
+            Type.VIDEO -> VideoBatchesFolder.importFromFolder(folderPath, context)
+                .hasRecordingsAvailable()
+        }
+
+    enum class Type {
+        AUDIO,
+        VIDEO,
+    }
 }
 
 @Serializable
 data class AudioRecorderSettings(
-    // 30 minutes
-    val maxDuration: Long = 30 * 60 * 1000L,
-    // 60 seconds
-    val intervalDuration: Long = 60 * 1000L,
     // 320 Kbps
     val bitRate: Int = 320000,
     val samplingRate: Int? = null,
     val outputFormat: Int? = null,
     val encoder: Int? = null,
     val showAllMicrophones: Boolean = false,
-    val deleteRecordingsImmediately: Boolean = false,
-    val saveFolder: String? = null,
 ) {
     fun getOutputFormat(): Int {
         if (outputFormat != null) {
@@ -163,36 +235,6 @@ data class AudioRecorderSettings(
     else
         MediaRecorder.AudioEncoder.AMR_NB
 
-    fun getSaveFolder(context: Context): File {
-        val defaultFolder = AudioRecorderExporter.getFolder(context)
-
-        if (saveFolder == null) {
-            return defaultFolder
-        }
-
-        runCatching {
-            return File(saveFolder!!).apply {
-                if (!exists()) {
-                    mkdirs()
-                }
-            }
-        }
-
-        return defaultFolder
-    }
-
-    fun setIntervalDuration(duration: Long): AudioRecorderSettings {
-        if (duration < 10 * 1000L || duration > 60 * 60 * 1000L) {
-            throw Exception("Interval duration must be between 10 seconds and 1 hour")
-        }
-
-        if (duration > maxDuration) {
-            throw Exception("Interval duration must be less than max duration")
-        }
-
-        return copy(intervalDuration = duration)
-    }
-
     fun setBitRate(bitRate: Int): AudioRecorderSettings {
         if (bitRate !in 1000..320000) {
             throw Exception("Bit rate must be between 1000 and 320000")
@@ -225,28 +267,8 @@ data class AudioRecorderSettings(
         return copy(encoder = encoder)
     }
 
-    fun setMaxDuration(duration: Long): AudioRecorderSettings {
-        if (duration < 60 * 1000L || duration > 10 * 24 * 60 * 60 * 1000L) {
-            throw Exception("Max duration must be between 1 minute and 10 days")
-        }
-
-        if (duration < intervalDuration) {
-            throw Exception("Max duration must be greater than interval duration")
-        }
-
-        return copy(maxDuration = duration)
-    }
-
     fun setShowAllMicrophones(showAllMicrophones: Boolean): AudioRecorderSettings {
         return copy(showAllMicrophones = showAllMicrophones)
-    }
-
-    fun setDeleteRecordingsImmediately(deleteRecordingsImmediately: Boolean): AudioRecorderSettings {
-        return copy(deleteRecordingsImmediately = deleteRecordingsImmediately)
-    }
-
-    fun setSaveFolder(saveFolder: String?): AudioRecorderSettings {
-        return copy(saveFolder = saveFolder)
     }
 
     fun isEncoderCompatible(encoder: Int): Boolean {
@@ -258,6 +280,19 @@ data class AudioRecorderSettings(
 
         return supportedFormats.contains(outputFormat)
     }
+
+    val fileExtension: String
+        get() = when (getOutputFormat()) {
+            MediaRecorder.OutputFormat.AAC_ADTS -> "aac"
+            MediaRecorder.OutputFormat.THREE_GPP -> "3gp"
+            MediaRecorder.OutputFormat.MPEG_4 -> "mp4"
+            MediaRecorder.OutputFormat.MPEG_2_TS -> "ts"
+            MediaRecorder.OutputFormat.WEBM -> "webm"
+            MediaRecorder.OutputFormat.AMR_NB -> "amr"
+            MediaRecorder.OutputFormat.AMR_WB -> "awb"
+            MediaRecorder.OutputFormat.OGG -> "ogg"
+            else -> "raw"
+        }
 
     companion object {
         fun getDefaultInstance(): AudioRecorderSettings = AudioRecorderSettings()
@@ -369,6 +404,93 @@ data class AudioRecorderSettings(
 }
 
 @Serializable
+data class VideoRecorderSettings(
+    val targetedVideoBitRate: Int? = null,
+    val quality: String? = null,
+    val targetFrameRate: Int? = null,
+) {
+    fun setTargetedVideoBitRate(bitRate: Int?): VideoRecorderSettings {
+        return copy(targetedVideoBitRate = bitRate)
+    }
+
+    fun setQuality(quality: Quality?): VideoRecorderSettings {
+        val invertedMap = QUALITY_NAME_QUALITY_MAP.entries.associateBy({ it.value }, { it.key })
+
+        return copy(quality = quality?.let { invertedMap[it] })
+    }
+
+    fun setTargetFrameRate(frameRate: Int?): VideoRecorderSettings {
+        return copy(targetFrameRate = frameRate)
+    }
+
+    fun getQuality(): Quality? =
+        quality?.let {
+            QUALITY_NAME_QUALITY_MAP[it]!!
+        }
+
+    fun getQualitySelector(): QualitySelector? =
+        quality?.let {
+            QualitySelector.from(
+                QUALITY_NAME_QUALITY_MAP[it]!!
+            )
+        }
+
+    fun getMimeType() = "video/$fileExtension"
+
+    val fileExtension
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) "mp4" else "3gp"
+
+    companion object {
+        fun getDefaultInstance() = VideoRecorderSettings()
+
+        val QUALITY_NAME_QUALITY_MAP: Map<String, Quality> = mapOf(
+            "LOWEST" to Quality.LOWEST,
+            "HIGHEST" to Quality.HIGHEST,
+            "SD" to Quality.SD,
+            "HD" to Quality.HD,
+            "FHD" to Quality.FHD,
+            "UHD" to Quality.UHD,
+        )
+
+        val EXAMPLE_BITRATE_VALUES = listOf(
+            null,
+            500 * 1000,
+            // 1 Mbps
+            1 * 1000 * 1000,
+            2 * 1000 * 1000,
+            4 * 1000 * 1000,
+            8 * 1000 * 1000,
+            16 * 1000 * 1000,
+            32 * 1000 * 1000,
+            50 * 1000 * 1000,
+            100 * 1000 * 1000,
+        )
+
+        val EXAMPLE_FRAME_RATE_VALUES = listOf(
+            null,
+            24,
+            30,
+            60,
+            120,
+            240,
+        )
+
+        val AVAILABLE_QUALITIES = listOf(
+            Quality.HIGHEST,
+            Quality.UHD,
+            Quality.FHD,
+            Quality.HD,
+            Quality.SD,
+            Quality.LOWEST,
+        )
+
+        val EXAMPLE_QUALITY_VALUES = listOf(
+            null,
+        ) + AVAILABLE_QUALITIES
+    }
+}
+
+@Serializable
 data class NotificationSettings(
     val title: String,
     val message: String,
@@ -386,39 +508,39 @@ data class NotificationSettings(
         @Serializable
         data object Default : Preset(
             R.string.ui_audioRecorder_state_recording_title,
-            R.string.ui_audioRecorder_state_recording_description,
+            R.string.ui_recorder_state_recording_description,
             true,
             R.drawable.launcher_monochrome_noopacity,
         )
 
         @Serializable
         data object Weather : Preset(
-            R.string.ui_audioRecorder_state_recording_fake_weather_title,
-            R.string.ui_audioRecorder_state_recording_fake_weather_description,
+            R.string.ui_recorder_state_recording_fake_weather_title,
+            R.string.ui_recorder_state_recording_fake_weather_description,
             false,
             R.drawable.ic_cloud
         )
 
         @Serializable
         data object Player : Preset(
-            R.string.ui_audioRecorder_state_recording_fake_player_title,
-            R.string.ui_audioRecorder_state_recording_fake_player_description,
+            R.string.ui_recorder_state_recording_fake_player_title,
+            R.string.ui_recorder_state_recording_fake_player_description,
             true,
             R.drawable.ic_note,
         )
 
         @Serializable
         data object Browser : Preset(
-            R.string.ui_audioRecorder_state_recording_fake_browser_title,
-            R.string.ui_audioRecorder_state_recording_fake_browser_description,
+            R.string.ui_recorder_state_recording_fake_browser_title,
+            R.string.ui_recorder_state_recording_fake_browser_description,
             true,
             R.drawable.ic_download,
         )
 
         @Serializable
         data object VPN : Preset(
-            R.string.ui_audioRecorder_state_recording_fake_vpn_title,
-            R.string.ui_audioRecorder_state_recording_fake_vpn_description,
+            R.string.ui_recorder_state_recording_fake_vpn_title,
+            R.string.ui_recorder_state_recording_fake_vpn_description,
             false,
             R.drawable.ic_vpn,
         )
@@ -442,5 +564,12 @@ data class NotificationSettings(
             Preset.Browser,
             Preset.VPN,
         )
+    }
+}
+
+@Serializable
+class AppLockSettings {
+    companion object {
+        fun getDefaultInstance() = AppLockSettings()
     }
 }

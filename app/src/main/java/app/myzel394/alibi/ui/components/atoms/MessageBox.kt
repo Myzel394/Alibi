@@ -3,6 +3,7 @@ package app.myzel394.alibi.ui.components.atoms
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -27,57 +28,82 @@ fun MessageBox(
     type: MessageType,
     message: String,
     title: String? = null,
+    density: VisualDensity = VisualDensity.COMFORTABLE,
 ) {
     val isDark = rememberIsInDarkMode()
-    val containerColor = when (type) {
+    val containerColorDarkMode = when (type) {
         MessageType.ERROR -> MaterialTheme.colorScheme.errorContainer
         MessageType.INFO -> MaterialTheme.colorScheme.tertiaryContainer
         MessageType.SUCCESS -> Color.Green.copy(alpha = 0.3f)
         MessageType.WARNING -> Color.Yellow.copy(alpha = 0.3f)
         MessageType.SURFACE -> MaterialTheme.colorScheme.surfaceVariant
     }
-    val onContainerColor = when (type) {
-        MessageType.ERROR -> MaterialTheme.colorScheme.onError
+    val onContainerColorDarkMode = when (type) {
+        MessageType.ERROR -> MaterialTheme.colorScheme.onErrorContainer
         MessageType.INFO -> MaterialTheme.colorScheme.onTertiaryContainer
         MessageType.SUCCESS -> Color.Green
         MessageType.WARNING -> Color.Yellow
         MessageType.SURFACE -> MaterialTheme.colorScheme.onSurfaceVariant
     }
-    val textColor = if (isDark) onContainerColor else MaterialTheme.colorScheme.onSurface
-    val backgroundColor = if (isDark) containerColor else onContainerColor
+    val containerColorLightMode = when (type) {
+        MessageType.ERROR -> MaterialTheme.colorScheme.errorContainer
+        MessageType.INFO -> MaterialTheme.colorScheme.tertiaryContainer
+        MessageType.SUCCESS -> Color.Green
+        MessageType.WARNING -> Color.Yellow
+        MessageType.SURFACE -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+    val onContainerColorLightMode = when (type) {
+        MessageType.ERROR -> MaterialTheme.colorScheme.onErrorContainer
+        MessageType.INFO -> MaterialTheme.colorScheme.onTertiaryContainer
+        MessageType.SUCCESS -> MaterialTheme.colorScheme.onSurface
+        MessageType.WARNING -> MaterialTheme.colorScheme.onSurface
+        MessageType.SURFACE -> MaterialTheme.colorScheme.surfaceVariant
+    }
+    val textColor = if (isDark) onContainerColorDarkMode else onContainerColorLightMode
+    val backgroundColor = if (isDark) containerColorDarkMode else containerColorLightMode
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clip(MaterialTheme.shapes.medium)
             .background(backgroundColor)
-            .padding(horizontal = 8.dp, vertical = 16.dp)
+            .let {
+                if (density == VisualDensity.COMFORTABLE) {
+                    it.padding(horizontal = 8.dp, vertical = 16.dp)
+                } else {
+                    it.padding(8.dp)
+                }
+            }
             .then(modifier)
     ) {
-        Icon(
-            imageVector = when (type) {
-                MessageType.ERROR -> Icons.Default.Error
-                MessageType.INFO -> Icons.Default.Info
-                MessageType.SURFACE -> Icons.Default.Info
-                MessageType.SUCCESS -> Icons.Default.Check
-                MessageType.WARNING -> Icons.Default.Warning
-            },
-            contentDescription = null,
-            tint = textColor,
-            modifier = Modifier.padding(16.dp)
-        )
+        if (density == VisualDensity.COMFORTABLE) {
+            Icon(
+                imageVector = when (type) {
+                    MessageType.ERROR -> Icons.Default.Error
+                    MessageType.INFO -> Icons.Default.Info
+                    MessageType.SURFACE -> Icons.Default.Info
+                    MessageType.SUCCESS -> Icons.Default.Check
+                    MessageType.WARNING -> Icons.Default.Warning
+                },
+                contentDescription = null,
+                tint = textColor,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
         Column {
             if (title != null) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyLarge,
                     color = textColor,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyMedium,
                 color = textColor,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -90,4 +116,9 @@ enum class MessageType {
     SURFACE,
     SUCCESS,
     WARNING,
+}
+
+enum class VisualDensity {
+    COMPACT,
+    COMFORTABLE,
 }

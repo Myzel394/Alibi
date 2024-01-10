@@ -1,15 +1,14 @@
 package app.myzel394.alibi.services
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.Notification
-import android.app.Service
 import android.content.Intent
-import android.content.pm.ServiceInfo
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.lifecycle.LifecycleService
 import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.ui.utils.PermissionHelper
@@ -20,31 +19,77 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 
-abstract class RecorderService : Service() {
+abstract class RecorderService : LifecycleService() {
     private val binder = RecorderBinder()
 
     private var isPaused: Boolean = false
-
     lateinit var recordingStart: LocalDateTime
         private set
+    private lateinit var recordingTimeTimer: ScheduledExecutorService
+    private var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
 
     var state = RecorderState.IDLE
         private set
 
     var onStateChange: ((RecorderState) -> Unit)? = null
+    var onError: () -> Unit = {}
+    var onRecordingTimeChange: ((Long) -> Unit)? = null
 
     var recordingTime = 0L
         private set
-    private lateinit var recordingTimeTimer: ScheduledExecutorService
-    var onRecordingTimeChange: ((Long) -> Unit)? = null
-    var notificationDetails: RecorderNotificationHelper.NotificationDetails? = null
 
-    protected abstract fun start()
-    protected abstract fun pause()
-    protected abstract fun resume()
-    protected abstract fun stop()
+    protected open fun start() {
+        createRecordingTimeTimer()
+    }
 
-    override fun onBind(p0: Intent?): IBinder? = binder
+    protected open fun pause() {
+        isPaused = true
+
+        recordingTimeTimer.shutdown()
+    }
+
+    protected open fun resume() {
+        createRecordingTimeTimer()
+    }
+
+    protected open suspend fun stop() {
+        recordingTimeTimer.shutdown()
+    }
+
+    protected abstract fun startForegroundService()
+
+    fun startRecording() {
+        recordingStart = LocalDateTime.now()
+
+        startForegroundService()
+        changeState(RecorderState.RECORDING)
+        start()
+    }
+
+    suspend fun stopRecording() {
+        changeState(RecorderState.STOPPED)
+        stop()
+    }
+
+    fun pauseRecording() {
+        changeState(RecorderState.PAUSED)
+    }
+
+    fun resumeRecording() {
+        changeState(RecorderState.RECORDING)
+    }
+
+    fun destroy() {
+        NotificationManagerCompat.from(this)
+            .cancel(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID)
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    }
+
+    override fun onBind(intent: Intent): IBinder? {
+        super.onBind(intent)
+        return binder
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
@@ -60,7 +105,7 @@ abstract class RecorderService : Service() {
             "changeState" -> {
                 val newState = intent.getStringExtra("newState")?.let {
                     RecorderState.valueOf(it)
-                } ?: RecorderState.IDLE
+                } ?: RecorderState.STOPPED
                 changeState(newState)
             }
         }
@@ -76,16 +121,19 @@ abstract class RecorderService : Service() {
         recordingTimeTimer = Executors.newSingleThreadScheduledExecutor().also {
             it.scheduleAtFixedRate(
                 {
-                    recordingTime += 1000
+                    recordingTime += 1
                     onRecordingTimeChange?.invoke(recordingTime)
                 },
                 0,
-                1000,
-                TimeUnit.MILLISECONDS
+                1,
+                TimeUnit.SECONDS
             )
         }
     }
 
+    // Used to change the state of the service
+    // will internally call start() / pause() / resume() / stop()
+    // Immediately after creating the service make sure to call `changeState(RecorderState.RECORDING)`
     @SuppressLint("MissingPermission")
     fun changeState(newState: RecorderState) {
         if (state == newState) {
@@ -98,30 +146,16 @@ abstract class RecorderService : Service() {
                 if (isPaused) {
                     resume()
                     isPaused = false
-                } else {
-                    start()
                 }
+                // `start` is handled by `startRecording`
             }
 
-            RecorderState.PAUSED -> {
-                pause()
-                isPaused = true
-            }
+            RecorderState.PAUSED -> pause()
 
             else -> {}
         }
 
-        when (newState) {
-            RecorderState.RECORDING -> {
-                createRecordingTimeTimer()
-            }
-
-            RecorderState.PAUSED, RecorderState.IDLE -> {
-                recordingTimeTimer.shutdown()
-            }
-        }
-
-
+        // Update notification
         if (
             arrayOf(
                 RecorderState.RECORDING,
@@ -135,44 +169,13 @@ abstract class RecorderService : Service() {
                 notification
             )
         }
+
         onStateChange?.invoke(newState)
     }
 
-    // Must be immediately called after creating the service!
-    fun startRecording() {
-        recordingStart = LocalDateTime.now()
-
-        ServiceCompat.startForeground(
-            this,
-            NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID,
-            getNotificationHelper().buildStartingNotification(),
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
-            } else {
-                0
-            },
-        )
-
-        // Start
-        changeState(RecorderState.RECORDING)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        stop()
-        changeState(RecorderState.IDLE)
-
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        NotificationManagerCompat.from(this)
-            .cancel(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID)
-        stopSelf()
-    }
-
-    private fun getNotificationHelper(): RecorderNotificationHelper {
+    protected fun getNotificationHelper(): RecorderNotificationHelper {
         return RecorderNotificationHelper(this, notificationDetails)
     }
-
 
     private fun buildNotification(): Notification {
         val notificationHelper = getNotificationHelper()

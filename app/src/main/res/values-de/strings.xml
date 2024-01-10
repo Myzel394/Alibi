@@ -14,18 +14,18 @@
     <string name="ui_permissions_request">Bitte erteile die Berechtigung, um fortzufahren</string>
     <string name="ui_permissions_permanentlyDenied_message">Du wirst zu den Einstellungen weitergeleitet, um dort die Berechtigung zu erteilen.</string>
     <string name="ui_audioRecorder_action_start_label">Aufnahme starten</string>
-    <string name="ui_audioRecorder_action_saveOldRecording_label">Aufnahme vom <xliff:g name="date">%s</xliff:g> speichern</string>
-    <string name="ui_audioRecorder_action_delete_label">Löschen</string>
-    <string name="ui_audioRecorder_action_delete_confirm_title">Aufnahme Löschen?</string>
-    <string name="ui_audioRecorder_action_delete_confirm_message">Bist du sicher, dass du diese Aufnahme löschen möchtest?</string>
-    <string name="ui_audioRecorder_action_pause_label">Aufnahme pausieren</string>
-    <string name="ui_audioRecorder_action_resume_label">Aufnahme fortsetzten</string>
-    <string name="ui_audioRecorder_action_save_label">Aufnahme speichern</string>
+    <string name="ui_recorder_action_saveOldRecording_label">Aufnahme vom <xliff:g name="date">%s</xliff:g> speichern</string>
+    <string name="ui_recorder_action_delete_label">Löschen</string>
+    <string name="ui_recorder_action_delete_confirm_title">Aufnahme Löschen?</string>
+    <string name="ui_recorder_action_delete_confirm_message">Bist du sicher, dass du diese Aufnahme löschen möchtest?</string>
+    <string name="ui_recorder_action_pause_label">Aufnahme pausieren</string>
+    <string name="ui_recorder_action_resume_label">Aufnahme fortsetzten</string>
+    <string name="ui_recorder_action_save_label">Aufnahme speichern</string>
     <string name="ui_audioRecorder_action_start_description">Alibi wird im Hintergrund weiterhin aufnehmen und die letzten <xliff:g name="durationInMinutes">%s</xliff:g> Minuten auf Wunsch speichern</string>
-    <string name="ui_audioRecorder_action_save_processing_dialog_title">Bearbeiten</string>
-    <string name="ui_audioRecorder_action_save_processing_dialog_description">Audio wird bearbeitet, Alibi nicht schließen! Du wirst automatisch aufgefordert, die Datei zu speichern, wenn diese fertig bearbeitet ist</string>
+    <string name="ui_recorder_action_save_processing_dialog_title">Bearbeiten</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Audio wird bearbeitet, Alibi nicht schließen! Du wirst automatisch aufgefordert, die Datei zu speichern, wenn diese fertig bearbeitet ist</string>
     <string name="ui_audioRecorder_state_recording_title">Aufnahme läuft</string>
-    <string name="ui_audioRecorder_state_recording_description">Alibi nimmt im Hintergrund weiter auf</string>
+    <string name="ui_recorder_state_recording_description">Alibi nimmt im Hintergrund weiter auf</string>
     <string name="ui_welcome_explanation_title">Wilkommen zu Alibi!</string>
     <string name="ui_welcome_explanation_message">Alibi funktioniert wird eine Dashcam für dein Handy. Es ermöglicht dir, Ton im Hintergrund kontinuierlich aufzunehmen und die letzten 30 Minuten auf Wunsch zu speichern.</string>
     <string name="ui_welcome_responsibility_title">Du bist für die Nutzung dieser App verantwortlich!</string>
@@ -51,10 +51,10 @@
     <string name="ui_settings_option_encoder_title">Kodierer</string>
     <string name="ui_settings_option_encoder_extra_outputFormatChanged">Das Ausgabeformat wurde geändert, da das aktuelle mit diesem Encoder inkompatibel war</string>
     <string name="ui_settings_value_auto_label">Automatisch</string>
-    <string name="ui_audioRecorder_state_paused_title">Aufnahme pausiert</string>
-    <string name="ui_audioRecorder_state_paused_description">Audio-Aufnahme wurde pausiert</string>
-    <string name="ui_audioRecorder_error_recording_title">Es ist ein Fehler aufgetreten</string>
-    <string name="ui_audioRecorder_error_recording_description">Alibi stieß bei der Aufnahme auf einen Fehler. Soll die Aufnahme gespeichert werden? </string>
+    <string name="ui_recorder_state_paused_title">Aufnahme pausiert</string>
+    <string name="ui_recorder_state_paused_description">Audio-Aufnahme wurde pausiert</string>
+    <string name="ui_recorder_error_recording_title">Es ist ein Fehler aufgetreten</string>
+    <string name="ui_recorder_error_recording_description">Alibi stieß bei der Aufnahme auf einen Fehler. Soll die Aufnahme gespeichert werden? </string>
     <string name="ui_settings_language_title">Sprache</string>
     <string name="ui_settings_language_update_label">Ändern</string>
     <string name="ui_settings_option_import_label">Einstellungen importieren</string>

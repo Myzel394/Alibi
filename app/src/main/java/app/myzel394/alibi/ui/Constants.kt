@@ -2,12 +2,23 @@ package app.myzel394.alibi.ui
 
 import android.os.Build
 import androidx.compose.ui.unit.dp
-import java.io.File
 
 val BIG_PRIMARY_BUTTON_SIZE = 64.dp
+
+val SHEET_BOTTOM_OFFSET = 24.dp
 val MAX_AMPLITUDE = 20000
 val SUPPORTS_DARK_MODE_NATIVELY = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-val RECORDER_SUBFOLDER_NAME = ".recordings"
+
+val MEDIA_SUBFOLDER_NAME = "alibi"
+
+val SUPPORTS_SCOPED_STORAGE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+val SUPPORTS_SAVING_VIDEOS_IN_CUSTOM_FOLDERS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+val MEDIA_RECORDINGS_PREFIX = "alibi-recording-"
+val RECORDER_MEDIA_SELECTED_VALUE = "_'media"
+val RECORDER_INTERNAL_SELECTED_VALUE = "_'internal"
+
+val VIDEO_RECORDING_BATCHES_SUBFOLDER_NAME = ".video_recordings"
+val AUDIO_RECORDING_BATCHES_SUBFOLDER_NAME = ".audio_recordings"
 
 // You are not allowed to change the constants below.
 // If you do so, you will be blocked on GitHub.

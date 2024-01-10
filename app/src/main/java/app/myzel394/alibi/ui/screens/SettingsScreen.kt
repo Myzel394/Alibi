@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -38,25 +37,30 @@ import androidx.navigation.NavController
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.AboutTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.BitrateTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.CustomNotificationTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.DeleteRecordingsImmediatelyTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.EncoderTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ImportExport
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AboutTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderEncoderTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderFrameRateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.CustomNotificationTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DeleteRecordingsImmediatelyTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DividerTitle
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderQualityTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.ImportExport
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.InAppLanguagePicker
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.IntervalDurationTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.MaxDurationTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.OutputFormatTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.SamplingRateTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.SaveFolderTile
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ShowAllMicrophonesTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.IntervalDurationTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.MaxDurationTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderOutputFormatTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderSamplingRateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.SaveFolderTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderShowAllMicrophonesTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.EnableAppLockTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderBitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ThemeSelector
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
 import app.myzel394.alibi.ui.effects.rememberSettings
 import app.myzel394.alibi.ui.models.AudioRecorderModel
+import app.myzel394.alibi.ui.models.VideoRecorderModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,6 +68,7 @@ import kotlinx.coroutines.launch
 fun SettingsScreen(
     navController: NavController,
     audioRecorder: AudioRecorderModel,
+    videoRecorder: VideoRecorderModel,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
@@ -117,7 +122,7 @@ fun SettingsScreen(
             val settings = rememberSettings()
 
             // Show alert
-            if (audioRecorder.isInRecording)
+            if (audioRecorder.isInRecording || videoRecorder.isInRecording) {
                 Box(
                     modifier = Modifier
                         .padding(16.dp)
@@ -128,9 +133,20 @@ fun SettingsScreen(
                         message = stringResource(R.string.ui_settings_hint_recordingActive_message),
                     )
                 }
+            }
             if (!SUPPORTS_DARK_MODE_NATIVELY) {
                 ThemeSelector()
             }
+            MaxDurationTile(settings = settings)
+            IntervalDurationTile(settings = settings)
+            InAppLanguagePicker()
+            DeleteRecordingsImmediatelyTile(settings = settings)
+            CustomNotificationTile(navController = navController, settings = settings)
+            EnableAppLockTile(settings = settings)
+            SaveFolderTile(
+                settings = settings,
+                snackbarHostState = snackbarHostState,
+            )
             GlobalSwitch(
                 label = stringResource(R.string.ui_settings_advancedSettings_label),
                 checked = settings.showAdvancedSettings,
@@ -142,29 +158,31 @@ fun SettingsScreen(
                     }
                 }
             )
-            MaxDurationTile(settings = settings)
-            IntervalDurationTile(settings = settings)
-            InAppLanguagePicker()
-            DeleteRecordingsImmediatelyTile(settings = settings)
-            CustomNotificationTile(navController = navController, settings = settings)
-            AboutTile(navController = navController)
             AnimatedVisibility(visible = settings.showAdvancedSettings) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
                     Column {
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 32.dp)
+                        DividerTitle(
+                            title = stringResource(R.string.ui_settings_sections_audio_title),
+                            description = stringResource(R.string.ui_settings_sections_audio_description),
                         )
-                        SaveFolderTile(settings = settings)
-                        ShowAllMicrophonesTile(settings = settings)
-                        BitrateTile(settings = settings)
-                        SamplingRateTile(settings = settings)
-                        EncoderTile(snackbarHostState = snackbarHostState, settings = settings)
-                        OutputFormatTile(settings = settings)
+                        AudioRecorderShowAllMicrophonesTile(settings = settings)
+                        AudioRecorderSamplingRateTile(settings = settings)
+                        AudioRecorderEncoderTile(
+                            snackbarHostState = snackbarHostState,
+                            settings = settings
+                        )
+                        AudioRecorderOutputFormatTile(settings = settings)
+
+                        DividerTitle(
+                            title = stringResource(R.string.ui_settings_sections_video_title),
+                            description = stringResource(R.string.ui_settings_sections_video_description),
+                        )
+                        VideoRecorderQualityTile(settings = settings)
+                        VideoRecorderBitrateTile(settings = settings)
+                        VideoRecorderFrameRateTile(settings = settings)
                     }
                     Divider(
                         modifier = Modifier
@@ -173,6 +191,7 @@ fun SettingsScreen(
                     ImportExport(snackbarHostState = snackbarHostState)
                 }
             }
+            AboutTile(navController = navController)
         }
     }
 }
