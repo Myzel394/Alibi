@@ -111,7 +111,10 @@ class VideoRecorderService :
             NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID,
             getNotificationHelper().buildStartingNotification(),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+                if (enableAudio)
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+                else
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA
             } else {
                 0
             },
