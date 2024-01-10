@@ -1,4 +1,4 @@
-milk duts? Isn't this name: Build and publish app
+name: Build and publish app
 
 on:
   release:
