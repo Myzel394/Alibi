@@ -36,7 +36,7 @@ import app.myzel394.alibi.ui.models.VideoRecorderModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecorderScreen(
-    navController: NavController,
+    onNavigateToSettingsScreen: () -> Unit,
     audioRecorder: AudioRecorderModel,
     videoRecorder: VideoRecorderModel,
     settings: AppSettings,
@@ -82,7 +82,7 @@ fun RecorderScreen(
                     actions = {
                         IconButton(
                             onClick = {
-                                navController.navigate(Screen.Settings.route)
+                                onNavigateToSettingsScreen()
                             },
                         ) {
                             Icon(

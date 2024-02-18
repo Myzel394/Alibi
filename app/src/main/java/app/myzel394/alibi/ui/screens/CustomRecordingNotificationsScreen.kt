@@ -50,7 +50,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomRecordingNotificationsScreen(
-    navController: NavController,
+    onBackNavigate: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         rememberTopAppBarState()
@@ -79,7 +79,7 @@ fun CustomRecordingNotificationsScreen(
                     Text(stringResource(R.string.ui_settings_option_customNotification_title))
                 },
                 navigationIcon = {
-                    IconButton(onClick = navController::popBackStack) {
+                    IconButton(onClick = onBackNavigate) {
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = "Back"
@@ -110,7 +110,7 @@ fun CustomRecordingNotificationsScreen(
                             })
                         }
                     }
-                    navController.popBackStack()
+                    onBackNavigate()
                 }
             )
         } else {

@@ -53,7 +53,7 @@ import app.myzel394.alibi.ui.components.AboutScreen.atoms.GPGKeyOverview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
-    navController: NavController,
+    onBackNavigate: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         rememberTopAppBarState()
@@ -67,7 +67,7 @@ fun AboutScreen(
                     Text(stringResource(R.string.ui_about_title))
                 },
                 navigationIcon = {
-                    IconButton(onClick = navController::popBackStack) {
+                    IconButton(onClick = onBackNavigate) {
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = "Back"
