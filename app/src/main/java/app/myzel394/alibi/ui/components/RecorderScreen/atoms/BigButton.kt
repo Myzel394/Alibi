@@ -1,6 +1,6 @@
 package app.myzel394.alibi.ui.components.RecorderScreen.atoms
 
-import android.Manifest
+import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,10 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,12 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import app.myzel394.alibi.R
-import app.myzel394.alibi.ui.utils.PermissionHelper
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -41,8 +36,10 @@ fun BigButton(
     onClick: () -> Unit,
     onLongClick: () -> Unit = {},
 ) {
+    val orientation = LocalConfiguration.current.orientation
+
     BoxWithConstraints {
-        val isLarge = maxWidth > 500.dp
+        val isLarge = maxWidth > 500.dp && orientation == Configuration.ORIENTATION_PORTRAIT
 
         Column(
             modifier = Modifier
