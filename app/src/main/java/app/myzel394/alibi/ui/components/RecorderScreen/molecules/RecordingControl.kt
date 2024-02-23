@@ -29,6 +29,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun RecordingControl(
     modifier: Modifier = Modifier,
+    orientation: Int = LocalConfiguration.current.orientation,
     initialDelay: Long = 0L,
     isPaused: Boolean,
     recordingTime: Long,
@@ -36,7 +37,6 @@ fun RecordingControl(
     onPauseResume: () -> Unit,
     onSave: () -> Unit,
 ) {
-    val orientation = LocalConfiguration.current.orientation
     val animateIn = rememberInitialRecordingAnimation(recordingTime)
 
     var deleteButtonAlphaIsIn by rememberSaveable {
