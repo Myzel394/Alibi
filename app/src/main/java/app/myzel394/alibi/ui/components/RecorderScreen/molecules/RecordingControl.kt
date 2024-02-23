@@ -1,8 +1,11 @@
 package app.myzel394.alibi.ui.components.RecorderScreen.molecules
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -14,6 +17,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.DeleteButton
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.PauseResumeButton
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.SaveButton
@@ -23,6 +28,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun RecordingControl(
+    modifier: Modifier = Modifier,
     initialDelay: Long = 0L,
     isPaused: Boolean,
     recordingTime: Long,
@@ -30,6 +36,7 @@ fun RecordingControl(
     onPauseResume: () -> Unit,
     onSave: () -> Unit,
 ) {
+    val orientation = LocalConfiguration.current.orientation
     val animateIn = rememberInitialRecordingAnimation(recordingTime)
 
     var deleteButtonAlphaIsIn by rememberSaveable {
@@ -85,38 +92,87 @@ fun RecordingControl(
         }
     }
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .alpha(deleteButtonAlpha),
-            contentAlignment = Alignment.Center,
-        ) {
-            DeleteButton(onDelete = onDelete)
+    when (orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = modifier,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .alpha(saveButtonAlpha),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    SaveButton(
+                        onSave = onSave,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .alpha(pauseButtonAlpha),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    PauseResumeButton(
+                        isPaused = isPaused,
+                        onChange = onPauseResume,
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .alpha(deleteButtonAlpha),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    DeleteButton(
+                        onDelete = onDelete,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
         }
 
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .alpha(pauseButtonAlpha),
-        ) {
-            PauseResumeButton(
-                isPaused = isPaused,
-                onChange = onPauseResume,
-            )
-        }
+        else -> {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = modifier,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .alpha(deleteButtonAlpha),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    DeleteButton(onDelete = onDelete)
+                }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .alpha(saveButtonAlpha),
-            contentAlignment = Alignment.Center,
-        ) {
-            SaveButton(onSave = onSave)
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .alpha(pauseButtonAlpha),
+                ) {
+                    PauseResumeButton(
+                        isPaused = isPaused,
+                        onChange = onPauseResume,
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .alpha(saveButtonAlpha),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    SaveButton(onSave = onSave)
+                }
+            }
         }
     }
 }
