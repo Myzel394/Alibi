@@ -4,8 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,10 +19,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.PermMedia
@@ -147,9 +145,19 @@ fun SaveFolderTile(
     var showDCIMFolderHelpSheet by remember { mutableStateOf(false) }
 
     if (showDCIMFolderHelpSheet) {
-        MediaFoldersExplanationDialog(
+        DCIMFolderExplanationDialog(
             onDismiss = {
                 showDCIMFolderHelpSheet = false
+            }
+        )
+    }
+
+    var showExplanationDialog by remember { mutableStateOf(false) }
+
+    if (showExplanationDialog) {
+        InternalFolderExplanationDialog(
+            onDismiss = {
+                showExplanationDialog = false
             }
         )
     }
@@ -159,7 +167,7 @@ fun SaveFolderTile(
         description = stringResource(R.string.ui_settings_option_saveFolder_explanation),
         leading = {
             Icon(
-                Icons.Default.InsertDriveFile,
+                Icons.AutoMirrored.Filled.InsertDriveFile,
                 contentDescription = null,
             )
         },
@@ -205,7 +213,25 @@ fun SaveFolderTile(
                 val openFolder = rememberOpenUri()
 
                 when (settings.saveFolder) {
-                    null -> {}
+                    null -> {
+                        Button(
+                            onClick = {
+                                showExplanationDialog = true
+                            },
+                            shape = MaterialTheme.shapes.small,
+                            contentPadding = ButtonDefaults.TextButtonContentPadding,
+                            colors = ButtonDefaults.filledTonalButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            ),
+                        ) {
+                            Text(
+                                stringResource(R.string.ui_settings_option_saveFolder_explainMediaFolder_label),
+                                fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                            )
+                        }
+                    }
+
                     RECORDER_MEDIA_SELECTED_VALUE -> {
                         Button(
                             onClick = {
@@ -258,12 +284,9 @@ fun SaveFolderTile(
 }
 
 @Composable
-fun MediaFoldersExplanationDialog(
+fun DCIMFolderExplanationDialog(
     onDismiss: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val openFolder = rememberOpenUri()
-
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = {
@@ -355,6 +378,42 @@ fun MediaFoldersExplanationDialog(
                         AUDIO_RECORDING_BATCHES_SUBFOLDER_NAME,
                         VIDEO_RECORDING_BATCHES_SUBFOLDER_NAME
                     ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun InternalFolderExplanationDialog(
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                Icons.Default.Lock,
+                contentDescription = null,
+            )
+        },
+        title = {
+            Text(stringResource(R.string.ui_settings_option_saveFolder_explainMediaFolder_label))
+        },
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text(stringResource(R.string.dialog_close_neutral_label))
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(32.dp),
+            ) {
+                Text(
+                    stringResource(R.string.ui_settings_option_saveFolder_explainInternalFolder_explanation),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
