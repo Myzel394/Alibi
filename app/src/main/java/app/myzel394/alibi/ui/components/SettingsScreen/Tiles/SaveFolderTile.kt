@@ -410,7 +410,9 @@ fun InternalFolderExplanationDialog(
         },
         text = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(32.dp),
             ) {
@@ -527,7 +529,8 @@ fun SelectionSheet(
                 )
                 if (!SUPPORTS_SAVING_VIDEOS_IN_CUSTOM_FOLDERS) {
                     Column(
-                        modifier = Modifier.padding(horizontal = 32.dp, vertical = 12.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 32.dp, vertical = 12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
