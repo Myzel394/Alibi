@@ -194,7 +194,9 @@ class VideoRecorderService :
                 selectedCamera,
                 videoCapture
             )
-            cameraControl = CameraControl(camera!!)
+            cameraControl = CameraControl(camera!!).also {
+                it.init()
+            }
             onCameraControlAvailable()
 
             _cameraAvailableListener.complete(Unit)
@@ -309,17 +311,25 @@ class VideoRecorderService :
     }
 
     class CameraControl(
-        val camera: Camera
+        val camera: Camera,
+        // Save state for optimistic updates
+        var torchEnabled: Boolean = false,
     ) {
+        fun init() {
+            torchEnabled = camera.cameraInfo.torchState.value == TorchState.ON
+        }
+
         fun enableTorch() {
+            torchEnabled = true
             camera.cameraControl.enableTorch(true)
         }
 
         fun disableTorch() {
+            torchEnabled = false
             camera.cameraControl.enableTorch(false)
         }
 
-        fun isTorchEnabled(): Boolean {
+        fun isHardwareTorchReallyEnabled(): Boolean {
             return camera.cameraInfo.torchState.value == TorchState.ON
         }
 

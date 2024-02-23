@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -38,21 +38,21 @@ import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.SUPPORTS_DARK_MODE_NATIVELY
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AboutTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderEncoderTile
-import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderFrameRateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderOutputFormatTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderSamplingRateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderShowAllMicrophonesTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.CustomNotificationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DeleteRecordingsImmediatelyTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DividerTitle
-import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderQualityTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.EnableAppLockTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.ImportExport
-import app.myzel394.alibi.ui.components.SettingsScreen.atoms.InAppLanguagePicker
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.IntervalDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.MaxDurationTile
-import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderOutputFormatTile
-import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderSamplingRateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.SaveFolderTile
-import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderShowAllMicrophonesTile
-import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.EnableAppLockTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderBitrateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderFrameRateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderQualityTile
+import app.myzel394.alibi.ui.components.SettingsScreen.atoms.InAppLanguagePicker
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ThemeSelector
 import app.myzel394.alibi.ui.components.atoms.GlobalSwitch
 import app.myzel394.alibi.ui.components.atoms.MessageBox
@@ -99,9 +99,10 @@ fun SettingsScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackNavigate) {
+                        val label = stringResource(R.string.goBack)
                         Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = label,
                         )
                     }
                 },

@@ -1,9 +1,12 @@
 package app.myzel394.alibi.ui.components.RecorderScreen.organisms
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.HorizontalDivider
@@ -16,6 +19,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RealtimeAudioVisualizer
@@ -33,6 +37,7 @@ fun AudioRecordingStatus(
     audioRecorder: AudioRecorderModel,
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current.orientation
 
     val scope = rememberCoroutineScope()
 
@@ -62,47 +67,104 @@ fun AudioRecordingStatus(
                 .weight(1f),
         )
 
-        RecordingStatus(
-            recordingTime = audioRecorder.recordingTime,
-            progress = audioRecorder.progress,
-            recordingStart = audioRecorder.recordingStart,
-            maxDuration = audioRecorder.settings!!.maxDuration,
-        )
+        when (configuration) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement
+                            .spacedBy(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(3f),
+                    ) {
+                        RecordingStatus(
+                            recordingTime = audioRecorder.recordingTime,
+                            progress = audioRecorder.progress,
+                            recordingStart = audioRecorder.recordingStart,
+                            maxDuration = audioRecorder.settings!!.maxDuration,
+                            progressModifier = Modifier.fillMaxWidth(.9f),
+                        )
 
-        Column(
-            verticalArrangement = Arrangement
-                .spacedBy(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            MicrophoneStatus(audioRecorder)
-
-            HorizontalDivider()
-
-            RecordingControl(
-                isPaused = audioRecorder.isPaused,
-                recordingTime = audioRecorder.recordingTime,
-                onDelete = {
-                    scope.launch {
-                        runCatching {
-                            audioRecorder.stopRecording(context)
-                        }
-                        runCatching {
-                            audioRecorder.destroyService(context)
-                        }
-                        audioRecorder.batchesFolder!!.deleteRecordings()
+                        MicrophoneStatus(audioRecorder)
                     }
-                },
-                onPauseResume = {
-                    if (audioRecorder.isPaused) {
-                        audioRecorder.resumeRecording()
-                    } else {
-                        audioRecorder.pauseRecording()
-                    }
-                },
-                onSave = {
-                    audioRecorder.onRecordingSave(false)
+
+                    RecordingControl(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        isPaused = audioRecorder.isPaused,
+                        recordingTime = audioRecorder.recordingTime,
+                        onDelete = {
+                            scope.launch {
+                                runCatching {
+                                    audioRecorder.stopRecording(context)
+                                }
+                                runCatching {
+                                    audioRecorder.destroyService(context)
+                                }
+                                audioRecorder.batchesFolder!!.deleteRecordings()
+                            }
+                        },
+                        onPauseResume = {
+                            if (audioRecorder.isPaused) {
+                                audioRecorder.resumeRecording()
+                            } else {
+                                audioRecorder.pauseRecording()
+                            }
+                        },
+                        onSave = {
+                            audioRecorder.onRecordingSave(false)
+                        }
+                    )
                 }
-            )
+            }
+
+            else -> {
+                RecordingStatus(
+                    recordingTime = audioRecorder.recordingTime,
+                    progress = audioRecorder.progress,
+                    recordingStart = audioRecorder.recordingStart,
+                    maxDuration = audioRecorder.settings!!.maxDuration,
+                )
+
+                Column(
+                    verticalArrangement = Arrangement
+                        .spacedBy(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    MicrophoneStatus(audioRecorder)
+
+                    HorizontalDivider()
+
+                    RecordingControl(
+                        isPaused = audioRecorder.isPaused,
+                        recordingTime = audioRecorder.recordingTime,
+                        onDelete = {
+                            scope.launch {
+                                runCatching {
+                                    audioRecorder.stopRecording(context)
+                                }
+                                runCatching {
+                                    audioRecorder.destroyService(context)
+                                }
+                                audioRecorder.batchesFolder!!.deleteRecordings()
+                            }
+                        },
+                        onPauseResume = {
+                            if (audioRecorder.isPaused) {
+                                audioRecorder.resumeRecording()
+                            } else {
+                                audioRecorder.pauseRecording()
+                            }
+                        },
+                        onSave = {
+                            audioRecorder.onRecordingSave(false)
+                        }
+                    )
+                }
+            }
         }
     }
 }

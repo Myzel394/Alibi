@@ -40,6 +40,7 @@ fun RecordingStatus(
     progress: Float,
     recordingStart: LocalDateTime,
     maxDuration: Long,
+    progressModifier: Modifier = Modifier.width(300.dp),
 ) {
     val animateIn = rememberInitialRecordingAnimation(recordingTime)
 
@@ -73,9 +74,8 @@ fun RecordingStatus(
             )
         ) {
             LinearProgressIndicator(
-                progress = progress,
-                modifier = Modifier
-                    .width(300.dp)
+                progress = { progress },
+                modifier = progressModifier,
             )
         }
 

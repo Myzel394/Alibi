@@ -1,5 +1,6 @@
 package app.myzel394.alibi.ui.components.RecorderScreen.organisms
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,13 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidthIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +42,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_MAX_WIDTH
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.AudioRecordingStart
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.QuickMaxDurationSelector
@@ -64,6 +67,7 @@ fun StartRecording(
     showAudioRecorder: Boolean,
 ) {
     val context = LocalContext.current
+    val orientation = LocalConfiguration.current.orientation
 
     val label = stringResource(
         R.string.ui_recorder_action_start_description_2,
@@ -98,24 +102,50 @@ fun StartRecording(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 32.dp),
+            .padding(bottom = if (orientation == Configuration.ORIENTATION_PORTRAIT) 32.dp else 16.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.weight(1f))
+        when (orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (showAudioRecorder)
+                        AudioRecordingStart(
+                            audioRecorder = audioRecorder,
+                            appSettings = appSettings,
+                        )
+                    VideoRecordingStart(
+                        videoRecorder = videoRecorder,
+                        appSettings = appSettings,
+                        onHideAudioRecording = onHideTopBar,
+                        onShowAudioRecording = onShowTopBar,
+                        showPreview = !showAudioRecorder,
+                    )
+                }
+            }
 
-        if (showAudioRecorder)
-            AudioRecordingStart(
-                audioRecorder = audioRecorder,
-                appSettings = appSettings,
-            )
-        VideoRecordingStart(
-            videoRecorder = videoRecorder,
-            appSettings = appSettings,
-            onHideAudioRecording = onHideTopBar,
-            onShowAudioRecording = onShowTopBar,
-            showPreview = !showAudioRecorder,
-        )
+            else -> {
+                Spacer(modifier = Modifier.weight(1f))
+
+                if (showAudioRecorder)
+                    AudioRecordingStart(
+                        audioRecorder = audioRecorder,
+                        appSettings = appSettings,
+                    )
+                VideoRecordingStart(
+                    videoRecorder = videoRecorder,
+                    appSettings = appSettings,
+                    onHideAudioRecording = onHideTopBar,
+                    onShowAudioRecording = onShowTopBar,
+                    showPreview = !showAudioRecorder,
+                )
+            }
+        }
+
 
         val forceUpdate = rememberForceUpdateOnLifeCycleChange()
         Column(
@@ -133,6 +163,7 @@ fun StartRecording(
                 TextButton(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .requiredWidthIn(max = BIG_PRIMARY_BUTTON_MAX_WIDTH)
                         .height(BIG_PRIMARY_BUTTON_SIZE)
                         .semantics {
                             contentDescription = label

@@ -1,6 +1,5 @@
 package app.myzel394.alibi.ui.screens
 
-import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,8 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,11 +41,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import app.myzel394.alibi.R
 import app.myzel394.alibi.BuildConfig
-import app.myzel394.alibi.ui.TRANSLATION_HELP_URL
+import app.myzel394.alibi.R
 import app.myzel394.alibi.ui.REPO_URL
+import app.myzel394.alibi.ui.TRANSLATION_HELP_URL
 import app.myzel394.alibi.ui.components.AboutScreen.atoms.DonationsTile
 import app.myzel394.alibi.ui.components.AboutScreen.atoms.GPGKeyOverview
 
@@ -68,9 +66,10 @@ fun AboutScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackNavigate) {
+                        val label = stringResource(R.string.goBack)
                         Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = label,
                         )
                     }
                 },
@@ -159,7 +158,7 @@ fun AboutScreen(
                         fontWeight = FontWeight.Bold,
                     )
                     Icon(
-                        Icons.Default.OpenInNew,
+                        Icons.AutoMirrored.Filled.OpenInNew,
                         contentDescription = null,
                         modifier = Modifier.size(ButtonDefaults.IconSize)
                     )
@@ -196,7 +195,7 @@ fun AboutScreen(
                         fontWeight = FontWeight.Bold,
                     )
                     Icon(
-                        Icons.Default.OpenInNew,
+                        Icons.AutoMirrored.Filled.OpenInNew,
                         contentDescription = null,
                         modifier = Modifier.size(ButtonDefaults.IconSize)
                     )
