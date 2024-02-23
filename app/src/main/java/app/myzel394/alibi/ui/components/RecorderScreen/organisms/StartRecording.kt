@@ -106,8 +106,6 @@ fun StartRecording(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.weight(1f))
-
         when (orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 Row(
@@ -131,6 +129,8 @@ fun StartRecording(
             }
 
             else -> {
+                Spacer(modifier = Modifier.weight(1f))
+
                 if (showAudioRecorder)
                     AudioRecordingStart(
                         audioRecorder = audioRecorder,
