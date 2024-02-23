@@ -71,9 +71,10 @@ fun CustomRecordingNotificationsScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackNavigate) {
+                        val label = stringResource(R.string.goBack)
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = label,
                         )
                     }
                 },

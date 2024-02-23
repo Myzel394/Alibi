@@ -190,4 +190,5 @@
     <string name="ui_videoRecorder_action_start_settings_cameraLens_unknown_label">Unknown</string>
     <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">To protect your privacy, Alibi stores its batches into its own private, encrypted storage. This storage is only accessible by Alibi and can\'t be accessed by other apps or by a possible intruder. Once you save the recording, you will be asked where you want to save the recording to.</string>
     <string name="ui_rotateDevice_portrait_label">Please rotate your device to portait mode</string>
+    <string name="goBack">Back</string>
 </resources>
