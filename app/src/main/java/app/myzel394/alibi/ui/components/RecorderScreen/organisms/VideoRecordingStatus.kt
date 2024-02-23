@@ -19,7 +19,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -224,14 +228,16 @@ fun _VideoControls(videoRecorder: VideoRecorderModel) {
     if (!videoRecorder.isStartingRecording) {
         val cameraControl = videoRecorder.recorderService!!.cameraControl!!
         if (cameraControl.hasTorchAvailable()) {
-            val isTorchEnabled = cameraControl.isTorchEnabled()
+            var torchEnabled by rememberSaveable { mutableStateOf(cameraControl.torchEnabled) }
 
             TorchStatus(
-                enabled = isTorchEnabled,
+                enabled = torchEnabled,
                 onChange = {
-                    if (isTorchEnabled) {
+                    if (torchEnabled) {
+                        torchEnabled = false
                         cameraControl.disableTorch()
                     } else {
+                        torchEnabled = true
                         cameraControl.enableTorch()
                     }
                 },
