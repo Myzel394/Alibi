@@ -61,11 +61,18 @@ fun RealtimeAudioVisualizer(
     }
 
     val configuration = LocalConfiguration.current
-    val screenWidth = with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx() }
+    // Use greater value of width and height to make sure the amplitudes are shown
+    // when the user rotates the device
+    val availableSpace = with(LocalDensity.current) {
+        Math.max(
+            configuration.screenWidthDp.dp.toPx(),
+            configuration.screenHeightDp.dp.toPx()
+        )
+    }
 
-    LaunchedEffect(screenWidth) {
+    LaunchedEffect(availableSpace) {
         // Add 1 to allow the visualizer to overflow the screen
-        audioRecorder.setMaxAmplitudesAmount(ceil(screenWidth.toInt() / BOX_DIFF).toInt() + 1)
+        audioRecorder.setMaxAmplitudesAmount(ceil(availableSpace.toInt() / BOX_DIFF).toInt() + 1)
     }
 
     Canvas(modifier = modifier) {
