@@ -11,10 +11,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -150,7 +149,7 @@ fun MicrophoneSelection(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 modifier = Modifier.padding(vertical = 32.dp),
                             ) {
-                                Divider(
+                                HorizontalDivider(
                                     modifier = Modifier
                                         .weight(1f)
                                 )
@@ -160,7 +159,7 @@ fun MicrophoneSelection(
                                     color = MaterialTheme.colorScheme.tertiary,
                                     textAlign = TextAlign.Center,
                                 )
-                                Divider(
+                                HorizontalDivider(
                                     modifier = Modifier
                                         .weight(1f),
                                 )

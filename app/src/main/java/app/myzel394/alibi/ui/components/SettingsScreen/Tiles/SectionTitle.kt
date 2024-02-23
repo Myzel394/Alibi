@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,8 +20,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DividerTitle(
     modifier: Modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 32.dp),
+        .fillMaxWidth()
+        .padding(vertical = 32.dp),
     title: String,
     description: String,
 ) {
@@ -34,7 +35,7 @@ fun DividerTitle(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier
                     .weight(1f)
                     .align(Alignment.CenterVertically),
@@ -44,7 +45,7 @@ fun DividerTitle(
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onSurface,
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier
                     .weight(1f)
                     .align(Alignment.CenterVertically),

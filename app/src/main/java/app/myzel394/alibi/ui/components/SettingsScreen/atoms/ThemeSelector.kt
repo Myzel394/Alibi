@@ -28,7 +28,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.navOptions
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import kotlinx.coroutines.launch
