@@ -31,7 +31,7 @@ import app.myzel394.alibi.ui.enums.Screen
 
 @Composable
 fun AboutTile(
-    navController: NavController,
+    onNavigateToAboutScreen: () -> Unit,
 ) {
     val label = stringResource(R.string.ui_about_title)
 
@@ -44,7 +44,7 @@ fun AboutTile(
                 contentDescription = label
             }
             .clickable {
-                navController.navigate(Screen.About.route)
+                onNavigateToAboutScreen()
             }
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(16.dp),

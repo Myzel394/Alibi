@@ -66,7 +66,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    navController: NavController,
+    onBackNavigate: () -> Unit,
+    onNavigateToCustomRecordingNotifications: () -> Unit,
+    onNavigateToAboutScreen: () -> Unit,
     audioRecorder: AudioRecorderModel,
     videoRecorder: VideoRecorderModel,
 ) {
@@ -97,7 +99,7 @@ fun SettingsScreen(
                     Text(stringResource(R.string.ui_settings_title))
                 },
                 navigationIcon = {
-                    IconButton(onClick = navController::popBackStack) {
+                    IconButton(onClick = onBackNavigate) {
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = "Back"
@@ -141,7 +143,7 @@ fun SettingsScreen(
             IntervalDurationTile(settings = settings)
             InAppLanguagePicker()
             DeleteRecordingsImmediatelyTile(settings = settings)
-            CustomNotificationTile(navController = navController, settings = settings)
+            CustomNotificationTile(onNavigateToCustomRecordingNotifications, settings = settings)
             EnableAppLockTile(settings = settings)
             SaveFolderTile(
                 settings = settings,
@@ -191,7 +193,7 @@ fun SettingsScreen(
                     ImportExport(snackbarHostState = snackbarHostState)
                 }
             }
-            AboutTile(navController = navController)
+            AboutTile(onNavigateToAboutScreen)
         }
     }
 }

@@ -1,18 +1,5 @@
 package app.myzel394.alibi.ui
 
-import android.content.Context
-import android.hardware.biometrics.BiometricManager.Authenticators.BIOMETRIC_STRONG
-import android.hardware.biometrics.BiometricManager.Authenticators.DEVICE_CREDENTIAL
-import android.hardware.biometrics.BiometricPrompt
-import android.hardware.biometrics.BiometricPrompt.CryptoObject
-import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraManager
-import android.os.Build
-import android.os.CancellationSignal
-import android.widget.Button
-import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.camera.core.CameraX
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -24,28 +11,22 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
-import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.screens.AboutScreen
-import app.myzel394.alibi.ui.screens.RecorderScreen
 import app.myzel394.alibi.ui.screens.CustomRecordingNotificationsScreen
+import app.myzel394.alibi.ui.screens.RecorderScreen
 import app.myzel394.alibi.ui.screens.SettingsScreen
 import app.myzel394.alibi.ui.screens.WelcomeScreen
-import app.myzel394.alibi.ui.utils.CameraInfo
-import app.myzel394.alibi.helpers.AppLockHelper
 
 const val SCALE_IN = 1.25f
 
@@ -79,7 +60,7 @@ fun Navigation(
         startDestination = if (settings.hasSeenOnboarding) Screen.AudioRecorder.route else Screen.Welcome.route,
     ) {
         composable(Screen.Welcome.route) {
-            WelcomeScreen(navController = navController)
+            WelcomeScreen(onNavigateToAudioRecorderScreen = { navController.navigate(Screen.AudioRecorder.route) })
         }
         composable(
             Screen.AudioRecorder.route,
@@ -94,7 +75,9 @@ fun Navigation(
             }
         ) {
             RecorderScreen(
-                navController = navController,
+                onNavigateToSettingsScreen = {
+                    navController.navigate(Screen.Settings.route)
+                },
                 audioRecorder = audioRecorder,
                 videoRecorder = videoRecorder,
                 settings = settings,
@@ -110,7 +93,11 @@ fun Navigation(
             }
         ) {
             SettingsScreen(
-                navController = navController,
+                onBackNavigate = navController::popBackStack,
+                onNavigateToCustomRecordingNotifications = {
+                    navController.navigate(Screen.CustomRecordingNotifications.route)
+                },
+                onNavigateToAboutScreen = { navController.navigate(Screen.About.route) },
                 audioRecorder = audioRecorder,
                 videoRecorder = videoRecorder,
             )
@@ -129,7 +116,7 @@ fun Navigation(
             }
         ) {
             CustomRecordingNotificationsScreen(
-                navController = navController,
+                onBackNavigate = navController::popBackStack
             )
         }
         composable(
@@ -142,7 +129,7 @@ fun Navigation(
             }
         ) {
             AboutScreen(
-                navController = navController,
+                onBackNavigate = navController::popBackStack,
             )
         }
     }

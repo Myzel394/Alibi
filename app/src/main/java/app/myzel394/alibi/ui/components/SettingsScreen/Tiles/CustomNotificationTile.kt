@@ -21,7 +21,7 @@ import app.myzel394.alibi.ui.enums.Screen
 
 @Composable
 fun CustomNotificationTile(
-    navController: NavController,
+    onNavigateToCustomRecordingNotifications: () -> Unit,
     settings: AppSettings,
 ) {
     val dataStore = LocalContext.current.dataStore
@@ -35,7 +35,8 @@ fun CustomNotificationTile(
     SettingsTile(
         firstModifier = Modifier
             .clickable {
-                navController.navigate(Screen.CustomRecordingNotifications.route)
+
+                onNavigateToCustomRecordingNotifications()
             }
             .semantics { contentDescription = label },
         title = stringResource(R.string.ui_settings_option_customNotification_title),
