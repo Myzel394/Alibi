@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Alibi</string>
     <string name="dialog_close_cancel_label">Abbrechen</string>
     <string name="dialog_close_neutral_label">OK</string>
@@ -169,10 +169,13 @@
     <string name="ui_severeError_fileSaverUnavailable_title">Dateimanager nicht gefunden</string>
     <string name="ui_severeError_fileSaverUnavailable_text">Alibi konnte keine Dateimanager App auf Ihrem Telefon finden. Bitte installieren Sie eine Dateimanager App und versuchen Sie es erneut. Wenn diese Nachricht noch erscheint, können Sie in den erweiterten Einstellungen einen benutzerdefinierten Batchordner verwenden. Alibi funktioniert möglicherweise nicht vollständig auf Ihrem Gerät.</string>
     <string name="ui_videoRecorder_state_recording_title">Video aufnehmen</string>
-    <string name="ui_settings_option_saveFolder_openFolder_label">Ordner in Dateien öffnen</string>
+    <string name="ui_settings_option_saveFolder_openFolder_label">Ausgewählten Ordner im Dateimanager öffnen</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_label">Wo werden meine Batches gespeichert?</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_generalExplanation">Um Ihre Batches zu sehen, öffnen Sie die Datei-App, gehen Sie zum internen Speicher und dann finden Sie Ihre Batches in folgenden Ordnern:</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">Die letzten zusammengeführten Aufnahmen werden in diesen Ordnern gespeichert. Jede Aufnahme erstellt einen Unterordner um die kurzen Stapel in (\"%s\" für Audioaufnahmen, \"%s\" für Videoaufnahmen zu speichern). Um die einzelnen Stapel anzeigen zu können, müssen Sie eventuell versteckte Dateien in der Datei-App aktivieren.</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_openFolderExplanation">Tippen Sie auf einen Ordner, um ihn in der Datei-App zu öffnen</string>
     <string name="ui_videoRecorder_action_start_settings_cameraLens_unknown_label">Unbekannt</string>
+    <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">Um Ihre Privatsphäre zu schützen, speichert Alibi seine Batches in einem eigenen privaten und verschlüsselten Speicher. Dieser Speicher ist nur für Alibi zugänglich und kann nicht von anderen Apps oder einem möglichen Eindringling aufgerufen werden. Sobald Sie die Aufnahme gespeichert haben, werden Sie gefragt, wohin Sie die Aufnahme speichern möchten.</string>
+    <string name="ui_rotateDevice_portrait_label">Bitte drehen Sie Ihr Gerät in den Portait-Modus</string>
+    <string name="goBack">Zurück</string>
 </resources>
