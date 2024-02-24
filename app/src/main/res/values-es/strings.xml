@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Alibi</string>
     <string name="dialog_close_cancel_label">Cancelar</string>
     <string name="dialog_close_neutral_label">Aceptar</string>
@@ -169,10 +169,13 @@
     <string name="ui_severeError_fileSaverUnavailable_title">File Manager app not found</string>
     <string name="ui_severeError_fileSaverUnavailable_text">Alibi couldn\'t find a file manager app on your phone. Please install a file manager app and try again. If this message still appears, you can try using a custom batches folder in the advanced settings section. Alibi may not fully work on your device.</string>
     <string name="ui_videoRecorder_state_recording_title">Recording Video</string>
-    <string name="ui_settings_option_saveFolder_openFolder_label">Open Folder in Files</string>
+    <string name="ui_settings_option_saveFolder_openFolder_label">Open selected folder in file manager</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_label">Where are my batches stored?</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_generalExplanation">To view your batches, open the Files app, go to the internal storage and then you will find your batches in following folders:</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">The final merged recordings will be saved in those folders. Each recording creates a subfolder to store the short batches in (\"%s\" for audio recordings, \"%s\" for video recordings). To view the individual batches, you may need to enable hidden files in the Files app.</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_openFolderExplanation">Tap on a folder to open it in the Files app</string>
     <string name="ui_videoRecorder_action_start_settings_cameraLens_unknown_label">Unknown</string>
+    <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">To protect your privacy, Alibi stores its batches into its own private, encrypted storage. This storage is only accessible by Alibi and can\'t be accessed by other apps or by a possible intruder. Once you save the recording, you will be asked where you want to save the recording to.</string>
+    <string name="ui_rotateDevice_portrait_label">Please rotate your device to portait mode</string>
+    <string name="goBack">Back</string>
 </resources>
