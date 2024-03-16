@@ -129,7 +129,7 @@ fun RecorderEventsHandler(
         }
     }
 
-    suspend fun saveRecording(recorder: RecorderModel): Thread {
+    suspend fun saveRecording(recorder: RecorderModel, cleanupOldFiles: Boolean = false): Thread {
         isProcessing = true
 
         // Give the user some time to see the processing dialog
@@ -217,7 +217,7 @@ fun RecorderEventsHandler(
                 } catch (error: Exception) {
                     Log.getStackTraceString(error)
                 } finally {
-                    recorder.recorderService?.unlockFiles()
+                    recorder.recorderService?.unlockFiles(cleanupOldFiles)
                     isProcessing = false
                 }
             }
@@ -226,14 +226,14 @@ fun RecorderEventsHandler(
 
     // Register audio recorder events
     DisposableEffect(key1 = audioRecorder, key2 = settings) {
-        audioRecorder.onRecordingSave = {
+        audioRecorder.onRecordingSave = { cleanupOldFiles ->
             // We create our own coroutine because we show our own dialog and we want to
             // keep saving until it's finished.
             // So it's smarter to take things into our own hands and use our local coroutine,
             // instead of hoping that the coroutine from where this will be called will be alive
             // until the end of the saving process
             scope.launch {
-                saveRecording(audioRecorder as RecorderModel).join()
+                saveRecording(audioRecorder as RecorderModel, cleanupOldFiles).join()
             }
         }
         audioRecorder.onRecordingStart = {
@@ -269,14 +269,14 @@ fun RecorderEventsHandler(
 
     // Register video recorder events
     DisposableEffect(key1 = videoRecorder, key2 = settings) {
-        videoRecorder.onRecordingSave = {
+        videoRecorder.onRecordingSave = { cleanupOldFiles ->
             // We create our own coroutine because we show our own dialog and we want to
             // keep saving until it's finished.
             // So it's smarter to take things into our own hands and use our local coroutine,
             // instead of hoping that the coroutine from where this will be called will be alive
             // until the end of the saving process
             scope.launch {
-                saveRecording(videoRecorder as RecorderModel).join()
+                saveRecording(videoRecorder as RecorderModel, cleanupOldFiles).join()
             }
         }
         videoRecorder.onRecordingStart = {

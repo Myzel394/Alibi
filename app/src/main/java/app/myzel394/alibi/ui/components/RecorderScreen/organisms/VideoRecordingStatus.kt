@@ -219,7 +219,7 @@ fun _PrimitiveControls(videoRecorder: VideoRecorderModel) {
                 videoRecorder.pauseRecording()
             }
         },
-        onSave = {
+        onSaveAndStop = {
             scope.launch {
                 videoRecorder.stopRecording(context)
 
@@ -227,12 +227,15 @@ fun _PrimitiveControls(videoRecorder: VideoRecorderModel) {
                     it.saveLastRecording(videoRecorder as RecorderModel)
                 }
 
-                videoRecorder.onRecordingSave().join()
+                videoRecorder.onRecordingSave(false).join()
 
                 runCatching {
                     videoRecorder.destroyService(context)
                 }
             }
+        },
+        onSaveCurrent = {
+            //TODO
         }
     )
 }

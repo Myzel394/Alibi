@@ -144,7 +144,7 @@ fun _PrimitiveControls(audioRecorder: AudioRecorderModel) {
                 audioRecorder.pauseRecording()
             }
         },
-        onSave = {
+        onSaveAndStop = {
             scope.launch {
                 audioRecorder.stopRecording(context)
 
@@ -152,12 +152,13 @@ fun _PrimitiveControls(audioRecorder: AudioRecorderModel) {
                     it.saveLastRecording(audioRecorder as RecorderModel)
                 }
 
-                audioRecorder.onRecordingSave()
+                audioRecorder.onRecordingSave(false)
 
                 runCatching {
                     audioRecorder.destroyService(context)
                 }
             }
-        }
+        },
+        onSaveCurrent = {},
     )
 }

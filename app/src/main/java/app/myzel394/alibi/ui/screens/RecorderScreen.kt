@@ -120,10 +120,10 @@ fun RecorderScreen(
                         scope.launch {
                             when (settings.lastRecording!!.type) {
                                 RecordingInformation.Type.AUDIO ->
-                                    audioRecorder.onRecordingSave()
+                                    audioRecorder.onRecordingSave(false)
 
                                 RecordingInformation.Type.VIDEO ->
-                                    videoRecorder.onRecordingSave()
+                                    videoRecorder.onRecordingSave(false)
                             }
                         }
                     },
