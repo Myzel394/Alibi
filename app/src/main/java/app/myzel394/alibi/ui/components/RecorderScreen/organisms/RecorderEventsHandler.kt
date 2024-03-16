@@ -30,7 +30,6 @@ import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.BaseRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -224,26 +223,15 @@ fun RecorderEventsHandler(
 
     // Register audio recorder events
     DisposableEffect(key1 = audioRecorder, key2 = settings) {
-        audioRecorder.onRecordingSave = { justSave ->
-            val completer = CompletableDeferred<Unit>()
-
+        audioRecorder.onRecordingSave = {
+            // We create our own coroutine because we show our own dialog and we want to
+            // keep saving until it's finished.
+            // So it's smarter to take things into our own hands and use our local coroutine,
+            // instead of hoping that the coroutine from where this will be called will be alive
+            // until the end of the saving process
             scope.launch {
-                if (justSave) {
-                    saveRecording(audioRecorder as RecorderModel)
-                } else {
-                    audioRecorder.stopRecording(context)
-
-                    saveAsLastRecording(audioRecorder as RecorderModel)
-
-                    saveRecording(audioRecorder)
-
-                    audioRecorder.destroyService(context)
-                }
-
-                completer.complete(Unit)
+                saveRecording(audioRecorder as RecorderModel)
             }
-
-            completer
         }
         audioRecorder.onRecordingStart = {
             snackbarHostState.currentSnackbarData?.dismiss()
@@ -278,26 +266,15 @@ fun RecorderEventsHandler(
 
     // Register video recorder events
     DisposableEffect(key1 = videoRecorder, key2 = settings) {
-        videoRecorder.onRecordingSave = { justSave ->
-            val completer = CompletableDeferred<Unit>()
-
+        videoRecorder.onRecordingSave = {
+            // We create our own coroutine because we show our own dialog and we want to
+            // keep saving until it's finished.
+            // So it's smarter to take things into our own hands and use our local coroutine,
+            // instead of hoping that the coroutine from where this will be called will be alive
+            // until the end of the saving process
             scope.launch {
-                if (justSave) {
-                    saveRecording(videoRecorder as RecorderModel)
-                } else {
-                    videoRecorder.stopRecording(context)
-
-                    saveAsLastRecording(videoRecorder as RecorderModel)
-
-                    saveRecording(videoRecorder)
-
-                    videoRecorder.destroyService(context)
-                }
-
-                completer.complete(Unit)
+                saveRecording(videoRecorder as RecorderModel)
             }
-
-            completer
         }
         videoRecorder.onRecordingStart = {
             snackbarHostState.currentSnackbarData?.dismiss()

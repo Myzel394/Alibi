@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
+import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.TorchStatus
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingControl
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingStatus
@@ -189,6 +190,7 @@ fun _VideoRecordingStatus(videoRecorder: VideoRecorderModel) {
 @Composable
 fun _PrimitiveControls(videoRecorder: VideoRecorderModel) {
     val context = LocalContext.current
+    val dataStore = context.dataStore
     val scope = rememberCoroutineScope()
 
     RecordingControl(
@@ -218,7 +220,19 @@ fun _PrimitiveControls(videoRecorder: VideoRecorderModel) {
             }
         },
         onSave = {
-            videoRecorder.onRecordingSave(false)
+            scope.launch {
+                videoRecorder.stopRecording(context)
+
+                dataStore.updateData {
+                    it.saveLastRecording(videoRecorder as RecorderModel)
+                }
+
+                videoRecorder.onRecordingSave()
+
+                runCatching {
+                    videoRecorder.destroyService(context)
+                }
+            }
         }
     )
 }
