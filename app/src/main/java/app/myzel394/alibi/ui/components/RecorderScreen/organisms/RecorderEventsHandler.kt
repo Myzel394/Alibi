@@ -1,6 +1,5 @@
 package app.myzel394.alibi.ui.components.RecorderScreen.organisms
 
-import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.compose.material3.SnackbarDuration
@@ -9,8 +8,6 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,6 +30,7 @@ import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.BaseRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -227,6 +225,8 @@ fun RecorderEventsHandler(
     // Register audio recorder events
     DisposableEffect(key1 = audioRecorder, key2 = settings) {
         audioRecorder.onRecordingSave = { justSave ->
+            val completer = CompletableDeferred<Unit>()
+
             scope.launch {
                 if (justSave) {
                     saveRecording(audioRecorder as RecorderModel)
@@ -239,7 +239,11 @@ fun RecorderEventsHandler(
 
                     audioRecorder.destroyService(context)
                 }
+
+                completer.complete(Unit)
             }
+
+            completer
         }
         audioRecorder.onRecordingStart = {
             snackbarHostState.currentSnackbarData?.dismiss()
@@ -265,7 +269,9 @@ fun RecorderEventsHandler(
         }
 
         onDispose {
-            audioRecorder.onRecordingSave = {}
+            audioRecorder.onRecordingSave = {
+                throw NotImplementedError("onRecordingSave should not be called now")
+            }
             audioRecorder.onError = {}
         }
     }
@@ -273,6 +279,8 @@ fun RecorderEventsHandler(
     // Register video recorder events
     DisposableEffect(key1 = videoRecorder, key2 = settings) {
         videoRecorder.onRecordingSave = { justSave ->
+            val completer = CompletableDeferred<Unit>()
+
             scope.launch {
                 if (justSave) {
                     saveRecording(videoRecorder as RecorderModel)
@@ -285,7 +293,11 @@ fun RecorderEventsHandler(
 
                     videoRecorder.destroyService(context)
                 }
+
+                completer.complete(Unit)
             }
+
+            completer
         }
         videoRecorder.onRecordingStart = {
             snackbarHostState.currentSnackbarData?.dismiss()
@@ -311,7 +323,9 @@ fun RecorderEventsHandler(
         }
 
         onDispose {
-            videoRecorder.onRecordingSave = {}
+            videoRecorder.onRecordingSave = {
+                throw NotImplementedError("onRecordingSave should not be called now")
+            }
             videoRecorder.onError = {}
         }
     }
