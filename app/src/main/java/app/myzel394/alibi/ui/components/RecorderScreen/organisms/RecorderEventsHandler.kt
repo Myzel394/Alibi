@@ -129,15 +129,17 @@ fun RecorderEventsHandler(
         }
     }
 
-    suspend fun saveRecording(recorder: RecorderModel) {
+    suspend fun saveRecording(recorder: RecorderModel): Thread {
         isProcessing = true
 
         // Give the user some time to see the processing dialog
         delay(100)
 
-        thread {
+        return thread {
             runBlocking {
                 try {
+                    recorder.recorderService?.lockFiles()
+
                     val recording =
                         // When new recording created
                         recorder.recorderService?.getRecordingInformation()
@@ -215,6 +217,7 @@ fun RecorderEventsHandler(
                 } catch (error: Exception) {
                     Log.getStackTraceString(error)
                 } finally {
+                    recorder.recorderService?.unlockFiles()
                     isProcessing = false
                 }
             }
@@ -230,7 +233,7 @@ fun RecorderEventsHandler(
             // instead of hoping that the coroutine from where this will be called will be alive
             // until the end of the saving process
             scope.launch {
-                saveRecording(audioRecorder as RecorderModel)
+                saveRecording(audioRecorder as RecorderModel).join()
             }
         }
         audioRecorder.onRecordingStart = {
@@ -273,7 +276,7 @@ fun RecorderEventsHandler(
             // instead of hoping that the coroutine from where this will be called will be alive
             // until the end of the saving process
             scope.launch {
-                saveRecording(videoRecorder as RecorderModel)
+                saveRecording(videoRecorder as RecorderModel).join()
             }
         }
         videoRecorder.onRecordingStart = {

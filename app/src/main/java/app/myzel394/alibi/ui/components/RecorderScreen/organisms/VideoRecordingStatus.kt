@@ -227,7 +227,7 @@ fun _PrimitiveControls(videoRecorder: VideoRecorderModel) {
                     it.saveLastRecording(videoRecorder as RecorderModel)
                 }
 
-                videoRecorder.onRecordingSave()
+                videoRecorder.onRecordingSave().join()
 
                 runCatching {
                     videoRecorder.destroyService(context)
