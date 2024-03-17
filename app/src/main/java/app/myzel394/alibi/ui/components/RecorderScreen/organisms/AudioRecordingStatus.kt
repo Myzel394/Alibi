@@ -152,13 +152,19 @@ fun _PrimitiveControls(audioRecorder: AudioRecorderModel) {
                     it.saveLastRecording(audioRecorder as RecorderModel)
                 }
 
-                audioRecorder.onRecordingSave(false)
+                audioRecorder.onRecordingSave(false).join()
 
                 runCatching {
                     audioRecorder.destroyService(context)
                 }
             }
         },
-        onSaveCurrent = {},
+        onSaveCurrent = {
+            scope.launch {
+                audioRecorder.recorderService!!.startNewCycle()
+
+                audioRecorder.onRecordingSave(true).join()
+            }
+        },
     )
 }

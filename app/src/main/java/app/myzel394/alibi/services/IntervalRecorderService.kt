@@ -35,7 +35,7 @@ abstract class IntervalRecorderService<I, B : BatchesFolder> :
     // Unlocks and deletes the files that were locked using `lockFiles`.
     fun unlockFiles(cleanupFiles: Boolean = false) {
         if (cleanupFiles) {
-            batchesFolder.deleteRecordings(0..lockedIndex!!)
+            batchesFolder.deleteRecordings(0..<lockedIndex!!)
         }
 
         lockedIndex = null

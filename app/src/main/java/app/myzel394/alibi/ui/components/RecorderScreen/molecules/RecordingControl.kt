@@ -108,9 +108,7 @@ fun RecordingControl(
                 ) {
                     SaveButton(
                         onSave = onSaveAndStop,
-                        onLongClick = {
-                            println("onLongClick")
-                        },
+                        onLongClick = onSaveCurrent,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -176,9 +174,7 @@ fun RecordingControl(
                 ) {
                     SaveButton(
                         onSave = onSaveAndStop,
-                        onLongClick = {
-                            println("onLongClick")
-                        },
+                        onLongClick = onSaveCurrent,
                     )
                 }
             }
