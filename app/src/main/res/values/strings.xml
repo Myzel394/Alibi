@@ -191,4 +191,6 @@
     <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">To protect your privacy, Alibi stores its batches into its own private, encrypted storage. This storage is only accessible by Alibi and can\'t be accessed by other apps or by a possible intruder. Once you save the recording, you will be asked where you want to save the recording to.</string>
     <string name="ui_rotateDevice_portrait_label">Please rotate your device to portait mode</string>
     <string name="goBack">Back</string>
+    <string name="ui_recorder_action_saveCurrent">Save now?</string>
+    <string name="ui_recorder_action_saveCurrent_explanation">You can save the current ongoing recording by pressing and holding down on the save button. The recording will continue in the background.</string>
 </resources>

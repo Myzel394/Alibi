@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RealtimeAudioVisualizer
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.SaveCurrentNowModal
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.MicrophoneStatus
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingControl
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingStatus
@@ -123,6 +124,25 @@ fun _PrimitiveControls(audioRecorder: AudioRecorderModel) {
     val dataStore = context.dataStore
     val scope = rememberCoroutineScope()
 
+    var showConfirmSaveNow by remember { mutableStateOf(false) }
+
+    if (showConfirmSaveNow) {
+        SaveCurrentNowModal(
+            onDismiss = {
+                showConfirmSaveNow = false
+            },
+            onConfirm = {
+                showConfirmSaveNow = false
+
+                scope.launch {
+                    audioRecorder.recorderService!!.startNewCycle()
+
+                    audioRecorder.onRecordingSave(false).join()
+                }
+            },
+        )
+    }
+
     RecordingControl(
         isPaused = audioRecorder.isPaused,
         recordingTime = audioRecorder.recordingTime,
@@ -160,11 +180,7 @@ fun _PrimitiveControls(audioRecorder: AudioRecorderModel) {
             }
         },
         onSaveCurrent = {
-            scope.launch {
-                audioRecorder.recorderService!!.startNewCycle()
-
-                audioRecorder.onRecordingSave(false).join()
-            }
+            showConfirmSaveNow = true
         },
     )
 }
