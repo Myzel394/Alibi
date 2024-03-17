@@ -163,7 +163,7 @@ fun _PrimitiveControls(audioRecorder: AudioRecorderModel) {
             scope.launch {
                 audioRecorder.recorderService!!.startNewCycle()
 
-                audioRecorder.onRecordingSave(true).join()
+                audioRecorder.onRecordingSave(false).join()
             }
         },
     )

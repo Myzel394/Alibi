@@ -138,7 +138,9 @@ fun RecorderEventsHandler(
         return thread {
             runBlocking {
                 try {
-                    recorder.recorderService?.lockFiles()
+                    if (recorder.isCurrentlyActivelyRecording) {
+                        recorder.recorderService?.lockFiles()
+                    }
 
                     val recording =
                         // When new recording created
@@ -217,7 +219,9 @@ fun RecorderEventsHandler(
                 } catch (error: Exception) {
                     Log.getStackTraceString(error)
                 } finally {
-                    recorder.recorderService?.unlockFiles(cleanupOldFiles)
+                    if (recorder.isCurrentlyActivelyRecording) {
+                        recorder.recorderService?.unlockFiles(cleanupOldFiles)
+                    }
                     isProcessing = false
                 }
             }

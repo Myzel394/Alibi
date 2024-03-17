@@ -32,6 +32,9 @@ abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderServi
     open val isInRecording: Boolean
         get() = recorderService != null
 
+    open val isCurrentlyActivelyRecording
+        get() = recorderState === RecorderState.RECORDING
+
     val isPaused: Boolean
         get() = recorderState === RecorderState.PAUSED
 
