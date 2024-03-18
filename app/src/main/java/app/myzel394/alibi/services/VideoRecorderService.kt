@@ -50,7 +50,7 @@ class VideoRecorderService :
 
     // Used to listen and check if the camera is available
     private var _cameraAvailableListener = CompletableDeferred<Unit>()
-    private var _videoFinalizerListener = CompletableDeferred<Unit>()
+    private lateinit var _videoFinalizerListener: CompletableDeferred<Unit>;
 
     // Absolute last completer that can be awaited to ensure that the camera is closed
     private var _cameraCloserListener = CompletableDeferred<Unit>()
@@ -129,8 +129,10 @@ class VideoRecorderService :
             stopActiveRecording()
             val newRecording = prepareVideoRecording()
 
+            _videoFinalizerListener = CompletableDeferred()
+
             activeRecording = newRecording.start(ContextCompat.getMainExecutor(this)) { event ->
-                if (event is VideoRecordEvent.Finalize && this@VideoRecorderService.state == RecorderState.STOPPED) {
+                if (event is VideoRecordEvent.Finalize && this@VideoRecorderService.state == RecorderState.STOPPED || this@VideoRecorderService.state == RecorderState.PAUSED) {
                     _videoFinalizerListener.complete(Unit)
                 }
             }
