@@ -11,6 +11,7 @@ import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
+import app.myzel394.alibi.ui.components.RecorderScreen.organisms.RecorderModel
 import app.myzel394.alibi.ui.utils.PermissionHelper
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -100,6 +101,16 @@ data class AppSettings(
 
     fun setAppLockSettings(appLockSettings: AppLockSettings?): AppSettings {
         return copy(appLockSettings = appLockSettings)
+    }
+
+    fun saveLastRecording(recorder: RecorderModel): AppSettings {
+        return if (deleteRecordingsImmediately) {
+            this
+        } else {
+            setLastRecording(
+                recorder.recorderService!!.getRecordingInformation()
+            )
+        }
     }
 
     // If the object is present, biometric authentication is enabled.

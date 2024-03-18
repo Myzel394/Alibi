@@ -139,7 +139,7 @@ class VideoRecorderService :
         if (_cameraAvailableListener.isCompleted) {
             action()
         } else {
-            // Race condition of `startNewCycle` being called before `invpkeOnCompletion`
+            // Race condition of `startNewCycle` being called before `invokeOnCompletion`
             // has been called can be ignored, as the camera usually opens within 5 seconds
             // and the interval can't be set shorter than 10 seconds.
             _cameraAvailableListener.invokeOnCompletion {
