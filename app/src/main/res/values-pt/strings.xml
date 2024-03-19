@@ -14,22 +14,22 @@
     <string name="ui_permissions_request_title">Permission denied</string>
     <string name="ui_permissions_request">Please grant the permission to continue</string>
     <string name="ui_permissions_permanentlyDenied_message">You will be redirected to the app settings to grant the permission there.</string>
-    <string name="ui_audioRecorder_action_start_label">Start Recording</string>
+    <string name="ui_audioRecorder_action_start_label">Start Audio Recording</string>
     <string name="ui_audioRecorder_state_recording_title">Recording Audio</string>
     <string name="ui_recorder_action_saveOldRecording_label">Save Recording from <xliff:g name="date">%s</xliff:g></string>
     <string name="ui_recorder_action_delete_label">Delete</string>
     <string name="ui_recorder_action_delete_confirm_title">Delete Recording?</string>
     <string name="ui_recorder_action_delete_confirm_message">Are you sure you want to delete this recording?</string>
-    <string name="ui_recorder_action_pause_label">Pause Recording</string>
-    <string name="ui_recorder_action_resume_label">Resume Recording</string>
-    <string name="ui_recorder_action_save_label">Save Recording</string>
+    <string name="ui_recorder_action_pause_label">Pause</string>
+    <string name="ui_recorder_action_resume_label">Resume</string>
+    <string name="ui_recorder_action_save_label">Save</string>
     <string name="ui_recorder_action_save_success">Recording has been saved successfully!</string>
     <string name="ui_recorder_action_save_openFolder">Open</string>
     <string name="ui_recorder_action_start_description_1">Alibi will continue recording in the background and store the last\u0020</string>
     <string name="ui_recorder_action_start_description_2"><xliff:g name="durationInMinutes">%s</xliff:g> minutes</string>
     <string name="ui_recorder_action_start_description_3">\u0020at your request</string>
     <string name="ui_recorder_action_save_processing_dialog_title">Processing</string>
-    <string name="ui_recorder_action_save_processing_dialog_description">Processing Audio, do not close Alibi! You will be automatically prompted to save the file once it\'s ready</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Processing your recording, do not close Alibi! You will automatically be prompted to save the file once it\'s ready</string>
     <string name="ui_recorder_state_recording_description">Alibi keeps recording in the background</string>
     <string name="ui_recorder_state_recording_fake_weather_title">Current Weather</string>
     <string name="ui_recorder_state_recording_fake_weather_description">14° with light chance of rain</string>
@@ -40,7 +40,7 @@
     <string name="ui_recorder_state_recording_fake_vpn_title">Connected to VPN</string>
     <string name="ui_recorder_state_recording_fake_vpn_description">Connection Secured</string>
     <string name="ui_welcome_explanation_title">Welcome to Alibi!</string>
-    <string name="ui_welcome_explanation_message">Alibi is like a dashcam for your phone. It allows you to record your audio continuously and save the last 30 minutes when you need it.</string>
+    <string name="ui_welcome_explanation_message">Alibi is like a dashcam for your phone. It allows you to record audio and video continuously and save the last 30 minutes at your request.</string>
     <string name="ui_welcome_responsibility_title">You are solely responsible for the use of this app</string>
     <string name="ui_welcome_responsibility_message">Alibi does not take any responsibility for the use of this app. You are solely responsible. Use it at your own risk.</string>
     <string name="ui_welcome_start_label">Start Alibi</string>
@@ -51,7 +51,7 @@
     <string name="ui_settings_option_maxDuration_title">Max duration</string>
     <string name="ui_settings_option_maxDuration_description">Set the maximum duration of the recording</string>
     <string name="ui_settings_option_intervalDuration_title">Batch duration</string>
-    <string name="ui_settings_option_intervalDuration_description">Record a single batch for this duration. Alibi records multiple batches and deletes the oldest one. When exporting the audio, all batches will be merged together</string>
+    <string name="ui_settings_option_intervalDuration_description">Record a single batch for this duration. Alibi records multiple batches and deletes the oldest one. When exporting the recording, all batches will be merged together</string>
     <string name="ui_settings_option_bitrate_title">Bitrate</string>
     <string name="ui_settings_option_bitrate_description">A higher bitrate means better quality but also larger file size</string>
     <string name="ui_settings_option_bitrate_explanation">Set the bitrate for the audio recording</string>
@@ -63,8 +63,8 @@
     <string name="ui_settings_option_encoder_extra_outputFormatChanged">Output Format has been changed because the current one was incompatible with this encoder</string>
     <string name="ui_settings_value_auto_label">Auto</string>
     <string name="ui_recorder_state_paused_title">Recording paused</string>
-    <string name="ui_recorder_state_paused_description">Audio Recording has been paused</string>
-    <string name="ui_recorder_error_recording_title">An error occured</string>
+    <string name="ui_recorder_state_paused_description">Alibi is paused</string>
+    <string name="ui_recorder_error_recording_title">An error occurred</string>
     <string name="ui_recorder_error_recording_description">Alibi encountered an error during recording. Would you like to try saving the recording?</string>
     <string name="ui_settings_language_title">Language</string>
     <string name="ui_settings_language_update_label">Change</string>
@@ -178,4 +178,6 @@
     <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">To protect your privacy, Alibi stores its batches into its own private, encrypted storage. This storage is only accessible by Alibi and can\'t be accessed by other apps or by a possible intruder. Once you save the recording, you will be asked where you want to save the recording to.</string>
     <string name="ui_rotateDevice_portrait_label">Please rotate your device to portait mode</string>
     <string name="goBack">Back</string>
+    <string name="ui_recorder_action_saveCurrent">Save now?</string>
+    <string name="ui_recorder_action_saveCurrent_explanation">You can save the current ongoing recording by pressing and holding down on the save button. The recording will continue in the background.</string>
 </resources>
