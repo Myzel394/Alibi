@@ -35,7 +35,8 @@ fun RecordingControl(
     recordingTime: Long,
     onDelete: () -> Unit,
     onPauseResume: () -> Unit,
-    onSave: () -> Unit,
+    onSaveAndStop: () -> Unit,
+    onSaveCurrent: () -> Unit,
 ) {
     val animateIn = rememberInitialRecordingAnimation(recordingTime)
 
@@ -106,7 +107,8 @@ fun RecordingControl(
                     contentAlignment = Alignment.Center,
                 ) {
                     SaveButton(
-                        onSave = onSave,
+                        onSave = onSaveAndStop,
+                        onLongClick = onSaveCurrent,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -170,7 +172,10 @@ fun RecordingControl(
                         .alpha(saveButtonAlpha),
                     contentAlignment = Alignment.Center,
                 ) {
-                    SaveButton(onSave = onSave)
+                    SaveButton(
+                        onSave = onSaveAndStop,
+                        onLongClick = onSaveCurrent,
+                    )
                 }
             }
         }

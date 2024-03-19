@@ -3,28 +3,26 @@ package app.myzel394.alibi.helpers
 import android.Manifest
 import android.content.ContentUris
 import android.content.ContentValues
-import app.myzel394.alibi.ui.MEDIA_RECORDINGS_PREFIX
-
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.MediaStore.Video.Media
-import androidx.documentfile.provider.DocumentFile
-import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import com.arthenica.ffmpegkit.FFmpegKitConfig
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
+import app.myzel394.alibi.ui.MEDIA_RECORDINGS_PREFIX
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.utils.PermissionHelper
-import com.arthenica.ffmpegkit.FFprobeKit
+import com.arthenica.ffmpegkit.FFmpegKitConfig
 import kotlinx.coroutines.CompletableDeferred
+import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.reflect.KFunction4
 
 abstract class BatchesFolder(
@@ -196,7 +194,6 @@ abstract class BatchesFolder(
     ).apply {
         createNewFile()
     }
-
 
     fun checkIfOutputAlreadyExists(
         date: LocalDateTime,
@@ -388,12 +385,12 @@ abstract class BatchesFolder(
         }
     }
 
-    fun deleteOldRecordings(earliestCounter: Long) {
+    fun deleteRecordings(range: LongRange) {
         when (type) {
             BatchType.INTERNAL -> getInternalFolder().listFiles()?.forEach {
                 val fileCounter = it.nameWithoutExtension.toIntOrNull() ?: return@forEach
 
-                if (fileCounter < earliestCounter) {
+                if (fileCounter in range) {
                     it.delete()
                 }
             }
@@ -401,7 +398,7 @@ abstract class BatchesFolder(
             BatchType.CUSTOM -> getCustomDefinedFolder().listFiles().forEach {
                 val fileCounter = it.name?.substringBeforeLast(".")?.toIntOrNull() ?: return@forEach
 
-                if (fileCounter < earliestCounter) {
+                if (fileCounter in range) {
                     it.delete()
                 }
             }
@@ -411,7 +408,7 @@ abstract class BatchesFolder(
                     val deletableNames = mutableListOf<String>()
 
                     queryMediaContent { rawName, counter, _, _ ->
-                        if (counter < earliestCounter) {
+                        if (counter in range) {
                             deletableNames.add(rawName)
                         }
                     }
@@ -428,7 +425,7 @@ abstract class BatchesFolder(
                             it.nameWithoutExtension.substring(mediaPrefix.length).toIntOrNull()
                                 ?: return@forEach
 
-                        if (fileCounter < earliestCounter) {
+                        if (fileCounter in range) {
                             it.delete()
                         }
                     }

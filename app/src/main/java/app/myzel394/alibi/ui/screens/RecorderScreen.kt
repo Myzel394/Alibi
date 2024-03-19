@@ -16,22 +16,26 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
-import app.myzel394.alibi.ui.components.RecorderScreen.organisms.AudioRecordingStatus
-import app.myzel394.alibi.ui.components.RecorderScreen.organisms.StartRecording
-import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
+import app.myzel394.alibi.ui.components.RecorderScreen.organisms.AudioRecordingStatus
 import app.myzel394.alibi.ui.components.RecorderScreen.organisms.RecorderEventsHandler
+import app.myzel394.alibi.ui.components.RecorderScreen.organisms.StartRecording
 import app.myzel394.alibi.ui.components.RecorderScreen.organisms.VideoRecordingStatus
 import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,6 +47,7 @@ fun RecorderScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     RecorderEventsHandler(
         settings = settings,
@@ -112,12 +117,14 @@ fun RecorderScreen(
                     videoRecorder = videoRecorder,
                     appSettings = appSettings,
                     onSaveLastRecording = {
-                        when (settings.lastRecording!!.type) {
-                            RecordingInformation.Type.AUDIO ->
-                                audioRecorder.onRecordingSave(true)
+                        scope.launch {
+                            when (settings.lastRecording!!.type) {
+                                RecordingInformation.Type.AUDIO ->
+                                    audioRecorder.onRecordingSave(false)
 
-                            RecordingInformation.Type.VIDEO ->
-                                videoRecorder.onRecordingSave(true)
+                                RecordingInformation.Type.VIDEO ->
+                                    videoRecorder.onRecordingSave(false)
+                            }
                         }
                     },
                     showAudioRecorder = topBarVisible,

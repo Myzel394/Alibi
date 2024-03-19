@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -32,6 +33,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
+import app.myzel394.alibi.dataStore
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.SaveCurrentNowModal
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.TorchStatus
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingControl
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingStatus
@@ -189,7 +192,27 @@ fun _VideoRecordingStatus(videoRecorder: VideoRecorderModel) {
 @Composable
 fun _PrimitiveControls(videoRecorder: VideoRecorderModel) {
     val context = LocalContext.current
+    val dataStore = context.dataStore
     val scope = rememberCoroutineScope()
+
+    var showConfirmSaveNow by remember { mutableStateOf(false) }
+
+    if (showConfirmSaveNow) {
+        SaveCurrentNowModal(
+            onDismiss = {
+                showConfirmSaveNow = false
+            },
+            onConfirm = {
+                showConfirmSaveNow = false
+
+                scope.launch {
+                    videoRecorder.recorderService!!.startNewCycle()
+
+                    videoRecorder.onRecordingSave(false).join()
+                }
+            },
+        )
+    }
 
     RecordingControl(
         orientation = Configuration.ORIENTATION_PORTRAIT,
@@ -217,8 +240,23 @@ fun _PrimitiveControls(videoRecorder: VideoRecorderModel) {
                 videoRecorder.pauseRecording()
             }
         },
-        onSave = {
-            videoRecorder.onRecordingSave(false)
+        onSaveAndStop = {
+            scope.launch {
+                videoRecorder.stopRecording(context)
+
+                dataStore.updateData {
+                    it.saveLastRecording(videoRecorder as RecorderModel)
+                }
+
+                videoRecorder.onRecordingSave(false).join()
+
+                runCatching {
+                    videoRecorder.destroyService(context)
+                }
+            }
+        },
+        onSaveCurrent = {
+            showConfirmSaveNow = true
         }
     )
 }
