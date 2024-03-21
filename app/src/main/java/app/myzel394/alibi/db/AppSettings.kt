@@ -31,7 +31,7 @@ data class AppSettings(
 
     /// Recording information
     // 30 minutes
-    val maxDuration: Long = 30 * 60 * 1000L,
+    val maxDuration: Long = 15 * 60 * 1000L,
     // 60 seconds
     val intervalDuration: Long = 60 * 1000L,
 

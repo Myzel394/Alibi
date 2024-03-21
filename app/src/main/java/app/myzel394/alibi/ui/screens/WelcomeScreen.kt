@@ -13,11 +13,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
 import app.myzel394.alibi.dataStore
-import app.myzel394.alibi.ui.components.WelcomeScreen.atoms.ExplanationPage
-import app.myzel394.alibi.ui.components.WelcomeScreen.atoms.ResponsibilityPage
-import app.myzel394.alibi.ui.enums.Screen
+import app.myzel394.alibi.ui.components.WelcomeScreen.pages.ExplanationPage
+import app.myzel394.alibi.ui.components.WelcomeScreen.pages.ResponsibilityPage
+import app.myzel394.alibi.ui.components.WelcomeScreen.pages.TimeSettingsPage
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -35,31 +34,44 @@ fun WelcomeScreen(
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f,
-        pageCount = {2}
+        pageCount = { 4 }
     )
 
-    Scaffold() {padding ->
+    fun finishTutorial() {
+        scope.launch {
+            dataStore.updateData {
+                settings.setHasSeenOnboarding(true)
+            }
+            onNavigateToAudioRecorderScreen()
+        }
+    }
+
+    Scaffold() { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            HorizontalPager(state = pagerState) {position ->
+            HorizontalPager(state = pagerState) { position ->
                 when (position) {
                     0 -> ExplanationPage(
                         onContinue = {
                             scope.launch {
-                                pagerState.animateScrollToPage(2)
+                                pagerState.animateScrollToPage(1)
                             }
                         }
                     )
+
                     1 -> ResponsibilityPage {
                         scope.launch {
-                            dataStore.updateData {
-                                settings.setHasSeenOnboarding(true)
-                            }
-                            onNavigateToAudioRecorderScreen()
+                            pagerState.animateScrollToPage(2)
+                        }
+                    }
+
+                    2 -> TimeSettingsPage {
+                        scope.launch {
+                            pagerState.animateScrollToPage(3)
                         }
                     }
                 }

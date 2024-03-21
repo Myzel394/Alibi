@@ -195,4 +195,12 @@
     <string name="ui_recorder_action_saveCurrent_explanation">You can save the current ongoing recording by pressing and holding down on the save button. The recording will continue in the background.</string>
     <string name="ui_recorder_lowOnStorage_hint">You are low on storage. Alibi may not function properly. Please free up some space.</string>
     <string name="ui_recorder_lowOnStorage_hintANDswitchSaveFolder">You are low on storage. Alibi may not function properly. Please free up some space. Alternatively, change the batches folder to a different location in the settings.</string>
+    <string name="ui_welcome_timeSettings_title">How long should Alibi remember?</string>
+    <string name="ui_welcome_timeSettings_message">Alibi will continuously record and delete old recordings to make space for new ones. You decide how long Alibi should remember the past.</string>
+    <string name="ui_welcome_timeSettings_values_5min">5 Minutes</string>
+    <string name="ui_welcome_timeSettings_values_15min">15 minutes</string>
+    <string name="ui_welcome_timeSettings_values_30min">30 minutes</string>
+    <string name="ui_welcome_timeSettings_values_1hour">1 hour</string>
+    <string name="ui_welcome_timeSettings_selectTime">Select %s</string>
+    <string name="ui_welcome_timeSettings_changeableHint">You can change this anytime</string>
 </resources>
