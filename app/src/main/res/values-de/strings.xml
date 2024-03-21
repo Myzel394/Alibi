@@ -147,7 +147,7 @@
     <string name="ui_recorder_action_changeMaxDuration_title">Wenn angehalten, speichern Sie die letzten...</string>
     <string name="ui_recorder_info_startTime_short">Aufnahme gestartet um %s</string>
     <string name="ui_recorder_info_startTime_full">Aufnahme gestartet %s</string>
-    <string name="ui_recorder_info_saveNowTime">Jetzt speichern wird bis %s speichern</string>
+    <string name="ui_recorder_info_saveNowTime">Press to save from %s till now</string>
     <string name="ui_videoRecorder_info_starting">Videoaufnahme wird gestartet...</string>
     <string name="ui_locked_title">Alibi ist gesperrt</string>
     <string name="ui_locked_unlocked">Entsperren</string>
