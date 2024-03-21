@@ -193,4 +193,5 @@
     <string name="goBack">Back</string>
     <string name="ui_recorder_action_saveCurrent">Save now?</string>
     <string name="ui_recorder_action_saveCurrent_explanation">You can save the current ongoing recording by pressing and holding down on the save button. The recording will continue in the background.</string>
+    <string name="ui_recorder_lowOnStorage_hint">You are low on storage. Alibi may not function properly. Please free up some space.</string>
 </resources>

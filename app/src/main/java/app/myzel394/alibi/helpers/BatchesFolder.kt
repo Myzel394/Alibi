@@ -7,12 +7,15 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
+import android.os.storage.StorageManager
 import android.provider.MediaStore
 import android.provider.MediaStore.Video.Media
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.MEDIA_RECORDINGS_PREFIX
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
@@ -519,10 +522,32 @@ abstract class BatchesFolder(
         return uri!!
     }
 
+    fun getAvailableBytes(): Long {
+        val storageManager = context.getSystemService(StorageManager::class.java) ?: return -1
+        val file = when (type) {
+            BatchType.INTERNAL -> context.filesDir
+            BatchType.CUSTOM -> customFolder!!.uri.toFile()
+            BatchType.MEDIA -> scopedMediaContentUri.toFile()
+        }
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            storageManager.getAllocatableBytes(storageManager.getUuidForPath(file))
+        } else {
+            file.usableSpace;
+        }
+    }
+
     enum class BatchType {
         INTERNAL,
         CUSTOM,
         MEDIA,
+    }
+
+    companion object {
+        fun requiredBytesForOneMinuteOfRecording(appSettings: AppSettings): Long {
+            // 300 MiB sounds like a good default
+            return 300 * 1024 * 1024
+        }
     }
 }
 

@@ -135,7 +135,8 @@ class VideoBatchesFolder(
 
         fun viaMediaFolder(context: Context) = VideoBatchesFolder(context, BatchType.MEDIA)
 
-        fun importFromFolder(folder: String, context: Context) = when (folder) {
+        fun importFromFolder(folder: String?, context: Context) = when (folder) {
+            null -> viaInternalFolder(context)
             RECORDER_INTERNAL_SELECTED_VALUE -> viaInternalFolder(context)
             RECORDER_MEDIA_SELECTED_VALUE -> viaMediaFolder(context)
             else -> viaCustomFolder(
