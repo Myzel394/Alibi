@@ -69,7 +69,7 @@ fun TimeSelector(
     ) {
         for ((duration, label) in OPTIONS) {
             val a11yLabel = stringResource(
-                R.string.ui_welcome_timeSettings_selectTime,
+                R.string.a11y_selectValue,
                 label
             )
 

@@ -11,6 +11,8 @@
     <string name="form_error_value_mustBeGreaterThan">Please enter a number greater than <xliff:g name="min">%s</xliff:g></string>
     <string name="form_value_selected">Selected: %s</string>
 
+    <string name="a11y_selectValue">Select %s</string>
+
     <string name="notificationChannels_recorder_name">Recorder</string>
     <string name="notificationChannels_recorder_description">Shows the current recording status</string>
 
@@ -201,8 +203,11 @@
     <string name="ui_welcome_timeSettings_values_15min">15 minutes</string>
     <string name="ui_welcome_timeSettings_values_30min">30 minutes</string>
     <string name="ui_welcome_timeSettings_values_1hour">1 hour</string>
-    <string name="ui_welcome_timeSettings_selectTime">Select %s</string>
     <string name="ui_welcome_timeSettings_changeableHint">You can change this anytime</string>
     <string name="ui_welcome_saveFolder_title">Where should Alibi store the batches?</string>
     <string name="ui_welcome_saveFolder_message">By default, Alibi stores the batches into its own private, encrypted storage. You can change this and specify an external, unencrypted folder. If you want to let Alibi remember more than 15 minutes, you should choose an external folder, as the internal folder is very small.</string>
+    <string name="ui_welcome_saveFolder_values_internal">Internal Storage</string>
+    <string name="ui_welcome_saveFolder_values_custom">Custom Folder</string>
+    <string name="ui_welcome_saveFolder_values_media">Media Folder</string>
+    <string name="ui_welcome_saveFolder_externalRequired">Please select either the Media Folder or a Custom Folder. Alibi has not enough space to store the batches in the internal storage. Alternatively, go back one step and select a shorter duration.</string>
 </resources>

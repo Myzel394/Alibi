@@ -8,7 +8,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +17,7 @@ import app.myzel394.alibi.ui.components.WelcomeScreen.pages.ExplanationPage
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.ResponsibilityPage
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.SaveFolderPage
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.TimeSettingsPage
+import app.myzel394.alibi.ui.effects.rememberSettings
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -27,10 +27,7 @@ fun WelcomeScreen(
 ) {
     val context = LocalContext.current
     val dataStore = context.dataStore
-    val settings = dataStore
-        .data
-        .collectAsState(initial = null)
-        .value ?: return
+    val settings = rememberSettings()
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -83,8 +80,11 @@ fun WelcomeScreen(
                             }
                         },
                         onContinue = {
-                            finishTutorial()
-                        }
+                            scope.launch {
+                                pagerState.animateScrollToPage(3)
+                            }
+                        },
+                        appSettings = settings
                     )
                 }
             }

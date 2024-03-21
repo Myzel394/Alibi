@@ -1,6 +1,7 @@
 package app.myzel394.alibi.ui.components.WelcomeScreen.pages
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -21,11 +23,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
+import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.helpers.BatchesFolder
+import app.myzel394.alibi.helpers.VideoBatchesFolder
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.components.WelcomeScreen.atoms.SaveFolderSelection
 
@@ -33,7 +43,29 @@ import app.myzel394.alibi.ui.components.WelcomeScreen.atoms.SaveFolderSelection
 fun SaveFolderPage(
     onBack: () -> Unit,
     onContinue: () -> Unit,
+    appSettings: AppSettings,
 ) {
+    var saveFolder by rememberSaveable { mutableStateOf<String?>(null) }
+
+    val context = LocalContext.current
+
+    val isLowOnStorage = if (saveFolder != null)
+        false
+    else {
+        val availableBytes = VideoBatchesFolder.viaInternalFolder(context).getAvailableBytes()
+
+        if (availableBytes == null) {
+            return
+        }
+
+        val bytesPerMinute = BatchesFolder.requiredBytesForOneMinuteOfRecording(appSettings)
+        val requiredBytes = appSettings.maxDuration / 1000 / 60 * bytesPerMinute
+
+        // Allow for a 10% margin of error
+        availableBytes < requiredBytes * 1.1
+    }
+
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween,
@@ -63,7 +95,16 @@ fun SaveFolderPage(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        SaveFolderSelection()
+        Box(
+            modifier = Modifier.widthIn(max = 400.dp)
+        ) {
+            SaveFolderSelection(
+                appSettings = appSettings,
+                saveFolder = saveFolder,
+                isLowOnStorage = isLowOnStorage,
+                onSaveFolderChange = { saveFolder = it },
+            )
+        }
         Spacer(modifier = Modifier.weight(1f))
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -84,6 +125,7 @@ fun SaveFolderPage(
             }
             Button(
                 onClick = onContinue,
+                enabled = !isLowOnStorage,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(BIG_PRIMARY_BUTTON_SIZE),
