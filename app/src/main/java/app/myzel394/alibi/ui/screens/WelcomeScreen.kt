@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.ExplanationPage
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.ResponsibilityPage
+import app.myzel394.alibi.ui.components.WelcomeScreen.pages.SaveFolderPage
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.TimeSettingsPage
 import kotlinx.coroutines.launch
 
@@ -74,6 +75,17 @@ fun WelcomeScreen(
                             pagerState.animateScrollToPage(3)
                         }
                     }
+
+                    3 -> SaveFolderPage(
+                        onBack = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(2)
+                            }
+                        },
+                        onContinue = {
+                            finishTutorial()
+                        }
+                    )
                 }
             }
         }

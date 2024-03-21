@@ -57,7 +57,7 @@ fun Navigation(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background),
         navController = navController,
-        startDestination = if (settings.hasSeenOnboarding) Screen.AudioRecorder.route else Screen.Welcome.route,
+        startDestination = Screen.Welcome.route,
     ) {
         composable(Screen.Welcome.route) {
             WelcomeScreen(onNavigateToAudioRecorderScreen = { navController.navigate(Screen.AudioRecorder.route) })
