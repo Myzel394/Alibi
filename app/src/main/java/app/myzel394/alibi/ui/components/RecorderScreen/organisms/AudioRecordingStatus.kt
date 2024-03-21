@@ -90,7 +90,11 @@ fun AudioRecordingStatus(
                         MicrophoneStatus(audioRecorder)
                     }
 
-                    _PrimitiveControls(audioRecorder)
+                    Box(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        _PrimitiveControls(audioRecorder)
+                    }
                 }
             }
 
