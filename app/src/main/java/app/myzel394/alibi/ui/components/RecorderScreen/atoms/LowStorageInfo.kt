@@ -22,6 +22,10 @@ fun LowStorageInfo(
     val availableBytes =
         VideoBatchesFolder.importFromFolder(appSettings.saveFolder, context).getAvailableBytes()
 
+    if (availableBytes == null) {
+        return
+    }
+
     val bytesPerMinute = BatchesFolder.requiredBytesForOneMinuteOfRecording(appSettings)
     val requiredBytes = appSettings.maxDuration / 1000 / 60 * bytesPerMinute
 
@@ -35,7 +39,9 @@ fun LowStorageInfo(
         ) {
             MessageBox(
                 type = MessageType.WARNING,
-                message = stringResource(R.string.ui_recorder_lowOnStorage_hint),
+                message = if (appSettings.saveFolder == null)
+                    stringResource(R.string.ui_recorder_lowOnStorage_hintANDswitchSaveFolder)
+                else stringResource(R.string.ui_recorder_lowOnStorage_hint)
             )
         }
 }

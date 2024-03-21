@@ -522,8 +522,8 @@ abstract class BatchesFolder(
         return uri!!
     }
 
-    fun getAvailableBytes(): Long {
-        val storageManager = context.getSystemService(StorageManager::class.java) ?: return -1
+    fun getAvailableBytes(): Long? {
+        val storageManager = context.getSystemService(StorageManager::class.java) ?: return null
         val file = when (type) {
             BatchType.INTERNAL -> context.filesDir
             BatchType.CUSTOM -> customFolder!!.uri.toFile()
@@ -545,8 +545,8 @@ abstract class BatchesFolder(
 
     companion object {
         fun requiredBytesForOneMinuteOfRecording(appSettings: AppSettings): Long {
-            // 300 MiB sounds like a good default
-            return 300 * 1024 * 1024
+            // 250 MiB sounds like a good default
+            return 250 * 1024 * 1024
         }
     }
 }
