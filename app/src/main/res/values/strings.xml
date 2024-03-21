@@ -210,4 +210,6 @@
     <string name="ui_welcome_saveFolder_values_custom">Custom Folder</string>
     <string name="ui_welcome_saveFolder_values_media">Media Folder</string>
     <string name="ui_welcome_saveFolder_externalRequired">Please select either the Media Folder or a Custom Folder. Alibi has not enough space to store the batches in the internal storage. Alternatively, go back one step and select a shorter duration.</string>
+    <string name="ui_welcome_saveFolder_customFolder_title">Select a Custom Folder</string>
+    <string name="ui_welcome_saveFolder_customFolder_message">You will now be asked to select a folder where Alibi should store the batches. Please select a folder where you have write access to.</string>
 </resources>

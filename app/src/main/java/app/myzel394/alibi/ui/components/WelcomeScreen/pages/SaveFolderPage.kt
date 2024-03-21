@@ -1,5 +1,6 @@
 package app.myzel394.alibi.ui.components.WelcomeScreen.pages
 
+import android.Manifest
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,12 +17,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +41,14 @@ import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
+import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
+import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.components.WelcomeScreen.atoms.SaveFolderSelection
+import app.myzel394.alibi.ui.components.atoms.MessageBox
+import app.myzel394.alibi.ui.components.atoms.MessageType
+import app.myzel394.alibi.ui.components.atoms.PermissionRequester
+import app.myzel394.alibi.ui.components.atoms.VisualDensity
+import app.myzel394.alibi.ui.utils.rememberFolderSelectorDialog
 
 @Composable
 fun SaveFolderPage(
@@ -67,7 +78,8 @@ fun SaveFolderPage(
 
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -94,7 +106,7 @@ fun SaveFolderPage(
                 stringResource(R.string.ui_welcome_saveFolder_message),
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(2f))
         Box(
             modifier = Modifier.widthIn(max = 400.dp)
         ) {
@@ -106,6 +118,16 @@ fun SaveFolderPage(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
+        Box(
+            modifier = Modifier.widthIn(max = 400.dp)
+        ) {
+            MessageBox(
+                type = MessageType.INFO,
+                message = stringResource(R.string.ui_welcome_timeSettings_changeableHint),
+                density = VisualDensity.DENSE,
+            )
+        }
+        Spacer(modifier = Modifier.weight(2f))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -123,22 +145,101 @@ fun SaveFolderPage(
                     contentDescription = null,
                 )
             }
-            Button(
-                onClick = onContinue,
-                enabled = !isLowOnStorage,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(BIG_PRIMARY_BUTTON_SIZE),
-                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-            ) {
-                Icon(
-                    Icons.Default.ChevronRight,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
-                )
-                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                Text(stringResource(R.string.continue_label))
+            PermissionRequester(
+                permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                icon = Icons.AutoMirrored.Filled.InsertDriveFile,
+                onPermissionAvailable = onContinue,
+            ) { requestWritePermission ->
+                val selectFolder = rememberFolderSelectorDialog { folder ->
+                    if (folder == null) {
+                        return@rememberFolderSelectorDialog
+                    }
+
+                    onContinue()
+                }
+                var showCustomFolderHint by rememberSaveable { mutableStateOf(false) }
+
+                if (showCustomFolderHint) {
+                    _CustomFolderDialog(
+                        onAbort = { showCustomFolderHint = false },
+                        onOk = {
+                            showCustomFolderHint = false
+                            selectFolder()
+                        },
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        when (saveFolder) {
+                            null -> onContinue()
+                            RECORDER_MEDIA_SELECTED_VALUE -> {
+                                if (SUPPORTS_SCOPED_STORAGE) {
+                                    onContinue()
+                                } else {
+                                    requestWritePermission()
+                                }
+                            }
+
+                            else -> {
+                                showCustomFolderHint = true
+                            }
+                        }
+                    },
+                    enabled = !isLowOnStorage,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(BIG_PRIMARY_BUTTON_SIZE),
+                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                ) {
+                    Icon(
+                        Icons.Default.ChevronRight,
+                        contentDescription = null,
+                        modifier = Modifier.size(ButtonDefaults.IconSize)
+                    )
+                    Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                    Text(stringResource(R.string.continue_label))
+                }
             }
         }
     }
+}
+
+@Composable
+fun _CustomFolderDialog(
+    onAbort: () -> Unit,
+    onOk: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onAbort,
+        icon = {
+            Icon(
+                Icons.Default.Folder,
+                contentDescription = null,
+            )
+        },
+        title = {
+            Text(stringResource(R.string.ui_welcome_saveFolder_customFolder_title))
+        },
+        text = {
+            Text(stringResource(R.string.ui_welcome_saveFolder_customFolder_message))
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onAbort,
+                contentPadding = ButtonDefaults.TextButtonContentPadding,
+                colors = ButtonDefaults.textButtonColors(),
+            ) {
+                Text(stringResource(R.string.dialog_close_cancel_label))
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onOk,
+            ) {
+                Text(stringResource(R.string.dialog_close_neutral_label))
+            }
+        }
+    )
+
 }
