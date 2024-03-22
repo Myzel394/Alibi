@@ -39,7 +39,7 @@
     <string name="ui_recorder_action_start_description_3">\u0020at your request</string>
 
     <string name="ui_recorder_action_save_processing_dialog_title">Processing</string>
-    <string name="ui_recorder_action_save_processing_dialog_description">Processing your recording, do not close Alibi! You will automatically be prompted to save the file once it\'s ready</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Processing your recording, do not close Alibi! You will automatically be prompted to save the file once it\'s ready. This process may take a few minutes if your time frame is big. Once this is finished and you are asked to save the file, please do so and then wait until you see Alibi\'s main screen again.</string>
 
     <string name="ui_recorder_state_recording_description">Alibi keeps recording in the background</string>
 
@@ -221,4 +221,5 @@
     <string name="ui_welcome_ready_start">Start Alibi</string>
     <string name="ui_about_support_title">Get Support</string>
     <string name="ui_about_support_message">If you have any questions, feedback or face any issues, please don\'t hesitate to contact me. I\'m happy to help you! Below is a list of ways to get in touch with me:</string>
+    <string name="ui_welcome_timeSettings_values_1min">1 Minute</string>
 </resources>

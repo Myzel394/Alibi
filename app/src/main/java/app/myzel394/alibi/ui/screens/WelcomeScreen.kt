@@ -14,10 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.ExplanationPage
+import app.myzel394.alibi.ui.components.WelcomeScreen.pages.MaxDurationSettingsPage
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.ReadyPage
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.ResponsibilityPage
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.SaveFolderPage
-import app.myzel394.alibi.ui.components.WelcomeScreen.pages.TimeSettingsPage
 import app.myzel394.alibi.ui.effects.rememberSettings
 import kotlinx.coroutines.launch
 
@@ -71,7 +71,7 @@ fun WelcomeScreen(
                         }
                     }
 
-                    2 -> TimeSettingsPage {
+                    2 -> MaxDurationSettingsPage {
                         scope.launch {
                             pagerState.animateScrollToPage(3)
                         }

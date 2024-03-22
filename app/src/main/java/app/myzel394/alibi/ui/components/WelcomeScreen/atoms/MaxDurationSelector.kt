@@ -44,21 +44,21 @@ import com.maxkeppeler.sheets.duration.models.DurationFormat
 import com.maxkeppeler.sheets.duration.models.DurationSelection
 import kotlinx.coroutines.launch
 
+const val MINUTES_1 = 1000 * 60 * 1L
 const val MINUTES_5 = 1000 * 60 * 5L
 const val MINUTES_15 = 1000 * 60 * 15L
 const val MINUTES_30 = 1000 * 60 * 30L
-const val HOURS_1 = 1000 * 60 * 60L
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimeSelector(
+fun MaxDurationSelector(
     modifier: Modifier = Modifier,
 ) {
     val OPTIONS = mapOf<Long, String>(
+        MINUTES_1 to stringResource(R.string.ui_welcome_timeSettings_values_1min),
         MINUTES_5 to stringResource(R.string.ui_welcome_timeSettings_values_5min),
         MINUTES_15 to stringResource(R.string.ui_welcome_timeSettings_values_15min),
         MINUTES_30 to stringResource(R.string.ui_welcome_timeSettings_values_30min),
-        HOURS_1 to stringResource(R.string.ui_welcome_timeSettings_values_1hour),
     )
 
     val scope = rememberCoroutineScope()

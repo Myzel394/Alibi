@@ -556,8 +556,8 @@ abstract class BatchesFolder(
 
     companion object {
         fun requiredBytesForOneMinuteOfRecording(appSettings: AppSettings): Long {
-            // 250 MiB sounds like a good default
-            return 250 * 1024 * 1024
+            // 350 MiB sounds like a good default
+            return 350 * 1024 * 1024
         }
     }
 }

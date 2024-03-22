@@ -28,13 +28,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
-import app.myzel394.alibi.ui.components.WelcomeScreen.atoms.TimeSelector
+import app.myzel394.alibi.ui.components.WelcomeScreen.atoms.MaxDurationSelector
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
 import app.myzel394.alibi.ui.components.atoms.VisualDensity
 
 @Composable
-fun TimeSettingsPage(
+fun MaxDurationSettingsPage(
     onContinue: () -> Unit,
 ) {
     Column(
@@ -76,7 +76,7 @@ fun TimeSettingsPage(
                 .widthIn(max = 400.dp)
                 .padding(horizontal = 16.dp)
         ) {
-            TimeSelector()
+            MaxDurationSelector()
         }
         Spacer(modifier = Modifier.height(20.dp))
         Box(

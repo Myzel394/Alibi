@@ -40,7 +40,7 @@ fun BigButton(
 
     BoxWithConstraints {
         val isLarge =
-            maxWidth > 500.dp && maxHeight > 1200.dp && orientation == Configuration.ORIENTATION_PORTRAIT
+            maxWidth > 200.dp && maxHeight > 400.dp && orientation == Configuration.ORIENTATION_PORTRAIT
 
         Column(
             modifier = Modifier
