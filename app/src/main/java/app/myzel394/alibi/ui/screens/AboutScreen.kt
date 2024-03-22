@@ -89,8 +89,8 @@ fun AboutScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(horizontal = 32.dp)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 32.dp),
             verticalArrangement = Arrangement.spacedBy(48.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
