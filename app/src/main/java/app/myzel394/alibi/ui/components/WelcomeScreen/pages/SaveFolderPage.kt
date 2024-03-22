@@ -76,8 +76,12 @@ fun SaveFolderPage(
     }
 
     LaunchedEffect(isLowOnStorage, appSettings.maxDuration) {
-        if (isLowOnStorage && saveFolder == null) {
-            saveFolder = RECORDER_MEDIA_SELECTED_VALUE
+        if (isLowOnStorage) {
+            if (saveFolder == null) {
+                saveFolder = RECORDER_MEDIA_SELECTED_VALUE
+            }
+        } else {
+            saveFolder = null
         }
     }
 
