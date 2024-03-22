@@ -93,9 +93,16 @@ fun RecorderEventsHandler(
         recorder: RecorderModel
     ) {
         if (!settings.deleteRecordingsImmediately) {
+            val information = recorder.recorderService?.getRecordingInformation()
+
+            if (information == null) {
+                Log.e("RecorderEventsHandler", "Recording information is null")
+                return
+            }
+
             dataStore.updateData {
                 it.setLastRecording(
-                    recorder.recorderService!!.getRecordingInformation()
+                    information
                 )
             }
         }
@@ -247,6 +254,13 @@ fun RecorderEventsHandler(
             scope.launch {
                 saveAsLastRecording(audioRecorder as RecorderModel)
 
+                runCatching {
+                    audioRecorder.stopRecording(context)
+                }
+                runCatching {
+                    audioRecorder.destroyService(context)
+                }
+
                 showRecorderError = true
             }
         }
@@ -290,6 +304,13 @@ fun RecorderEventsHandler(
             scope.launch {
                 saveAsLastRecording(videoRecorder as RecorderModel)
 
+                runCatching {
+                    videoRecorder.stopRecording(context)
+                }
+                runCatching {
+                    videoRecorder.destroyService(context)
+                }
+
                 showRecorderError = true
             }
         }
@@ -323,8 +344,6 @@ fun RecorderEventsHandler(
         RecorderErrorDialog(
             onClose = {
                 showRecorderError = false
-            },
-            onSave = {
             },
         )
 

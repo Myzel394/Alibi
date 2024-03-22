@@ -80,7 +80,7 @@
     <string name="ui_recorder_state_paused_title">Recording paused</string>
     <string name="ui_recorder_state_paused_description">Alibi is paused</string>
     <string name="ui_recorder_error_recording_title">An error occurred</string>
-    <string name="ui_recorder_error_recording_description">Alibi encountered an error during recording. Would you like to try saving the recording?</string>
+    <string name="ui_recorder_error_recording_description">Alibi encountered an error during recording. Try using different settings or restart the app.</string>
     <string name="ui_settings_language_title">Language</string>
     <string name="ui_settings_language_update_label">Change</string>
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Device Microphone</string>

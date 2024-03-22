@@ -191,17 +191,22 @@ class VideoRecorderService :
         videoCapture = buildVideoCapture(recorder)
 
         runOnMain {
-            camera = cameraProvider!!.bindToLifecycle(
-                this,
-                selectedCamera,
-                videoCapture
-            )
-            cameraControl = CameraControl(camera!!).also {
-                it.init()
-            }
-            onCameraControlAvailable()
+            try {
+                camera = cameraProvider!!.bindToLifecycle(
+                    this,
+                    selectedCamera,
+                    videoCapture
+                )
 
-            _cameraAvailableListener.complete(Unit)
+                cameraControl = CameraControl(camera!!).also {
+                    it.init()
+                }
+                onCameraControlAvailable()
+
+                _cameraAvailableListener.complete(Unit)
+            } catch (error: IllegalArgumentException) {
+                onError()
+            }
         }
     }
 
