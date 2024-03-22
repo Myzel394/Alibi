@@ -1,8 +1,12 @@
 package app.myzel394.alibi.ui.screens
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.BuildConfig
 import app.myzel394.alibi.R
+import app.myzel394.alibi.ui.CONTACT_METHODS
 import app.myzel394.alibi.ui.REPO_URL
 import app.myzel394.alibi.ui.TRANSLATION_HELP_URL
 import app.myzel394.alibi.ui.components.AboutScreen.atoms.DonationsTile
@@ -125,7 +132,7 @@ fun AboutScreen(
                 )
                 Text(
                     stringResource(R.string.ui_about_contribute_message),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodySmall,
                 )
 
                 val githubLabel = stringResource(R.string.accessibility_open_in_browser, REPO_URL)
@@ -202,6 +209,54 @@ fun AboutScreen(
                 }
 
                 DonationsTile()
+
+                Text(
+                    stringResource(R.string.ui_about_support_title),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    stringResource(R.string.ui_about_support_message),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    val clipboardManager =
+                        LocalContext.current.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+                    for (contact in CONTACT_METHODS) {
+                        val name = contact.key
+                        val uri = contact.value
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.medium)
+                                .clickable {
+                                    val clip = ClipData.newPlainText("text", uri)
+                                    clipboardManager.setPrimaryClip(clip)
+                                }
+                                .padding(16.dp)
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                Icons.Default.ContentCopy,
+                                contentDescription = null,
+                            )
+                            Text(
+                                name,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(
+                                uri,
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize.times(0.5),
+                            )
+                        }
+                    }
+                }
 
                 GPGKeyOverview()
             }
