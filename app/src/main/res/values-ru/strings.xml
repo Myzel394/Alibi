@@ -8,7 +8,7 @@
     <string name="form_error_type_notNumber">Пожалуйста, введите правильное число</string>
     <string name="form_error_value_notInRange">Пожалуйста, введите число между <xliff:g name="min">%s</xliff:g> и <xliff:g name="max">%s</xliff:g></string>
     <string name="form_error_value_mustBeGreaterThan">Пожалуйста, введите число, превышающее <xliff:g name="min">%s</xliff:g></string>
-    <string name="form_value_selected">Selected: %s</string>
+    <string name="form_value_selected"></string>
     <string name="notificationChannels_recorder_name">Запись</string>
     <string name="notificationChannels_recorder_description">Показывает текущий статус записи</string>
     <string name="ui_permissions_request_title">Доступ запрещен</string>
@@ -180,4 +180,6 @@
     <string name="goBack">Back</string>
     <string name="ui_recorder_action_saveCurrent">Save now?</string>
     <string name="ui_recorder_action_saveCurrent_explanation">You can save the current ongoing recording by pressing and holding down on the save button. The recording will continue in the background.</string>
+    <string name="ui_recorder_lowOnStorage_hint">You are low on storage. Alibi may not function properly. Please free up some space.</string>
+    <string name="ui_recorder_lowOnStorage_hintANDswitchSaveFolder">You are low on storage. Alibi may not function properly. Please free up some space. Alternatively, change the batches folder to a different location in the settings.</string>
 </resources>
