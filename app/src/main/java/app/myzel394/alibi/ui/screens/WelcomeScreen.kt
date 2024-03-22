@@ -44,11 +44,13 @@ fun WelcomeScreen(
         }
     }
 
-    Scaffold() { padding ->
+    Scaffold(
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
+
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             HorizontalPager(state = pagerState) { position ->

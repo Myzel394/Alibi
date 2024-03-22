@@ -3,13 +3,13 @@ package app.myzel394.alibi.ui.components.WelcomeScreen.atoms
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Lock
@@ -34,6 +34,7 @@ import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SUPPORTS_SAVING_VIDEOS_IN_CUSTOM_FOLDERS
 import app.myzel394.alibi.ui.components.atoms.MessageBox
 import app.myzel394.alibi.ui.components.atoms.MessageType
+import app.myzel394.alibi.ui.components.atoms.VisualDensity
 
 const val CUSTOM_FOLDER = "custom"
 
@@ -65,7 +66,6 @@ fun SaveFolderSelection(
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.verticalScroll(rememberScrollState()),
     ) {
         Column(
             modifier = Modifier
@@ -134,7 +134,7 @@ fun SaveFolderSelection(
                         Text(label)
                     }
                     Icon(
-                        Icons.Default.Lock,
+                        Icons.Default.PermMedia,
                         contentDescription = null,
                         modifier = Modifier
                             .size(ButtonDefaults.IconSize)
@@ -170,7 +170,7 @@ fun SaveFolderSelection(
                             Text(label)
                         }
                         Icon(
-                            Icons.Default.Lock,
+                            Icons.Default.Folder,
                             contentDescription = null,
                             modifier = Modifier
                                 .size(ButtonDefaults.IconSize)
@@ -201,5 +201,15 @@ fun SaveFolderSelection(
                 type = MessageType.ERROR,
                 message = stringResource(R.string.ui_welcome_saveFolder_externalRequired)
             )
+        else
+            Box(
+                modifier = Modifier.widthIn(max = 400.dp)
+            ) {
+                MessageBox(
+                    type = MessageType.INFO,
+                    message = stringResource(R.string.ui_welcome_timeSettings_changeableHint),
+                    density = VisualDensity.DENSE,
+                )
+            }
     }
 }

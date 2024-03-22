@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -44,10 +46,7 @@ import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.components.WelcomeScreen.atoms.SaveFolderSelection
-import app.myzel394.alibi.ui.components.atoms.MessageBox
-import app.myzel394.alibi.ui.components.atoms.MessageType
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
-import app.myzel394.alibi.ui.components.atoms.VisualDensity
 import app.myzel394.alibi.ui.utils.rememberFolderSelectorDialog
 
 @Composable
@@ -79,7 +78,8 @@ fun SaveFolderPage(
 
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -106,7 +106,7 @@ fun SaveFolderPage(
                 stringResource(R.string.ui_welcome_saveFolder_message),
             )
         }
-        Spacer(modifier = Modifier.weight(2f))
+        Spacer(modifier = Modifier.weight(1f))
         Box(
             modifier = Modifier.widthIn(max = 400.dp)
         ) {
@@ -118,16 +118,6 @@ fun SaveFolderPage(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        Box(
-            modifier = Modifier.widthIn(max = 400.dp)
-        ) {
-            MessageBox(
-                type = MessageType.INFO,
-                message = stringResource(R.string.ui_welcome_timeSettings_changeableHint),
-                density = VisualDensity.DENSE,
-            )
-        }
-        Spacer(modifier = Modifier.weight(2f))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
