@@ -40,11 +40,11 @@ fun BigButton(
 
     BoxWithConstraints {
         val isLarge =
-            maxWidth > 200.dp && maxHeight > 400.dp && orientation == Configuration.ORIENTATION_PORTRAIT
+            maxWidth > 200.dp && maxHeight > 350.dp && orientation == Configuration.ORIENTATION_PORTRAIT
 
         Column(
             modifier = Modifier
-                .size(if (isLarge) 250.dp else 180.dp)
+                .size(if (isLarge) 250.dp else 190.dp)
                 .clip(CircleShape)
                 .semantics {
                     contentDescription = label
