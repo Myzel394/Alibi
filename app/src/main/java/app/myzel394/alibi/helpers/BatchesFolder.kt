@@ -8,12 +8,13 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.ParcelFileDescriptor
 import android.os.storage.StorageManager
 import android.provider.MediaStore
 import android.provider.MediaStore.Video.Media
+import android.system.Os
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.db.AppSettings
@@ -28,6 +29,7 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.reflect.KFunction4
+
 
 abstract class BatchesFolder(
     open val context: Context,
@@ -524,21 +526,46 @@ abstract class BatchesFolder(
     }
 
     fun getAvailableBytes(): Long? {
+        if (type == BatchType.CUSTOM) {
+            var fileDescriptor: ParcelFileDescriptor? = null
+
+            try {
+                fileDescriptor =
+                    context.contentResolver.openFileDescriptor(customFolder!!.uri, "r")!!
+                val stats = Os.fstatvfs(fileDescriptor.fileDescriptor)
+
+                val available = stats.f_bavail * stats.f_bsize
+
+                runCatching {
+                    fileDescriptor.close()
+                }
+
+                return available
+            } catch (e: Exception) {
+                runCatching {
+                    fileDescriptor?.close();
+                }
+
+                return null
+            }
+        }
+
         val storageManager = context.getSystemService(StorageManager::class.java) ?: return null
         val file = when (type) {
             BatchType.INTERNAL -> context.filesDir
-            BatchType.CUSTOM -> customFolder!!.uri.toFile()
             BatchType.MEDIA ->
                 if (SUPPORTS_SCOPED_STORAGE)
                     File(
                         Environment.getExternalStoragePublicDirectory(VideoBatchesFolder.BASE_SCOPED_STORAGE_RELATIVE_PATH),
-                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toString(),
+                        Media.EXTERNAL_CONTENT_URI.toString(),
                     )
                 else
                     File(
                         Environment.getExternalStoragePublicDirectory(VideoBatchesFolder.BASE_LEGACY_STORAGE_FOLDER),
                         VideoBatchesFolder.MEDIA_RECORDINGS_SUBFOLDER,
                     )
+
+            BatchType.CUSTOM -> throw IllegalArgumentException("This code should not be reachable")
         }
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
