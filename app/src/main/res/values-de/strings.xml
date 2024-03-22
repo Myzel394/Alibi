@@ -147,7 +147,7 @@
     <string name="ui_recorder_action_changeMaxDuration_title">Wenn angehalten, speichern Sie die letzten...</string>
     <string name="ui_recorder_info_startTime_short">Aufnahme gestartet um %s</string>
     <string name="ui_recorder_info_startTime_full">Aufnahme gestartet %s</string>
-    <string name="ui_recorder_info_saveNowTime">Press to save from %s till now</string>
+    <string name="ui_recorder_info_saveNowTime">Drücke bis jetzt um ab %s zu speichern</string>
     <string name="ui_videoRecorder_info_starting">Videoaufnahme wird gestartet...</string>
     <string name="ui_locked_title">Alibi ist gesperrt</string>
     <string name="ui_locked_unlocked">Entsperren</string>
@@ -178,6 +178,8 @@
     <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">Um Ihre Privatsphäre zu schützen, speichert Alibi seine Batches in einem eigenen privaten und verschlüsselten Speicher. Dieser Speicher ist nur für Alibi zugänglich und kann nicht von anderen Apps oder einem möglichen Eindringling aufgerufen werden. Sobald Sie die Aufnahme gespeichert haben, werden Sie gefragt, wohin Sie die Aufnahme speichern möchten.</string>
     <string name="ui_rotateDevice_portrait_label">Bitte drehen Sie Ihr Gerät in den Portait-Modus</string>
     <string name="goBack">Zurück</string>
-    <string name="ui_recorder_action_saveCurrent">Save now?</string>
-    <string name="ui_recorder_action_saveCurrent_explanation">You can save the current ongoing recording by pressing and holding down on the save button. The recording will continue in the background.</string>
+    <string name="ui_recorder_action_saveCurrent">Jetzt speichern?</string>
+    <string name="ui_recorder_action_saveCurrent_explanation">Sie können die aktuelle Aufnahme speichern, indem Sie die Schaltfläche Speichern drücken und gedrückt halten. Die Aufnahme wird im Hintergrund fortgesetzt.</string>
+    <string name="ui_recorder_lowOnStorage_hint">Sie haben wenig Speicherplatz. Alibi funktioniert möglicherweise nicht richtig. Bitte geben Sie etwas Speicher frei.</string>
+    <string name="ui_recorder_lowOnStorage_hintANDswitchSaveFolder">Sie haben wenig Speicherplatz. Alibi funktioniert möglicherweise nicht richtig. Bitte geben Sie etwas Speicher frei. Alternativ können Sie den Batchordner in den Einstellungen auf einen anderen Ort ändern.</string>
 </resources>
