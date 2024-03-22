@@ -7,6 +7,7 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.os.storage.StorageManager
 import android.provider.MediaStore
 import android.provider.MediaStore.Video.Media
@@ -527,7 +528,17 @@ abstract class BatchesFolder(
         val file = when (type) {
             BatchType.INTERNAL -> context.filesDir
             BatchType.CUSTOM -> customFolder!!.uri.toFile()
-            BatchType.MEDIA -> scopedMediaContentUri.toFile()
+            BatchType.MEDIA ->
+                if (SUPPORTS_SCOPED_STORAGE)
+                    File(
+                        Environment.getExternalStoragePublicDirectory(VideoBatchesFolder.BASE_SCOPED_STORAGE_RELATIVE_PATH),
+                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toString(),
+                    )
+                else
+                    File(
+                        Environment.getExternalStoragePublicDirectory(VideoBatchesFolder.BASE_LEGACY_STORAGE_FOLDER),
+                        VideoBatchesFolder.MEDIA_RECORDINGS_SUBFOLDER,
+                    )
         }
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
