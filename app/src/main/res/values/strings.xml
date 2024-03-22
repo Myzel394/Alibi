@@ -205,7 +205,7 @@
     <string name="ui_welcome_timeSettings_values_1hour">1 hour</string>
     <string name="ui_welcome_timeSettings_changeableHint">You can change this anytime</string>
     <string name="ui_welcome_saveFolder_title">Where should Alibi store the batches?</string>
-    <string name="ui_welcome_saveFolder_message">By default, Alibi stores the batches into its own private, encrypted storage. You can change this and specify an external, unencrypted folder. If you want to let Alibi remember more than 15 minutes, you should choose an external folder, as the internal folder is very small.</string>
+    <string name="ui_welcome_saveFolder_message">Select where you would like to let Alibi store the batches of the ongoing recordings. The internal folder is encrypted and only accessible by Alibi. This folder is recommended if you only want to record a small time frame. If you need a longer time frame, you will most likely need to select a different folder, as the internal storage is very limited.</string>
     <string name="ui_welcome_saveFolder_values_internal">Internal Storage</string>
     <string name="ui_welcome_saveFolder_values_custom">Custom Folder</string>
     <string name="ui_welcome_saveFolder_values_media">Media Folder</string>

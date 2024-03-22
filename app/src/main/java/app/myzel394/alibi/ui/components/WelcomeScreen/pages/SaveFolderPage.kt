@@ -29,8 +29,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,22 +61,25 @@ fun SaveFolderPage(
 
     val context = LocalContext.current
 
-    val isLowOnStorage = if (saveFolder != null)
-        false
-    else {
+    val isLowOnStorage: Boolean = remember(appSettings.maxDuration) {
         val availableBytes = VideoBatchesFolder.viaInternalFolder(context).getAvailableBytes()
 
         if (availableBytes == null) {
-            return
+            return@remember false
         }
 
         val bytesPerMinute = BatchesFolder.requiredBytesForOneMinuteOfRecording(appSettings)
         val requiredBytes = appSettings.maxDuration / 1000 / 60 * bytesPerMinute
 
         // Allow for a 10% margin of error
-        availableBytes < requiredBytes * 1.1
+        availableBytes < requiredBytes
     }
 
+    LaunchedEffect(isLowOnStorage, appSettings.maxDuration) {
+        if (isLowOnStorage && saveFolder == null) {
+            saveFolder = RECORDER_MEDIA_SELECTED_VALUE
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -111,7 +116,6 @@ fun SaveFolderPage(
             modifier = Modifier.widthIn(max = 400.dp)
         ) {
             SaveFolderSelection(
-                appSettings = appSettings,
                 saveFolder = saveFolder,
                 isLowOnStorage = isLowOnStorage,
                 onSaveFolderChange = { saveFolder = it },
@@ -176,7 +180,7 @@ fun SaveFolderPage(
                             }
                         }
                     },
-                    enabled = !isLowOnStorage,
+                    enabled = if (saveFolder == null) !isLowOnStorage else true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(BIG_PRIMARY_BUTTON_SIZE),

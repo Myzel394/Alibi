@@ -23,13 +23,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
-import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SUPPORTS_SAVING_VIDEOS_IN_CUSTOM_FOLDERS
 import app.myzel394.alibi.ui.components.atoms.MessageBox
@@ -41,17 +39,10 @@ const val CUSTOM_FOLDER = "custom"
 @Composable
 fun SaveFolderSelection(
     modifier: Modifier = Modifier,
-    appSettings: AppSettings,
     saveFolder: String?,
     isLowOnStorage: Boolean,
     onSaveFolderChange: (String?) -> Unit,
 ) {
-    val OPTIONS = mapOf<String?, Pair<String, ImageVector>>(
-        null to (stringResource(R.string.ui_welcome_saveFolder_values_internal) to Icons.Default.Lock),
-        RECORDER_MEDIA_SELECTED_VALUE to (stringResource(R.string.ui_welcome_saveFolder_values_media) to Icons.Default.PermMedia),
-        CUSTOM_FOLDER to (stringResource(R.string.ui_welcome_saveFolder_values_custom) to Icons.Default.Folder),
-    )
-
     @Composable
     fun createModifier(a11yLabel: String, onClick: () -> Unit) =
         Modifier
@@ -196,7 +187,7 @@ fun SaveFolderSelection(
                 }
             }
         }
-        if (isLowOnStorage)
+        if (isLowOnStorage && saveFolder == null)
             MessageBox(
                 type = MessageType.ERROR,
                 message = stringResource(R.string.ui_welcome_saveFolder_externalRequired)

@@ -53,7 +53,9 @@ fun WelcomeScreen(
 
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            HorizontalPager(state = pagerState) { position ->
+            HorizontalPager(
+                state = pagerState,
+            ) { position ->
                 when (position) {
                     0 -> ExplanationPage(
                         onContinue = {
