@@ -92,7 +92,7 @@ fun SaveFolderPage(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(40.dp))
         Column(
             modifier = Modifier
                 .padding(horizontal = 32.dp),
@@ -113,11 +113,16 @@ fun SaveFolderPage(
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 stringResource(R.string.ui_welcome_saveFolder_message),
+                fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                color = MaterialTheme.typography.bodySmall.color,
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(40.dp))
         Box(
-            modifier = Modifier.widthIn(max = 400.dp)
+            modifier = Modifier
+                .widthIn(max = 400.dp)
+                .padding(horizontal = 16.dp)
         ) {
             SaveFolderSelection(
                 saveFolder = saveFolder,
@@ -125,7 +130,7 @@ fun SaveFolderPage(
                 onSaveFolderChange = { saveFolder = it },
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(40.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier

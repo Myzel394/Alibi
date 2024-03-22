@@ -44,7 +44,7 @@ fun TimeSettingsPage(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(40.dp))
         Column(
             modifier = Modifier
                 .padding(horizontal = 32.dp),
@@ -65,17 +65,24 @@ fun TimeSettingsPage(
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 stringResource(R.string.ui_welcome_timeSettings_message),
+                fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                color = MaterialTheme.typography.bodySmall.color,
             )
         }
-        Spacer(modifier = Modifier.weight(2f))
+        Spacer(modifier = Modifier.height(40.dp))
         Box(
-            modifier = Modifier.widthIn(max = 400.dp)
+            modifier = Modifier
+                .widthIn(max = 400.dp)
+                .padding(horizontal = 16.dp)
         ) {
             TimeSelector()
         }
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(20.dp))
         Box(
-            modifier = Modifier.widthIn(max = 400.dp)
+            modifier = Modifier
+                .widthIn(max = 400.dp)
+                .padding(horizontal = 16.dp)
         ) {
             MessageBox(
                 type = MessageType.INFO,
@@ -83,7 +90,7 @@ fun TimeSettingsPage(
                 density = VisualDensity.DENSE,
             )
         }
-        Spacer(modifier = Modifier.weight(2f))
+        Spacer(modifier = Modifier.height(40.dp))
         Button(
             onClick = { onContinue() },
             modifier = Modifier
