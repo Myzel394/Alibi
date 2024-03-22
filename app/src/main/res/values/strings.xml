@@ -216,4 +216,7 @@
     <string name="ui_welcome_timeSettings_values_customFormat_mm">%s minutes</string>
     <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%s hour, %s minutes</string>
     <string name="ui_welcome_timeSettings_values_customFormat_h_mm">1 hour, %s minutes</string>
+    <string name="ui_welcome_ready_title">You are ready!</string>
+    <string name="ui_welcome_ready_message">You are ready to start using Alibi! Go ahead and try it out!</string>
+    <string name="ui_welcome_ready_start">Start Alibi</string>
 </resources>

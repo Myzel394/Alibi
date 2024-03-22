@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.ExplanationPage
+import app.myzel394.alibi.ui.components.WelcomeScreen.pages.ReadyPage
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.ResponsibilityPage
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.SaveFolderPage
 import app.myzel394.alibi.ui.components.WelcomeScreen.pages.TimeSettingsPage
@@ -32,7 +33,7 @@ fun WelcomeScreen(
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f,
-        pageCount = { 4 }
+        pageCount = { 5 }
     )
 
     fun finishTutorial() {
@@ -85,11 +86,15 @@ fun WelcomeScreen(
                         },
                         onContinue = {
                             scope.launch {
-                                pagerState.animateScrollToPage(3)
+                                pagerState.animateScrollToPage(4)
                             }
                         },
                         appSettings = settings
                     )
+
+                    4 -> ReadyPage {
+                        finishTutorial()
+                    }
                 }
             }
         }
