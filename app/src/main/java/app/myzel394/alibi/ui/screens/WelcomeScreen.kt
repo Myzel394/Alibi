@@ -45,8 +45,7 @@ fun WelcomeScreen(
         }
     }
 
-    Scaffold(
-    ) { padding ->
+    Scaffold() { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -84,8 +83,12 @@ fun WelcomeScreen(
                                 pagerState.animateScrollToPage(2)
                             }
                         },
-                        onContinue = {
+                        onContinue = { saveFolder ->
                             scope.launch {
+                                dataStore.updateData {
+                                    settings.setSaveFolder(saveFolder)
+                                }
+
                                 pagerState.animateScrollToPage(4)
                             }
                         },

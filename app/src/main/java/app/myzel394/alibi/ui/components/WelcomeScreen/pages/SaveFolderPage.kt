@@ -54,7 +54,7 @@ import app.myzel394.alibi.ui.utils.rememberFolderSelectorDialog
 @Composable
 fun SaveFolderPage(
     onBack: () -> Unit,
-    onContinue: () -> Unit,
+    onContinue: (saveFolder: String?) -> Unit,
     appSettings: AppSettings,
 ) {
     var saveFolder by rememberSaveable { mutableStateOf<String?>(null) }
@@ -146,14 +146,14 @@ fun SaveFolderPage(
             PermissionRequester(
                 permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 icon = Icons.AutoMirrored.Filled.InsertDriveFile,
-                onPermissionAvailable = onContinue,
+                onPermissionAvailable = { onContinue(saveFolder) },
             ) { requestWritePermission ->
                 val selectFolder = rememberFolderSelectorDialog { folder ->
                     if (folder == null) {
                         return@rememberFolderSelectorDialog
                     }
 
-                    onContinue()
+                    onContinue(saveFolder)
                 }
                 var showCustomFolderHint by rememberSaveable { mutableStateOf(false) }
 
@@ -170,10 +170,10 @@ fun SaveFolderPage(
                 Button(
                     onClick = {
                         when (saveFolder) {
-                            null -> onContinue()
+                            null -> onContinue(saveFolder)
                             RECORDER_MEDIA_SELECTED_VALUE -> {
                                 if (SUPPORTS_SCOPED_STORAGE) {
-                                    onContinue()
+                                    onContinue(saveFolder)
                                 } else {
                                     requestWritePermission()
                                 }
