@@ -33,6 +33,8 @@ import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.Timer
+import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
 
 typealias RecorderModel = BaseRecorderModel<
@@ -140,9 +142,12 @@ fun RecorderEventsHandler(
         recorder: RecorderModel,
         cleanupOldFiles: Boolean = false
     ): CompletableDeferred<Unit> {
-        isProcessing = true
-
         val completer = CompletableDeferred<Unit>()
+
+        // If processing takes this short, don't show the processing dialog
+        val timer = Timer().schedule(250L) {
+            isProcessing = true
+        }
 
         thread {
             runBlocking {
@@ -231,6 +236,7 @@ fun RecorderEventsHandler(
                     if (recorder.isCurrentlyActivelyRecording) {
                         recorder.recorderService?.unlockFiles(cleanupOldFiles)
                     }
+                    timer.cancel()
                     isProcessing = false
                     processingProgress = null
                     completer.complete(Unit)
