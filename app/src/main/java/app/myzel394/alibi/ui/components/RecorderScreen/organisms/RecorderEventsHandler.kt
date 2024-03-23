@@ -30,7 +30,7 @@ import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.BaseRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.concurrent.thread
@@ -136,13 +136,15 @@ fun RecorderEventsHandler(
         }
     }
 
-    suspend fun saveRecording(recorder: RecorderModel, cleanupOldFiles: Boolean = false): Thread {
+    fun saveRecording(
+        recorder: RecorderModel,
+        cleanupOldFiles: Boolean = false
+    ): CompletableDeferred<Unit> {
         isProcessing = true
 
-        // Give the user some time to see the processing dialog
-        delay(100)
+        val completer = CompletableDeferred<Unit>()
 
-        return thread {
+        thread {
             runBlocking {
                 try {
                     if (recorder.isCurrentlyActivelyRecording) {
@@ -230,22 +232,19 @@ fun RecorderEventsHandler(
                         recorder.recorderService?.unlockFiles(cleanupOldFiles)
                     }
                     isProcessing = false
+                    processingProgress = null
+                    completer.complete(Unit)
                 }
             }
         }
+
+        return completer
     }
 
     // Register audio recorder events
     DisposableEffect(key1 = audioRecorder, key2 = settings) {
         audioRecorder.onRecordingSave = { cleanupOldFiles ->
-            // We create our own coroutine because we show our own dialog and we want to
-            // keep saving until it's finished.
-            // So it's smarter to take things into our own hands and use our local coroutine,
-            // instead of hoping that the coroutine from where this will be called will be alive
-            // until the end of the saving process
-            scope.launch {
-                saveRecording(audioRecorder as RecorderModel, cleanupOldFiles).join()
-            }
+            saveRecording(audioRecorder as RecorderModel, cleanupOldFiles)
         }
         audioRecorder.onRecordingStart = {
             snackbarHostState.currentSnackbarData?.dismiss()
@@ -288,14 +287,7 @@ fun RecorderEventsHandler(
     // Register video recorder events
     DisposableEffect(key1 = videoRecorder, key2 = settings) {
         videoRecorder.onRecordingSave = { cleanupOldFiles ->
-            // We create our own coroutine because we show our own dialog and we want to
-            // keep saving until it's finished.
-            // So it's smarter to take things into our own hands and use our local coroutine,
-            // instead of hoping that the coroutine from where this will be called will be alive
-            // until the end of the saving process
-            scope.launch {
-                saveRecording(videoRecorder as RecorderModel, cleanupOldFiles).join()
-            }
+            saveRecording(videoRecorder as RecorderModel, cleanupOldFiles)
         }
         videoRecorder.onRecordingStart = {
             snackbarHostState.currentSnackbarData?.dismiss()

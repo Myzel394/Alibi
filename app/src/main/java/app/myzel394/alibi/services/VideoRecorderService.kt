@@ -132,7 +132,7 @@ class VideoRecorderService :
             _videoFinalizerListener = CompletableDeferred()
 
             activeRecording = newRecording.start(ContextCompat.getMainExecutor(this)) { event ->
-                if (event is VideoRecordEvent.Finalize && this@VideoRecorderService.state == RecorderState.STOPPED || this@VideoRecorderService.state == RecorderState.PAUSED) {
+                if (event is VideoRecordEvent.Finalize && (this@VideoRecorderService.state == RecorderState.STOPPED || this@VideoRecorderService.state == RecorderState.PAUSED)) {
                     _videoFinalizerListener.complete(Unit)
                 }
             }
