@@ -2,7 +2,6 @@ package app.myzel394.alibi.ui.components.SettingsScreen.Tiles
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,7 +9,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -43,6 +41,12 @@ fun IntervalDurationTile(
 
     fun updateValue(intervalDuration: Long) {
         scope.launch {
+            if (intervalDuration > settings.maxDuration) {
+                dataStore.updateData {
+                    it.setMaxDuration(intervalDuration)
+                }
+            }
+
             dataStore.updateData {
                 it.setIntervalDuration(intervalDuration)
             }

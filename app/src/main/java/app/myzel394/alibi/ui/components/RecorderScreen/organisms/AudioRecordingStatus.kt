@@ -22,7 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.RealtimeAudioVisualizer
+import app.myzel394.alibi.ui.components.RecorderScreen.atoms.SaveCurrentNowModal
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.MicrophoneStatus
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingControl
 import app.myzel394.alibi.ui.components.RecorderScreen.molecules.RecordingStatus
@@ -38,8 +40,6 @@ fun AudioRecordingStatus(
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current.orientation
-
-    val scope = rememberCoroutineScope()
 
     var now by remember { mutableStateOf(LocalDateTime.now()) }
 
@@ -90,34 +90,11 @@ fun AudioRecordingStatus(
                         MicrophoneStatus(audioRecorder)
                     }
 
-                    RecordingControl(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
-                        isPaused = audioRecorder.isPaused,
-                        recordingTime = audioRecorder.recordingTime,
-                        onDelete = {
-                            scope.launch {
-                                runCatching {
-                                    audioRecorder.stopRecording(context)
-                                }
-                                runCatching {
-                                    audioRecorder.destroyService(context)
-                                }
-                                audioRecorder.batchesFolder!!.deleteRecordings()
-                            }
-                        },
-                        onPauseResume = {
-                            if (audioRecorder.isPaused) {
-                                audioRecorder.resumeRecording()
-                            } else {
-                                audioRecorder.pauseRecording()
-                            }
-                        },
-                        onSave = {
-                            audioRecorder.onRecordingSave(false)
-                        }
-                    )
+                    Box(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        _PrimitiveControls(audioRecorder)
+                    }
                 }
             }
 
@@ -138,33 +115,76 @@ fun AudioRecordingStatus(
 
                     HorizontalDivider()
 
-                    RecordingControl(
-                        isPaused = audioRecorder.isPaused,
-                        recordingTime = audioRecorder.recordingTime,
-                        onDelete = {
-                            scope.launch {
-                                runCatching {
-                                    audioRecorder.stopRecording(context)
-                                }
-                                runCatching {
-                                    audioRecorder.destroyService(context)
-                                }
-                                audioRecorder.batchesFolder!!.deleteRecordings()
-                            }
-                        },
-                        onPauseResume = {
-                            if (audioRecorder.isPaused) {
-                                audioRecorder.resumeRecording()
-                            } else {
-                                audioRecorder.pauseRecording()
-                            }
-                        },
-                        onSave = {
-                            audioRecorder.onRecordingSave(false)
-                        }
-                    )
+                    _PrimitiveControls(audioRecorder)
                 }
             }
         }
     }
+}
+
+@Composable
+fun _PrimitiveControls(audioRecorder: AudioRecorderModel) {
+    val context = LocalContext.current
+    val dataStore = context.dataStore
+    val scope = rememberCoroutineScope()
+
+    var showConfirmSaveNow by remember { mutableStateOf(false) }
+
+    if (showConfirmSaveNow) {
+        SaveCurrentNowModal(
+            onDismiss = {
+                showConfirmSaveNow = false
+            },
+            onConfirm = {
+                showConfirmSaveNow = false
+
+                scope.launch {
+                    audioRecorder.recorderService!!.startNewCycle()
+
+                    audioRecorder.onRecordingSave(false).join()
+                }
+            },
+        )
+    }
+
+    RecordingControl(
+        isPaused = audioRecorder.isPaused,
+        recordingTime = audioRecorder.recordingTime,
+        onDelete = {
+            scope.launch {
+                runCatching {
+                    audioRecorder.stopRecording(context)
+                }
+                runCatching {
+                    audioRecorder.destroyService(context)
+                }
+                audioRecorder.batchesFolder!!.deleteRecordings()
+            }
+        },
+        onPauseResume = {
+            if (audioRecorder.isPaused) {
+                audioRecorder.resumeRecording()
+            } else {
+                audioRecorder.pauseRecording()
+            }
+        },
+        onSaveAndStop = {
+            scope.launch {
+                audioRecorder.stopRecording(context)
+
+                dataStore.updateData {
+                    it.saveLastRecording(audioRecorder as RecorderModel)
+                }
+
+                audioRecorder.onRecordingSave(false).join()
+
+                runCatching {
+                    audioRecorder.destroyService(context)
+                }
+            }
+        },
+        onSaveCurrent = {
+            showConfirmSaveNow = true
+        },
+    )
 }

@@ -11,6 +11,7 @@ import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
+import app.myzel394.alibi.ui.components.RecorderScreen.organisms.RecorderModel
 import app.myzel394.alibi.ui.utils.PermissionHelper
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -30,7 +31,7 @@ data class AppSettings(
 
     /// Recording information
     // 30 minutes
-    val maxDuration: Long = 30 * 60 * 1000L,
+    val maxDuration: Long = 15 * 60 * 1000L,
     // 60 seconds
     val intervalDuration: Long = 60 * 1000L,
 
@@ -100,6 +101,16 @@ data class AppSettings(
 
     fun setAppLockSettings(appLockSettings: AppLockSettings?): AppSettings {
         return copy(appLockSettings = appLockSettings)
+    }
+
+    fun saveLastRecording(recorder: RecorderModel): AppSettings {
+        return if (deleteRecordingsImmediately) {
+            this
+        } else {
+            setLastRecording(
+                recorder.recorderService!!.getRecordingInformation()
+            )
+        }
     }
 
     // If the object is present, biometric authentication is enabled.
@@ -297,14 +308,15 @@ data class AudioRecorderSettings(
     companion object {
         fun getDefaultInstance(): AudioRecorderSettings = AudioRecorderSettings()
         val EXAMPLE_MAX_DURATIONS = listOf(
+            1 * 60 * 1000L,
+            5 * 60 * 1000L,
             15 * 60 * 1000L,
             30 * 60 * 1000L,
             60 * 60 * 1000L,
-            2 * 60 * 60 * 1000L,
-            3 * 60 * 60 * 1000L,
         )
         val EXAMPLE_DURATION_TIMES = listOf(
             60 * 1000L,
+            60 * 2 * 1000L,
             60 * 5 * 1000L,
             60 * 10 * 1000L,
             60 * 15 * 1000L,

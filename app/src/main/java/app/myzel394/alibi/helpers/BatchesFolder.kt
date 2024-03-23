@@ -3,29 +3,33 @@ package app.myzel394.alibi.helpers
 import android.Manifest
 import android.content.ContentUris
 import android.content.ContentValues
-import app.myzel394.alibi.ui.MEDIA_RECORDINGS_PREFIX
-
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
+import android.os.ParcelFileDescriptor
+import android.os.storage.StorageManager
 import android.provider.MediaStore
 import android.provider.MediaStore.Video.Media
-import androidx.documentfile.provider.DocumentFile
-import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import com.arthenica.ffmpegkit.FFmpegKitConfig
+import android.system.Os
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
+import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.ui.MEDIA_RECORDINGS_PREFIX
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.utils.PermissionHelper
-import com.arthenica.ffmpegkit.FFprobeKit
+import com.arthenica.ffmpegkit.FFmpegKitConfig
 import kotlinx.coroutines.CompletableDeferred
+import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.reflect.KFunction4
+
 
 abstract class BatchesFolder(
     open val context: Context,
@@ -196,7 +200,6 @@ abstract class BatchesFolder(
     ).apply {
         createNewFile()
     }
-
 
     fun checkIfOutputAlreadyExists(
         date: LocalDateTime,
@@ -388,12 +391,12 @@ abstract class BatchesFolder(
         }
     }
 
-    fun deleteOldRecordings(earliestCounter: Long) {
+    fun deleteRecordings(range: LongRange) {
         when (type) {
             BatchType.INTERNAL -> getInternalFolder().listFiles()?.forEach {
                 val fileCounter = it.nameWithoutExtension.toIntOrNull() ?: return@forEach
 
-                if (fileCounter < earliestCounter) {
+                if (fileCounter in range) {
                     it.delete()
                 }
             }
@@ -401,7 +404,7 @@ abstract class BatchesFolder(
             BatchType.CUSTOM -> getCustomDefinedFolder().listFiles().forEach {
                 val fileCounter = it.name?.substringBeforeLast(".")?.toIntOrNull() ?: return@forEach
 
-                if (fileCounter < earliestCounter) {
+                if (fileCounter in range) {
                     it.delete()
                 }
             }
@@ -411,7 +414,7 @@ abstract class BatchesFolder(
                     val deletableNames = mutableListOf<String>()
 
                     queryMediaContent { rawName, counter, _, _ ->
-                        if (counter < earliestCounter) {
+                        if (counter in range) {
                             deletableNames.add(rawName)
                         }
                     }
@@ -428,7 +431,7 @@ abstract class BatchesFolder(
                             it.nameWithoutExtension.substring(mediaPrefix.length).toIntOrNull()
                                 ?: return@forEach
 
-                        if (fileCounter < earliestCounter) {
+                        if (fileCounter in range) {
                             it.delete()
                         }
                     }
@@ -522,10 +525,67 @@ abstract class BatchesFolder(
         return uri!!
     }
 
+    fun getAvailableBytes(): Long? {
+        if (type == BatchType.CUSTOM) {
+            var fileDescriptor: ParcelFileDescriptor? = null
+
+            try {
+                fileDescriptor =
+                    context.contentResolver.openFileDescriptor(customFolder!!.uri, "r")!!
+                val stats = Os.fstatvfs(fileDescriptor.fileDescriptor)
+
+                val available = stats.f_bavail * stats.f_bsize
+
+                runCatching {
+                    fileDescriptor.close()
+                }
+
+                return available
+            } catch (e: Exception) {
+                runCatching {
+                    fileDescriptor?.close();
+                }
+
+                return null
+            }
+        }
+
+        val storageManager = context.getSystemService(StorageManager::class.java) ?: return null
+        val file = when (type) {
+            BatchType.INTERNAL -> context.filesDir
+            BatchType.MEDIA ->
+                if (SUPPORTS_SCOPED_STORAGE)
+                    File(
+                        Environment.getExternalStoragePublicDirectory(VideoBatchesFolder.BASE_SCOPED_STORAGE_RELATIVE_PATH),
+                        Media.EXTERNAL_CONTENT_URI.toString(),
+                    )
+                else
+                    File(
+                        Environment.getExternalStoragePublicDirectory(VideoBatchesFolder.BASE_LEGACY_STORAGE_FOLDER),
+                        VideoBatchesFolder.MEDIA_RECORDINGS_SUBFOLDER,
+                    )
+
+            BatchType.CUSTOM -> throw IllegalArgumentException("This code should not be reachable")
+        }
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            storageManager.getAllocatableBytes(storageManager.getUuidForPath(file))
+        } else {
+            file.usableSpace;
+        }
+    }
+
     enum class BatchType {
         INTERNAL,
         CUSTOM,
         MEDIA,
+    }
+
+    companion object {
+        fun requiredBytesForOneMinuteOfRecording(appSettings: AppSettings): Long {
+            // 350 MiB sounds like a good default
+            return 350 * 1024 * 1024
+        }
     }
 }
 
