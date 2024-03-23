@@ -54,70 +54,68 @@ fun VideoRecordingStatus(
 
     when (orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
-            Box {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically,
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement
+                        .spacedBy(32.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(0.9f)
+                        .align(Alignment.CenterVertically),
+                ) {
+                    _VideoGeneralInfo(videoRecorder)
+                    _VideoRecordingStatus(videoRecorder)
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(0.9f)
                 ) {
                     Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement
                             .spacedBy(32.dp),
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(0.9f)
-                            .align(Alignment.CenterVertically),
-                    ) {
-                        _VideoGeneralInfo(videoRecorder)
-                        _VideoRecordingStatus(videoRecorder)
-                    }
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(0.9f)
-                    ) {
-                        Column(
-                            verticalArrangement = Arrangement
-                                .spacedBy(32.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            _VideoControls(videoRecorder)
-                            HorizontalDivider()
-                            _PrimitiveControls(videoRecorder)
-                        }
-                    }
-                }
-            }
-        }
-
-        else -> {
-            Box {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement
-                            .spacedBy(16.dp),
-                    ) {
-                        _VideoGeneralInfo(videoRecorder)
-                        _VideoRecordingStatus(videoRecorder)
-                    }
-
-                    Column(
-                        verticalArrangement = Arrangement
-                            .spacedBy(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         _VideoControls(videoRecorder)
                         HorizontalDivider()
                         _PrimitiveControls(videoRecorder)
                     }
+                }
+            }
+        }
+
+        else -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Box {}
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement
+                        .spacedBy(16.dp),
+                ) {
+                    _VideoGeneralInfo(videoRecorder)
+                    _VideoRecordingStatus(videoRecorder)
+                }
+
+                Column(
+                    verticalArrangement = Arrangement
+                        .spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    _VideoControls(videoRecorder)
+                    HorizontalDivider()
+                    _PrimitiveControls(videoRecorder)
                 }
             }
         }
