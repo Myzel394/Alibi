@@ -1,4 +1,4 @@
-package app.myzel394.alibi.ui.components.WelcomeScreen.atoms
+package app.myzel394.alibi.ui.components.WelcomeScreen.pages
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.WavingHand
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -26,7 +26,7 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 
 @Composable
-fun ExplanationPage(
+fun ResponsibilityPage(
     onContinue: () -> Unit,
 ) {
     Column(
@@ -42,24 +42,24 @@ fun ExplanationPage(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
-                Icons.Default.WavingHand,
+                Icons.Default.Warning,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.size(128.dp),
             )
             Spacer(modifier = Modifier.height(32.dp))
             Text(
-                stringResource(R.string.ui_welcome_explanation_title),
+                stringResource(R.string.ui_welcome_responsibility_title),
                 style = MaterialTheme.typography.titleLarge,
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                stringResource(R.string.ui_welcome_explanation_message),
+                stringResource(R.string.ui_welcome_responsibility_message),
             )
         }
         Spacer(modifier = Modifier.weight(1f))
         Button(
-            onClick = { onContinue() },
+            onClick = onContinue,
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()

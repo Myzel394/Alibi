@@ -103,7 +103,7 @@ fun StartRecording(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = if (orientation == Configuration.ORIENTATION_PORTRAIT) 32.dp else 16.dp),
+            .padding(bottom = if (orientation == Configuration.ORIENTATION_PORTRAIT) 0.dp else 16.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

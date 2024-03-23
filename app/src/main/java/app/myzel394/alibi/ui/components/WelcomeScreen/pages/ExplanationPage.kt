@@ -1,4 +1,4 @@
-package app.myzel394.alibi.ui.components.WelcomeScreen.atoms
+package app.myzel394.alibi.ui.components.WelcomeScreen.pages
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.WavingHand
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -26,7 +26,7 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 
 @Composable
-fun ResponsibilityPage(
+fun ExplanationPage(
     onContinue: () -> Unit,
 ) {
     Column(
@@ -42,19 +42,19 @@ fun ResponsibilityPage(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
-                Icons.Default.Warning,
+                Icons.Default.WavingHand,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.size(128.dp),
             )
             Spacer(modifier = Modifier.height(32.dp))
             Text(
-                stringResource(R.string.ui_welcome_responsibility_title),
+                stringResource(R.string.ui_welcome_explanation_title),
                 style = MaterialTheme.typography.titleLarge,
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                stringResource(R.string.ui_welcome_responsibility_message),
+                stringResource(R.string.ui_welcome_explanation_message),
             )
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -67,12 +67,12 @@ fun ResponsibilityPage(
             contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         ) {
             Icon(
-                Icons.Default.Check,
+                Icons.Default.ChevronRight,
                 contentDescription = null,
                 modifier = Modifier.size(ButtonDefaults.IconSize)
             )
             Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-            Text(stringResource(R.string.ui_welcome_start_label))
+            Text(stringResource(R.string.continue_label))
         }
     }
 }

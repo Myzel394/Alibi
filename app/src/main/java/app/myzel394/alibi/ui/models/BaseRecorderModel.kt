@@ -17,7 +17,7 @@ import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.services.IntervalRecorderService
 import app.myzel394.alibi.services.RecorderNotificationHelper
 import app.myzel394.alibi.services.RecorderService
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.serialization.json.Json
 
 abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderService<I, B>> :
@@ -49,7 +49,7 @@ abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderServi
 
     // If `isSavingAsOldRecording` is true, the user is saving an old recording,
     // thus the service is not running and thus doesn't need to be stopped or destroyed
-    var onRecordingSave: (cleanupOldFiles: Boolean) -> Job = {
+    var onRecordingSave: (cleanupOldFiles: Boolean) -> CompletableDeferred<Unit> = {
         throw NotImplementedError("onRecordingSave not implemented")
     }
     var onRecordingStart: () -> Unit = {}

@@ -2,6 +2,7 @@ package app.myzel394.alibi.ui
 
 import android.os.Build
 import androidx.compose.ui.unit.dp
+import java.util.Base64
 
 val BIG_PRIMARY_BUTTON_SIZE = 64.dp
 val BIG_PRIMARY_BUTTON_MAX_WIDTH = 450.dp
@@ -62,4 +63,18 @@ val CRYPTO_DONATIONS = mapOf(
     "Tezos" to "tz1QUWNYuFqDibGCrwmkdaHSpTx3d6ZdxLMi",
     "Litecoin" to "LZayhTosZ9ToRvcbeR1gEDgb76Z7ZA2drN",
     "Filecoin" to "f1j6pm3chzhgadpf6iwmtux33jb5gccj5arkg4dsq",
+)
+
+// Base64encoding these values so that bots can't easily scrape them.
+val b64d = Base64.getDecoder()
+val CONTACT_METHODS = mapOf<String, String>(
+    "E-Mail" to String(b64d.decode("Z2" + "9vZ2xlLXBsYX" + "k" + "uMjlrMWFAYWxlZWFzL" + "mNvbQo=")).trim(),
+    "GitHub" to String(
+        b64d.decode(
+            "aHR" +
+                    "0cHM6Ly9n" + "a" + "XRodWIuY29t" + "L015emVsMzk0L2NvbnRhY3QtbWUK"
+        )
+    ).trim(),
+    "Mastodon" to String(b64d.decode("T" + "X" + "l6Z" + "WwzOTRAbWFzdG9kb24uc29" + "jaWFsCg" + "==")).trim(),
+    "Reddit" to "https://reddit.com/u/Myzel394"
 )

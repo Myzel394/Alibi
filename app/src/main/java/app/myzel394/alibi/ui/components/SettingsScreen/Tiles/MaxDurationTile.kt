@@ -68,7 +68,7 @@ fun MaxDurationTile(
             timeFormat = DurationFormat.HH_MM,
             currentTime = settings.maxDuration / 1000,
             minTime = 60,
-            maxTime = 10 * 24 * 60 * 60,
+            maxTime = 23 * 60 * 60 + 59 * 60,
         )
     )
     SettingsTile(
