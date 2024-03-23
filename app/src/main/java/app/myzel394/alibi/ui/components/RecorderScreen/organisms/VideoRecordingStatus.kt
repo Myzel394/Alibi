@@ -33,7 +33,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.myzel394.alibi.R
-import app.myzel394.alibi.ui.components.RecorderScreen.atoms.CameraPreview
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.SaveCurrentNowModal
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.TorchStatus
@@ -56,10 +55,6 @@ fun VideoRecordingStatus(
     when (orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             Box {
-                CameraPreview(
-                    modifier = Modifier,
-                    cameraSelector = videoRecorder.cameraSelector
-                )
                 Row(
                     modifier = Modifier.fillMaxSize(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
@@ -98,11 +93,6 @@ fun VideoRecordingStatus(
 
         else -> {
             Box {
-                CameraPreview(
-                    modifier = Modifier,
-                    cameraSelector = videoRecorder.cameraSelector
-                )
-
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
