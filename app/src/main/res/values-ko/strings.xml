@@ -14,15 +14,15 @@
     <string name="ui_permissions_request_title">Permission denied</string>
     <string name="ui_permissions_request">Please grant the permission to continue</string>
     <string name="ui_permissions_permanentlyDenied_message">You will be redirected to the app settings to grant the permission there.</string>
-    <string name="ui_audioRecorder_action_start_label">Start Recording</string>
+    <string name="ui_audioRecorder_action_start_label">녹음 시작</string>
     <string name="ui_audioRecorder_state_recording_title">Recording Audio</string>
     <string name="ui_recorder_action_saveOldRecording_label">Save Recording from <xliff:g name="date">%s</xliff:g></string>
     <string name="ui_recorder_action_delete_label">Delete</string>
     <string name="ui_recorder_action_delete_confirm_title">Delete Recording?</string>
     <string name="ui_recorder_action_delete_confirm_message">Are you sure you want to delete this recording?</string>
-    <string name="ui_recorder_action_pause_label">Pause Recording</string>
-    <string name="ui_recorder_action_resume_label">Resume Recording</string>
-    <string name="ui_recorder_action_save_label">Save Recording</string>
+    <string name="ui_recorder_action_pause_label">일시 중지</string>
+    <string name="ui_recorder_action_resume_label">녹음 계속</string>
+    <string name="ui_recorder_action_save_label">녹음 저장</string>
     <string name="ui_recorder_action_save_success">Recording has been saved successfully!</string>
     <string name="ui_recorder_action_save_openFolder">Open</string>
     <string name="ui_recorder_action_start_description_1">Alibi will continue recording in the background and store the last\u0020</string>
@@ -63,8 +63,8 @@
     <string name="ui_settings_option_encoder_extra_outputFormatChanged">Output Format has been changed because the current one was incompatible with this encoder</string>
     <string name="ui_settings_value_auto_label">Auto</string>
     <string name="ui_recorder_state_paused_title">Recording paused</string>
-    <string name="ui_recorder_state_paused_description">Audio Recording has been paused</string>
-    <string name="ui_recorder_error_recording_title">An error occured</string>
+    <string name="ui_recorder_state_paused_description">녹음이 일시 정지 되었습니다</string>
+    <string name="ui_recorder_error_recording_title">오류가 발생했습니다</string>
     <string name="ui_recorder_error_recording_description">Alibi encountered an error during recording. Would you like to try saving the recording?</string>
     <string name="ui_settings_language_title">Language</string>
     <string name="ui_settings_language_update_label">Change</string>
