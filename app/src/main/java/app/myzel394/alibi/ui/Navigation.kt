@@ -30,6 +30,7 @@ import app.myzel394.alibi.ui.screens.SettingsScreen
 import app.myzel394.alibi.ui.screens.WelcomeScreen
 
 const val SCALE_IN = 1.25f
+const val DEBUG_SKIP_WELCOME = false;
 
 @Composable
 fun Navigation(
@@ -58,7 +59,7 @@ fun Navigation(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background),
         navController = navController,
-        startDestination = if (settings.hasSeenOnboarding) Screen.AudioRecorder.route else Screen.Welcome.route,
+        startDestination = if (settings.hasSeenOnboarding || DEBUG_SKIP_WELCOME) Screen.AudioRecorder.route else Screen.Welcome.route,
     ) {
         composable(Screen.Welcome.route) {
             WelcomeScreen(

@@ -1,6 +1,7 @@
 package app.myzel394.alibi.ui.components.RecorderScreen.organisms
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -241,18 +242,27 @@ fun _PrimitiveControls(videoRecorder: VideoRecorderModel) {
             }
         },
         onSaveAndStop = {
+            println("User initiated video recording save and stop")
             scope.launch {
+                Log.d("Alibi", "====== Asking to stop recording...")
                 videoRecorder.stopRecording(context)
+                Log.d("Alibi", "====== Asking to stop recording... done")
 
+                Log.d("Alibi", "====== Updating data store...")
                 dataStore.updateData {
                     it.saveLastRecording(videoRecorder as RecorderModel)
                 }
+                Log.d("Alibi", "====== Updating data store... done")
 
+                Log.d("Alibi", "===== Asking to save recording...")
                 videoRecorder.onRecordingSave(false).join()
+                Log.d("Alibi", "===== Asking to save recording... done")
 
+                Log.d("Alibi", "===== Destroying service...")
                 runCatching {
                     videoRecorder.destroyService(context)
                 }
+                Log.d("Alibi", "===== Destroying service... done")
             }
         },
         onSaveCurrent = {

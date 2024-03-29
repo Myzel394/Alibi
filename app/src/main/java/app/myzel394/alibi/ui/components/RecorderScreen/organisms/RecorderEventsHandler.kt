@@ -248,7 +248,7 @@ fun RecorderEventsHandler(
     }
 
     // Register audio recorder events
-    DisposableEffect(key1 = audioRecorder, key2 = settings) {
+    DisposableEffect(Unit) {
         audioRecorder.onRecordingSave = { cleanupOldFiles ->
             saveRecording(audioRecorder as RecorderModel, cleanupOldFiles)
         }
@@ -291,7 +291,8 @@ fun RecorderEventsHandler(
     }
 
     // Register video recorder events
-    DisposableEffect(key1 = videoRecorder, key2 = settings) {
+    DisposableEffect(Unit) {
+        Log.d("Alibi", "===== Registering videoRecorder events $videoRecorder")
         videoRecorder.onRecordingSave = { cleanupOldFiles ->
             saveRecording(videoRecorder as RecorderModel, cleanupOldFiles)
         }
@@ -326,6 +327,7 @@ fun RecorderEventsHandler(
         }
 
         onDispose {
+            Log.d("Alibi", "===== Disposing videoRecorder events")
             videoRecorder.onRecordingSave = {
                 throw NotImplementedError("onRecordingSave should not be called now")
             }
