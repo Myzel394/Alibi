@@ -291,47 +291,57 @@ fun RecorderEventsHandler(
     }
 
     // Register video recorder events
+    // Absolutely no idea, but somehow on some devices the `DisposableEffect`
+    // is registered twice, and THEN disposed once (AFTER being called twice),
+    // which then causes the `onRecordingSave` to be in a weird state.
+    // This variable is a workaround to prevent this from happening.
+    var alreadyRegistered = false
     DisposableEffect(Unit) {
-        Log.d("Alibi", "===== Registering videoRecorder events $videoRecorder")
-        videoRecorder.onRecordingSave = { cleanupOldFiles ->
-            saveRecording(videoRecorder as RecorderModel, cleanupOldFiles)
-        }
-        videoRecorder.onRecordingStart = {
-            snackbarHostState.currentSnackbarData?.dismiss()
-        }
-        videoRecorder.onError = {
-            scope.launch {
-                saveAsLastRecording(videoRecorder as RecorderModel)
-
-                runCatching {
-                    videoRecorder.stopRecording(context)
-                }
-                runCatching {
-                    videoRecorder.destroyService(context)
-                }
-
-                showRecorderError = true
+        if (alreadyRegistered) {
+            onDispose { }
+        } else {
+            alreadyRegistered = true
+            Log.i("Alibi", "===== Registering videoRecorder events $videoRecorder")
+            videoRecorder.onRecordingSave = { cleanupOldFiles ->
+                saveRecording(videoRecorder as RecorderModel, cleanupOldFiles)
             }
-        }
-        videoRecorder.onBatchesFolderNotAccessible = {
-            scope.launch {
-                showBatchesInaccessibleError = true
+            videoRecorder.onRecordingStart = {
+                snackbarHostState.currentSnackbarData?.dismiss()
+            }
+            videoRecorder.onError = {
+                scope.launch {
+                    saveAsLastRecording(videoRecorder as RecorderModel)
 
-                runCatching {
-                    videoRecorder.stopRecording(context)
-                }
-                runCatching {
-                    videoRecorder.destroyService(context)
+                    runCatching {
+                        videoRecorder.stopRecording(context)
+                    }
+                    runCatching {
+                        videoRecorder.destroyService(context)
+                    }
+
+                    showRecorderError = true
                 }
             }
-        }
+            videoRecorder.onBatchesFolderNotAccessible = {
+                scope.launch {
+                    showBatchesInaccessibleError = true
 
-        onDispose {
-            Log.d("Alibi", "===== Disposing videoRecorder events")
-            videoRecorder.onRecordingSave = {
-                throw NotImplementedError("onRecordingSave should not be called now")
+                    runCatching {
+                        videoRecorder.stopRecording(context)
+                    }
+                    runCatching {
+                        videoRecorder.destroyService(context)
+                    }
+                }
             }
-            videoRecorder.onError = {}
+
+            onDispose {
+                Log.i("Alibi", "===== Disposing videoRecorder events")
+                videoRecorder.onRecordingSave = {
+                    throw NotImplementedError("onRecordingSave should not be called now")
+                }
+                videoRecorder.onError = {}
+            }
         }
     }
 
