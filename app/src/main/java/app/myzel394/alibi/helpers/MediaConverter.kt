@@ -1,17 +1,11 @@
 package app.myzel394.alibi.helpers
 
-import android.content.Context
-import android.net.Uri
 import android.util.Log
-import androidx.documentfile.provider.DocumentFile
 import com.arthenica.ffmpegkit.FFmpegKit
-import com.arthenica.ffmpegkit.FFmpegKitConfig
 import com.arthenica.ffmpegkit.ReturnCode
 import kotlinx.coroutines.CompletableDeferred
 import java.io.File
-import java.lang.Compiler.command
 import java.util.UUID
-import kotlin.math.log
 
 // Abstract class for concatenating audio and video files
 // The concatenator runs in its own thread to avoid unresponsiveness.
@@ -56,7 +50,7 @@ data class AudioConcatenator(
             command
         ) { session ->
             if (!ReturnCode.isSuccess(session!!.returnCode)) {
-                Log.d(
+                Log.i(
                     "Audio Concatenation",
                     String.format(
                         "Command failed with state %s and rc %s.%s",
@@ -100,7 +94,7 @@ class MediaConverter {
                 command,
                 { session ->
                     if (!ReturnCode.isSuccess(session!!.returnCode)) {
-                        Log.d(
+                        Log.i(
                             "Audio Concatenation",
                             String.format(
                                 "Command failed with state %s and rc %s.%s",
@@ -162,7 +156,7 @@ class MediaConverter {
                     if (ReturnCode.isSuccess(session!!.returnCode)) {
                         completer.complete(Unit)
                     } else {
-                        Log.d(
+                        Log.i(
                             "Video Concatenation",
                             String.format(
                                 "Command failed with state %s and rc %s.%s",
