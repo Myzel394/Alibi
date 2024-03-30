@@ -248,59 +248,65 @@ fun RecorderEventsHandler(
     }
 
     // Register audio recorder events
-    DisposableEffect(Unit) {
-        audioRecorder.onRecordingSave = { cleanupOldFiles ->
-            saveRecording(audioRecorder as RecorderModel, cleanupOldFiles)
-        }
-        audioRecorder.onRecordingStart = {
-            snackbarHostState.currentSnackbarData?.dismiss()
-        }
-        audioRecorder.onError = {
-            scope.launch {
-                saveAsLastRecording(audioRecorder as RecorderModel)
-
-                runCatching {
-                    audioRecorder.stopRecording(context)
-                }
-                runCatching {
-                    audioRecorder.destroyService(context)
-                }
-
-                showRecorderError = true
-            }
-        }
-        audioRecorder.onBatchesFolderNotAccessible = {
-            scope.launch {
-                showBatchesInaccessibleError = true
-
-                runCatching {
-                    audioRecorder.stopRecording(context)
-                }
-                runCatching {
-                    audioRecorder.destroyService(context)
-                }
-            }
-        }
-
-        onDispose {
-            audioRecorder.onRecordingSave = {
-                throw NotImplementedError("onRecordingSave should not be called now")
-            }
-            audioRecorder.onError = {}
-        }
-    }
-
-    // Register video recorder events
     // Absolutely no idea, but somehow on some devices the `DisposableEffect`
     // is registered twice, and THEN disposed once (AFTER being called twice),
     // which then causes the `onRecordingSave` to be in a weird state.
     // This variable is a workaround to prevent this from happening.
-    var alreadyRegistered = false
+    var audioAlreadyRegistered = false
     DisposableEffect(Unit) {
-        if (alreadyRegistered) {
+        if (audioAlreadyRegistered) {
             onDispose { }
         } else {
-            alreadyRegistered = true
+            audioAlreadyRegistered = true
+            audioRecorder.onRecordingSave = { cleanupOldFiles ->
+                saveRecording(audioRecorder as RecorderModel, cleanupOldFiles)
+            }
+            audioRecorder.onRecordingStart = {
+                snackbarHostState.currentSnackbarData?.dismiss()
+            }
+            audioRecorder.onError = {
+                scope.launch {
+                    saveAsLastRecording(audioRecorder as RecorderModel)
+
+                    runCatching {
+                        audioRecorder.stopRecording(context)
+                    }
+                    runCatching {
+                        audioRecorder.destroyService(context)
+                    }
+
+                    showRecorderError = true
+                }
+            }
+            audioRecorder.onBatchesFolderNotAccessible = {
+                scope.launch {
+                    showBatchesInaccessibleError = true
+
+                    runCatching {
+                        audioRecorder.stopRecording(context)
+                    }
+                    runCatching {
+                        audioRecorder.destroyService(context)
+                    }
+                }
+            }
+
+            onDispose {
+                audioRecorder.onRecordingSave = {
+                    throw NotImplementedError("onRecordingSave should not be called now")
+                }
+                audioRecorder.onError = {}
+            }
+        }
+    }
+
+    // Register video recorder events
+    var videoAlreadyRegistered = false
+    DisposableEffect(Unit) {
+        if (videoAlreadyRegistered) {
+            onDispose { }
+        } else {
+            videoAlreadyRegistered = true
             Log.i("Alibi", "===== Registering videoRecorder events $videoRecorder")
             videoRecorder.onRecordingSave = { cleanupOldFiles ->
                 saveRecording(videoRecorder as RecorderModel, cleanupOldFiles)
