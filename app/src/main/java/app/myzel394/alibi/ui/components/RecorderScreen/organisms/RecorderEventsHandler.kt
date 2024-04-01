@@ -252,12 +252,12 @@ fun RecorderEventsHandler(
     // is registered twice, and THEN disposed once (AFTER being called twice),
     // which then causes the `onRecordingSave` to be in a weird state.
     // This variable is a workaround to prevent this from happening.
-    var audioAlreadyRegistered = false
-    DisposableEffect(Unit) {
-        if (audioAlreadyRegistered) {
+    var previousAudioSettings: AppSettings? = null
+    DisposableEffect(settings) {
+        if (previousAudioSettings == settings) {
             onDispose { }
         } else {
-            audioAlreadyRegistered = true
+            previousAudioSettings = settings
             audioRecorder.onRecordingSave = { cleanupOldFiles ->
                 saveRecording(audioRecorder as RecorderModel, cleanupOldFiles)
             }
@@ -301,12 +301,12 @@ fun RecorderEventsHandler(
     }
 
     // Register video recorder events
-    var videoAlreadyRegistered = false
-    DisposableEffect(Unit) {
-        if (videoAlreadyRegistered) {
+    var previousVideoSettings: AppSettings? = null
+    DisposableEffect(settings) {
+        if (previousVideoSettings == settings) {
             onDispose { }
         } else {
-            videoAlreadyRegistered = true
+            previousVideoSettings = settings
             Log.i("Alibi", "===== Registering videoRecorder events $videoRecorder")
             videoRecorder.onRecordingSave = { cleanupOldFiles ->
                 saveRecording(videoRecorder as RecorderModel, cleanupOldFiles)
