@@ -32,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,6 +49,7 @@ import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.components.WelcomeScreen.atoms.SaveFolderSelection
 import app.myzel394.alibi.ui.components.atoms.PermissionRequester
 import app.myzel394.alibi.ui.utils.rememberFolderSelectorDialog
+import kotlin.concurrent.thread
 
 @Composable
 fun SaveFolderPage(
@@ -61,18 +61,26 @@ fun SaveFolderPage(
 
     val context = LocalContext.current
 
-    val isLowOnStorage: Boolean = remember(appSettings.maxDuration) {
-        val availableBytes = VideoBatchesFolder.viaInternalFolder(context).getAvailableBytes()
+    var isLowOnStorage by rememberSaveable {
+        mutableStateOf(false)
+    }
+    // Fetching this synchronously results in the UI being blocked.
+    // Instead, we fetch this in a different thread and update the state when we have the result.
+    LaunchedEffect(appSettings, context) {
+        thread {
+            val availableBytes = VideoBatchesFolder.viaInternalFolder(context).getAvailableBytes()
 
-        if (availableBytes == null) {
-            return@remember false
+            if (availableBytes == null) {
+                isLowOnStorage = false
+                return@thread
+            }
+
+            val bytesPerMinute = BatchesFolder.requiredBytesForOneMinuteOfRecording(appSettings)
+            val requiredBytes = appSettings.maxDuration / 1000 / 60 * bytesPerMinute
+
+            // Allow for a 10% margin of error
+            isLowOnStorage = availableBytes < requiredBytes
         }
-
-        val bytesPerMinute = BatchesFolder.requiredBytesForOneMinuteOfRecording(appSettings)
-        val requiredBytes = appSettings.maxDuration / 1000 / 60 * bytesPerMinute
-
-        // Allow for a 10% margin of error
-        availableBytes < requiredBytes
     }
 
     LaunchedEffect(isLowOnStorage, appSettings.maxDuration) {
@@ -126,7 +134,7 @@ fun SaveFolderPage(
         ) {
             SaveFolderSelection(
                 saveFolder = saveFolder,
-                isLowOnStorage = isLowOnStorage,
+                isLowOnStorage = false,
                 onSaveFolderChange = { saveFolder = it },
             )
         }
@@ -189,7 +197,7 @@ fun SaveFolderPage(
                             }
                         }
                     },
-                    enabled = if (saveFolder == null) !isLowOnStorage else true,
+                    enabled = if (saveFolder == null) !false else true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(BIG_PRIMARY_BUTTON_SIZE),
