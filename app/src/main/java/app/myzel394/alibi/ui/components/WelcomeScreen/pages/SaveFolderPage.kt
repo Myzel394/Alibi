@@ -134,7 +134,7 @@ fun SaveFolderPage(
         ) {
             SaveFolderSelection(
                 saveFolder = saveFolder,
-                isLowOnStorage = false,
+                isLowOnStorage = isLowOnStorage,
                 onSaveFolderChange = { saveFolder = it },
             )
         }
@@ -197,7 +197,7 @@ fun SaveFolderPage(
                             }
                         }
                     },
-                    enabled = if (saveFolder == null) !false else true,
+                    enabled = if (saveFolder == null) !isLowOnStorage else true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(BIG_PRIMARY_BUTTON_SIZE),
