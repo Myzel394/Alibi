@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.PermMedia
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -435,26 +434,12 @@ fun SelectionSheet(
 ) {
     val context = LocalContext.current
 
-    var showCustomFolderWarning by remember { mutableStateOf(false) }
-
     val selectFolder = rememberFolderSelectorDialog { folder ->
         if (folder == null) {
             return@rememberFolderSelectorDialog
         }
 
         updateValue(folder.toString())
-    }
-
-    if (showCustomFolderWarning) {
-        CustomFolderWarningDialog(
-            onDismiss = {
-                showCustomFolderWarning = false
-            },
-            onConfirm = {
-                showCustomFolderWarning = false
-                selectFolder()
-            },
-        )
     }
 
     var showExternalPermissionRequired by remember { mutableStateOf(false) }
@@ -523,9 +508,7 @@ fun SelectionSheet(
                 SelectionButton(
                     label = stringResource(R.string.ui_settings_option_saveFolder_action_custom_label),
                     icon = Icons.Default.Folder,
-                    onClick = {
-                        showCustomFolderWarning = true
-                    },
+                    onClick = selectFolder,
                 )
                 if (!SUPPORTS_SAVING_VIDEOS_IN_CUSTOM_FOLDERS) {
                     Column(
@@ -579,52 +562,6 @@ fun SelectionButton(
         Text(label)
         Box {}
     }
-}
-
-@Composable
-fun CustomFolderWarningDialog(
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-) {
-    val title = stringResource(R.string.ui_settings_option_saveFolder_warning_title)
-    val text = stringResource(R.string.ui_settings_option_saveFolder_warning_text)
-
-    AlertDialog(
-        icon = {
-            Icon(
-                Icons.Default.Warning,
-                contentDescription = null,
-            )
-        },
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = title)
-        },
-        text = {
-            Text(text = text)
-        },
-        confirmButton = {
-            Button(onClick = onConfirm) {
-                Text(
-                    text = stringResource(R.string.ui_settings_option_saveFolder_warning_action_confirm),
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss,
-                contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
-            ) {
-                Icon(
-                    Icons.Default.Cancel,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                )
-                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                Text(stringResource(R.string.dialog_close_cancel_label))
-            }
-        }
-    )
 }
 
 @Composable

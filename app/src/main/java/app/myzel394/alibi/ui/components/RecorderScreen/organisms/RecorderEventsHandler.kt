@@ -30,9 +30,11 @@ import app.myzel394.alibi.ui.models.AudioRecorderModel
 import app.myzel394.alibi.ui.models.BaseRecorderModel
 import app.myzel394.alibi.ui.models.VideoRecorderModel
 import app.myzel394.alibi.ui.utils.rememberFileSaverDialog
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.Timer
+import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
 
 typealias RecorderModel = BaseRecorderModel<
@@ -93,9 +95,16 @@ fun RecorderEventsHandler(
         recorder: RecorderModel
     ) {
         if (!settings.deleteRecordingsImmediately) {
+            val information = recorder.recorderService?.getRecordingInformation()
+
+            if (information == null) {
+                Log.e("RecorderEventsHandler", "Recording information is null")
+                return
+            }
+
             dataStore.updateData {
                 it.setLastRecording(
-                    recorder.recorderService!!.getRecordingInformation()
+                    information
                 )
             }
         }
@@ -129,13 +138,18 @@ fun RecorderEventsHandler(
         }
     }
 
-    suspend fun saveRecording(recorder: RecorderModel, cleanupOldFiles: Boolean = false): Thread {
-        isProcessing = true
+    fun saveRecording(
+        recorder: RecorderModel,
+        cleanupOldFiles: Boolean = false
+    ): CompletableDeferred<Unit> {
+        val completer = CompletableDeferred<Unit>()
 
-        // Give the user some time to see the processing dialog
-        delay(100)
+        // If processing takes this short, don't show the processing dialog
+        val timer = Timer().schedule(250L) {
+            isProcessing = true
+        }
 
-        return thread {
+        thread {
             runBlocking {
                 try {
                     if (recorder.isCurrentlyActivelyRecording) {
@@ -222,95 +236,118 @@ fun RecorderEventsHandler(
                     if (recorder.isCurrentlyActivelyRecording) {
                         recorder.recorderService?.unlockFiles(cleanupOldFiles)
                     }
+                    timer.cancel()
                     isProcessing = false
+                    processingProgress = null
+                    completer.complete(Unit)
                 }
             }
         }
+
+        return completer
     }
 
     // Register audio recorder events
-    DisposableEffect(key1 = audioRecorder, key2 = settings) {
-        audioRecorder.onRecordingSave = { cleanupOldFiles ->
-            // We create our own coroutine because we show our own dialog and we want to
-            // keep saving until it's finished.
-            // So it's smarter to take things into our own hands and use our local coroutine,
-            // instead of hoping that the coroutine from where this will be called will be alive
-            // until the end of the saving process
-            scope.launch {
-                saveRecording(audioRecorder as RecorderModel, cleanupOldFiles).join()
+    // Absolutely no idea, but somehow on some devices the `DisposableEffect`
+    // is registered twice, and THEN disposed once (AFTER being called twice),
+    // which then causes the `onRecordingSave` to be in a weird state.
+    // This variable is a workaround to prevent this from happening.
+    var previousAudioSettings: AppSettings? = null
+    DisposableEffect(settings) {
+        if (previousAudioSettings == settings) {
+            onDispose { }
+        } else {
+            previousAudioSettings = settings
+            audioRecorder.onRecordingSave = { cleanupOldFiles ->
+                saveRecording(audioRecorder as RecorderModel, cleanupOldFiles)
             }
-        }
-        audioRecorder.onRecordingStart = {
-            snackbarHostState.currentSnackbarData?.dismiss()
-        }
-        audioRecorder.onError = {
-            scope.launch {
-                saveAsLastRecording(audioRecorder as RecorderModel)
-
-                showRecorderError = true
+            audioRecorder.onRecordingStart = {
+                snackbarHostState.currentSnackbarData?.dismiss()
             }
-        }
-        audioRecorder.onBatchesFolderNotAccessible = {
-            scope.launch {
-                showBatchesInaccessibleError = true
+            audioRecorder.onError = {
+                scope.launch {
+                    saveAsLastRecording(audioRecorder as RecorderModel)
 
-                runCatching {
-                    audioRecorder.stopRecording(context)
-                }
-                runCatching {
-                    audioRecorder.destroyService(context)
+                    runCatching {
+                        audioRecorder.stopRecording(context)
+                    }
+                    runCatching {
+                        audioRecorder.destroyService(context)
+                    }
+
+                    showRecorderError = true
                 }
             }
-        }
+            audioRecorder.onBatchesFolderNotAccessible = {
+                scope.launch {
+                    showBatchesInaccessibleError = true
 
-        onDispose {
-            audioRecorder.onRecordingSave = {
-                throw NotImplementedError("onRecordingSave should not be called now")
+                    runCatching {
+                        audioRecorder.stopRecording(context)
+                    }
+                    runCatching {
+                        audioRecorder.destroyService(context)
+                    }
+                }
             }
-            audioRecorder.onError = {}
+
+            onDispose {
+                audioRecorder.onRecordingSave = {
+                    throw NotImplementedError("onRecordingSave should not be called now")
+                }
+                audioRecorder.onError = {}
+            }
         }
     }
 
     // Register video recorder events
-    DisposableEffect(key1 = videoRecorder, key2 = settings) {
-        videoRecorder.onRecordingSave = { cleanupOldFiles ->
-            // We create our own coroutine because we show our own dialog and we want to
-            // keep saving until it's finished.
-            // So it's smarter to take things into our own hands and use our local coroutine,
-            // instead of hoping that the coroutine from where this will be called will be alive
-            // until the end of the saving process
-            scope.launch {
-                saveRecording(videoRecorder as RecorderModel, cleanupOldFiles).join()
+    var previousVideoSettings: AppSettings? = null
+    DisposableEffect(settings) {
+        if (previousVideoSettings == settings) {
+            onDispose { }
+        } else {
+            previousVideoSettings = settings
+            Log.i("Alibi", "===== Registering videoRecorder events $videoRecorder")
+            videoRecorder.onRecordingSave = { cleanupOldFiles ->
+                saveRecording(videoRecorder as RecorderModel, cleanupOldFiles)
             }
-        }
-        videoRecorder.onRecordingStart = {
-            snackbarHostState.currentSnackbarData?.dismiss()
-        }
-        videoRecorder.onError = {
-            scope.launch {
-                saveAsLastRecording(videoRecorder as RecorderModel)
-
-                showRecorderError = true
+            videoRecorder.onRecordingStart = {
+                snackbarHostState.currentSnackbarData?.dismiss()
             }
-        }
-        videoRecorder.onBatchesFolderNotAccessible = {
-            scope.launch {
-                showBatchesInaccessibleError = true
+            videoRecorder.onError = {
+                scope.launch {
+                    saveAsLastRecording(videoRecorder as RecorderModel)
 
-                runCatching {
-                    videoRecorder.stopRecording(context)
-                }
-                runCatching {
-                    videoRecorder.destroyService(context)
+                    runCatching {
+                        videoRecorder.stopRecording(context)
+                    }
+                    runCatching {
+                        videoRecorder.destroyService(context)
+                    }
+
+                    showRecorderError = true
                 }
             }
-        }
+            videoRecorder.onBatchesFolderNotAccessible = {
+                scope.launch {
+                    showBatchesInaccessibleError = true
 
-        onDispose {
-            videoRecorder.onRecordingSave = {
-                throw NotImplementedError("onRecordingSave should not be called now")
+                    runCatching {
+                        videoRecorder.stopRecording(context)
+                    }
+                    runCatching {
+                        videoRecorder.destroyService(context)
+                    }
+                }
             }
-            videoRecorder.onError = {}
+
+            onDispose {
+                Log.i("Alibi", "===== Disposing videoRecorder events")
+                videoRecorder.onRecordingSave = {
+                    throw NotImplementedError("onRecordingSave should not be called now")
+                }
+                videoRecorder.onError = {}
+            }
         }
     }
 
@@ -323,8 +360,6 @@ fun RecorderEventsHandler(
         RecorderErrorDialog(
             onClose = {
                 showRecorderError = false
-            },
-            onSave = {
             },
         )
 

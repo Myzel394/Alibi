@@ -14,6 +14,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,6 +30,7 @@ import app.myzel394.alibi.ui.screens.SettingsScreen
 import app.myzel394.alibi.ui.screens.WelcomeScreen
 
 const val SCALE_IN = 1.25f
+const val DEBUG_SKIP_WELCOME = false;
 
 @Composable
 fun Navigation(
@@ -57,10 +59,18 @@ fun Navigation(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background),
         navController = navController,
-        startDestination = if (settings.hasSeenOnboarding) Screen.AudioRecorder.route else Screen.Welcome.route,
+        startDestination = if (settings.hasSeenOnboarding || DEBUG_SKIP_WELCOME) Screen.AudioRecorder.route else Screen.Welcome.route,
     ) {
         composable(Screen.Welcome.route) {
-            WelcomeScreen(onNavigateToAudioRecorderScreen = { navController.navigate(Screen.AudioRecorder.route) })
+            WelcomeScreen(
+                onNavigateToAudioRecorderScreen = {
+                    val mainHandler = ContextCompat.getMainExecutor(context)
+
+                    mainHandler.execute {
+                        navController.navigate(Screen.AudioRecorder.route)
+                    }
+                },
+            )
         }
         composable(
             Screen.AudioRecorder.route,

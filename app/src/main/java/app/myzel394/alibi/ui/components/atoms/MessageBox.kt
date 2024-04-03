@@ -68,15 +68,15 @@ fun MessageBox(
             .clip(MaterialTheme.shapes.medium)
             .background(backgroundColor)
             .let {
-                if (density == VisualDensity.COMFORTABLE) {
-                    it.padding(horizontal = 8.dp, vertical = 16.dp)
-                } else {
-                    it.padding(8.dp)
+                when (density) {
+                    VisualDensity.COMFORTABLE -> it.padding(horizontal = 8.dp, vertical = 16.dp)
+                    VisualDensity.DENSE -> it.padding(8.dp)
+                    VisualDensity.COMPACT -> it.padding(8.dp)
                 }
             }
             .then(modifier)
     ) {
-        if (density == VisualDensity.COMFORTABLE) {
+        if (density == VisualDensity.COMFORTABLE || density == VisualDensity.DENSE) {
             Icon(
                 imageVector = when (type) {
                     MessageType.ERROR -> Icons.Default.Error
@@ -121,4 +121,5 @@ enum class MessageType {
 enum class VisualDensity {
     COMPACT,
     COMFORTABLE,
+    DENSE,
 }

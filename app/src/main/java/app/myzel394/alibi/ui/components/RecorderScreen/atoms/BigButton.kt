@@ -35,15 +35,17 @@ fun BigButton(
     description: String? = null,
     onClick: () -> Unit,
     onLongClick: () -> Unit = {},
+    isBig: Boolean? = null,
 ) {
     val orientation = LocalConfiguration.current.orientation
 
     BoxWithConstraints {
-        val isLarge = maxWidth > 500.dp && orientation == Configuration.ORIENTATION_PORTRAIT
+        val isLarge = if (isBig == null)
+            maxWidth > 250.dp && maxHeight > 600.dp && orientation == Configuration.ORIENTATION_PORTRAIT else isBig
 
         Column(
             modifier = Modifier
-                .size(if (isLarge) 250.dp else 200.dp)
+                .size(if (isLarge) 250.dp else 190.dp)
                 .clip(CircleShape)
                 .semantics {
                     contentDescription = label

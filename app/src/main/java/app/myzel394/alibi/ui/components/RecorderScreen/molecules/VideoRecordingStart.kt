@@ -27,6 +27,7 @@ fun VideoRecordingStart(
     onHideAudioRecording: () -> Unit,
     onShowAudioRecording: () -> Unit,
     showPreview: Boolean,
+    useLargeButtons: Boolean? = null,
 ) {
     val context = LocalContext.current
 
@@ -87,6 +88,7 @@ fun VideoRecordingStart(
                     showSheet = true
                 }
             },
+            isBig = useLargeButtons,
         )
     }
 }
