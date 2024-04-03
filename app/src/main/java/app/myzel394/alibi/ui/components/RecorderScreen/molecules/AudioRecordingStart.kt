@@ -22,6 +22,7 @@ import app.myzel394.alibi.ui.models.AudioRecorderModel
 fun AudioRecordingStart(
     audioRecorder: AudioRecorderModel,
     appSettings: AppSettings,
+    useLargeButtons: Boolean? = null,
 ) {
     val context = LocalContext.current
 
@@ -59,6 +60,7 @@ fun AudioRecordingStart(
                 label = stringResource(R.string.ui_audioRecorder_action_start_label),
                 icon = Icons.Default.Mic,
                 onClick = triggerRecordAudio,
+                isBig = useLargeButtons,
             )
         }
     }

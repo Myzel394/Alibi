@@ -3,6 +3,7 @@ package app.myzel394.alibi.ui.components.RecorderScreen.organisms
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -100,24 +101,47 @@ fun StartRecording(
         )
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = if (orientation == Configuration.ORIENTATION_PORTRAIT) 0.dp else 16.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        when (orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+    BoxWithConstraints {
+        val isLargeDisplay =
+            maxWidth > 250.dp && maxHeight > 600.dp && orientation == Configuration.ORIENTATION_PORTRAIT
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = if (orientation == Configuration.ORIENTATION_PORTRAIT) 0.dp else 16.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            when (orientation) {
+                Configuration.ORIENTATION_LANDSCAPE -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        if (showAudioRecorder)
+                            AudioRecordingStart(
+                                audioRecorder = audioRecorder,
+                                appSettings = appSettings,
+                            )
+                        VideoRecordingStart(
+                            videoRecorder = videoRecorder,
+                            appSettings = appSettings,
+                            onHideAudioRecording = onHideTopBar,
+                            onShowAudioRecording = onShowTopBar,
+                            showPreview = !showAudioRecorder,
+                        )
+                    }
+                }
+
+                else -> {
+                    Spacer(modifier = Modifier.weight(1f))
+
                     if (showAudioRecorder)
                         AudioRecordingStart(
                             audioRecorder = audioRecorder,
                             appSettings = appSettings,
+                            useLargeButtons = isLargeDisplay,
                         )
                     VideoRecordingStart(
                         videoRecorder = videoRecorder,
@@ -125,95 +149,86 @@ fun StartRecording(
                         onHideAudioRecording = onHideTopBar,
                         onShowAudioRecording = onShowTopBar,
                         showPreview = !showAudioRecorder,
+                        useLargeButtons = isLargeDisplay,
                     )
                 }
             }
 
-            else -> {
-                Spacer(modifier = Modifier.weight(1f))
 
-                if (showAudioRecorder)
-                    AudioRecordingStart(
-                        audioRecorder = audioRecorder,
-                        appSettings = appSettings,
+            val forceUpdate = rememberForceUpdateOnLifeCycleChange()
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .then(forceUpdate),
+                verticalArrangement = Arrangement.Bottom,
+            ) {
+                if (appSettings.lastRecording?.hasRecordingsAvailable(context) == true) {
+                    val label = stringResource(
+                        R.string.ui_recorder_action_saveOldRecording_label,
+                        DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
+                            .format(appSettings.lastRecording.recordingStart),
                     )
-                VideoRecordingStart(
-                    videoRecorder = videoRecorder,
-                    appSettings = appSettings,
-                    onHideAudioRecording = onHideTopBar,
-                    onShowAudioRecording = onShowTopBar,
-                    showPreview = !showAudioRecorder,
-                )
-            }
-        }
-
-
-        val forceUpdate = rememberForceUpdateOnLifeCycleChange()
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .then(forceUpdate),
-            verticalArrangement = Arrangement.Bottom,
-        ) {
-            if (appSettings.lastRecording?.hasRecordingsAvailable(context) == true) {
-                val label = stringResource(
-                    R.string.ui_recorder_action_saveOldRecording_label,
-                    DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
-                        .format(appSettings.lastRecording.recordingStart),
-                )
-                TextButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .requiredWidthIn(max = BIG_PRIMARY_BUTTON_MAX_WIDTH)
-                        .height(BIG_PRIMARY_BUTTON_SIZE)
-                        .semantics {
-                            contentDescription = label
-                        },
-                    onClick = onSaveLastRecording,
-                    contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
-                ) {
-                    Icon(
-                        Icons.Default.Save,
-                        contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize),
-                    )
-                    Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                    Text(label)
-                }
-            } else {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.launcher_monochrome_noopacity),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
+                    TextButton(
                         modifier = Modifier
-                            .size(ButtonDefaults.IconSize)
-                    )
+                            .fillMaxWidth()
+                            .requiredWidthIn(max = BIG_PRIMARY_BUTTON_MAX_WIDTH)
+                            .height(BIG_PRIMARY_BUTTON_SIZE)
+                            .semantics {
+                                contentDescription = label
+                            },
+                        onClick = onSaveLastRecording,
+                        contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
+                    ) {
+                        Icon(
+                            Icons.Default.Save,
+                            contentDescription = null,
+                            modifier = Modifier.size(ButtonDefaults.IconSize),
+                        )
+                        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                        Text(label)
+                    }
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.launcher_monochrome_noopacity),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
+                            modifier = Modifier
+                                .size(ButtonDefaults.IconSize)
+                        )
 
-                    Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
 
-                    ClickableText(
-                        text = annotatedDescription,
-                        onClick = { textIndex ->
-                            if (annotatedDescription.getStringAnnotations(textIndex, textIndex)
-                                    .firstOrNull()?.tag == "minutes"
-                            ) {
-                                showQuickMaxDurationSelector = true
-                            }
-                        },
-                        modifier = Modifier
-                            .widthIn(max = 300.dp)
-                            .fillMaxWidth(),
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        ),
-                    )
+                        ClickableText(
+                            text = annotatedDescription,
+                            onClick = { textIndex ->
+                                if (annotatedDescription.getStringAnnotations(textIndex, textIndex)
+                                        .firstOrNull()?.tag == "minutes"
+                                ) {
+                                    showQuickMaxDurationSelector = true
+                                }
+                            },
+                            modifier = Modifier
+                                .widthIn(max = 300.dp)
+                                .fillMaxWidth(),
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            ),
+                        )
+                    }
                 }
             }
-        }
 
-        LowStorageInfo(appSettings = appSettings)
+            LowStorageInfo(
+                modifier = if (isLargeDisplay) Modifier
+                    .padding(16.dp)
+                    .widthIn(max = 400.dp) else Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                appSettings = appSettings
+            )
+        }
     }
 }

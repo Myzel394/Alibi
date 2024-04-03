@@ -18,6 +18,7 @@ import app.myzel394.alibi.ui.components.atoms.VisualDensity
 
 @Composable
 fun LowStorageInfo(
+    modifier: Modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
     appSettings: AppSettings,
 ) {
     val context = LocalContext.current
@@ -36,9 +37,7 @@ fun LowStorageInfo(
     println("LowStorageInfo: availableBytes: $availableBytes, requiredBytes: $requiredBytes, isLowOnStorage: $isLowOnStorage")
 
     if (isLowOnStorage)
-        Box(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-        ) {
+        Box(modifier = modifier) {
             BoxWithConstraints {
                 val isLarge = maxHeight > 600.dp;
 
