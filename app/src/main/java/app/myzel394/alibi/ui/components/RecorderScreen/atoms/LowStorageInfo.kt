@@ -37,7 +37,7 @@ fun LowStorageInfo(
 
     if (isLowOnStorage)
         Box(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
         ) {
             BoxWithConstraints {
                 val isLarge = maxHeight > 600.dp;
