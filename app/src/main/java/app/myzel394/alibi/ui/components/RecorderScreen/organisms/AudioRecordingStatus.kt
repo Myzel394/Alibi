@@ -38,7 +38,6 @@ import java.time.LocalDateTime
 fun AudioRecordingStatus(
     audioRecorder: AudioRecorderModel,
 ) {
-    val context = LocalContext.current
     val configuration = LocalConfiguration.current.orientation
 
     var now by remember { mutableStateOf(LocalDateTime.now()) }

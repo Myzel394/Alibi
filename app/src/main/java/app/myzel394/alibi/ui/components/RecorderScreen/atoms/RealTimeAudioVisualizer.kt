@@ -4,11 +4,16 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -75,7 +80,15 @@ fun RealtimeAudioVisualizer(
         audioRecorder.setMaxAmplitudesAmount(ceil(availableSpace.toInt() / BOX_DIFF).toInt() + 1)
     }
 
-    Canvas(modifier = modifier) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    val transformState = rememberTransformableState { zoomChange, _, _ ->
+        scale *= zoomChange
+    }
+    val amplitudePercentageModifier = MAX_AMPLITUDE * (1 / scale)
+
+    Canvas(
+        modifier = modifier.transformable(transformState),
+    ) {
         val height = this.size.height / 2f
         val width = this.size.width
 
@@ -88,7 +101,8 @@ fun RealtimeAudioVisualizer(
                     val horizontalProgress = (
                             clamp(horizontalValue, GROW_START, GROW_END)
                                     - GROW_START) / (GROW_END - GROW_START)
-                    val amplitudePercentage = (amplitude.toFloat() / MAX_AMPLITUDE).coerceAtMost(1f)
+                    val amplitudePercentage =
+                        (amplitude.toFloat() / amplitudePercentageModifier).coerceAtMost(1f)
                     val boxHeight =
                         (height * amplitudePercentage * horizontalProgress).coerceAtLeast(15f)
 
