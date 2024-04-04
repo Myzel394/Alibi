@@ -9,6 +9,7 @@
     <string name="form_error_value_notInRange">Please enter a number between <xliff:g name="min">%s</xliff:g> and <xliff:g name="max">%s</xliff:g></string>
     <string name="form_error_value_mustBeGreaterThan">Please enter a number greater than <xliff:g name="min">%s</xliff:g></string>
     <string name="form_value_selected">Selected: %s</string>
+    <string name="a11y_selectValue">Select %s</string>
     <string name="notificationChannels_recorder_name">Recorder</string>
     <string name="notificationChannels_recorder_description">Shows the current recording status</string>
     <string name="ui_permissions_request_title">Permission denied</string>
@@ -29,7 +30,7 @@
     <string name="ui_recorder_action_start_description_2"><xliff:g name="durationInMinutes">%s</xliff:g> minutes</string>
     <string name="ui_recorder_action_start_description_3">\u0020at your request</string>
     <string name="ui_recorder_action_save_processing_dialog_title">Processing</string>
-    <string name="ui_recorder_action_save_processing_dialog_description">Processing Audio, do not close Alibi! You will be automatically prompted to save the file once it\'s ready</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Processing your recording, do not close Alibi! You will automatically be prompted to save the file once it\'s ready. This process may take a few minutes if your time frame is big. Once this is finished and you are asked to save the file, please do so and then wait until you see Alibi\'s main screen again.</string>
     <string name="ui_recorder_state_recording_description">Alibi keeps recording in the background</string>
     <string name="ui_recorder_state_recording_fake_weather_title">Current Weather</string>
     <string name="ui_recorder_state_recording_fake_weather_description">14° with light chance of rain</string>
@@ -65,7 +66,7 @@
     <string name="ui_recorder_state_paused_title">Recording paused</string>
     <string name="ui_recorder_state_paused_description">녹음이 일시 정지 되었습니다</string>
     <string name="ui_recorder_error_recording_title">오류가 발생했습니다</string>
-    <string name="ui_recorder_error_recording_description">Alibi encountered an error during recording. Would you like to try saving the recording?</string>
+    <string name="ui_recorder_error_recording_description">Alibi encountered an error during recording. Try using different settings or restart the app.</string>
     <string name="ui_settings_language_title">Language</string>
     <string name="ui_settings_language_update_label">Change</string>
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Device Microphone</string>
@@ -182,4 +183,29 @@
     <string name="ui_recorder_action_saveCurrent_explanation">You can save the current ongoing recording by pressing and holding down on the save button. The recording will continue in the background.</string>
     <string name="ui_recorder_lowOnStorage_hint">You are low on storage. Alibi may not function properly. Please free up some space.</string>
     <string name="ui_recorder_lowOnStorage_hintANDswitchSaveFolder">You are low on storage. Alibi may not function properly. Please free up some space. Alternatively, change the batches folder to a different location in the settings.</string>
+    <string name="ui_welcome_timeSettings_title">How long should Alibi remember?</string>
+    <string name="ui_welcome_timeSettings_message">Alibi will continuously record and delete old recordings to make space for new ones. You decide how long Alibi should remember the past.</string>
+    <string name="ui_welcome_timeSettings_values_5min">5 Minutes</string>
+    <string name="ui_welcome_timeSettings_values_15min">15 minutes</string>
+    <string name="ui_welcome_timeSettings_values_30min">30 minutes</string>
+    <string name="ui_welcome_timeSettings_values_1hour">1 hour</string>
+    <string name="ui_welcome_timeSettings_changeableHint">You can change this anytime</string>
+    <string name="ui_welcome_saveFolder_title">Where should Alibi store the batches?</string>
+    <string name="ui_welcome_saveFolder_message">Select where you would like to let Alibi store the batches of the ongoing recordings. The internal folder is encrypted and only accessible by Alibi. This folder is recommended if you only want to record a small time frame. If you need a longer time frame, you will most likely need to select a different folder, as the internal storage is very limited.</string>
+    <string name="ui_welcome_saveFolder_values_internal">Internal Storage</string>
+    <string name="ui_welcome_saveFolder_values_custom">Custom Folder</string>
+    <string name="ui_welcome_saveFolder_values_media">Media Folder</string>
+    <string name="ui_welcome_saveFolder_externalRequired">Please select either the Media Folder or a Custom Folder. Alibi has not enough space to store the batches in the internal storage. Alternatively, go back one step and select a shorter duration.</string>
+    <string name="ui_welcome_saveFolder_customFolder_title">Select a Custom Folder</string>
+    <string name="ui_welcome_saveFolder_customFolder_message">You will now be asked to select a folder where Alibi should store the batches. Please select a folder where you have write access to.</string>
+    <string name="ui_welcome_timeSettings_values_custom">Custom Duration</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_mm">%s minutes</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%s hour, %s minutes</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_h_mm">1 hour, %s minutes</string>
+    <string name="ui_welcome_ready_title">You are ready!</string>
+    <string name="ui_welcome_ready_message">You are ready to start using Alibi! Go ahead and try it out!</string>
+    <string name="ui_welcome_ready_start">Start Alibi</string>
+    <string name="ui_about_support_title">Get Support</string>
+    <string name="ui_about_support_message">If you have any questions, feedback or face any issues, please don\'t hesitate to contact me. I\'m happy to help you! Below is a list of ways to get in touch with me:</string>
+    <string name="ui_welcome_timeSettings_values_1min">1 Minute</string>
 </resources>
