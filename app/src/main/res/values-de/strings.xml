@@ -9,6 +9,7 @@
     <string name="form_error_value_notInRange">Bitte gib eine Nummer zwischen<xliff:g name="min">%s</xliff:g> und <xliff:g name="max">%s</xliff:g>ein</string>
     <string name="form_error_value_mustBeGreaterThan">Bitte gib eine Zahl größer als <xliff:g name="min">%s</xliff:g> ein</string>
     <string name="form_value_selected">%s ausgewählt</string>
+    <string name="a11y_selectValue">Select %s</string>
     <string name="notificationChannels_recorder_name">Aufnahme</string>
     <string name="notificationChannels_recorder_description">Zeigt den aktuellen Status der Aufnahme an</string>
     <string name="ui_permissions_request_title">Berechtigung verweigert</string>
@@ -29,7 +30,7 @@
     <string name="ui_recorder_action_start_description_2"><xliff:g name="durationInMinutes">%s</xliff:g> Minuten</string>
     <string name="ui_recorder_action_start_description_3">\u0020auf Ihre Anfrage</string>
     <string name="ui_recorder_action_save_processing_dialog_title">Bearbeiten</string>
-    <string name="ui_recorder_action_save_processing_dialog_description">Audio wird bearbeitet, Alibi nicht schließen! Du wirst automatisch aufgefordert, die Datei zu speichern, wenn diese fertig bearbeitet ist</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Bearbeite die Aufnahme, schließen Sie Alibi nicht! Sie werden automatisch aufgefordert, die Datei zu speichern, sobald sie fertig ist. Dieser Prozess kann einige Minuten dauern, wenn der Zeitrahmen groß ist. Sobald dies beendet ist und Sie gebeten werden, die Datei zu speichern, tun Sie dies bitte und warten Sie, bis Sie den Alibi Hauptbildschirm wieder sehen.</string>
     <string name="ui_recorder_state_recording_description">Alibi nimmt im Hintergrund weiter auf</string>
     <string name="ui_recorder_state_recording_fake_weather_title">Aktuelles Wetter</string>
     <string name="ui_recorder_state_recording_fake_weather_description">14° mit leichter Regenwahrscheinlichkeit</string>
@@ -65,7 +66,7 @@
     <string name="ui_recorder_state_paused_title">Aufnahme pausiert</string>
     <string name="ui_recorder_state_paused_description">Audio-Aufnahme wurde pausiert</string>
     <string name="ui_recorder_error_recording_title">Es ist ein Fehler aufgetreten</string>
-    <string name="ui_recorder_error_recording_description">Alibi stieß bei der Aufnahme auf einen Fehler. Soll die Aufnahme gespeichert werden? </string>
+    <string name="ui_recorder_error_recording_description">Es ist ein Fehler während der Aufnahme aufgetreten. Versuchen Sie andere Einstellungen zu verwenden oder starten Sie Alibi neu.</string>
     <string name="ui_settings_language_title">Sprache</string>
     <string name="ui_settings_language_update_label">Ändern</string>
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Geräte-Mikrofon</string>
@@ -182,4 +183,29 @@
     <string name="ui_recorder_action_saveCurrent_explanation">Sie können die aktuelle Aufnahme speichern, indem Sie die Schaltfläche Speichern drücken und gedrückt halten. Die Aufnahme wird im Hintergrund fortgesetzt.</string>
     <string name="ui_recorder_lowOnStorage_hint">Sie haben wenig Speicherplatz. Alibi funktioniert möglicherweise nicht richtig. Bitte geben Sie etwas Speicher frei.</string>
     <string name="ui_recorder_lowOnStorage_hintANDswitchSaveFolder">Sie haben wenig Speicherplatz. Alibi funktioniert möglicherweise nicht richtig. Bitte geben Sie etwas Speicher frei. Alternativ können Sie den Batchordner in den Einstellungen auf einen anderen Ort ändern.</string>
+    <string name="ui_welcome_timeSettings_title">How long should Alibi remember?</string>
+    <string name="ui_welcome_timeSettings_message">Alibi wird ständig aufnehmen und alte aufnahmen löschen, um Platz für neue Aufnahmen zu schaffen. Du entscheidest, wie lange die alten aufnahmen gespeichert werden.</string>
+    <string name="ui_welcome_timeSettings_values_5min">5 Minuten</string>
+    <string name="ui_welcome_timeSettings_values_15min">15 minuten</string>
+    <string name="ui_welcome_timeSettings_values_30min">30 minuten</string>
+    <string name="ui_welcome_timeSettings_values_1hour">1 Stunde</string>
+    <string name="ui_welcome_timeSettings_changeableHint">Du kannst dies jederzeit ändern</string>
+    <string name="ui_welcome_saveFolder_title">Wo solle Alibi die Batches speichern?</string>
+    <string name="ui_welcome_saveFolder_message">Wählen Sie aus, wo Sie Alibi die Batches der laufenden Aufnahmen speichern lassen möchten. Der interne Ordner ist verschlüsselt und nur für Alibi zugänglich. Dieser Ordner wird empfohlen, wenn Sie nur einen kleinen Zeitrahmen aufnehmen möchten. Wenn Sie einen längeren Zeitrahmen benötigen, müssen Sie höchstwahrscheinlich einen anderen Ordner auswählen, da der interne Speicher sehr begrenzt ist.</string>
+    <string name="ui_welcome_saveFolder_values_internal">Interner Speicher</string>
+    <string name="ui_welcome_saveFolder_values_custom">Eigener Speicherort</string>
+    <string name="ui_welcome_saveFolder_values_media">Medien Ordner</string>
+    <string name="ui_welcome_saveFolder_externalRequired">Bitte wählen Sie entweder den Medienordner oder einen benutzerdefinierten Ordner. Alibi hat nicht genug Platz, um die Batches im internen Speicher zu speichern. Oder gehen Sie einen Schritt zurück und wählen Sie eine kürzere Dauer.</string>
+    <string name="ui_welcome_saveFolder_customFolder_title">Wähle einen eigenen Ordner</string>
+    <string name="ui_welcome_saveFolder_customFolder_message">Sie werden nun aufgefordert, einen Ordner auszuwählen, in dem Alibi die Batches speichern soll. Bitte wählen Sie einen Ordner, auf den Sie Schreibzugriff haben.</string>
+    <string name="ui_welcome_timeSettings_values_custom">Benutzerdefinierte Dauer</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_mm">%s Minuten</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%s Stunde, %s Minuten</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_h_mm">1 Stunde, %s Minuten</string>
+    <string name="ui_welcome_ready_title">Sie sind bereit!</string>
+    <string name="ui_welcome_ready_message">Du bist bereit, Alibi zu verwenden! Probiere es aus!</string>
+    <string name="ui_welcome_ready_start">Alibi Starten</string>
+    <string name="ui_about_support_title">Holen Sie sich Unterstützung</string>
+    <string name="ui_about_support_message">Wenn Sie Fragen, Feedback oder Probleme haben, zögern Sie bitte nicht, mich zu kontaktieren. Ich helfe Ihnen gerne! Unten ist eine Liste von Möglichkeiten, mit mir in Kontakt zu treten:</string>
+    <string name="ui_welcome_timeSettings_values_1min">1 Minute</string>
 </resources>
