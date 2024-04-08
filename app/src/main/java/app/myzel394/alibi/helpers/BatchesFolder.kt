@@ -441,23 +441,28 @@ abstract class BatchesFolder(
     }
 
     fun checkIfFolderIsAccessible(): Boolean {
-        return when (type) {
-            BatchType.INTERNAL -> true
-            BatchType.CUSTOM -> getCustomDefinedFolder().canWrite() && getCustomDefinedFolder().canRead()
-            BatchType.MEDIA -> {
-                if (SUPPORTS_SCOPED_STORAGE) {
-                    return true
-                }
+        try {
+            return when (type) {
+                BatchType.INTERNAL -> true
+                BatchType.CUSTOM -> getCustomDefinedFolder().canWrite() && getCustomDefinedFolder().canRead()
+                BatchType.MEDIA -> {
+                    if (SUPPORTS_SCOPED_STORAGE) {
+                        return true
+                    }
 
-                return PermissionHelper.hasGranted(
-                    context,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) &&
-                        PermissionHelper.hasGranted(
-                            context,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-                        )
+                    return PermissionHelper.hasGranted(
+                        context,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) &&
+                            PermissionHelper.hasGranted(
+                                context,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            )
+                }
             }
+        } catch (error: NullPointerException) {
+            error.printStackTrace()
+            return false
         }
     }
 
@@ -579,6 +584,10 @@ abstract class BatchesFolder(
         INTERNAL,
         CUSTOM,
         MEDIA,
+    }
+
+    class InaccessibleError : RuntimeException() {
+
     }
 
     companion object {

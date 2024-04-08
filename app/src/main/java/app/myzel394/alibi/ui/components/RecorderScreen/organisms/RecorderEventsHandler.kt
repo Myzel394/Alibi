@@ -356,17 +356,16 @@ fun RecorderEventsHandler(
             progress = processingProgress,
         )
 
-    if (showRecorderError)
-        RecorderErrorDialog(
-            onClose = {
-                showRecorderError = false
-            },
-        )
-
     if (showBatchesInaccessibleError)
         BatchesInaccessibleDialog(
             onClose = {
                 showBatchesInaccessibleError = false
+            },
+        )
+    else if (showRecorderError)
+        RecorderErrorDialog(
+            onClose = {
+                showRecorderError = false
             },
         )
 }
