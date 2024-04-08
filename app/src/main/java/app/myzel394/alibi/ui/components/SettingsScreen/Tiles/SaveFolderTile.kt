@@ -2,7 +2,6 @@ package app.myzel394.alibi.ui.components.SettingsScreen.Tiles
 
 import android.Manifest
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -97,35 +96,40 @@ fun SaveFolderTile(
 
     val successMessage = stringResource(R.string.ui_settings_option_saveFolder_success)
     fun updateValue(path: String?) {
-        if (path == null) {
-            return
-        }
+        if (path != null && path != RECORDER_MEDIA_SELECTED_VALUE) {
+            context.contentResolver.takePersistableUriPermission(
+                path.toUri(),
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
 
-        if (!BatchesFolder.canAccessFolder(context, path.toUri())) {
-            showError = true
-            return
-        }
+            if (!BatchesFolder.canAccessFolder(context, path.toUri())) {
+                showError = true
 
-        if (settings.saveFolder != null && settings.saveFolder != RECORDER_MEDIA_SELECTED_VALUE) {
-            runCatching {
-                // Clean up
-                val grantedURIs = context.contentResolver.persistedUriPermissions;
-
-                grantedURIs.forEach { permission ->
+                runCatching {
                     context.contentResolver.releasePersistableUriPermission(
-                        permission.uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION
-                                or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        path.toUri(),
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                 }
+                return
             }
         }
 
-        if (path != RECORDER_MEDIA_SELECTED_VALUE) {
-            context.contentResolver.takePersistableUriPermission(
-                Uri.parse(path),
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            )
+        runCatching {
+            // Clean up
+            val grantedURIs = context.contentResolver.persistedUriPermissions;
+
+            grantedURIs.forEach { permission ->
+                if (permission.uri == path?.toUri()) {
+                    return@forEach
+                }
+
+                context.contentResolver.releasePersistableUriPermission(
+                    permission.uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            }
         }
 
         scope.launch {
