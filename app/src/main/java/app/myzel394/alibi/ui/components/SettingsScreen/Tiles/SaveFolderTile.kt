@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mic
@@ -62,6 +63,7 @@ import app.myzel394.alibi.R
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.helpers.AudioBatchesFolder
+import app.myzel394.alibi.helpers.BatchesFolder
 import app.myzel394.alibi.helpers.VideoBatchesFolder
 import app.myzel394.alibi.ui.AUDIO_RECORDING_BATCHES_SUBFOLDER_NAME
 import app.myzel394.alibi.ui.MEDIA_SUBFOLDER_NAME
@@ -91,18 +93,35 @@ fun SaveFolderTile(
     val context = LocalContext.current
     val dataStore = context.dataStore
 
+    var showError by remember { mutableStateOf(false) }
+
     val successMessage = stringResource(R.string.ui_settings_option_saveFolder_success)
     fun updateValue(path: String?) {
+        if (path == null) {
+            return
+        }
+
+        if (!BatchesFolder.canAccessFolder(context, path.toUri())) {
+            showError = true
+            return
+        }
+
         if (settings.saveFolder != null && settings.saveFolder != RECORDER_MEDIA_SELECTED_VALUE) {
             runCatching {
-                context.contentResolver.releasePersistableUriPermission(
-                    Uri.parse(settings.saveFolder),
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                )
+                // Clean up
+                val grantedURIs = context.contentResolver.persistedUriPermissions;
+
+                grantedURIs.forEach { permission ->
+                    context.contentResolver.releasePersistableUriPermission(
+                        permission.uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                }
             }
         }
 
-        if (path != null && path != RECORDER_MEDIA_SELECTED_VALUE) {
+        if (path != RECORDER_MEDIA_SELECTED_VALUE) {
             context.contentResolver.takePersistableUriPermission(
                 Uri.parse(path),
                 Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -128,6 +147,45 @@ fun SaveFolderTile(
             selectionSheetState.hide()
             selectionVisible = false
         }
+    }
+
+    if (showError) {
+        AlertDialog(
+            onDismissRequest = {
+                showError = false
+            },
+            icon = {
+                Icon(
+                    Icons.Default.Error,
+                    contentDescription = null,
+                )
+            },
+            title = {
+                Text(stringResource(R.string.ui_error_occurred_title))
+            },
+            confirmButton = {
+                Button(onClick = {
+                    showError = false
+                }) {
+                    Text(stringResource(R.string.dialog_close_neutral_label))
+                }
+            },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.ui_settings_option_saveFolder_batchesFolderInaccessible_error),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            }
+        )
     }
 
     if (selectionVisible) {

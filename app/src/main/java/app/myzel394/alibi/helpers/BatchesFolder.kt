@@ -586,14 +586,26 @@ abstract class BatchesFolder(
         MEDIA,
     }
 
-    class InaccessibleError : RuntimeException() {
-
-    }
-
     companion object {
         fun requiredBytesForOneMinuteOfRecording(appSettings: AppSettings): Long {
             // 350 MiB sounds like a good default
             return 350 * 1024 * 1024
+        }
+
+        fun canAccessFolder(context: Context, uri: Uri): Boolean {
+            return try {
+                // Create temp file
+                val tempFile = DocumentFile.fromSingleUri(context, uri)!!.createFile(
+                    "application/octet-stream",
+                    "temp"
+                )!!
+                tempFile.delete()
+
+                true
+            } catch (error: RuntimeException) {
+                error.printStackTrace()
+                false
+            }
         }
     }
 }
