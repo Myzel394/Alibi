@@ -20,19 +20,19 @@
     <string name="ui_recorder_action_saveOldRecording_label">Зберегти запис з <xliff:g name="date">%s</xliff:g></string>
     <string name="ui_recorder_action_delete_label">Видалити</string>
     <string name="ui_recorder_action_delete_confirm_title">Видалити запис?</string>
-    <string name="ui_recorder_action_delete_confirm_message">Are you sure you want to delete this recording?</string>
+    <string name="ui_recorder_action_delete_confirm_message">Ви впевнені що хочете видалити цей запис?</string>
     <string name="ui_recorder_action_pause_label">Pause Recording</string>
     <string name="ui_recorder_action_resume_label">Resume Recording</string>
     <string name="ui_recorder_action_save_label">Save Recording</string>
-    <string name="ui_recorder_action_save_success">Recording has been saved successfully!</string>
-    <string name="ui_recorder_action_save_openFolder">Open</string>
-    <string name="ui_recorder_action_start_description_1">Alibi will continue recording in the background and store the last\u0020</string>
-    <string name="ui_recorder_action_start_description_2"><xliff:g name="durationInMinutes">%s</xliff:g> minutes</string>
-    <string name="ui_recorder_action_start_description_3">\u0020at your request</string>
-    <string name="ui_recorder_action_save_processing_dialog_title">Processing</string>
-    <string name="ui_recorder_action_save_processing_dialog_description">Processing your recording, do not close Alibi! You will automatically be prompted to save the file once it\'s ready. This process may take a few minutes if your time frame is big. Once this is finished and you are asked to save the file, please do so and then wait until you see Alibi\'s main screen again.</string>
-    <string name="ui_recorder_state_recording_description">Alibi keeps recording in the background</string>
-    <string name="ui_recorder_state_recording_fake_weather_title">Current Weather</string>
+    <string name="ui_recorder_action_save_success">Запис було успішно збережено!</string>
+    <string name="ui_recorder_action_save_openFolder">Відкрити</string>
+    <string name="ui_recorder_action_start_description_1">Алібі буде продовжувати запис у фоні та збереже останні\u0020</string>
+    <string name="ui_recorder_action_start_description_2"><xliff:g name="durationInMinutes">%s</xliff:g> хвилин</string>
+    <string name="ui_recorder_action_start_description_3">\u0020за вашим запитом</string>
+    <string name="ui_recorder_action_save_processing_dialog_title">Обробка</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Ваш запис обробляється, не закривайте Алібі! Вам буде автоматично запропоновано зберегти файл, коли він буде готовий. Цей процес може зайняти декілька хвилин залежно від обраного Вами фреймтайму. Після завершення процесу та збереження файлу, будь ласка, дочекайтеся головного екрану Алібі</string>
+    <string name="ui_recorder_state_recording_description">Алібі зберігає записує у фоновому режимі</string>
+    <string name="ui_recorder_state_recording_fake_weather_title">Поточна погода</string>
     <string name="ui_recorder_state_recording_fake_weather_description">14° with light chance of rain</string>
     <string name="ui_recorder_state_recording_fake_player_title">Playing Audio</string>
     <string name="ui_recorder_state_recording_fake_player_description">Now playing: Despacito</string>
