@@ -3,13 +3,13 @@
     <string name="app_name">Alibi</string>
     <string name="dialog_close_cancel_label">İptal</string>
     <string name="dialog_close_neutral_label">Tamam</string>
-    <string name="continue_label">Devam et</string>
+    <string name="continue_label">Devam</string>
     <string name="format_kbps">        <xliff:g name="value">%s</xliff:g> KB/sn</string>
     <string name="form_error_type_notNumber">Lütfen geçerli bir sayı girin</string>
     <string name="form_error_value_notInRange">Lütfen arasında bir sayı girin <xliff:g name="min">%s</xliff:g> ve <xliff:g name="max">%s</xliff:g></string>
     <string name="form_error_value_mustBeGreaterThan">Lütfen daha büyük bir sayı girin <xliff:g name="min">%s</xliff:g></string>
-    <string name="form_value_selected">Seçildi: %s</string>
-    <string name="a11y_selectValue">Seç %s</string>
+    <string name="form_value_selected">Seçilen: %s</string>
+    <string name="a11y_selectValue">%s\'i seçin</string>
     <string name="notificationChannels_recorder_name">Kaydedici</string>
     <string name="notificationChannels_recorder_description">Mevcut kayıt durumunu gösterir</string>
     <string name="ui_permissions_request_title">İzin verilmedi</string>
