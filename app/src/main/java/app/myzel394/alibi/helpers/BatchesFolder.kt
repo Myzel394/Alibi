@@ -25,6 +25,9 @@ import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.utils.PermissionHelper
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -592,20 +595,29 @@ abstract class BatchesFolder(
             return 350 * 1024 * 1024
         }
 
-        fun canAccessFolder(context: Context, uri: Uri): Boolean {
-            return try {
-                // Create temp file
-                val tempFile = DocumentFile.fromSingleUri(context, uri)!!.createFile(
-                    "application/octet-stream",
-                    "temp"
-                )!!
-                tempFile.delete()
+        suspend fun canAccessFolder(context: Context, uri: Uri): Boolean {
+            var canAccess = false
 
-                true
-            } catch (error: RuntimeException) {
-                error.printStackTrace()
-                false
-            }
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    // Create temp file
+                    val documentFile = DocumentFile.fromTreeUri(context, uri)!!
+                    val tempFile = documentFile.createFile(
+                        "application/octet-stream",
+                        "temp"
+                    )!!
+                    if (!tempFile.exists() || !tempFile.canWrite() || !tempFile.canRead()) {
+                        return@launch
+                    }
+                    tempFile.delete()
+
+                    canAccess = true
+                } catch (error: RuntimeException) {
+                    error.printStackTrace()
+                }
+            }.join()
+
+            return canAccess
         }
     }
 }

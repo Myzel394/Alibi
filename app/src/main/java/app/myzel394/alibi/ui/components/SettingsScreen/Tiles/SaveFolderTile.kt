@@ -96,43 +96,44 @@ fun SaveFolderTile(
 
     val successMessage = stringResource(R.string.ui_settings_option_saveFolder_success)
     fun updateValue(path: String?) {
-        if (path != null && path != RECORDER_MEDIA_SELECTED_VALUE) {
-            context.contentResolver.takePersistableUriPermission(
-                path.toUri(),
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            )
-
-            if (!BatchesFolder.canAccessFolder(context, path.toUri())) {
-                showError = true
-
-                runCatching {
-                    context.contentResolver.releasePersistableUriPermission(
-                        path.toUri(),
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    )
-                }
-                return
-            }
-        }
-
-        runCatching {
-            // Clean up
-            val grantedURIs = context.contentResolver.persistedUriPermissions;
-
-            grantedURIs.forEach { permission ->
-                if (permission.uri == path?.toUri()) {
-                    return@forEach
-                }
-
-                context.contentResolver.releasePersistableUriPermission(
-                    permission.uri,
+        scope.launch {
+            if (path != null && path != RECORDER_MEDIA_SELECTED_VALUE) {
+                context.contentResolver.takePersistableUriPermission(
+                    path.toUri(),
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
                             or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 )
-            }
-        }
 
-        scope.launch {
+                if (!BatchesFolder.canAccessFolder(context, path.toUri())) {
+                    showError = true
+
+                    runCatching {
+                        context.contentResolver.releasePersistableUriPermission(
+                            path.toUri(),
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        )
+                    }
+                    return@launch
+                }
+            }
+
+            runCatching {
+                // Clean up
+                val grantedURIs = context.contentResolver.persistedUriPermissions;
+
+                grantedURIs.forEach { permission ->
+                    if (permission.uri == path?.toUri()) {
+                        return@forEach
+                    }
+
+                    context.contentResolver.releasePersistableUriPermission(
+                        permission.uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                }
+            }
+
             dataStore.updateData {
                 it.setSaveFolder(path)
             }
