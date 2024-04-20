@@ -1,13 +1,11 @@
 package app.myzel394.alibi.services
 
 import android.annotation.SuppressLint
-import android.app.ActivityManager
 import android.app.Notification
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.LifecycleService
 import app.myzel394.alibi.NotificationHelper
 import app.myzel394.alibi.enums.RecorderState
@@ -63,7 +61,16 @@ abstract class RecorderService : LifecycleService() {
 
         startForegroundService()
         changeState(RecorderState.RECORDING)
-        start()
+
+        try {
+            start()
+        } catch (error: RuntimeException) {
+            error.printStackTrace()
+
+            if (error !is AvoidErrorDialogError) {
+                onError()
+            }
+        }
     }
 
     suspend fun stopRecording() {
@@ -194,4 +201,9 @@ abstract class RecorderService : LifecycleService() {
             }
         }
     }
+
+
+    // Throw this error if you show a dialog yourself.
+    // This will prevent the service from showing their generic error dialog.
+    class AvoidErrorDialogError : RuntimeException()
 }

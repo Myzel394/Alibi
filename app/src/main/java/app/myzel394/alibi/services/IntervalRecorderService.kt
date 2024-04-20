@@ -65,6 +65,8 @@ abstract class IntervalRecorderService<I, B : BatchesFolder> :
 
         if (!batchesFolder.checkIfFolderIsAccessible()) {
             onBatchesFolderNotAccessible()
+
+            throw AvoidErrorDialogError()
         }
 
         createTimer()

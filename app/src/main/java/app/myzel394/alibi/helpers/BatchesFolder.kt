@@ -441,23 +441,28 @@ abstract class BatchesFolder(
     }
 
     fun checkIfFolderIsAccessible(): Boolean {
-        return when (type) {
-            BatchType.INTERNAL -> true
-            BatchType.CUSTOM -> getCustomDefinedFolder().canWrite() && getCustomDefinedFolder().canRead()
-            BatchType.MEDIA -> {
-                if (SUPPORTS_SCOPED_STORAGE) {
-                    return true
-                }
+        try {
+            return when (type) {
+                BatchType.INTERNAL -> true
+                BatchType.CUSTOM -> getCustomDefinedFolder().canWrite() && getCustomDefinedFolder().canRead()
+                BatchType.MEDIA -> {
+                    if (SUPPORTS_SCOPED_STORAGE) {
+                        return true
+                    }
 
-                return PermissionHelper.hasGranted(
-                    context,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) &&
-                        PermissionHelper.hasGranted(
-                            context,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-                        )
+                    return PermissionHelper.hasGranted(
+                        context,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) &&
+                            PermissionHelper.hasGranted(
+                                context,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            )
+                }
             }
+        } catch (error: NullPointerException) {
+            error.printStackTrace()
+            return false
         }
     }
 
@@ -585,6 +590,22 @@ abstract class BatchesFolder(
         fun requiredBytesForOneMinuteOfRecording(appSettings: AppSettings): Long {
             // 350 MiB sounds like a good default
             return 350 * 1024 * 1024
+        }
+
+        fun canAccessFolder(context: Context, uri: Uri): Boolean {
+            return try {
+                // Create temp file
+                val tempFile = DocumentFile.fromSingleUri(context, uri)!!.createFile(
+                    "application/octet-stream",
+                    "temp"
+                )!!
+                tempFile.delete()
+
+                true
+            } catch (error: RuntimeException) {
+                error.printStackTrace()
+                false
+            }
         }
     }
 }
