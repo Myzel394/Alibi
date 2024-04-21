@@ -208,4 +208,6 @@
     <string name="ui_about_support_title">Destek Alın</string>
     <string name="ui_about_support_message">Herhangi bir sorunuz, geri bildiriminiz varsa veya herhangi bir sorunla karşılaşırsanız, lütfen benimle iletişime geçmekten çekinmeyin. Size yardımcı olmaktan memnuniyet duyarım! Aşağıda benimle iletişime geçme yollarının bir listesi bulunmaktadır:</string>
     <string name="ui_welcome_timeSettings_values_1min">1 Dakika</string>
+    <string name="ui_error_occurred_title">There was an error</string>
+    <string name="ui_settings_option_saveFolder_batchesFolderInaccessible_error">Alibi can\'t access this folder. Please select a different one</string>
 </resources>
