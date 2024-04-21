@@ -208,4 +208,6 @@
     <string name="ui_about_support_title">Get Support</string>
     <string name="ui_about_support_message">If you have any questions, feedback or face any issues, please don\'t hesitate to contact me. I\'m happy to help you! Below is a list of ways to get in touch with me:</string>
     <string name="ui_welcome_timeSettings_values_1min">1 Minute</string>
+    <string name="ui_error_occurred_title">There was an error</string>
+    <string name="ui_settings_option_saveFolder_batchesFolderInaccessible_error">Alibi can\'t access this folder. Please select a different one</string>
 </resources>
