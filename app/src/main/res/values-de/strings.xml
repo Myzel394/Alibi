@@ -9,7 +9,7 @@
     <string name="form_error_value_notInRange">Bitte gib eine Nummer zwischen<xliff:g name="min">%s</xliff:g> und <xliff:g name="max">%s</xliff:g>ein</string>
     <string name="form_error_value_mustBeGreaterThan">Bitte gib eine Zahl größer als <xliff:g name="min">%s</xliff:g> ein</string>
     <string name="form_value_selected">%s ausgewählt</string>
-    <string name="a11y_selectValue">Select %s</string>
+    <string name="a11y_selectValue">Wähle %s</string>
     <string name="notificationChannels_recorder_name">Aufnahme</string>
     <string name="notificationChannels_recorder_description">Zeigt den aktuellen Status der Aufnahme an</string>
     <string name="ui_permissions_request_title">Berechtigung verweigert</string>
@@ -183,7 +183,7 @@
     <string name="ui_recorder_action_saveCurrent_explanation">Sie können die aktuelle Aufnahme speichern, indem Sie die Schaltfläche Speichern drücken und gedrückt halten. Die Aufnahme wird im Hintergrund fortgesetzt.</string>
     <string name="ui_recorder_lowOnStorage_hint">Sie haben wenig Speicherplatz. Alibi funktioniert möglicherweise nicht richtig. Bitte geben Sie etwas Speicher frei.</string>
     <string name="ui_recorder_lowOnStorage_hintANDswitchSaveFolder">Sie haben wenig Speicherplatz. Alibi funktioniert möglicherweise nicht richtig. Bitte geben Sie etwas Speicher frei. Alternativ können Sie den Batchordner in den Einstellungen auf einen anderen Ort ändern.</string>
-    <string name="ui_welcome_timeSettings_title">How long should Alibi remember?</string>
+    <string name="ui_welcome_timeSettings_title">Wie lange sollte sich Alibi erinnern?</string>
     <string name="ui_welcome_timeSettings_message">Alibi wird ständig aufnehmen und alte aufnahmen löschen, um Platz für neue Aufnahmen zu schaffen. Du entscheidest, wie lange die alten aufnahmen gespeichert werden.</string>
     <string name="ui_welcome_timeSettings_values_5min">5 Minuten</string>
     <string name="ui_welcome_timeSettings_values_15min">15 minuten</string>
@@ -208,4 +208,6 @@
     <string name="ui_about_support_title">Holen Sie sich Unterstützung</string>
     <string name="ui_about_support_message">Wenn Sie Fragen, Feedback oder Probleme haben, zögern Sie bitte nicht, mich zu kontaktieren. Ich helfe Ihnen gerne! Unten ist eine Liste von Möglichkeiten, mit mir in Kontakt zu treten:</string>
     <string name="ui_welcome_timeSettings_values_1min">1 Minute</string>
+    <string name="ui_error_occurred_title">Ein Fehler ist aufgetreten</string>
+    <string name="ui_settings_option_saveFolder_batchesFolderInaccessible_error">Alibi kann nicht auf diesen Ordner zugreifen. Bitte wählen Sie einen anderen</string>
 </resources>
