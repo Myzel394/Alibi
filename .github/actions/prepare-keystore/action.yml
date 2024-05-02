@@ -26,7 +26,6 @@ runs:
         encodedString: ${{ inputs.keyStoreBase64 }}
 
     - name: Write Keystore properties 🗝️
-      shell: bash
       run: |
         echo "storeFile=${{ steps.android_keystore.outputs.filePath }}" > key.properties
         echo "storePassword=${{ inputs.signingStorePassword }}" >> key.properties
