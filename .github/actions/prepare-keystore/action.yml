@@ -19,15 +19,12 @@ runs:
   using: composite
   steps:
     - name: Write Keystore file 🗄️
-      id: android_keystore
-      uses: timheuer/base64-to-file@v1.0.3
-      with:
-        fileName: key.jks
-        encodedString: ${{ inputs.keyStoreBase64 }}
+      shell: bash
+      run: echo "${{ inputs.keyStoreBase64 }}" | base64 -d > /home/runner/key.jks
 
     - name: Write Keystore properties 🗝️
       run: |
-        echo "storeFile=${{ steps.android_keystore.outputs.filePath }}" > key.properties
+        echo "storeFile=/home/runner/key.jks" > key.properties
         echo "storePassword=${{ inputs.signingStorePassword }}" >> key.properties
         echo "keyPassword=${{ inputs.signingKeyPassword }}" >> key.properties
         echo "keyAlias=${{ inputs.signingKeyAlias }}" >> key.properties
