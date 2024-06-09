@@ -143,6 +143,7 @@ data class AppSettings(
     enum class FilenameFormat {
         DATETIME_ABSOLUTE_START,
         DATETIME_RELATIVE_START,
+        DATETIME_NOW,
     }
 
     companion object {
@@ -183,6 +184,8 @@ data class RecordingInformation(
             AppSettings.FilenameFormat.DATETIME_RELATIVE_START -> LocalDateTime.now().minusSeconds(
                 getFullDuration() / 1000
             )
+
+            AppSettings.FilenameFormat.DATETIME_NOW -> LocalDateTime.now()
         }
     }
 

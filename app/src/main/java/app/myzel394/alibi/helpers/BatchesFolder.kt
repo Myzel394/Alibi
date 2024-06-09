@@ -257,6 +257,7 @@ abstract class BatchesFolder(
         onProgress: (Float?) -> Unit = {},
     ): String {
         val disableCache = disableCache ?: (type != BatchType.INTERNAL)
+        val date = recording.getStartDateForFilename(filenameFormat)
 
         if (!disableCache && checkIfOutputAlreadyExists(
                 recording.recordingStart,
@@ -279,7 +280,7 @@ abstract class BatchesFolder(
                 val filePaths = getBatchesForFFmpeg()
 
                 val outputFile = getOutputFileForFFmpeg(
-                    date = recording.getStartDateForFilename(filenameFormat),
+                    date = date,
                     extension = recording.fileExtension,
                 )
 

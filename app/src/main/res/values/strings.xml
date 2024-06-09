@@ -231,4 +231,6 @@
     <string name="ui_settings_option_filenameFormat_action_relativeStart_label">Recording start</string>
     <string name="ui_settings_option_filenameFormat_action_relativeStart_explanation">Use the time the actual recording starts at</string>
     <string name="ui_settings_option_filenameFormat_success">The new format will be used for future recordings</string>
+    <string name="ui_settings_option_filenameFormat_action_now_label">Save time</string>
+    <string name="ui_settings_option_filenameFormat_action_now_explanation">Use the time you saved the recording</string>
 </resources>

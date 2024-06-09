@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TextSnippet
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -174,6 +175,17 @@ private fun SelectionSheet(
                 label = stringResource(R.string.ui_settings_option_filenameFormat_action_relativeStart_label),
                 explanation = stringResource(R.string.ui_settings_option_filenameFormat_action_relativeStart_explanation),
                 icon = Icons.Default.Timelapse,
+                onClick = {
+                    updateValue(AppSettings.FilenameFormat.DATETIME_RELATIVE_START)
+                },
+            )
+
+            HorizontalDivider()
+
+            SelectionButton(
+                label = stringResource(R.string.ui_settings_option_filenameFormat_action_now_label),
+                explanation = stringResource(R.string.ui_settings_option_filenameFormat_action_now_explanation),
+                icon = Icons.Default.Circle,
                 onClick = {
                     updateValue(AppSettings.FilenameFormat.DATETIME_RELATIVE_START)
                 },
