@@ -45,6 +45,7 @@ import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.CustomNotificationT
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DeleteRecordingsImmediatelyTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DividerTitle
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.EnableAppLockTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.FilenameFormatTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.ImportExport
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.IntervalDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.MaxDurationTile
@@ -145,6 +146,7 @@ fun SettingsScreen(
             DeleteRecordingsImmediatelyTile(settings = settings)
             CustomNotificationTile(onNavigateToCustomRecordingNotifications, settings = settings)
             EnableAppLockTile(settings = settings)
+            FilenameFormatTile(settings = settings, snackbarHostState = snackbarHostState)
             SaveFolderTile(
                 settings = settings,
                 snackbarHostState = snackbarHostState,

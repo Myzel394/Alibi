@@ -489,7 +489,7 @@ fun InternalFolderExplanationDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectionSheet(
+private fun SelectionSheet(
     sheetState: SheetState,
     updateValue: (String?) -> Unit,
     onDismiss: () -> Unit,
@@ -596,7 +596,7 @@ fun SelectionSheet(
 }
 
 @Composable
-fun SelectionButton(
+private fun SelectionButton(
     label: String,
     icon: ImageVector,
     onClick: () -> Unit,
