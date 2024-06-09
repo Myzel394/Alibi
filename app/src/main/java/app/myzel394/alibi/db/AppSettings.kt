@@ -29,6 +29,8 @@ data class AppSettings(
     val theme: Theme = Theme.SYSTEM,
     val lastRecording: RecordingInformation? = null,
 
+    val filenameFormat: FilenameFormat = FilenameFormat.DATETIME_RELATIVE_START,
+
     /// Recording information
     // 30 minutes
     val maxDuration: Long = 15 * 60 * 1000L,
@@ -65,6 +67,10 @@ data class AppSettings(
 
     fun setLastRecording(lastRecording: RecordingInformation?): AppSettings {
         return copy(lastRecording = lastRecording)
+    }
+
+    fun setFilenameFormat(filenameFormat: FilenameFormat): AppSettings {
+        return copy(filenameFormat = filenameFormat)
     }
 
     fun setMaxDuration(duration: Long): AppSettings {
@@ -124,14 +130,19 @@ data class AppSettings(
         ))
     }
 
+    fun exportToString(): String {
+        return Json.encodeToString(serializer(), this)
+    }
+
     enum class Theme {
         SYSTEM,
         LIGHT,
         DARK,
     }
 
-    fun exportToString(): String {
-        return Json.encodeToString(serializer(), this)
+    enum class FilenameFormat {
+        DATETIME_ABSOLUTE_START,
+        DATETIME_RELATIVE_START,
     }
 
     companion object {
