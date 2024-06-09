@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import app.myzel394.alibi.db.AppSettings
+import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.ui.MEDIA_RECORDINGS_PREFIX
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
@@ -249,19 +250,22 @@ abstract class BatchesFolder(
     abstract fun cleanup()
 
     suspend fun concatenate(
-        recordingStart: LocalDateTime,
-        extension: String,
+        recording: RecordingInformation,
+        filenameFormat: AppSettings.FilenameFormat,
         disableCache: Boolean? = null,
         onNextParameterTry: (String) -> Unit = {},
-        durationPerBatchInMilliseconds: Long = 0,
         onProgress: (Float?) -> Unit = {},
     ): String {
         val disableCache = disableCache ?: (type != BatchType.INTERNAL)
 
-        if (!disableCache && checkIfOutputAlreadyExists(recordingStart, extension)) {
+        if (!disableCache && checkIfOutputAlreadyExists(
+                recording.recordingStart,
+                recording.fileExtension
+            )
+        ) {
             return getOutputFileForFFmpeg(
-                date = recordingStart,
-                extension = extension,
+                date = recording.recordingStart,
+                extension = recording.fileExtension,
             )
         }
 
@@ -271,34 +275,12 @@ abstract class BatchesFolder(
             onProgress(null)
 
             try {
+                val fullTime = recording.getFullDuration().toFloat();
                 val filePaths = getBatchesForFFmpeg()
 
-                // Casting here to float so it doesn't need to redo it on every progress update
-                var fullTime: Float? = null
-
-                runCatching {
-                    // `fullTime` is not accurate as the last batch might be shorter,
-                    // but it's good enough for the progress bar
-
-                    // Using the code below results in a nasty bug:
-                    // since we use ffmpeg to extract the duration, the saf parameter is already
-                    // "used up" and we can't use it again for the actual concatenation
-                    // Since an accurate progress bar is less important than speed,
-                    // we currently don't use this code
-                    /*
-                    val lastBatchTime = (FFprobeKit.execute(
-                        "-i ${filePaths.last()} -show_entries format=duration -v quiet -of csv=\"p=0\"",
-                    ).output.toFloat() * 1000).toLong()
-                    fullTime =
-                        ((durationPerBatchInMilliseconds * (filePaths.size - 1)) + lastBatchTime).toFloat()
-                     */
-                    // We use an approximation for the duration of the batches
-                    fullTime = (durationPerBatchInMilliseconds * filePaths.size).toFloat()
-                }
-
                 val outputFile = getOutputFileForFFmpeg(
-                    date = recordingStart,
-                    extension = extension,
+                    date = recording.getStartDateForFilename(filenameFormat),
+                    extension = recording.fileExtension,
                 )
 
                 concatenationFunction(
@@ -308,11 +290,7 @@ abstract class BatchesFolder(
                 ) { time ->
                     // The progressbar for the conversion is calculated based on the
                     // current time of the conversion and the total time of the batches.
-                    if (fullTime != null) {
-                        onProgress(time / fullTime!!)
-                    } else {
-                        onProgress(null)
-                    }
+                    onProgress(time / fullTime)
                 }.await()
                 return outputFile
             } catch (e: MediaConverter.FFmpegException) {

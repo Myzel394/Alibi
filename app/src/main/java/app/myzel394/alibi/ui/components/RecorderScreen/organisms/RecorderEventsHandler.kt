@@ -162,6 +162,7 @@ fun RecorderEventsHandler(
                         // When recording is loaded from lastRecording
                             ?: settings.lastRecording
                             ?: throw Exception("No recording information available")
+
                     val batchesFolder = when (recorder.javaClass) {
                         AudioRecorderModel::class.java -> AudioBatchesFolder.importFromFolder(
                             recording.folderPath,
@@ -177,9 +178,8 @@ fun RecorderEventsHandler(
                     }
 
                     batchesFolder.concatenate(
-                        recording.recordingStart,
-                        recording.fileExtension,
-                        durationPerBatchInMilliseconds = settings.intervalDuration,
+                        recording,
+                        filenameFormat = settings.filenameFormat,
                         onProgress = { percentage ->
                             processingProgress = percentage
                         }

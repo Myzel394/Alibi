@@ -16,9 +16,7 @@ import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.AudioBatchesFolder
 import app.myzel394.alibi.helpers.BatchesFolder
-import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.utils.MicrophoneInfo
-import java.lang.IllegalStateException
 
 class AudioRecorderService :
     IntervalRecorderService<RecordingInformation, AudioBatchesFolder>() {
@@ -304,12 +302,14 @@ class AudioRecorderService :
     }
 
     // ==== Settings ====
-    override fun getRecordingInformation() = RecordingInformation(
-        folderPath = batchesFolder.exportFolderForSettings(),
-        recordingStart = recordingStart,
-        maxDuration = settings.maxDuration,
-        fileExtension = settings.audioRecorderSettings.fileExtension,
-        intervalDuration = settings.intervalDuration,
-        type = RecordingInformation.Type.AUDIO,
-    )
+    override fun getRecordingInformation() =
+        RecordingInformation(
+            folderPath = batchesFolder.exportFolderForSettings(),
+            recordingStart = recordingStart,
+            maxDuration = settings.maxDuration,
+            batchesAmount = batchesFolder.getBatchesForFFmpeg().size,
+            fileExtension = settings.audioRecorderSettings.fileExtension,
+            intervalDuration = settings.intervalDuration,
+            type = RecordingInformation.Type.AUDIO,
+        )
 }
