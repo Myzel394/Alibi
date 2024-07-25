@@ -23,6 +23,7 @@ runs:
       run: echo "${{ inputs.keyStoreBase64 }}" | base64 -d > /home/runner/key.jks
 
     - name: Write Keystore properties 🗝️
+      shell: bash
       run: |
         echo "storeFile=/home/runner/key.jks" > key.properties
         echo "storePassword=${{ inputs.signingStorePassword }}" >> key.properties
