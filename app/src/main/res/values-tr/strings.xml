@@ -30,7 +30,7 @@
     <string name="ui_recorder_action_start_description_2">        <xliff:g name="durationInMinutes">%s</xliff:g> dakika</string>
     <string name="ui_recorder_action_start_description_3">\u0020ve isteğiniz üzerine</string>
     <string name="ui_recorder_action_save_processing_dialog_title">İşleniyor</string>
-    <string name="ui_recorder_action_save_processing_dialog_description">Kaydın işleniyor, Alibi\'yi kapatma! Dosyayı hazır olduğunda otomatik olarak kaydetmeniz istenecektir. Zaman diliminiz büyükse bu işlem birkaç dakika sürebilir. Bu işlem bittiğinde ve dosyayı kaydetmeniz istendiğinde, lütfen bunu yapın ve Alibi\'ın ana ekranını tekrar görene kadar bekleyin.</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Ses işleniyor, Alibi\'yi kapatmayın! Dosya hazır olduğunda dosyayı kaydetmeniz istenecektir</string>
     <string name="ui_recorder_state_recording_description">Alibi arka planda kayıt yapmaya devam ediyor</string>
     <string name="ui_recorder_state_recording_fake_weather_title">Mevcut Hava Durumu</string>
     <string name="ui_recorder_state_recording_fake_weather_description">14° hafif yağmur ihtimali ile</string>
@@ -66,7 +66,7 @@
     <string name="ui_recorder_state_paused_title">Kayıt duraklatıldı</string>
     <string name="ui_recorder_state_paused_description">Alibi duraklatılır</string>
     <string name="ui_recorder_error_recording_title">Bir hata oluştu</string>
-    <string name="ui_recorder_error_recording_description">Alibi kayıt sırasında bir hatayla karşılaştı. Farklı ayarlar kullanmayı deneyin veya uygulamayı yeniden başlatın.</string>
+    <string name="ui_recorder_error_recording_description">Alibi, kayıt sırasında bir hata ile karşılaştı. Ses kaydını kaydetmeyi denemek ister misiniz?</string>
     <string name="ui_settings_language_title">Dil</string>
     <string name="ui_settings_language_update_label">Değiştir</string>
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Cihaz Mikrofonu</string>
