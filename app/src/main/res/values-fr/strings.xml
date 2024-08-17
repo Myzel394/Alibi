@@ -30,7 +30,7 @@
     <string name="ui_recorder_action_start_description_2"><xliff:g name="durationInMinutes">%s</xliff:g> minutes</string>
     <string name="ui_recorder_action_start_description_3">\u0020à votre demande</string>
     <string name="ui_recorder_action_save_processing_dialog_title">Traitement en cours</string>
-    <string name="ui_recorder_action_save_processing_dialog_description">Traitement de votre enregistrement, ne fermez pas Alibi ! Vous serez automatiquement invité à enregistrer le fichier une fois qu\'il sera prêt. Ce processus peut prendre quelques minutes si votre vidéo a une durée conséquente. Une fois terminé, il vous sera demandé d\'enregistrer le fichier, s\'il vous plaît faites le et attendez jusqu\'à ce que vous voyez l\'écran principal d\'Alibi.</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Processing Audio, do not close Alibi! You will be automatically prompted to save the file once it\'s ready</string>
     <string name="ui_recorder_state_recording_description">Alibi continue l\'enregistrement en arrière-plan</string>
     <string name="ui_recorder_state_recording_fake_weather_title">Météo Actuelle</string>
     <string name="ui_recorder_state_recording_fake_weather_description">14° avec une faible probabilité de pluie</string>
@@ -66,7 +66,7 @@
     <string name="ui_recorder_state_paused_title">Enregistrement en pause</string>
     <string name="ui_recorder_state_paused_description">Audio Recording has been paused</string>
     <string name="ui_recorder_error_recording_title">An error occured</string>
-    <string name="ui_recorder_error_recording_description">Alibi a rencontré une erreur lors de l\'enregistrement. Essayez d\'utiliser des paramètres différents ou redémarrez l\'application.</string>
+    <string name="ui_recorder_error_recording_description">Alibi encountered an error during recording. Would you like to try saving the recording?</string>
     <string name="ui_settings_language_title">Langue</string>
     <string name="ui_settings_language_update_label">Modifier</string>
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Microphone de l\'appareil</string>
