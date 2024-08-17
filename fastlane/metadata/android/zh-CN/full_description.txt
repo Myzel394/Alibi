@@ -1,1 +1,1 @@
-<p>Alibi keeps recording in the background and saves the last 30 minutes at your request.</p><p>Everything is completely configurable. No internet connection required.</p>
+<p>Alibi 将持续在后台录制，并按您的要求保存最后 30 分钟录制。</p><p>一切都是完全可配置的。 不需要网络连接。</p>
