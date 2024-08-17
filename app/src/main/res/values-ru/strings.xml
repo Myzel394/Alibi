@@ -30,7 +30,7 @@
     <string name="ui_recorder_action_start_description_2"><xliff:g name="durationInMinutes">%s</xliff:g> minutes</string>
     <string name="ui_recorder_action_start_description_3">\u0020at your request</string>
     <string name="ui_recorder_action_save_processing_dialog_title">Processing</string>
-    <string name="ui_recorder_action_save_processing_dialog_description">Processing your recording, do not close Alibi! You will automatically be prompted to save the file once it\'s ready. This process may take a few minutes if your time frame is big. Once this is finished and you are asked to save the file, please do so and then wait until you see Alibi\'s main screen again.</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Processing Audio, do not close Alibi! You will be automatically prompted to save the file once it\'s ready</string>
     <string name="ui_recorder_state_recording_description">Alibi keeps recording in the background</string>
     <string name="ui_recorder_state_recording_fake_weather_title">Current Weather</string>
     <string name="ui_recorder_state_recording_fake_weather_description">14° with light chance of rain</string>
@@ -66,7 +66,7 @@
     <string name="ui_recorder_state_paused_title">Recording paused</string>
     <string name="ui_recorder_state_paused_description">Audio Recording has been paused</string>
     <string name="ui_recorder_error_recording_title">An error occured</string>
-    <string name="ui_recorder_error_recording_description">Alibi encountered an error during recording. Try using different settings or restart the app.</string>
+    <string name="ui_recorder_error_recording_description">Alibi encountered an error during recording. Would you like to try saving the recording?</string>
     <string name="ui_settings_language_title">Язык</string>
     <string name="ui_settings_language_update_label">Изменить</string>
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Микрофон устройства</string>
