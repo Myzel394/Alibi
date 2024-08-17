@@ -30,7 +30,7 @@
     <string name="ui_recorder_action_start_description_2"><xliff:g name="durationInMinutes">%s</xliff:g> minuten</string>
     <string name="ui_recorder_action_start_description_3">\u0020bij uw eis</string>
     <string name="ui_recorder_action_save_processing_dialog_title">Aan het verwerken</string>
-    <string name="ui_recorder_action_save_processing_dialog_description">Uw opname aan het verwerken, sluit Alibi niet! U wordt automatisch gevraagd om het bestand op te slaan zodra het af is. Dit proces kan een paar minuten duren als de opname lang is. Zodra dit voltooid is en u wordt gevraagd om het bestand op te slaan, doe dit en dan wacht totdat u de hoofdpagina weer ziet.</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Processing Audio, do not close Alibi! You will be automatically prompted to save the file once it\'s ready</string>
     <string name="ui_recorder_state_recording_description">Alibi blijft in de achtergrond opnemen</string>
     <string name="ui_recorder_state_recording_fake_weather_title">Huidig weer</string>
     <string name="ui_recorder_state_recording_fake_weather_description">14° met kleine kans op regen</string>
@@ -66,7 +66,7 @@
     <string name="ui_recorder_state_paused_title">Opname gepauzeerd</string>
     <string name="ui_recorder_state_paused_description">Audio Recording has been paused</string>
     <string name="ui_recorder_error_recording_title">An error occured</string>
-    <string name="ui_recorder_error_recording_description">Alibi kreeg een fout tijden het opnemen. Probeer andere instellingen of herstart de app.</string>
+    <string name="ui_recorder_error_recording_description">Alibi encountered an error during recording. Would you like to try saving the recording?</string>
     <string name="ui_settings_language_title">Taal</string>
     <string name="ui_settings_language_update_label">Wijzigen</string>
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Apparaatsmircofoon</string>
