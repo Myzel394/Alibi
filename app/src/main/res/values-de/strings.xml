@@ -30,7 +30,7 @@
     <string name="ui_recorder_action_start_description_2"><xliff:g name="durationInMinutes">%s</xliff:g> Minuten</string>
     <string name="ui_recorder_action_start_description_3">\u0020auf Ihre Anfrage</string>
     <string name="ui_recorder_action_save_processing_dialog_title">Bearbeiten</string>
-    <string name="ui_recorder_action_save_processing_dialog_description">Bearbeite die Aufnahme, schließen Sie Alibi nicht! Sie werden automatisch aufgefordert, die Datei zu speichern, sobald sie fertig ist. Dieser Prozess kann einige Minuten dauern, wenn der Zeitrahmen groß ist. Sobald dies beendet ist und Sie gebeten werden, die Datei zu speichern, tun Sie dies bitte und warten Sie, bis Sie den Alibi Hauptbildschirm wieder sehen.</string>
+    <string name="ui_recorder_action_save_processing_dialog_description">Audio wird bearbeitet, Alibi nicht schließen! Du wirst automatisch aufgefordert, die Datei zu speichern, wenn diese fertig bearbeitet ist</string>
     <string name="ui_recorder_state_recording_description">Alibi nimmt im Hintergrund weiter auf</string>
     <string name="ui_recorder_state_recording_fake_weather_title">Aktuelles Wetter</string>
     <string name="ui_recorder_state_recording_fake_weather_description">14° mit leichter Regenwahrscheinlichkeit</string>
@@ -66,7 +66,7 @@
     <string name="ui_recorder_state_paused_title">Aufnahme pausiert</string>
     <string name="ui_recorder_state_paused_description">Audio-Aufnahme wurde pausiert</string>
     <string name="ui_recorder_error_recording_title">Es ist ein Fehler aufgetreten</string>
-    <string name="ui_recorder_error_recording_description">Es ist ein Fehler während der Aufnahme aufgetreten. Versuchen Sie andere Einstellungen zu verwenden oder starten Sie Alibi neu.</string>
+    <string name="ui_recorder_error_recording_description">Alibi stieß bei der Aufnahme auf einen Fehler. Soll die Aufnahme gespeichert werden? </string>
     <string name="ui_settings_language_title">Sprache</string>
     <string name="ui_settings_language_update_label">Ändern</string>
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Geräte-Mikrofon</string>
