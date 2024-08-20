@@ -398,11 +398,25 @@ abstract class BatchesFolder(
                         }
                     }
 
-                    context.contentResolver.delete(
-                        scopedMediaContentUri,
-                        "${MediaStore.MediaColumns.DISPLAY_NAME} IN (${deletableNames.joinToString(",")})",
-                        null,
-                    )
+                    try {
+                        context.contentResolver.delete(
+                            scopedMediaContentUri,
+                            "${MediaStore.MediaColumns.DISPLAY_NAME} IN (${
+                                deletableNames.joinToString(
+                                    ","
+                                ) { "'$it'" }
+                            })",
+                            null,
+                        )
+                        // This is unfortunate if the files can't be deleted, but let's just
+                        // ignore it since we can't do anything about it
+                    } catch (e: RuntimeException) {
+                        // Probably file not found
+                        e.printStackTrace()
+                    } catch (e: IllegalArgumentException) {
+                        // Strange filename, should not happen
+                        e.printStackTrace()
+                    }
                 } else {
                     // TODO: Fix "would you like to try saving" -> Save button
                     legacyMediaFolder.listFiles()?.forEach {
