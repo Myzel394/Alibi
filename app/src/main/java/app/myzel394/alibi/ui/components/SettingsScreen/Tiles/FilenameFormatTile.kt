@@ -220,10 +220,10 @@ private fun SelectionButton(
             contentDescription = null,
             modifier = Modifier
                 .size(ButtonDefaults.IconSize)
-                .fillMaxWidth(.3f),
+                .fillMaxWidth(0.1f),
         )
         Column(
-            modifier = Modifier.fillMaxWidth(.7f),
+            modifier = Modifier.fillMaxWidth(0.9f),
         ) {
             Text(label)
             Text(
