@@ -2,7 +2,6 @@ package app.myzel394.alibi.ui.components.SettingsScreen.Tiles
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -219,15 +218,18 @@ private fun SelectionButton(
         Icon(
             icon,
             contentDescription = null,
-            modifier = Modifier.size(ButtonDefaults.IconSize),
+            modifier = Modifier
+                .size(ButtonDefaults.IconSize)
+                .fillMaxWidth(.3f),
         )
-        Column {
+        Column(
+            modifier = Modifier.fillMaxWidth(.7f),
+        ) {
             Text(label)
             Text(
                 explanation,
                 style = MaterialTheme.typography.bodySmall,
             )
         }
-        Box {}
     }
 }
