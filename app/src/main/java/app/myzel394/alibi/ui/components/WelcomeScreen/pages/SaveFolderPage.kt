@@ -1,6 +1,7 @@
 package app.myzel394.alibi.ui.components.WelcomeScreen.pages
 
 import android.Manifest
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -156,6 +158,17 @@ fun SaveFolderPage(
                     contentDescription = null,
                 )
             }
+
+            var showError by rememberSaveable { mutableStateOf(false) }
+
+            if (showError) {
+                _FolderInaccessibleDialog(
+                    onClose = {
+                        showError = false
+                    }
+                )
+            }
+
             PermissionRequester(
                 permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 icon = Icons.AutoMirrored.Filled.InsertDriveFile,
@@ -166,7 +179,23 @@ fun SaveFolderPage(
                         return@rememberFolderSelectorDialog
                     }
 
-                    onContinue(saveFolder)
+                    context.contentResolver.takePersistableUriPermission(
+                        folder,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+
+                    if (BatchesFolder.canAccessFolder(context, folder)) {
+                        onContinue(folder.toString())
+                    } else {
+                        showError = true
+
+                        runCatching {
+                            context.contentResolver.releasePersistableUriPermission(
+                                folder,
+                                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                            )
+                        }
+                    }
                 }
                 var showCustomFolderHint by rememberSaveable { mutableStateOf(false) }
 
@@ -214,6 +243,44 @@ fun SaveFolderPage(
             }
         }
     }
+}
+
+@Composable
+fun _FolderInaccessibleDialog(
+    onClose: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onClose,
+        icon = {
+            Icon(
+                Icons.Default.Error,
+                contentDescription = null,
+            )
+        },
+        title = {
+            Text(stringResource(R.string.ui_error_occurred_title))
+        },
+        confirmButton = {
+            Button(onClick = onClose) {
+                Text(stringResource(R.string.dialog_close_neutral_label))
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(32.dp),
+            ) {
+                Text(
+                    stringResource(R.string.ui_settings_option_saveFolder_batchesFolderInaccessible_error),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
+    )
 }
 
 @Composable

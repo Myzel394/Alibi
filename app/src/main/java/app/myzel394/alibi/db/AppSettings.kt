@@ -29,6 +29,8 @@ data class AppSettings(
     val theme: Theme = Theme.SYSTEM,
     val lastRecording: RecordingInformation? = null,
 
+    val filenameFormat: FilenameFormat = FilenameFormat.DATETIME_RELATIVE_START,
+
     /// Recording information
     // 30 minutes
     val maxDuration: Long = 15 * 60 * 1000L,
@@ -65,6 +67,10 @@ data class AppSettings(
 
     fun setLastRecording(lastRecording: RecordingInformation?): AppSettings {
         return copy(lastRecording = lastRecording)
+    }
+
+    fun setFilenameFormat(filenameFormat: FilenameFormat): AppSettings {
+        return copy(filenameFormat = filenameFormat)
     }
 
     fun setMaxDuration(duration: Long): AppSettings {
@@ -124,14 +130,20 @@ data class AppSettings(
         ))
     }
 
+    fun exportToString(): String {
+        return Json.encodeToString(serializer(), this)
+    }
+
     enum class Theme {
         SYSTEM,
         LIGHT,
         DARK,
     }
 
-    fun exportToString(): String {
-        return Json.encodeToString(serializer(), this)
+    enum class FilenameFormat {
+        DATETIME_ABSOLUTE_START,
+        DATETIME_RELATIVE_START,
+        DATETIME_NOW,
     }
 
     companion object {
@@ -151,6 +163,7 @@ data class RecordingInformation(
     val folderPath: String,
     @Serializable(with = LocalDateTimeSerializer::class)
     val recordingStart: LocalDateTime,
+    val batchesAmount: Int,
     val maxDuration: Long,
     val intervalDuration: Long,
     val fileExtension: String,
@@ -164,6 +177,23 @@ data class RecordingInformation(
             Type.VIDEO -> VideoBatchesFolder.importFromFolder(folderPath, context)
                 .hasRecordingsAvailable()
         }
+
+    fun getStartDateForFilename(filenameFormat: AppSettings.FilenameFormat): LocalDateTime {
+        return when (filenameFormat) {
+            AppSettings.FilenameFormat.DATETIME_ABSOLUTE_START -> recordingStart
+            AppSettings.FilenameFormat.DATETIME_RELATIVE_START -> LocalDateTime.now().minusSeconds(
+                getFullDuration() / 1000
+            )
+
+            AppSettings.FilenameFormat.DATETIME_NOW -> LocalDateTime.now()
+        }
+    }
+
+    fun getFullDuration(): Long {
+        // This is not accurate, since the last batch may be shorter than the others
+        // but it's good enough
+        return intervalDuration * batchesAmount - (intervalDuration * 0.5).toLong()
+    }
 
     enum class Type {
         AUDIO,

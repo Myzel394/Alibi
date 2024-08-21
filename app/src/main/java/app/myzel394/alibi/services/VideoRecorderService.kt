@@ -304,14 +304,16 @@ class VideoRecorderService :
                 this
             }
 
-    override fun getRecordingInformation(): RecordingInformation = RecordingInformation(
-        folderPath = batchesFolder.exportFolderForSettings(),
-        recordingStart = recordingStart,
-        maxDuration = settings.maxDuration,
-        fileExtension = settings.videoRecorderSettings.fileExtension,
-        intervalDuration = settings.intervalDuration,
-        type = RecordingInformation.Type.VIDEO,
-    )
+    override fun getRecordingInformation() =
+        RecordingInformation(
+            folderPath = batchesFolder.exportFolderForSettings(),
+            recordingStart = recordingStart,
+            maxDuration = settings.maxDuration,
+            batchesAmount = batchesFolder.getBatchesForFFmpeg().size,
+            fileExtension = settings.videoRecorderSettings.fileExtension,
+            intervalDuration = settings.intervalDuration,
+            type = RecordingInformation.Type.VIDEO,
+        )
 
     companion object {
         const val CAMERA_CLOSE_TIMEOUT = 20000L

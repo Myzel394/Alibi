@@ -41,4 +41,4 @@ jobs:
           track: production
           status: inProgress
           inAppUpdatePriority: 2
-          userFraction: 0.33
+          userFraction: 0.2
