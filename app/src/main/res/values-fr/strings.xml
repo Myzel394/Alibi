@@ -168,9 +168,9 @@
     <string name="ui_settings_option_saveFolder_externalPermissionRequired_action_confirm">Donner l\'autorisation</string>
     <string name="ui_recorder_error_batchesInaccessible_description">Alibi n\'a pas pu accéder ou écrire dans le dossier des lots. Essayez de choisir un dossier différent ou utilisez le stockage interne à la place. L\'enregistrement a été annulé.</string>
     <string name="ui_severeError_fileSaverUnavailable_title">Gestionnaire de fichiers non trouvé</string>
-    <string name="ui_severeError_fileSaverUnavailable_text">Alibi couldn\'t find a file manager app on your phone. Please install a file manager app and try again. If this message still appears, you can try using a custom batches folder in the advanced settings section. Alibi may not fully work on your device.</string>
-    <string name="ui_videoRecorder_state_recording_title">Recording Video</string>
-    <string name="ui_settings_option_saveFolder_openFolder_label">Open selected folder in file manager</string>
+    <string name="ui_severeError_fileSaverUnavailable_text">Alibi n\'a pas pu trouver de gestionnaire de fichiers sur votre téléphone. Veuillez installer gestionnaire de fichiers et réessayer. Si ce message apparaît toujours, vous pouvez essayer d\'utiliser un dossier de sequences personnalisé dans la section Paramètres avancés. Alibi peut ne pas fonctionner entièrement sur votre appareil.</string>
+    <string name="ui_videoRecorder_state_recording_title">En cours d\'enregistrement vidéo</string>
+    <string name="ui_settings_option_saveFolder_openFolder_label">Ouvrir le dossier sélectionné dans le gestionnaire de fichiers</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_label">Where are my batches stored?</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_generalExplanation">To view your batches, open the Files app, go to the internal storage and then you will find your batches in following folders:</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">The final merged recordings will be saved in those folders. Each recording creates a subfolder to store the short batches in (\"%s\" for audio recordings, \"%s\" for video recordings). To view the individual batches, you may need to enable hidden files in the Files app.</string>
