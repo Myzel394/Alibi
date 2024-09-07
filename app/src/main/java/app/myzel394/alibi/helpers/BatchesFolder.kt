@@ -191,8 +191,8 @@ abstract class BatchesFolder(
         return "$name.$extension"
     }
 
-    fun asInternalGetOutputFile(date: LocalDateTime, extension: String): File {
-        return File(getInternalFolder(), getName(date, extension))
+    fun asInternalGetOutputFile(fileName: String): File {
+        return File(getInternalFolder(), fileName)
     }
 
     fun asMediaGetLegacyFile(name: String): File = File(
@@ -203,16 +203,8 @@ abstract class BatchesFolder(
     }
 
     fun checkIfOutputAlreadyExists(
-        date: LocalDateTime,
-        extension: String
+        fileName: String,
     ): Boolean {
-        val stem = date
-            .format(DateTimeFormatter.ISO_DATE_TIME)
-            .toString()
-            .replace(":", "-")
-            .replace(".", "_")
-        val fileName = "$stem.$extension"
-
         return when (type) {
             BatchType.INTERNAL -> File(getInternalFolder(), fileName).exists()
 
@@ -245,6 +237,7 @@ abstract class BatchesFolder(
     abstract fun getOutputFileForFFmpeg(
         date: LocalDateTime,
         extension: String,
+        fileName: String,
     ): String
 
     abstract fun cleanup()
@@ -255,18 +248,17 @@ abstract class BatchesFolder(
         disableCache: Boolean? = null,
         onNextParameterTry: (String) -> Unit = {},
         onProgress: (Float?) -> Unit = {},
+        fileName: String,
     ): String {
         val disableCache = disableCache ?: (type != BatchType.INTERNAL)
         val date = recording.getStartDateForFilename(filenameFormat)
 
-        if (!disableCache && checkIfOutputAlreadyExists(
-                recording.recordingStart,
-                recording.fileExtension
-            )
+        if (!disableCache && checkIfOutputAlreadyExists(fileName)
         ) {
             return getOutputFileForFFmpeg(
                 date = recording.recordingStart,
                 extension = recording.fileExtension,
+                fileName = fileName,
             )
         }
 
@@ -282,6 +274,7 @@ abstract class BatchesFolder(
                 val outputFile = getOutputFileForFFmpeg(
                     date = date,
                     extension = recording.fileExtension,
+                    fileName = fileName,
                 )
 
                 concatenationFunction(

@@ -39,18 +39,20 @@ class VideoBatchesFolder(
 
     private var customParcelFileDescriptor: ParcelFileDescriptor? = null
 
-    override fun getOutputFileForFFmpeg(date: LocalDateTime, extension: String): String {
+    override fun getOutputFileForFFmpeg(
+        date: LocalDateTime,
+        extension: String,
+        fileName: String,
+    ): String {
         return when (type) {
-            BatchType.INTERNAL -> asInternalGetOutputFile(date, extension).absolutePath
+            BatchType.INTERNAL -> asInternalGetOutputFile(fileName).absolutePath
 
             BatchType.CUSTOM -> {
-                val name = getName(date, extension)
-
                 FFmpegKitConfig.getSafParameterForWrite(
                     context,
-                    (customFolder!!.findFile(name) ?: customFolder.createFile(
+                    (customFolder!!.findFile(fileName) ?: customFolder.createFile(
                         "video/${extension}",
-                        getName(date, extension),
+                        fileName,
                     )!!).uri
                 )!!
             }
@@ -58,7 +60,7 @@ class VideoBatchesFolder(
             BatchType.MEDIA -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val mediaUri = getOrCreateMediaFile(
-                        name = getName(date, extension),
+                        name = fileName,
                         mimeType = "video/$extension",
                         relativePath = BASE_SCOPED_STORAGE_RELATIVE_PATH + "/" + MEDIA_SUBFOLDER_NAME,
                     )
@@ -71,7 +73,7 @@ class VideoBatchesFolder(
                     val path = arrayOf(
                         Environment.getExternalStoragePublicDirectory(BASE_LEGACY_STORAGE_FOLDER),
                         MEDIA_SUBFOLDER_NAME,
-                        getName(date, extension)
+                        fileName,
                     ).joinToString("/")
                     return File(path)
                         .apply {
@@ -146,7 +148,7 @@ class VideoBatchesFolder(
         }
 
         val BASE_LEGACY_STORAGE_FOLDER = Environment.DIRECTORY_DCIM
-        val MEDIA_RECORDINGS_SUBFOLDER = MEDIA_SUBFOLDER_NAME + "/video_recordings"
+        val MEDIA_RECORDINGS_SUBFOLDER = MEDIA_SUBFOLDER_NAME + "/.video_recordings"
         val BASE_SCOPED_STORAGE_RELATIVE_PATH = Environment.DIRECTORY_DCIM
         val SCOPED_STORAGE_RELATIVE_PATH =
             BASE_SCOPED_STORAGE_RELATIVE_PATH + "/" + MEDIA_RECORDINGS_SUBFOLDER

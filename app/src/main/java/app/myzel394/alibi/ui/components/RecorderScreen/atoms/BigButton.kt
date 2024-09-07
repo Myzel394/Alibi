@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,8 +40,8 @@ fun BigButton(
     val orientation = LocalConfiguration.current.orientation
 
     BoxWithConstraints {
-        val isLarge = if (isBig == null)
-            maxWidth > 250.dp && maxHeight > 600.dp && orientation == Configuration.ORIENTATION_PORTRAIT else isBig
+        val isLarge = isBig
+            ?: (maxWidth > 250.dp && maxHeight > 600.dp && orientation == Configuration.ORIENTATION_PORTRAIT)
 
         Column(
             modifier = Modifier
@@ -52,7 +52,7 @@ fun BigButton(
                 }
                 .combinedClickable(
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(color = MaterialTheme.colorScheme.primary),
+                    indication = ripple(color = MaterialTheme.colorScheme.primary),
                     onClick = onClick,
                     onLongClick = onLongClick,
                 ),

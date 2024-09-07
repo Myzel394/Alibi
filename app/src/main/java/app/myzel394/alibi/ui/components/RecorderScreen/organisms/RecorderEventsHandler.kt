@@ -177,38 +177,33 @@ fun RecorderEventsHandler(
                         else -> throw Exception("Unknown recorder type")
                     }
 
+                    val fileName = batchesFolder.getName(
+                        recording.recordingStart,
+                        recording.fileExtension,
+                    )
+
                     batchesFolder.concatenate(
                         recording,
                         filenameFormat = settings.filenameFormat,
+                        fileName = fileName,
                         onProgress = { percentage ->
                             processingProgress = percentage
                         }
                     )
 
                     // Save file
-                    val name = batchesFolder.getName(
-                        recording.recordingStart,
-                        recording.fileExtension,
-                    )
-
                     when (batchesFolder.type) {
                         BatchesFolder.BatchType.INTERNAL -> {
                             when (batchesFolder) {
                                 is AudioBatchesFolder -> {
                                     saveAudioFile(
-                                        batchesFolder.asInternalGetOutputFile(
-                                            recording.recordingStart,
-                                            recording.fileExtension,
-                                        ), name
+                                        batchesFolder.asInternalGetOutputFile(fileName), fileName
                                     )
                                 }
 
                                 is VideoBatchesFolder -> {
                                     saveVideoFile(
-                                        batchesFolder.asInternalGetOutputFile(
-                                            recording.recordingStart,
-                                            recording.fileExtension,
-                                        ), name
+                                        batchesFolder.asInternalGetOutputFile(fileName), fileName
                                     )
                                 }
                             }
