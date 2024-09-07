@@ -142,7 +142,7 @@ class AudioBatchesFolder(
         }
 
         val BASE_LEGACY_STORAGE_FOLDER = Environment.DIRECTORY_PODCASTS
-        val MEDIA_RECORDINGS_SUBFOLDER = MEDIA_SUBFOLDER_NAME + "/audio_recordings"
+        val MEDIA_RECORDINGS_SUBFOLDER = MEDIA_SUBFOLDER_NAME + "/.audio_recordings"
         val BASE_SCOPED_STORAGE_RELATIVE_PATH =
             (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 Environment.DIRECTORY_RECORDINGS
