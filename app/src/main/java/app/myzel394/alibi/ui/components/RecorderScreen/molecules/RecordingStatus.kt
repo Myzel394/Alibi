@@ -76,6 +76,8 @@ fun RecordingStatus(
             LinearProgressIndicator(
                 progress = { progress },
                 modifier = progressModifier,
+                drawStopIndicator = { },
+                gapSize = 0.dp,
             )
         }
 
