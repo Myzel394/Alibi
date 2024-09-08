@@ -107,11 +107,11 @@
     <string name="ui_settings_option_deleteRecordingsImmediately_title">Supprimer les enregistrements immédiatement</string>
     <string name="ui_settings_option_deleteRecordingsImmediately_description">Si activé, Alibi supprimera immédiatement les enregistrements après avoir enregistré le fichier.</string>
     <string name="ui_settings_option_saveFolder_title">Répertoire des séquences</string>
-    <string name="ui_settings_option_saveFolder_explanation">Où Alibi devrait stocker les séquences temporaires lors de l\'enregistrement.</string>
+    <string name="ui_settings_option_saveFolder_explanation">Où Alibi devrait stocker les lots temporaires lors de l\'enregistrement.</string>
     <string name="ui_settings_option_saveFolder_action_select_label">Sélectionner</string>
     <string name="ui_settings_option_saveFolder_defaultValue">Stockage interne chiffré</string>
     <string name="ui_settings_option_saveFolder_warning_title">Êtes-vous sûr de vouloir changer de dossier ?</string>
-    <string name="ui_settings_option_saveFolder_warning_text">Par défaut, Alibi sauvegardera les séquences d\'enregistrement dans son stockage de fichiers privé et chiffré. Vous pouvez le modifier et spécifier un dossier externe non chiffré. Cela vous permettra d\'accéder aux séquences manuellement. FAITES LE SEULEMENT SI VOUS SAVEZ CE QUE VOUS FAITES !</string>
+    <string name="ui_settings_option_saveFolder_warning_text">Par défaut, Alibi sauvegardera les lots d\'enregistrement dans son stockage de fichiers privé et chiffré. Vous pouvez le modifier et spécifier un dossier externe non chiffré. Cela vous permettra d\'accéder aux lots manuellement. FAITES LE SEULEMENT SI VOUS SAVEZ CE QUE VOUS FAITES !</string>
     <string name="ui_settings_option_saveFolder_warning_action_confirm">Oui, changer de dossier</string>
     <string name="ui_settings_option_saveFolder_action_default_label">Utiliser un stockage privé et chiffré</string>
     <string name="ui_settings_sections_audio_title">Enregistrement audio</string>
@@ -162,11 +162,11 @@
     <string name="ui_settings_option_saveFolder_action_custom_label">Sélectionner un emplacement personnalisé</string>
     <string name="ui_settings_option_saveFolder_action_dcim_label">Utiliser le dossier DCIM</string>
     <string name="ui_settings_option_saveFolder_dcimValue">Dossier DCIM</string>
-    <string name="ui_settings_option_saveFolder_success">Le répertoire des séquences a été modifié avec succès</string>
+    <string name="ui_settings_option_saveFolder_success">Le répertoire des lots a été modifié avec succès</string>
     <string name="ui_settings_option_saveFolder_externalPermissionRequired_title">Autorisation requise</string>
     <string name="ui_settings_option_saveFolder_externalPermissionRequired_text">Pour accéder au dossier DCIM, vous devez accorder à Alibi la permission d\'accéder au stockage externe. Alibi n\'utilisera cette autorisation que pour écrire vos enregistrements dans le dossier DCIM.</string>
     <string name="ui_settings_option_saveFolder_externalPermissionRequired_action_confirm">Donner l\'autorisation</string>
-    <string name="ui_recorder_error_batchesInaccessible_description">Alibi n\'a pas pu accéder ou écrire dans le dossier des séquences. Essayez de choisir un dossier différent ou utilisez le stockage interne à la place. L\'enregistrement a été annulé.</string>
+    <string name="ui_recorder_error_batchesInaccessible_description">Alibi n\'a pas pu accéder ou écrire dans le dossier des lots. Essayez de choisir un dossier différent ou utilisez le stockage interne à la place. L\'enregistrement a été annulé.</string>
     <string name="ui_severeError_fileSaverUnavailable_title">Gestionnaire de fichiers non trouvé</string>
     <string name="ui_severeError_fileSaverUnavailable_text">Alibi n\'a pas pu trouver de gestionnaire de fichiers sur votre téléphone. Veuillez installer gestionnaire de fichiers et réessayer. Si ce message apparaît toujours, vous pouvez essayer d\'utiliser un dossier de sequences personnalisé dans la section Paramètres avancés. Alibi peut ne pas fonctionner entièrement sur votre appareil.</string>
     <string name="ui_videoRecorder_state_recording_title">En cours d\'enregistrement vidéo</string>
