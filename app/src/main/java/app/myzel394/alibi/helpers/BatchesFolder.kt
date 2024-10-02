@@ -235,7 +235,6 @@ abstract class BatchesFolder(
     }
 
     abstract fun getOutputFileForFFmpeg(
-        date: LocalDateTime,
         extension: String,
         fileName: String,
     ): String
@@ -244,19 +243,16 @@ abstract class BatchesFolder(
 
     suspend fun concatenate(
         recording: RecordingInformation,
-        filenameFormat: AppSettings.FilenameFormat,
         disableCache: Boolean? = null,
         onNextParameterTry: (String) -> Unit = {},
         onProgress: (Float?) -> Unit = {},
         fileName: String,
     ): String {
         val disableCache = disableCache ?: (type != BatchType.INTERNAL)
-        val date = recording.getStartDateForFilename(filenameFormat)
 
         if (!disableCache && checkIfOutputAlreadyExists(fileName)
         ) {
             return getOutputFileForFFmpeg(
-                date = recording.recordingStart,
                 extension = recording.fileExtension,
                 fileName = fileName,
             )
@@ -272,7 +268,6 @@ abstract class BatchesFolder(
                 val filePaths = getBatchesForFFmpeg()
 
                 val outputFile = getOutputFileForFFmpeg(
-                    date = date,
                     extension = recording.fileExtension,
                     fileName = fileName,
                 )

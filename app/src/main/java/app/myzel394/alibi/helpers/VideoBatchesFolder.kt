@@ -16,7 +16,6 @@ import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.VIDEO_RECORDING_BATCHES_SUBFOLDER_NAME
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import java.io.File
-import java.time.LocalDateTime
 
 class VideoBatchesFolder(
     override val context: Context,
@@ -40,7 +39,6 @@ class VideoBatchesFolder(
     private var customParcelFileDescriptor: ParcelFileDescriptor? = null
 
     override fun getOutputFileForFFmpeg(
-        date: LocalDateTime,
         extension: String,
         fileName: String,
     ): String {

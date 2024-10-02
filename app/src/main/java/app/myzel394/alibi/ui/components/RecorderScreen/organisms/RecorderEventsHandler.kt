@@ -178,13 +178,12 @@ fun RecorderEventsHandler(
                     }
 
                     val fileName = batchesFolder.getName(
-                        recording.recordingStart,
+                        recording.getStartDateForFilename(filenameFormat = settings.filenameFormat),
                         recording.fileExtension,
                     )
 
                     batchesFolder.concatenate(
                         recording,
-                        filenameFormat = settings.filenameFormat,
                         fileName = fileName,
                         onProgress = { percentage ->
                             processingProgress = percentage
