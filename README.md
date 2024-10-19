@@ -11,7 +11,7 @@
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06.webp" width="30%" />
 </p>
 
-Alibi keeps recording in the background and saves the last 30 minutes at your request.
+Alibi keeps recording audio/video in the background and saves the last 30 minutes at your request.
 Everything is completely configurable. No internet connection required.
 
 # Download
