@@ -16,7 +16,6 @@ import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import java.io.File
 import java.io.FileDescriptor
-import java.time.LocalDateTime
 
 class AudioBatchesFolder(
     override val context: Context,
@@ -38,7 +37,6 @@ class AudioBatchesFolder(
     private var mediaFileFileDescriptor: ParcelFileDescriptor? = null
 
     override fun getOutputFileForFFmpeg(
-        date: LocalDateTime,
         extension: String,
         fileName: String,
     ): String {
