@@ -40,6 +40,13 @@ data class AppSettings(
     val notificationSettings: NotificationSettings? = null,
     val deleteRecordingsImmediately: Boolean = false,
     val saveFolder: String? = null,
+    val combine_batches: Boolean = true,
+
+    // Scheduler settings
+    val schedulerEnabled: Boolean = false,
+    val schedulerHour: Int = 9,
+    val schedulerMinute: Int = 0,
+    val schedulerDays: Set<Int> = emptySet(),
 ) {
     fun setShowAdvancedSettings(showAdvancedSettings: Boolean): AppSettings {
         return copy(showAdvancedSettings = showAdvancedSettings)
@@ -107,6 +114,33 @@ data class AppSettings(
 
     fun setAppLockSettings(appLockSettings: AppLockSettings?): AppSettings {
         return copy(appLockSettings = appLockSettings)
+    }
+
+    fun setCombineBatches(combine_batches: Boolean): AppSettings {
+        return copy(combine_batches = combine_batches)
+    }
+
+    fun setSchedulerEnabled(enabled: Boolean): AppSettings {
+        return copy(schedulerEnabled = enabled)
+    }
+
+    fun setSchedulerTime(hour: Int, minute: Int): AppSettings {
+        if (hour !in 0..23) {
+            throw IllegalArgumentException("Hour must be between 0 and 23")
+        }
+        if (minute !in 0..59) {
+            throw IllegalArgumentException("Minute must be between 0 and 59")
+        }
+        return copy(schedulerHour = hour, schedulerMinute = minute)
+    }
+
+    fun setSchedulerDays(days: Set<Int>): AppSettings {
+        days.forEach {
+            if (it !in 1..7) { // Assuming java.util.Calendar constants (Sunday=1 to Saturday=7)
+                throw IllegalArgumentException("Invalid day of week: $it. Days must be between 1 (Sunday) and 7 (Saturday).")
+            }
+        }
+        return copy(schedulerDays = days)
     }
 
     fun saveLastRecording(recorder: RecorderModel): AppSettings {

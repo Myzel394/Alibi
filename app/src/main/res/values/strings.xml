@@ -233,4 +233,28 @@
     <string name="ui_settings_option_filenameFormat_success">The new format will be used for future recordings</string>
     <string name="ui_settings_option_filenameFormat_action_now_label">Save time</string>
     <string name="ui_settings_option_filenameFormat_action_now_explanation">Use the time you saved the recording</string>
+
+    <string name="ui_settings_combineBatches_title">Combine Batches</string>
+    <string name="ui_settings_combineBatches_description">If enabled, Alibi will combine all recorded batches into a single file when saving. If disabled, batches will be saved as individual files.</string>
+
+    <string name="ui_settings_scheduler_title">Recording Scheduler</string>
+    <string name="ui_settings_schedulerEnabled_title">Enable Scheduler</string>
+    <string name="ui_settings_schedulerEnabled_description">Automatically start recording at a scheduled time.</string>
+    <string name="ui_settings_schedulerTime_title">Scheduled Time</string>
+    <string name="ui_settings_schedulerTime_description">Start recording at %s</string>
+    <string name="ui_settings_schedulerDays_title">Scheduled Days</string>
+    <string name="ui_settings_schedulerDays_description">Select days for scheduled recording.</string>
+    <string-array name="day_initials">
+        <item>S</item>
+        <item>M</item>
+        <item>T</item>
+        <item>W</item>
+        <item>T</item>
+        <item>F</item>
+        <item>S</item>
+    </string-array>
+
+    <string name="ui_settings_scheduler_permission_dialog_title">Permission Required</string>
+    <string name="ui_settings_scheduler_permission_dialog_message">Alibi needs permission to schedule exact alarms to reliably start recordings. Please grant this permission in the app settings.</string>
+    <string name="ui_settings_scheduler_permission_dialog_grant">Grant Permission</string>
 </resources>

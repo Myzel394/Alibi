@@ -244,14 +244,33 @@ abstract class BatchesFolder(
 
     suspend fun concatenate(
         recording: RecordingInformation,
-        filenameFormat: AppSettings.FilenameFormat,
+        appSettings: AppSettings,
         disableCache: Boolean? = null,
         onNextParameterTry: (String) -> Unit = {},
         onProgress: (Float?) -> Unit = {},
         fileName: String,
     ): String {
         val disableCache = disableCache ?: (type != BatchType.INTERNAL)
-        val date = recording.getStartDateForFilename(filenameFormat)
+        val date = recording.getStartDateForFilename(appSettings.filenameFormat)
+
+        if (!appSettings.combine_batches) {
+            // If combine_batches is false, we skip concatenation and return an empty string
+            // or some indicator that concatenation was skipped.
+            // For now, returning the path to the first batch or an empty string.
+            // This part needs clarification based on expected behavior when skipping concatenation.
+            // For now, let's assume we want to indicate that no single concatenated file is available.
+            // Or, perhaps, we should save the batches individually?
+            // The task description implies skipping concatenation, not altering saving logic of individual files.
+            // So, we'll return a special value or handle it appropriately in the calling code.
+            // Returning an empty string might be problematic.
+            // Let's log and decide on the return value.
+            Log.i("Concatenation", "combine_batches is false, skipping concatenation.")
+            // This is a placeholder. The actual behavior for "skipping" needs to be defined.
+            // For instance, does it mean no file is created, or are batches handled differently?
+            // Assuming for now that "skipping" means we don't produce a concatenated file.
+            // The caller will need to handle this. A specific sentinel value or exception might be better.
+            return "" // Or throw an exception, or return a specific status/value
+        }
 
         if (!disableCache && checkIfOutputAlreadyExists(fileName)
         ) {

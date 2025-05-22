@@ -184,7 +184,7 @@ fun RecorderEventsHandler(
 
                     batchesFolder.concatenate(
                         recording,
-                        filenameFormat = settings.filenameFormat,
+                        settings, // Pass the AppSettings object here
                         fileName = fileName,
                         onProgress = { percentage ->
                             processingProgress = percentage
