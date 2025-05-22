@@ -41,6 +41,7 @@ import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderEncode
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderOutputFormatTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderSamplingRateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderShowAllMicrophonesTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.CombineBatchesTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.CustomNotificationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DeleteRecordingsImmediatelyTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DividerTitle
@@ -49,6 +50,9 @@ import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.FilenameFormatTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.ImportExport
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.IntervalDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.MaxDurationTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.SchedulerDaysTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.SchedulerEnabledTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.SchedulerTimeTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.SaveFolderTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderBitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderFrameRateTile
@@ -144,9 +148,19 @@ fun SettingsScreen(
             IntervalDurationTile(settings = settings)
             InAppLanguagePicker()
             DeleteRecordingsImmediatelyTile(settings = settings)
+            CombineBatchesTile(settings = settings)
             CustomNotificationTile(onNavigateToCustomRecordingNotifications, settings = settings)
             EnableAppLockTile(settings = settings)
             FilenameFormatTile(settings = settings, snackbarHostState = snackbarHostState)
+
+            // Scheduler Section
+            DividerTitle(
+                title = stringResource(R.string.ui_settings_scheduler_title),
+            )
+            SchedulerEnabledTile(settings = settings)
+            SchedulerTimeTile(settings = settings)
+            SchedulerDaysTile(settings = settings)
+
             SaveFolderTile(
                 settings = settings,
                 snackbarHostState = snackbarHostState,
