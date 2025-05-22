@@ -40,6 +40,7 @@ data class AppSettings(
     val notificationSettings: NotificationSettings? = null,
     val deleteRecordingsImmediately: Boolean = false,
     val saveFolder: String? = null,
+    val combine_batches: Boolean = true,
 ) {
     fun setShowAdvancedSettings(showAdvancedSettings: Boolean): AppSettings {
         return copy(showAdvancedSettings = showAdvancedSettings)
@@ -107,6 +108,10 @@ data class AppSettings(
 
     fun setAppLockSettings(appLockSettings: AppLockSettings?): AppSettings {
         return copy(appLockSettings = appLockSettings)
+    }
+
+    fun setCombineBatches(combine_batches: Boolean): AppSettings {
+        return copy(combine_batches = combine_batches)
     }
 
     fun saveLastRecording(recorder: RecorderModel): AppSettings {

@@ -41,6 +41,7 @@ import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderEncode
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderOutputFormatTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderSamplingRateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.AudioRecorderShowAllMicrophonesTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.CombineBatchesTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.CustomNotificationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DeleteRecordingsImmediatelyTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.DividerTitle
@@ -144,6 +145,7 @@ fun SettingsScreen(
             IntervalDurationTile(settings = settings)
             InAppLanguagePicker()
             DeleteRecordingsImmediatelyTile(settings = settings)
+            CombineBatchesTile(settings = settings)
             CustomNotificationTile(onNavigateToCustomRecordingNotifications, settings = settings)
             EnableAppLockTile(settings = settings)
             FilenameFormatTile(settings = settings, snackbarHostState = snackbarHostState)
