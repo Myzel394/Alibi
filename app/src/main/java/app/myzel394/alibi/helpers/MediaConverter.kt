@@ -111,7 +111,7 @@ class MediaConverter {
                 },
                 {},
                 { statistics ->
-                    onProgress(statistics.time)
+                    onProgress(statistics.time.toInt())
                 }
             )
 
@@ -171,7 +171,7 @@ class MediaConverter {
                 },
                 {},
                 { statistics ->
-                    onProgress(statistics.time)
+                    onProgress(statistics.time.toInt())
                 }
             )
 

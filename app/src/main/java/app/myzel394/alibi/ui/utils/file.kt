@@ -40,7 +40,7 @@ fun rememberFileSaverDialog(
 
     return { it, name ->
         file.value = it
-        launcher.launch(name ?: it.name)
+        launcher.launch(name.ifBlank { it.name })
     }
 }
 

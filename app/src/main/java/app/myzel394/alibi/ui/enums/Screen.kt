@@ -1,18 +1,16 @@
 package app.myzel394.alibi.ui.enums
 
-sealed class Screen(val route: String) {
-    data object AudioRecorder : Screen("audio-recorder")
-    data object Settings : Screen("settings")
-    data object Welcome : Screen("welcome")
-    data object CustomRecordingNotifications : Screen("custom-recording-notifications")
-    data object About : Screen("about")
+import kotlinx.serialization.Serializable
 
-    fun withArgs(vararg args: String): String {
-        return buildString {
-            append(route)
-            args.forEach { arg ->
-                append("/$arg")
-            }
-        }
-    }
+sealed class Screen {
+    @Serializable
+    data object Recorder
+    @Serializable
+    data object Settings
+    @Serializable
+    data object Welcome
+    @Serializable
+    object CustomRecordingNotifications
+    @Serializable
+    object About
 }
