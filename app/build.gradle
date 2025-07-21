@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace 'app.myzel394.alibi'
-    compileSdk 34
+    compileSdk 35
 
     def keystoreProperties = new Properties()
     def keystorePropertiesFile = rootProject.file('key.properties')
@@ -34,7 +34,7 @@ android {
         multiDexEnabled true
         applicationId "app.myzel394.alibi"
         minSdk 24
-        targetSdk 34
+        targetSdk 35
         versionCode 16
         versionName "0.5.3"
 
@@ -115,7 +115,7 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
-    implementation "androidx.navigation:navigation-compose:2.7.7"
+    implementation "androidx.navigation:navigation-compose:2.8.9"
 
     implementation 'com.google.dagger:hilt-android:2.49'
     annotationProcessor 'com.google.dagger:hilt-compiler:2.49'

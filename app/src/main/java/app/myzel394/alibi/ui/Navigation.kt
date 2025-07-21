@@ -16,9 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import app.myzel394.alibi.dataStore
 import app.myzel394.alibi.ui.enums.Screen
 import app.myzel394.alibi.ui.models.AudioRecorderModel
@@ -59,26 +61,27 @@ fun Navigation(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background),
         navController = navController,
-        startDestination = if (settings.hasSeenOnboarding || DEBUG_SKIP_WELCOME) Screen.AudioRecorder.route else Screen.Welcome.route,
+        startDestination = if (settings.hasSeenOnboarding || DEBUG_SKIP_WELCOME) Screen.Recorder else Screen.Welcome,
     ) {
-        composable(Screen.Welcome.route) {
+        composable<Screen.Welcome> {
             WelcomeScreen(
                 onNavigateToAudioRecorderScreen = {
                     val mainHandler = ContextCompat.getMainExecutor(context)
 
                     mainHandler.execute {
-                        navController.navigate(Screen.AudioRecorder.route)
+                        navController.navigate(Screen.Recorder)
                     }
                 },
             )
         }
-        composable(
-            Screen.AudioRecorder.route,
+        composable<Screen.Recorder>(
             enterTransition = {
-                when (initialState.destination.route) {
-                    Screen.Welcome.route -> null
-                    else -> scaleIn(initialScale = SCALE_IN) + fadeIn()
-                }
+                // No idea how to properly check the initial destination without a string.
+                // Android docs suck.
+                if (initialState.destination.route == "app.myzel394.alibi.ui.enums.Screen.Welcome")
+                    null
+                else
+                    scaleIn(initialScale = SCALE_IN) + fadeIn()
             },
             exitTransition = {
                 scaleOut(targetScale = SCALE_IN) + fadeOut(tween(durationMillis = 150))
@@ -86,15 +89,14 @@ fun Navigation(
         ) {
             RecorderScreen(
                 onNavigateToSettingsScreen = {
-                    navController.navigate(Screen.Settings.route)
+                    navController.navigate(Screen.Settings)
                 },
                 audioRecorder = audioRecorder,
                 videoRecorder = videoRecorder,
                 settings = settings,
             )
         }
-        composable(
-            Screen.Settings.route,
+        composable<Screen.Settings>(
             enterTransition = {
                 scaleIn(initialScale = 1 / SCALE_IN) + fadeIn()
             },
@@ -105,15 +107,14 @@ fun Navigation(
             SettingsScreen(
                 onBackNavigate = navController::popBackStack,
                 onNavigateToCustomRecordingNotifications = {
-                    navController.navigate(Screen.CustomRecordingNotifications.route)
+                    navController.navigate(Screen.CustomRecordingNotifications)
                 },
-                onNavigateToAboutScreen = { navController.navigate(Screen.About.route) },
+                onNavigateToAboutScreen = { navController.navigate(Screen.About) },
                 audioRecorder = audioRecorder,
                 videoRecorder = videoRecorder,
             )
         }
-        composable(
-            Screen.CustomRecordingNotifications.route,
+        composable<Screen.CustomRecordingNotifications>(
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { it -> it / 2 }
@@ -129,8 +130,7 @@ fun Navigation(
                 onBackNavigate = navController::popBackStack
             )
         }
-        composable(
-            Screen.About.route,
+        composable<Screen.About>(
             enterTransition = {
                 scaleIn()
             },
