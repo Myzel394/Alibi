@@ -130,7 +130,8 @@ dependencies {
 
     implementation "androidx.datastore:datastore-preferences:1.1.7"
 
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
+    // Updating requires Kotlin 2.0.0 or higher
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
 
     implementation 'com.maxkeppeler.sheets-compose-dialogs:core:1.2.0'
     implementation 'com.maxkeppeler.sheets-compose-dialogs:duration:1.2.0'
