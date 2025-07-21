@@ -35,8 +35,8 @@ android {
         applicationId "app.myzel394.alibi"
         minSdk 24
         targetSdk 35
-        versionCode 16
-        versionName "0.5.3"
+        versionCode 17
+        versionName "0.6.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -94,6 +94,7 @@ android {
 dependencies {
     implementation 'androidx.core:core-ktx:1.16.0'
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
+    // Updating requires Kotlin 2.0.0 or higher
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
     implementation 'androidx.activity:activity-compose:1.10.1'
     implementation 'androidx.activity:activity-ktx:1.10.1'
