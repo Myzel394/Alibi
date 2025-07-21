@@ -1,5 +1,6 @@
 package app.myzel394.alibi.ui.components.RecorderScreen.atoms
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -27,6 +29,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BigButton(
@@ -39,7 +42,9 @@ fun BigButton(
 ) {
     val orientation = LocalConfiguration.current.orientation
 
-    BoxWithConstraints {
+    BoxWithConstraints(
+        propagateMinConstraints = false,
+    ) {
         val isLarge = isBig
             ?: (maxWidth > 250.dp && maxHeight > 600.dp && orientation == Configuration.ORIENTATION_PORTRAIT)
 
