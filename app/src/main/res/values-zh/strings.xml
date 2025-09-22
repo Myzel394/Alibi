@@ -217,6 +217,6 @@
     <string name="ui_settings_option_filenameFormat_action_relativeStart_label">录制开始</string>
     <string name="ui_settings_option_filenameFormat_action_relativeStart_explanation">使用实际录音开始的时间</string>
     <string name="ui_settings_option_filenameFormat_success">新格式将用于未来的录音</string>
-    <string name="ui_settings_option_filenameFormat_action_now_label">保存时间</string>
+    <string name="ui_settings_option_filenameFormat_action_now_label">节省时间</string>
     <string name="ui_settings_option_filenameFormat_action_now_explanation">使用你保存录音的时间</string>
 </resources>
