@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name"></string>
+    <string name="app_name">Alibi</string>
     <string name="dialog_close_cancel_label">取消</string>
     <string name="dialog_close_neutral_label">确定</string>
     <string name="continue_label">继续</string>
@@ -87,8 +87,8 @@
     <string name="ui_settings_option_customNotification_description_setup">设置自定义录制通知</string>
     <string name="ui_settings_option_customNotification_description_edit">编辑录制通知</string>
     <string name="ui_settings_customNotifications_landing_title">不要暴露自己</string>
-    <string name="ui_settings_customNotifications_landing_description">由于 Android 的限制，Alibi 必须在录制时显示通知。要隐藏您正在使用 Alibi 的事实，您可以自定义通知。</string>
-    <string name="ui_settings_customNotifications_landing_help_hideNotifications">或者，您也可以简单地禁用通知</string>
+    <string name="ui_settings_customNotifications_landing_description">由于 Android 的限制，Alibi 必须在录制时显示通知。为了不被察觉使用 Alibi，您可以修改通知的内容。</string>
+    <string name="ui_settings_customNotifications_landing_help_hideNotifications">或者，您也可以直接禁用通知</string>
     <string name="ui_settings_customNotifications_landing_getStarted">创建自定义通知</string>
     <string name="ui_settings_customNotifications_preset_apply_label">应用预设 \"%s\"</string>
     <string name="ui_settings_customNotifications_showOngoing_label">显示持续时间</string>
@@ -101,7 +101,7 @@
     <string name="accessibility_open_in_browser">在浏览器中打开链接： %s</string>
     <string name="ui_about_contribute_translation">将 Alibi 翻译成您的语言</string>
     <string name="ui_about_contribute_donatation">捐赠</string>
-    <string name="ui_about_gpg_key_hint">复制我的 GPG 密钥。这个密钥只存在一次，我可以用它向您证明我真的是我。请现在保存，以便您稍后可以验证我的签名。</string>
+    <string name="ui_about_gpg_key_hint">您可以从此处复制我的 GPG 公钥。此密钥仅此一份，可以向您证实我的真实身份。现在保存，以便日后验证我的签名。</string>
     <string name="ui_about_gpg_key_copy">复制 GPG 密钥</string>
     <string name="ui_about_contribute_donation_githubSponsors">成为 GitHub 赞助者</string>
     <string name="ui_settings_option_deleteRecordingsImmediately_title">即时删除片段文件</string>
@@ -217,6 +217,6 @@
     <string name="ui_settings_option_filenameFormat_action_relativeStart_label">录制开始</string>
     <string name="ui_settings_option_filenameFormat_action_relativeStart_explanation">使用实际录音开始的时间</string>
     <string name="ui_settings_option_filenameFormat_success">新格式将用于未来的录音</string>
-    <string name="ui_settings_option_filenameFormat_action_now_label">节省时间</string>
+    <string name="ui_settings_option_filenameFormat_action_now_label">保存时间</string>
     <string name="ui_settings_option_filenameFormat_action_now_explanation">使用你保存录音的时间</string>
 </resources>
