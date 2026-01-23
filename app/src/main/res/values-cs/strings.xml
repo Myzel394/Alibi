@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Alibi</string>
-    <string name="dialog_close_cancel_label">Cancel</string>
+    <string name="dialog_close_cancel_label">Zrušit</string>
     <string name="dialog_close_neutral_label">OK</string>
-    <string name="continue_label">Continue</string>
+    <string name="continue_label">Pokračovat</string>
     <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
     <string name="form_error_type_notNumber">Please enter a valid number</string>
     <string name="form_error_value_notInRange">Please enter a number between <xliff:g name="min">%s</xliff:g> and <xliff:g name="max">%s</xliff:g></string>
