@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">Alibi</string>
-    <string name="dialog_close_cancel_label">取消</string>
+    <string name="app_name"></string>
+    <string name="dialog_close_cancel_label">إلغاء</string>
     <string name="dialog_close_neutral_label">确定</string>
     <string name="continue_label">继续</string>
-    <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
+    <string name="format_kbps"><xliff:g name="value">%s</xliff:g></string>
     <string name="form_error_type_notNumber">请输入有效数字</string>
     <string name="form_error_value_notInRange">请输入 <xliff:g name="min">%s</xliff:g> 到 <xliff:g name="max">%s</xliff:g> 之间的数</string>
     <string name="form_error_value_mustBeGreaterThan">请输入大于 <xliff:g name="min">%s</xliff:g> 的数</string>
