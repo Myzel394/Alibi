@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">Alibi</string>
-    <string name="dialog_close_cancel_label">取消</string>
+    <string name="app_name"></string>
+    <string name="dialog_close_cancel_label">إلغاء</string>
     <string name="dialog_close_neutral_label">确定</string>
     <string name="continue_label">继续</string>
-    <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
+    <string name="format_kbps"><xliff:g name="value">%s</xliff:g></string>
     <string name="form_error_type_notNumber">请输入有效数字</string>
     <string name="form_error_value_notInRange">请输入 <xliff:g name="min">%s</xliff:g> 到 <xliff:g name="max">%s</xliff:g> 之间的数</string>
     <string name="form_error_value_mustBeGreaterThan">请输入大于 <xliff:g name="min">%s</xliff:g> 的数</string>
@@ -87,8 +87,8 @@
     <string name="ui_settings_option_customNotification_description_setup">设置自定义录制通知</string>
     <string name="ui_settings_option_customNotification_description_edit">编辑录制通知</string>
     <string name="ui_settings_customNotifications_landing_title">不要暴露自己</string>
-    <string name="ui_settings_customNotifications_landing_description">由于 Android 的限制，Alibi 必须在录制时显示通知。为了不被察觉使用 Alibi，您可以修改通知的内容。</string>
-    <string name="ui_settings_customNotifications_landing_help_hideNotifications">或者，您也可以直接禁用通知</string>
+    <string name="ui_settings_customNotifications_landing_description">由于 Android 的限制，Alibi 必须在录制时显示通知。要隐藏您正在使用 Alibi 的事实，您可以自定义通知。</string>
+    <string name="ui_settings_customNotifications_landing_help_hideNotifications">或者，您也可以简单地禁用通知</string>
     <string name="ui_settings_customNotifications_landing_getStarted">创建自定义通知</string>
     <string name="ui_settings_customNotifications_preset_apply_label">应用预设 \"%s\"</string>
     <string name="ui_settings_customNotifications_showOngoing_label">显示持续时间</string>
@@ -101,7 +101,7 @@
     <string name="accessibility_open_in_browser">在浏览器中打开链接： %s</string>
     <string name="ui_about_contribute_translation">将 Alibi 翻译成您的语言</string>
     <string name="ui_about_contribute_donatation">捐赠</string>
-    <string name="ui_about_gpg_key_hint">您可以从此处复制我的 GPG 公钥。此密钥仅此一份，可以向您证实我的真实身份。现在保存，以便日后验证我的签名。</string>
+    <string name="ui_about_gpg_key_hint">复制我的 GPG 密钥。这个密钥只存在一次，我可以用它向您证明我真的是我。请现在保存，以便您稍后可以验证我的签名。</string>
     <string name="ui_about_gpg_key_copy">复制 GPG 密钥</string>
     <string name="ui_about_contribute_donation_githubSponsors">成为 GitHub 赞助者</string>
     <string name="ui_settings_option_deleteRecordingsImmediately_title">即时删除片段文件</string>
@@ -157,14 +157,14 @@
     <string name="ui_settings_option_enableAppLock_enrollmentRequired">请先选择密码或生物识别解锁方式</string>
     <string name="identityVerificationRequired_title">需要验证</string>
     <string name="identityVerificationRequired_subtitle">您需要验证身份才能继续</string>
-    <string name="ui_settings_option_saveFolder_videoUnsupported">此版本的 Android 不支持用于视频录制的自定义文件夹。Alibi 将取消录制并返回系统文件夹。</string>
+    <string name="ui_settings_option_saveFolder_videoUnsupported">您的 Android 版本不支持用于视频录制的自定义文件夹。Alibi 将取消录制并返回系统文件夹。</string>
     <string name="ui_minApiRequired">您将需要至少运行 Android %s (API 级别: %s) 的 Android 手机来使用此功能</string>
     <string name="ui_settings_option_saveFolder_action_custom_label">选择自定义位置</string>
     <string name="ui_settings_option_saveFolder_action_dcim_label">使用 DCIM 文件夹</string>
     <string name="ui_settings_option_saveFolder_dcimValue">DCIM 文件夹</string>
     <string name="ui_settings_option_saveFolder_success">片段文件夹更改成功</string>
     <string name="ui_settings_option_saveFolder_externalPermissionRequired_title">需要权限</string>
-    <string name="ui_settings_option_saveFolder_externalPermissionRequired_text">要访问 DCIM 文件夹，您需要授予 Alibi 访问外部存储的权限。Alibi 将只使用此权限将您的录制文件写入 DCIM 文件夹。</string>
+    <string name="ui_settings_option_saveFolder_externalPermissionRequired_text">要访问 DCIM 文件夹，您需要授予Alibi 访问外部存储的权限。 Alibi 将只使用此权限将您的录制文件写入DCIM文件夹。</string>
     <string name="ui_settings_option_saveFolder_externalPermissionRequired_action_confirm">授予权限</string>
     <string name="ui_recorder_error_batchesInaccessible_description">Alibi 无法访问或写入片段文件夹。 尝试选择一个不同的文件夹或使用内部存储。录制已中止。</string>
     <string name="ui_severeError_fileSaverUnavailable_title">未找到文件管理器</string>
@@ -181,17 +181,17 @@
     <string name="goBack">返回</string>
     <string name="ui_recorder_action_saveCurrent">立即保存？</string>
     <string name="ui_recorder_action_saveCurrent_explanation">您可以通过按下保存按钮来保存当前正在进行的录制。录制将继续在后台进行。</string>
-    <string name="ui_recorder_lowOnStorage_hint">您的可用存储空间不足。Alibi 可能无法正常工作。请释放一些空间。</string>
-    <string name="ui_recorder_lowOnStorage_hintANDswitchSaveFolder">您的可用存储空间不足。Alibi 可能无法正常工作。请释放一些空间，或者在设置中将片段文件夹更改为其他位置。</string>
+    <string name="ui_recorder_lowOnStorage_hint">您的存储空间值很低。Alibi 可能无法正常工作。请释放一些空间。</string>
+    <string name="ui_recorder_lowOnStorage_hintANDswitchSaveFolder">您的存储空间值很低。Alibi 可能无法正常工作。请释放一些空间，或者在设置中将片段文件夹更改为其他位置。</string>
     <string name="ui_welcome_timeSettings_title">Alibi 将保留多长时间？</string>
     <string name="ui_welcome_timeSettings_message">Alibi 将不断录制并删除旧的录制文件以为新的录制提供存储空间。由您决定 Alibi 应该保留多长时间的录制。</string>
-    <string name="ui_welcome_timeSettings_values_5min">5 分钟</string>
+    <string name="ui_welcome_timeSettings_values_5min">5分钟</string>
     <string name="ui_welcome_timeSettings_values_15min">15 分钟</string>
     <string name="ui_welcome_timeSettings_values_30min">30 分钟</string>
     <string name="ui_welcome_timeSettings_values_1hour">1 小时</string>
     <string name="ui_welcome_timeSettings_changeableHint">您可以随时更改。</string>
     <string name="ui_welcome_saveFolder_title">Alibi 将在哪里存储片段文件？</string>
-    <string name="ui_welcome_saveFolder_message">选择您想要让 Alibi 存储录制片段的位置。内部文件夹是加密的，只有 Alibi 才能访问。 如果您只希望录制短时间的片段，建议使用内部文件夹存储。如果您需要录制更长时间，建议选择自定义文件夹存储，因为内部存储往往非常有限。</string>
+    <string name="ui_welcome_saveFolder_message">选择您想要让 Alibi 存储录制片段的位置。内部文件夹是加密的，只有Alibi才能访问。 如果您只想录制一个短片段，这个文件夹是可行的。 如果您需要录制更长的时间，您可能要选择一个不同的文件夹，因为内部存储非常有限。</string>
     <string name="ui_welcome_saveFolder_values_internal">内部存储</string>
     <string name="ui_welcome_saveFolder_values_custom">自定义文件夹</string>
     <string name="ui_welcome_saveFolder_values_media">媒体文件夹</string>
@@ -206,7 +206,7 @@
     <string name="ui_welcome_ready_message">您已准备好使用 Alibi！请继续尝试吧！</string>
     <string name="ui_welcome_ready_start">开始使用 Alibi</string>
     <string name="ui_about_support_title">获取支持</string>
-    <string name="ui_about_support_message">如果您有任何疑问、反馈或遇到任何问题，欢迎随时与我联系。我很乐意帮助您！下面是我的联系方式列表：</string>
+    <string name="ui_about_support_message">如果您有任何疑问、反馈或遇到任何问题，请不要犹豫，与我联系。我很乐意帮助您！下面是我的联系方式列表：</string>
     <string name="ui_welcome_timeSettings_values_1min">1 分钟</string>
     <string name="ui_error_occurred_title">出现错误</string>
     <string name="ui_settings_option_saveFolder_batchesFolderInaccessible_error">Alibi 无法访问此文件夹。请选择其他文件夹</string>
@@ -217,6 +217,6 @@
     <string name="ui_settings_option_filenameFormat_action_relativeStart_label">录制开始</string>
     <string name="ui_settings_option_filenameFormat_action_relativeStart_explanation">使用实际录音开始的时间</string>
     <string name="ui_settings_option_filenameFormat_success">新格式将用于未来的录音</string>
-    <string name="ui_settings_option_filenameFormat_action_now_label">保存时间</string>
+    <string name="ui_settings_option_filenameFormat_action_now_label">节省时间</string>
     <string name="ui_settings_option_filenameFormat_action_now_explanation">使用你保存录音的时间</string>
 </resources>
