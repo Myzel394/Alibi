@@ -123,7 +123,12 @@ dependencies {
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.1'
 
-    implementation 'com.arthenica:ffmpeg-kit-full-gpl:5.1'
+    // The `full-gpl` variant of this fork ships a broken libavdevice.so that
+    // dlopens unresolved `PLATFORM_hid_*` symbols (libhidapi isn't bundled),
+    // which makes FFmpegKit fail to initialize. We don't need libass/libx264 any
+    // more now that overlays are rendered live via OpenGL and concat uses `-c copy`,
+    // so stick to the plain `main` variant.
+    implementation 'io.github.jamaismagic.ffmpeg:ffmpeg-kit-main-16kb:6.1.4'
 
     implementation "androidx.datastore:datastore-preferences:1.1.1"
 

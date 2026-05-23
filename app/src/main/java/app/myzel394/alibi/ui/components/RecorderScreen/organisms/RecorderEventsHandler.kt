@@ -225,8 +225,23 @@ fun RecorderEventsHandler(
                             }
                         }
                     }
+                } catch (error: Error) {
+                    if (
+                        error.cause is UnsatisfiedLinkError ||
+                        error.message?.contains("FFmpegKit failed to start") == true
+                    ) {
+                        Log.e("RecorderEventsHandler", "FFmpegKit failed to save recording", error)
+                        scope.launch {
+                            showRecorderError = true
+                        }
+                    } else {
+                        throw error
+                    }
                 } catch (error: Exception) {
-                    Log.getStackTraceString(error)
+                    Log.e("RecorderEventsHandler", "Failed to save recording", error)
+                    scope.launch {
+                        showRecorderError = true
+                    }
                 } finally {
                     if (recorder.isCurrentlyActivelyRecording) {
                         recorder.recorderService?.unlockFiles(cleanupOldFiles)

@@ -127,13 +127,20 @@ class VideoRecorderService :
 
         fun action() {
             stopActiveRecording()
+            val recordingCounter = counter
             val newRecording = prepareVideoRecording()
 
             _videoFinalizerListener = CompletableDeferred()
 
             activeRecording = newRecording.start(ContextCompat.getMainExecutor(this)) { event ->
-                if (event is VideoRecordEvent.Finalize && (this@VideoRecorderService.state == RecorderState.STOPPED || this@VideoRecorderService.state == RecorderState.PAUSED)) {
-                    _videoFinalizerListener.complete(Unit)
+                if (event is VideoRecordEvent.Finalize) {
+                    if (event.error in DELETE_RECORDING_ERROR_CODES) {
+                        batchesFolder.deleteRecordings(recordingCounter..recordingCounter)
+                    }
+
+                    if (this@VideoRecorderService.state == RecorderState.STOPPED || this@VideoRecorderService.state == RecorderState.PAUSED) {
+                        _videoFinalizerListener.complete(Unit)
+                    }
                 }
             }
         }
@@ -309,7 +316,7 @@ class VideoRecorderService :
             folderPath = batchesFolder.exportFolderForSettings(),
             recordingStart = recordingStart,
             maxDuration = settings.maxDuration,
-            batchesAmount = batchesFolder.getBatchesForFFmpeg().size,
+            batchesAmount = batchesFolder.getBatchesAmount(),
             fileExtension = settings.videoRecorderSettings.fileExtension,
             intervalDuration = settings.intervalDuration,
             type = RecordingInformation.Type.VIDEO,
@@ -317,6 +324,12 @@ class VideoRecorderService :
 
     companion object {
         const val CAMERA_CLOSE_TIMEOUT = 20000L
+        val DELETE_RECORDING_ERROR_CODES = setOf(
+            VideoRecordEvent.Finalize.ERROR_UNKNOWN,
+            VideoRecordEvent.Finalize.ERROR_RECORDER_ERROR,
+            VideoRecordEvent.Finalize.ERROR_ENCODING_FAILED,
+            VideoRecordEvent.Finalize.ERROR_NO_VALID_DATA,
+        )
     }
 
     class CameraControl(

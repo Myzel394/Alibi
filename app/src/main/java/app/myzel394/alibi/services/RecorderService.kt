@@ -117,7 +117,8 @@ abstract class RecorderService : LifecycleService() {
             }
         }
 
-        return super.onStartCommand(intent, flags, startId)
+        super.onStartCommand(intent, flags, startId)
+        return START_NOT_STICKY
     }
 
     inner class RecorderBinder : Binder() {
