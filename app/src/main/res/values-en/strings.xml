@@ -219,4 +219,14 @@
     <string name="ui_settings_option_filenameFormat_success">The new format will be used for future recordings</string>
     <string name="ui_settings_option_filenameFormat_action_now_label">Save time</string>
     <string name="ui_settings_option_filenameFormat_action_now_explanation">Use the time you saved the recording</string>
+    <string name="ui_settings_option_videoOverlay_time_title">Show time overlay</string>
+    <string name="ui_settings_option_videoOverlay_time_description">Burn the recording time into video recordings.</string>
+    <string name="ui_settings_option_videoOverlay_location_title">Show GPS coordinates</string>
+    <string name="ui_settings_option_videoOverlay_location_description">Burn GPS coordinates into video recordings. Requires location permission.</string>
+    <string name="ui_settings_option_videoOverlay_timeFormat_title">Time overlay format</string>
+    <string name="ui_settings_option_videoOverlay_timeFormat_description">Choose how the time overlay should be formatted.</string>
+    <string name="ui_settings_option_videoOverlay_timeFormat_isoOffset">ISO offset date-time</string>
+    <string name="ui_settings_option_videoOverlay_timeFormat_isoInstant">ISO instant (UTC)</string>
+    <string name="ui_settings_option_videoOverlay_timeFormat_isoLocal">ISO local date-time</string>
+    <string name="ui_settings_option_videoOverlay_timeFormat_dashcam">Dashcam date-time</string>
 </resources>

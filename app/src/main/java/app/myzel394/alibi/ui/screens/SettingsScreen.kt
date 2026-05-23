@@ -52,6 +52,7 @@ import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.MaxDurationTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.SaveFolderTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderBitrateTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderFrameRateTile
+import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderOverlayTile
 import app.myzel394.alibi.ui.components.SettingsScreen.Tiles.VideoRecorderQualityTile
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.InAppLanguagePicker
 import app.myzel394.alibi.ui.components.SettingsScreen.atoms.ThemeSelector
@@ -187,6 +188,7 @@ fun SettingsScreen(
                         VideoRecorderQualityTile(settings = settings)
                         VideoRecorderBitrateTile(settings = settings)
                         VideoRecorderFrameRateTile(settings = settings)
+                        VideoRecorderOverlayTile(settings = settings)
                     }
                     HorizontalDivider(
                         modifier = Modifier

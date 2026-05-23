@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.GpsFixed
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import app.myzel394.alibi.R
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.ui.BIG_PRIMARY_BUTTON_SIZE
 import app.myzel394.alibi.ui.SHEET_BOTTOM_OFFSET
 import app.myzel394.alibi.ui.components.RecorderScreen.atoms.CameraPreview
@@ -71,6 +73,7 @@ import kotlin.math.abs
 fun VideoRecorderPreparationSheet(
     showPreview: Boolean,
     videoSettings: VideoRecorderModel,
+    appSettings: AppSettings,
     onDismiss: () -> Unit,
     onPreviewVisible: () -> Unit,
     onPreviewHidden: () -> Unit,
@@ -185,42 +188,60 @@ fun VideoRecorderPreparationSheet(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             PermissionRequester(
-                                permission = Manifest.permission.CAMERA,
-                                icon = Icons.Default.CameraAlt,
+                                permission = Manifest.permission.ACCESS_FINE_LOCATION,
+                                icon = Icons.Default.GpsFixed,
                                 onPermissionAvailable = {
                                     onStartRecording()
-                                }
-                            ) { trigger ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(BIG_PRIMARY_BUTTON_SIZE)
-                                        .clip(CircleShape)
-                                        .background(MaterialTheme.colorScheme.primary)
-                                        .padding(16.dp)
-                                        .semantics {
-                                            contentDescription = label
-                                        }
-                                        .pointerInput(Unit) {
-                                            detectTapGestures(
-                                                onLongPress = {
-                                                    if (hasGrantedCameraPermission) {
-                                                        onPreviewVisible()
-                                                    }
-                                                },
-                                                onTap = {
-                                                    trigger()
-                                                }
+                                },
+                            ) { triggerLocationPermission ->
+                                PermissionRequester(
+                                    permission = Manifest.permission.CAMERA,
+                                    icon = Icons.Default.CameraAlt,
+                                    onPermissionAvailable = {
+                                        if (
+                                            appSettings.videoRecorderSettings.overlaySettings.locationEnabled &&
+                                            !PermissionHelper.hasGranted(
+                                                context,
+                                                Manifest.permission.ACCESS_FINE_LOCATION,
                                             )
-                                        },
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Text(
-                                        label,
-                                        style = MaterialTheme.typography.labelLarge,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
+                                        ) {
+                                            triggerLocationPermission()
+                                        } else {
+                                            onStartRecording()
+                                        }
+                                    }
+                                ) { trigger ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(BIG_PRIMARY_BUTTON_SIZE)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.primary)
+                                            .padding(16.dp)
+                                            .semantics {
+                                                contentDescription = label
+                                            }
+                                            .pointerInput(Unit) {
+                                                detectTapGestures(
+                                                    onLongPress = {
+                                                        if (hasGrantedCameraPermission) {
+                                                            onPreviewVisible()
+                                                        }
+                                                    },
+                                                    onTap = {
+                                                        trigger()
+                                                    }
+                                                )
+                                            },
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Text(
+                                            label,
+                                            style = MaterialTheme.typography.labelLarge,
+                                            color = MaterialTheme.colorScheme.onPrimary,
+                                        )
+                                    }
                                 }
                             }
 
