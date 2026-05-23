@@ -6,7 +6,7 @@
     <string name="continue_label">Continuar</string>
     <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
     <string name="form_error_type_notNumber">Por favor, insira um número válido</string>
-    <string name="form_error_value_notInRange">Por favor, insira um número entre <xliff:g name="min">%s</xliff:g> e <xliff:g name="max">%s</xliff:g></string>
+    <string name="form_error_value_notInRange">Por favor, insira um número entre <xliff:g name="min">%1$s</xliff:g> e <xliff:g name="max">%2$s</xliff:g></string>
     <string name="form_error_value_mustBeGreaterThan">Por favor, insira um número maior que <xliff:g name="min">%s</xliff:g></string>
     <string name="form_value_selected">Selecionado: %s</string>
     <string name="a11y_selectValue">Select %s</string>
@@ -72,7 +72,7 @@
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Microfone do Dispositivo</string>
     <string name="ui_audioRecorder_info_microphone_changeExplanation">O microfone selecionado será ativado imediatamente</string>
     <string name="ui_audioRecorder_error_microphoneDisconnected_title">Microfone desconectado</string>
-    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%s</xliff:g> desconectado. Alibi usará o microfone padrão em vez disso. <xliff:g name="nam">%s</xliff:g> será usado automaticamente assim que for reconectado.</string>
+    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%1$s</xliff:g> desconectado. Alibi usará o microfone padrão em vez disso. <xliff:g name="nam">%2$s</xliff:g> será usado automaticamente assim que for reconectado.</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_title">Microfone reconectado</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_message"><xliff:g name="name">%s</xliff:g> reconectado! Alibi alterou automaticamente a entrada de microfone para ele.</string>
     <string name="ui_settings_option_showAllMicrophones_title">Mostrar microfones ocultos</string>
@@ -158,7 +158,7 @@
     <string name="identityVerificationRequired_title">Verificação necessária</string>
     <string name="identityVerificationRequired_subtitle">Você precisa verificar sua identidade para continuar</string>
     <string name="ui_settings_option_saveFolder_videoUnsupported">Pastas personalizadas para Gravações de Vídeo não são suportadas pela sua versão do Android. O Alibi irá retornar para a pasta interna para de Gravações de Vídeo.</string>
-    <string name="ui_minApiRequired">Você vai precisar de um celular Android rodando pelo menos o Android %s (API-Nível: %s) para usar este recurso</string>
+    <string name="ui_minApiRequired">Você vai precisar de um celular Android rodando pelo menos o Android %1$s (API-Nível: %2$s) para usar este recurso</string>
     <string name="ui_settings_option_saveFolder_action_custom_label">Selecione uma localização personalizada</string>
     <string name="ui_settings_option_saveFolder_action_dcim_label">Usar a pasta DCIM</string>
     <string name="ui_settings_option_saveFolder_dcimValue">Pasta DCIM</string>
@@ -173,7 +173,7 @@
     <string name="ui_settings_option_saveFolder_openFolder_label">Abrir pasta selecionada no gerenciador de arquivos</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_label">Onde meus lotes estão armazenados?</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_generalExplanation">Para ver seus lotes, abra o aplicativo Arquivos, vá para o armazenamento interno e então você encontrará seus lotes nas seguintes pastas:</string>
-    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">As últimas gravações mescladas serão salvas nessas pastas. Cada gravação cria uma subpasta para armazenar os lotes curtos em (\"%s\" para gravações de áudio, \"%s\" para gravações de vídeo). Para ver os lotes individuais, talvez seja necessário habilitar os arquivos ocultos no app Arquivos.</string>
+    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">As últimas gravações mescladas serão salvas nessas pastas. Cada gravação cria uma subpasta para armazenar os lotes curtos em (\"%1$s\" para gravações de áudio, \"%2$s\" para gravações de vídeo). Para ver os lotes individuais, talvez seja necessário habilitar os arquivos ocultos no app Arquivos.</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_openFolderExplanation">Toque em uma pasta para abri-la no aplicativo Arquivos</string>
     <string name="ui_videoRecorder_action_start_settings_cameraLens_unknown_label">Desconhecido</string>
     <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">Para proteger sua privacidade, o Alibi armazena seus lotes em seu próprio armazenamento privado e criptografado. Este armazenamento só é acessível pelo Alibi e não pode ser acessado por outros aplicativos ou por um possível invasor. Depois de salvar a gravação, você será perguntado para onde deseja salvar a gravação.</string>
@@ -200,7 +200,7 @@
     <string name="ui_welcome_saveFolder_customFolder_message">You will now be asked to select a folder where Alibi should store the batches. Please select a folder where you have write access to.</string>
     <string name="ui_welcome_timeSettings_values_custom">Custom Duration</string>
     <string name="ui_welcome_timeSettings_values_customFormat_mm">%s minutes</string>
-    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%s hour, %s minutes</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%1$s hour, %2$s minutes</string>
     <string name="ui_welcome_timeSettings_values_customFormat_h_mm">1 hour, %s minutes</string>
     <string name="ui_welcome_ready_title">You are ready!</string>
     <string name="ui_welcome_ready_message">You are ready to start using Alibi! Go ahead and try it out!</string>

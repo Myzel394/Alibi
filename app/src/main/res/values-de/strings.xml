@@ -6,7 +6,7 @@
     <string name="continue_label">Fortsetzten</string>
     <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
     <string name="form_error_type_notNumber">Bitte eine gültige Nummer eingeben</string>
-    <string name="form_error_value_notInRange">Bitte gib eine Nummer zwischen<xliff:g name="min">%s</xliff:g> und <xliff:g name="max">%s</xliff:g>ein</string>
+    <string name="form_error_value_notInRange">Bitte gib eine Nummer zwischen<xliff:g name="min">%1$s</xliff:g> und <xliff:g name="max">%2$s</xliff:g>ein</string>
     <string name="form_error_value_mustBeGreaterThan">Bitte gib eine Zahl größer als <xliff:g name="min">%s</xliff:g> ein</string>
     <string name="form_value_selected">%s ausgewählt</string>
     <string name="a11y_selectValue">Wähle %s</string>
@@ -72,7 +72,7 @@
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Geräte-Mikrofon</string>
     <string name="ui_audioRecorder_info_microphone_changeExplanation">Das ausgewählte Mikrofon wird sofort aktiviert</string>
     <string name="ui_audioRecorder_error_microphoneDisconnected_title">Mikrofon wurde getrennt</string>
-    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%s</xliff:g> wurde getrennt. Alibi wird stattdessen das Standardmikrofon verwenden und automatisch zu <xliff:g name="nam">%s</xliff:g> wechseln, sobald es erneut verbunden wird.</string>
+    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%1$s</xliff:g> wurde getrennt. Alibi wird stattdessen das Standardmikrofon verwenden und automatisch zu <xliff:g name="nam">%2$s</xliff:g> wechseln, sobald es erneut verbunden wird.</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_title">Mikrofon erneut verbunden</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_message"><xliff:g name="name">%s</xliff:g> wurde wieder verbunden! Alibi hat den Mikrofoneingang automatisch geändert.</string>
     <string name="ui_settings_option_showAllMicrophones_title">Versteckte Mikrofone anzeigen</string>
@@ -158,7 +158,7 @@
     <string name="identityVerificationRequired_title">Verifizierung erforderlich</string>
     <string name="identityVerificationRequired_subtitle">Sie müssen Ihre Identität verifizieren, um fortzufahren</string>
     <string name="ui_settings_option_saveFolder_videoUnsupported">Benutzerdefinierte Ordner für Videoaufnahmen werden von Ihrer Android-Version nicht unterstützt. Alibi wird stattdessen für Videoaufnahmen den internen Ordner nutzen.</string>
-    <string name="ui_minApiRequired">Sie benötigen ein Android-Telefon mit mindestens Android %s (API-Level: %s) um diese Funktion zu nutzen</string>
+    <string name="ui_minApiRequired">Sie benötigen ein Android-Telefon mit mindestens Android %1$s (API-Level: %2$s) um diese Funktion zu nutzen</string>
     <string name="ui_settings_option_saveFolder_action_custom_label">Wähle einen eigenen Speicherort</string>
     <string name="ui_settings_option_saveFolder_action_dcim_label">DCIM Ordner verwenden</string>
     <string name="ui_settings_option_saveFolder_dcimValue">DCIM Ordner</string>
@@ -173,7 +173,7 @@
     <string name="ui_settings_option_saveFolder_openFolder_label">Ausgewählten Ordner im Dateimanager öffnen</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_label">Wo werden meine Batches gespeichert?</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_generalExplanation">Um Ihre Batches zu sehen, öffnen Sie die Datei-App, gehen Sie zum internen Speicher und dann finden Sie Ihre Batches in folgenden Ordnern:</string>
-    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">Die letzten zusammengeführten Aufnahmen werden in diesen Ordnern gespeichert. Jede Aufnahme erstellt einen Unterordner um die kurzen Stapel in (\"%s\" für Audioaufnahmen, \"%s\" für Videoaufnahmen zu speichern). Um die einzelnen Stapel anzeigen zu können, müssen Sie eventuell versteckte Dateien in der Datei-App aktivieren.</string>
+    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">Die letzten zusammengeführten Aufnahmen werden in diesen Ordnern gespeichert. Jede Aufnahme erstellt einen Unterordner um die kurzen Stapel in (\"%1$s\" für Audioaufnahmen, \"%2$s\" für Videoaufnahmen zu speichern). Um die einzelnen Stapel anzeigen zu können, müssen Sie eventuell versteckte Dateien in der Datei-App aktivieren.</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_openFolderExplanation">Tippen Sie auf einen Ordner, um ihn in der Datei-App zu öffnen</string>
     <string name="ui_videoRecorder_action_start_settings_cameraLens_unknown_label">Unbekannt</string>
     <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">Um Ihre Privatsphäre zu schützen, speichert Alibi seine Batches in einem eigenen privaten und verschlüsselten Speicher. Dieser Speicher ist nur für Alibi zugänglich und kann nicht von anderen Apps oder einem möglichen Eindringling aufgerufen werden. Sobald Sie die Aufnahme gespeichert haben, werden Sie gefragt, wohin Sie die Aufnahme speichern möchten.</string>
@@ -200,7 +200,7 @@
     <string name="ui_welcome_saveFolder_customFolder_message">Sie werden nun aufgefordert, einen Ordner auszuwählen, in dem Alibi die Batches speichern soll. Bitte wählen Sie einen Ordner, auf den Sie Schreibzugriff haben.</string>
     <string name="ui_welcome_timeSettings_values_custom">Benutzerdefinierte Dauer</string>
     <string name="ui_welcome_timeSettings_values_customFormat_mm">%s Minuten</string>
-    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%s Stunde, %s Minuten</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%1$s Stunde, %2$s Minuten</string>
     <string name="ui_welcome_timeSettings_values_customFormat_h_mm">1 Stunde, %s Minuten</string>
     <string name="ui_welcome_ready_title">Sie sind bereit!</string>
     <string name="ui_welcome_ready_message">Du bist bereit, Alibi zu verwenden! Probiere es aus!</string>

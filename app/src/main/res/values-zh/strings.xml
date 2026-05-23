@@ -6,7 +6,7 @@
     <string name="continue_label">继续</string>
     <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
     <string name="form_error_type_notNumber">请输入有效数字</string>
-    <string name="form_error_value_notInRange">请输入 <xliff:g name="min">%s</xliff:g> 到 <xliff:g name="max">%s</xliff:g> 之间的数</string>
+    <string name="form_error_value_notInRange">请输入 <xliff:g name="min">%1$s</xliff:g> 到 <xliff:g name="max">%2$s</xliff:g> 之间的数</string>
     <string name="form_error_value_mustBeGreaterThan">请输入大于 <xliff:g name="min">%s</xliff:g> 的数</string>
     <string name="form_value_selected">已选中：%s</string>
     <string name="a11y_selectValue">选择 %s</string>
@@ -72,7 +72,7 @@
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">设备麦克风</string>
     <string name="ui_audioRecorder_info_microphone_changeExplanation">选中的麦克风将立即激活</string>
     <string name="ui_audioRecorder_error_microphoneDisconnected_title">麦克风连接已断开</string>
-    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%s</xliff:g> 连接已断开。Alibi 将使用默认麦克风。一旦重新连接，我们将自动重新切换到 <xliff:g name="nam">%s</xliff:g>。</string>
+    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%1$s</xliff:g> 连接已断开。Alibi 将使用默认麦克风。一旦重新连接，我们将自动重新切换到 <xliff:g name="nam">%2$s</xliff:g>。</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_title">麦克风已重新连接</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_message"><xliff:g name="name">%s</xliff:g> 已重新连接！Alibi 已自动更改麦克风输入。</string>
     <string name="ui_settings_option_showAllMicrophones_title">显示隐藏的麦克风</string>
@@ -158,7 +158,7 @@
     <string name="identityVerificationRequired_title">需要验证</string>
     <string name="identityVerificationRequired_subtitle">您需要验证身份才能继续</string>
     <string name="ui_settings_option_saveFolder_videoUnsupported">您的 Android 版本不支持用于视频录制的自定义文件夹。Alibi 将取消录制并返回系统文件夹。</string>
-    <string name="ui_minApiRequired">您将需要至少运行 Android %s (API 级别: %s) 的 Android 手机来使用此功能</string>
+    <string name="ui_minApiRequired">您将需要至少运行 Android %1$s (API 级别: %2$s) 的 Android 手机来使用此功能</string>
     <string name="ui_settings_option_saveFolder_action_custom_label">选择自定义位置</string>
     <string name="ui_settings_option_saveFolder_action_dcim_label">使用 DCIM 文件夹</string>
     <string name="ui_settings_option_saveFolder_dcimValue">DCIM 文件夹</string>
@@ -173,7 +173,7 @@
     <string name="ui_settings_option_saveFolder_openFolder_label">在文件管理器中打开选定的文件夹</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_label">我录制的片段保存在哪里？</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_generalExplanation">要查看您录制的片段，请打开文件管理应用程序，转到内部存储，然后您将在以下文件夹中找到您录制的片段文件：</string>
-    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">最后合并的录制文件将保存到这些文件夹中。 每个录制件都创建一个子文件夹，将短片段存储在(\"%s\"用于录制音频，\"%s\"用于录制视频)。 要查看单个片段，您可能需要在文件管理应用中启用查看隐藏文件。</string>
+    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">最后合并的录制文件将保存到这些文件夹中。 每个录制件都创建一个子文件夹，将短片段存储在(\"%1$s\"用于录制音频，\"%2$s\"用于录制视频)。 要查看单个片段，您可能需要在文件管理应用中启用查看隐藏文件。</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_openFolderExplanation">点击文件夹在文件管理应用中打开</string>
     <string name="ui_videoRecorder_action_start_settings_cameraLens_unknown_label">未知</string>
     <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">为了保护您的隐私，Alibi 将录制的片段存储到自己的私有加密存储中。 此存储仅供 Alibi 访问，不能被其他应用或可能的入侵者访问。一旦您保存录制，您将被询问您想要将录制保存到哪里。</string>
@@ -200,7 +200,7 @@
     <string name="ui_welcome_saveFolder_customFolder_message">您需要选择一个 Alibi 存储录制片段的文件夹。请选择一个您拥有写访问权限的文件夹。</string>
     <string name="ui_welcome_timeSettings_values_custom">自定义时长</string>
     <string name="ui_welcome_timeSettings_values_customFormat_mm">%s 分钟</string>
-    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%s 小时, %s 分钟</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%1$s 小时, %2$s 分钟</string>
     <string name="ui_welcome_timeSettings_values_customFormat_h_mm">1 小时, %s 分钟</string>
     <string name="ui_welcome_ready_title">您已准备就绪！</string>
     <string name="ui_welcome_ready_message">您已准备好使用 Alibi！请继续尝试吧！</string>
