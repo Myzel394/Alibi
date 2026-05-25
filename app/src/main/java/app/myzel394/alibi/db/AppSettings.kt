@@ -450,6 +450,7 @@ data class VideoRecorderSettings(
     val targetedVideoBitRate: Int? = null,
     val quality: String? = null,
     val targetFrameRate: Int? = null,
+    val overlaySettings: VideoOverlaySettings = VideoOverlaySettings.getDefaultInstance(),
 ) {
     fun setTargetedVideoBitRate(bitRate: Int?): VideoRecorderSettings {
         return copy(targetedVideoBitRate = bitRate)
@@ -463,6 +464,10 @@ data class VideoRecorderSettings(
 
     fun setTargetFrameRate(frameRate: Int?): VideoRecorderSettings {
         return copy(targetFrameRate = frameRate)
+    }
+
+    fun setOverlaySettings(overlaySettings: VideoOverlaySettings): VideoRecorderSettings {
+        return copy(overlaySettings = overlaySettings)
     }
 
     fun getQuality(): Quality? =
@@ -530,6 +535,40 @@ data class VideoRecorderSettings(
             null,
         ) + AVAILABLE_QUALITIES
     }
+}
+
+@Serializable
+data class VideoOverlaySettings(
+    val timeEnabled: Boolean = false,
+    val locationEnabled: Boolean = false,
+    val timeFormat: VideoOverlayTimeFormat = VideoOverlayTimeFormat.ISO_OFFSET_DATE_TIME,
+) {
+    val enabled: Boolean
+        get() = timeEnabled || locationEnabled
+
+    fun setTimeEnabled(timeEnabled: Boolean): VideoOverlaySettings {
+        return copy(timeEnabled = timeEnabled)
+    }
+
+    fun setLocationEnabled(locationEnabled: Boolean): VideoOverlaySettings {
+        return copy(locationEnabled = locationEnabled)
+    }
+
+    fun setTimeFormat(timeFormat: VideoOverlayTimeFormat): VideoOverlaySettings {
+        return copy(timeFormat = timeFormat)
+    }
+
+    companion object {
+        fun getDefaultInstance() = VideoOverlaySettings()
+    }
+}
+
+@Serializable
+enum class VideoOverlayTimeFormat {
+    ISO_OFFSET_DATE_TIME,
+    ISO_INSTANT,
+    ISO_LOCAL_DATE_TIME,
+    DASHCAM_DATE_TIME,
 }
 
 @Serializable

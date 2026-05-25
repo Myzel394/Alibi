@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -66,39 +67,49 @@ abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderServi
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            recorderService =
-                ((service as RecorderService.RecorderBinder).getService() as T).also { recorder ->
-                    // Init variables from us to the service
-                    recorder.onStateChange = { state ->
-                        recorderState = state
-                    }
-                    recorder.onRecordingTimeChange = { time ->
-                        recordingTime = time
-                    }
-                    recorder.onError = {
-                        onError()
-                    }
-                    recorder.onBatchesFolderNotAccessible = {
-                        onBatchesFolderNotAccessible()
-                    }
+            @Suppress("UNCHECKED_CAST")
+            val recorder = (service as RecorderService.RecorderBinder).getService() as T
 
-                    if (batchesFolder != null) {
-                        recorder.batchesFolder = batchesFolder!!
-                    } else {
-                        batchesFolder = recorder.batchesFolder
-                    }
+            // Init variables from us to the service
+            recorder.onStateChange = { state ->
+                recorderState = state
+            }
+            recorder.onRecordingTimeChange = { time ->
+                recordingTime = time
+            }
+            recorder.onError = {
+                onError()
+            }
+            recorder.onBatchesFolderNotAccessible = {
+                onBatchesFolderNotAccessible()
+            }
 
-                    if (settings != null) {
-                        // If `settings` is set, it means we started the recording, so it should be
-                        // properly set on the service
-                        recorder.settings = settings!!
-                    } else {
-                        settings = recorder.settings
-                    }
+            if (batchesFolder != null) {
+                recorder.batchesFolder = batchesFolder!!
+            } else {
+                batchesFolder = recorder.batchesFolder
+            }
 
-                    // Rest should be initialized from the child class
-                    onServiceConnected(recorder)
-                }
+            if (settings != null) {
+                // If `settings` is set, it means we started the recording, so it should be
+                // properly set on the service
+                recorder.settings = settings!!
+            } else if (recorder.hasInitializedSettings()) {
+                settings = recorder.settings
+            } else {
+                Log.w(
+                    "BaseRecorderModel",
+                    "Connected to recorder service without initialized settings; stopping stale service."
+                )
+                recorder.destroy()
+                reset()
+                return
+            }
+
+            recorderService = recorder
+
+            // Rest should be initialized from the child class
+            onServiceConnected(recorder)
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -164,6 +175,7 @@ abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderServi
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     suspend fun stopRecording(context: Context) {
         recorderService!!.stopRecording()
     }

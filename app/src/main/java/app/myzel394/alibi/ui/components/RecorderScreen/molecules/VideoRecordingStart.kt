@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.GpsFixed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +40,7 @@ fun VideoRecordingStart(
         VideoRecorderPreparationSheet(
             showPreview = showPreview,
             videoSettings = videoRecorder,
+            appSettings = appSettings,
             onDismiss = {
                 showSheet = false
             },
@@ -57,38 +59,56 @@ fun VideoRecordingStart(
             showSheet = true
         }
     ) { triggerExternalStorage ->
-        BigButton(
-            label = stringResource(R.string.ui_videoRecorder_action_start_label),
-            description = stringResource(R.string.ui_videoRecorder_action_configure_label),
-            icon = Icons.Default.CameraAlt,
-            onLongClick = {
-                if (appSettings.requiresExternalStoragePermission(context)) {
-                    triggerExternalStorage()
-                    return@BigButton
-                }
-
-                showSheet = true
+        PermissionRequester(
+            permission = Manifest.permission.ACCESS_FINE_LOCATION,
+            icon = Icons.Default.GpsFixed,
+            onPermissionAvailable = {
+                videoRecorder.startRecording(context, appSettings)
             },
-            onClick = {
-                if (appSettings.requiresExternalStoragePermission(context)) {
-                    triggerExternalStorage()
-                    return@BigButton
-                }
+        ) { triggerLocation ->
+            BigButton(
+                label = stringResource(R.string.ui_videoRecorder_action_start_label),
+                description = stringResource(R.string.ui_videoRecorder_action_configure_label),
+                icon = Icons.Default.CameraAlt,
+                onLongClick = {
+                    if (appSettings.requiresExternalStoragePermission(context)) {
+                        triggerExternalStorage()
+                        return@BigButton
+                    }
 
-                if (PermissionHelper.hasGranted(
-                        context,
-                        Manifest.permission.CAMERA
-                    ) && PermissionHelper.hasGranted(
-                        context,
-                        Manifest.permission.RECORD_AUDIO
-                    )
-                ) {
-                    videoRecorder.startRecording(context, appSettings)
-                } else {
                     showSheet = true
-                }
-            },
-            isBig = useLargeButtons,
-        )
+                },
+                onClick = {
+                    if (appSettings.requiresExternalStoragePermission(context)) {
+                        triggerExternalStorage()
+                        return@BigButton
+                    }
+
+                    if (PermissionHelper.hasGranted(
+                            context,
+                            Manifest.permission.CAMERA
+                        ) && PermissionHelper.hasGranted(
+                            context,
+                            Manifest.permission.RECORD_AUDIO
+                        )
+                    ) {
+                        if (
+                            appSettings.videoRecorderSettings.overlaySettings.locationEnabled &&
+                            !PermissionHelper.hasGranted(
+                                context,
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                            )
+                        ) {
+                            triggerLocation()
+                        } else {
+                            videoRecorder.startRecording(context, appSettings)
+                        }
+                    } else {
+                        showSheet = true
+                    }
+                },
+                isBig = useLargeButtons,
+            )
+        }
     }
 }
