@@ -21,6 +21,7 @@ abstract class RecorderService : LifecycleService() {
     private val binder = RecorderBinder()
 
     private var isPaused: Boolean = false
+    private var isForegroundServiceStarted = false
     lateinit var recordingStart: LocalDateTime
         private set
     private lateinit var recordingTimeTimer: ScheduledExecutorService
@@ -56,10 +57,22 @@ abstract class RecorderService : LifecycleService() {
 
     protected abstract fun startForegroundService()
 
+    private fun startForegroundServiceIfNeeded() {
+        if (!isForegroundServiceStarted) {
+            startForegroundService()
+            isForegroundServiceStarted = true
+        }
+    }
+
+    private fun updateForegroundService() {
+        startForegroundService()
+        isForegroundServiceStarted = true
+    }
+
     fun startRecording() {
         recordingStart = LocalDateTime.now()
 
-        startForegroundService()
+        updateForegroundService()
         changeState(RecorderState.RECORDING)
 
         try {
@@ -90,6 +103,7 @@ abstract class RecorderService : LifecycleService() {
         NotificationManagerCompat.from(this)
             .cancel(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID)
         stopForeground(STOP_FOREGROUND_REMOVE)
+        isForegroundServiceStarted = false
         stopSelf()
     }
 
@@ -107,6 +121,7 @@ abstract class RecorderService : LifecycleService() {
                         it
                     )
                 }
+                startForegroundServiceIfNeeded()
             }
 
             "changeState" -> {
