@@ -34,6 +34,14 @@ fun VideoRecordingStart(
     var showSheet by rememberSaveable {
         mutableStateOf(false)
     }
+    var startAfterStoragePermission by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    fun startRecordingWithDefaults() {
+        videoRecorder.init(context)
+        videoRecorder.startRecording(context, appSettings)
+    }
 
     if (showSheet) {
         VideoRecorderPreparationSheet(
@@ -51,44 +59,56 @@ fun VideoRecordingStart(
     }
 
     PermissionRequester(
-        permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        icon = Icons.AutoMirrored.Filled.InsertDriveFile,
+        permission = Manifest.permission.CAMERA,
+        icon = Icons.Default.CameraAlt,
         onPermissionAvailable = {
-            showSheet = true
+            startRecordingWithDefaults()
+        },
+    ) { triggerCamera ->
+        fun startAfterRequiredPermissions() {
+            if (!PermissionHelper.hasGranted(context, Manifest.permission.CAMERA)) {
+                triggerCamera()
+                return
+            }
+
+            startRecordingWithDefaults()
         }
-    ) { triggerExternalStorage ->
-        BigButton(
-            label = stringResource(R.string.ui_videoRecorder_action_start_label),
-            description = stringResource(R.string.ui_videoRecorder_action_configure_label),
-            icon = Icons.Default.CameraAlt,
-            onLongClick = {
-                if (appSettings.requiresExternalStoragePermission(context)) {
-                    triggerExternalStorage()
-                    return@BigButton
-                }
 
-                showSheet = true
-            },
-            onClick = {
-                if (appSettings.requiresExternalStoragePermission(context)) {
-                    triggerExternalStorage()
-                    return@BigButton
-                }
-
-                if (PermissionHelper.hasGranted(
-                        context,
-                        Manifest.permission.CAMERA
-                    ) && PermissionHelper.hasGranted(
-                        context,
-                        Manifest.permission.RECORD_AUDIO
-                    )
-                ) {
-                    videoRecorder.startRecording(context, appSettings)
+        PermissionRequester(
+            permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            icon = Icons.AutoMirrored.Filled.InsertDriveFile,
+            onPermissionAvailable = {
+                if (startAfterStoragePermission) {
+                    startAfterStoragePermission = false
+                    startAfterRequiredPermissions()
                 } else {
                     showSheet = true
                 }
-            },
-            isBig = useLargeButtons,
-        )
+            }
+        ) { triggerExternalStorage ->
+            BigButton(
+                label = stringResource(R.string.ui_videoRecorder_action_start_label),
+                description = stringResource(R.string.ui_videoRecorder_action_configure_label),
+                icon = Icons.Default.CameraAlt,
+                onLongClick = {
+                    if (appSettings.requiresExternalStoragePermission(context)) {
+                        startAfterStoragePermission = false
+                        triggerExternalStorage()
+                        return@BigButton
+                    }
+
+                    showSheet = true
+                },
+                onClick = {
+                    if (appSettings.requiresExternalStoragePermission(context)) {
+                        startAfterStoragePermission = true
+                        triggerExternalStorage()
+                    } else {
+                        startAfterRequiredPermissions()
+                    }
+                },
+                isBig = useLargeButtons,
+            )
+        }
     }
 }
