@@ -6,7 +6,7 @@
     <string name="continue_label">Continuer</string>
     <string name="format_kbps"><xliff:g name="value">%s</xliff:g> Ko/s</string>
     <string name="form_error_type_notNumber">Veuillez saisir un nombre valide</string>
-    <string name="form_error_value_notInRange">Veuillez saisir un nombre entre <xliff:g name="min">%s</xliff:g> et <xliff:g name="max">%s</xliff:g></string>
+    <string name="form_error_value_notInRange">Veuillez saisir un nombre entre <xliff:g name="min">%1$s</xliff:g> et <xliff:g name="max">%2$s</xliff:g></string>
     <string name="form_error_value_mustBeGreaterThan">Veuillez saisir un nombre supérieur à <xliff:g name="min">%s</xliff:g></string>
     <string name="form_value_selected">Sélectionné : %s</string>
     <string name="a11y_selectValue">Sélectionnez %s</string>
@@ -72,7 +72,7 @@
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Microphone de l\'appareil</string>
     <string name="ui_audioRecorder_info_microphone_changeExplanation">Le microphone sélectionné sera activé immédiatement</string>
     <string name="ui_audioRecorder_error_microphoneDisconnected_title">Microphone déconnecté</string>
-    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%s</xliff:g> déconnecté. Alibi va utiliser le microphone par défaut à la place. Nous retournerons automatiquement à <xliff:g name="nam">%s</xliff:g> une fois qu\'il se reconnectera.</string>
+    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%1$s</xliff:g> déconnecté. Alibi va utiliser le microphone par défaut à la place. Nous retournerons automatiquement à <xliff:g name="nam">%2$s</xliff:g> une fois qu\'il se reconnectera.</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_title">Microphone reconnecté</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_message"><xliff:g name="name">%s</xliff:g> reconnecté ! Alibi a automatiquement modifié le microphone utilisé pour prendre celui-ci.</string>
     <string name="ui_settings_option_showAllMicrophones_title">Afficher les microphones cachés</string>
@@ -158,7 +158,7 @@
     <string name="identityVerificationRequired_title">Vérification requise</string>
     <string name="identityVerificationRequired_subtitle">Vous devez vérifier votre identité pour continuer</string>
     <string name="ui_settings_option_saveFolder_videoUnsupported">Les dossiers personnalisés pour les enregistrements vidéo ne sont pas pris en charge par votre version Android. Alibi utilisera le dossier interne à la place pour les enregistrements vidéo.</string>
-    <string name="ui_minApiRequired">Vous aurez besoin d\'un téléphone Android fonctionnant au moins sous Android %s (niveau API : %s) pour utiliser cette fonctionnalité</string>
+    <string name="ui_minApiRequired">Vous aurez besoin d\'un téléphone Android fonctionnant au moins sous Android %1$s (niveau API : %2$s) pour utiliser cette fonctionnalité</string>
     <string name="ui_settings_option_saveFolder_action_custom_label">Sélectionner un emplacement personnalisé</string>
     <string name="ui_settings_option_saveFolder_action_dcim_label">Utiliser le dossier DCIM</string>
     <string name="ui_settings_option_saveFolder_dcimValue">Dossier DCIM</string>
@@ -173,7 +173,7 @@
     <string name="ui_settings_option_saveFolder_openFolder_label">Ouvrir le dossier sélectionné dans le gestionnaire de fichiers</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_label">Où mes séquences sont-elles stockées ?</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_generalExplanation">Pour afficher vos séquences, ouvrez votre gestionnaire de fichiers, allez sur le stockage interne et vous trouverez vos séquences dans les dossiers suivants :</string>
-    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">Les enregistrements assemblés finaux seront enregistrés dans ces dossiers. Chaque enregistrement crée un sous-dossier dans lequel stocker les séquences courtes (\"%s\" pour les enregistrements audio, \"%s\" pour les enregistrements vidéo). Pour voir les séquences individuelement, vous devrez peut-être activer les fichiers cachés dans votre gestionnaire de fichiers.</string>
+    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">Les enregistrements assemblés finaux seront enregistrés dans ces dossiers. Chaque enregistrement crée un sous-dossier dans lequel stocker les séquences courtes (\"%1$s\" pour les enregistrements audio, \"%2$s\" pour les enregistrements vidéo). Pour voir les séquences individuelement, vous devrez peut-être activer les fichiers cachés dans votre gestionnaire de fichiers.</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_openFolderExplanation">Appuyez sur un dossier pour l\'ouvrir dans votre gestionnaire de fichiers</string>
     <string name="ui_videoRecorder_action_start_settings_cameraLens_unknown_label">Inconnu(e)</string>
     <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">Pour protéger votre vie privée, Alibi stocke les sequences dans son propre stockage privé et chiffré. Ce stockage est uniquement accessible par Alibi et ne peut pas être accédé par d\'autres applications ou par un intrus éventuel. Une fois que vous aurez enregistré votre enregistrement, on vous demandera dans quel dossier vous souhaitez l\'enregistrer.</string>
@@ -201,7 +201,7 @@ Sinon, essayez de changer le dossier de sauvegarde des séquences dans les param
     <string name="ui_welcome_saveFolder_customFolder_message">Vous allez maintenant être invité à sélectionner le dossier où Alibi sauvegardera les séquences. Veuillez sélectionner un dossier dans lequel vous avez accès en écriture.</string>
     <string name="ui_welcome_timeSettings_values_custom">Durée personnalisée</string>
     <string name="ui_welcome_timeSettings_values_customFormat_mm">%s minutes</string>
-    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%s heure et %s minutes</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%1$s heure et %2$s minutes</string>
     <string name="ui_welcome_timeSettings_values_customFormat_h_mm">1 heure et %s minutes</string>
     <string name="ui_welcome_ready_title">Vous êtes prêt !</string>
     <string name="ui_welcome_ready_message">Vous êtes prêt à utiliser Alibi! Allez-y et essayez !</string>

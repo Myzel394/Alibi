@@ -6,7 +6,7 @@
     <string name="continue_label">Continua</string>
     <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
     <string name="form_error_type_notNumber">Si prega d\'inserire un numero valido</string>
-    <string name="form_error_value_notInRange">Si prega d\'inserire un numero tra <xliff:g name="min">%s</xliff:g> e <xliff:g name="max">%s</xliff:g></string>
+    <string name="form_error_value_notInRange">Si prega d\'inserire un numero tra <xliff:g name="min">%1$s</xliff:g> e <xliff:g name="max">%2$s</xliff:g></string>
     <string name="form_error_value_mustBeGreaterThan">Si prega d\'inserire un numero maggiore di <xliff:g name="min">%s</xliff:g></string>
     <string name="form_value_selected">Selezionati: %s</string>
     <string name="a11y_selectValue">Seleziona %s</string>
@@ -72,7 +72,7 @@
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Microfono Del Dispositivo</string>
     <string name="ui_audioRecorder_info_microphone_changeExplanation">Il microfono selezionato verrà attivato immediatamente</string>
     <string name="ui_audioRecorder_error_microphoneDisconnected_title">Microfono disconnesso</string>
-    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%s</xliff:g> disconnesso. Alibi userà invece il microfono predefinito. Torneremo automaticamente a <xliff:g name="nam">%s</xliff:g> una volta che si ricollega.</string>
+    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%1$s</xliff:g> disconnesso. Alibi userà invece il microfono predefinito. Torneremo automaticamente a <xliff:g name="nam">%2$s</xliff:g> una volta che si ricollega.</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_title">Microfono riconnesso</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_message"><xliff:g name="name">%s</xliff:g> riconnesso! Alibi ha cambiato automaticamente l\'entrata del microfono.</string>
     <string name="ui_settings_option_showAllMicrophones_title">Mostra microfoni nascosti</string>
@@ -158,7 +158,7 @@
     <string name="identityVerificationRequired_title">Verifica necessaria</string>
     <string name="identityVerificationRequired_subtitle">Devi verificare la tua identità per continuare</string>
     <string name="ui_settings_option_saveFolder_videoUnsupported">Le cartelle personalizzate per le registrazioni video non sono supportate dalla tua versione Android. Alibi passerà alla cartella interna invece per le registrazioni video.</string>
-    <string name="ui_minApiRequired">Avrai bisogno di un telefono Android con almeno Android %s (livello API: %s) per utilizzare questa funzione</string>
+    <string name="ui_minApiRequired">Avrai bisogno di un telefono Android con almeno Android %1$s (livello API: %2$s) per utilizzare questa funzione</string>
     <string name="ui_settings_option_saveFolder_action_custom_label">Seleziona una posizione personalizzata</string>
     <string name="ui_settings_option_saveFolder_action_dcim_label">Usa la cartella DCIM</string>
     <string name="ui_settings_option_saveFolder_dcimValue">Cartella DCIM</string>
@@ -173,7 +173,7 @@
     <string name="ui_settings_option_saveFolder_openFolder_label">Apri la cartella selezionata nel file manager</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_label">Dove sono conservati i miei batch?</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_generalExplanation">Per visualizzare i tuoi batch, apri l\'app File, vai alla memoria interna e poi troverai i tuoi batch nelle seguenti cartelle:</string>
-    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">Le registrazioni unite finali saranno salvate in quelle cartelle. Ogni registrazione crea una sottocartella per memorizzare i brevi batch in (\"%s\" per le registrazioni audio, \"%s\" per le registrazioni video). Per visualizzare i singoli batch, potrebbe essere necessario abilitare i file nascosti nell\'app File.</string>
+    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">Le registrazioni unite finali saranno salvate in quelle cartelle. Ogni registrazione crea una sottocartella per memorizzare i brevi batch in (\"%1$s\" per le registrazioni audio, \"%2$s\" per le registrazioni video). Per visualizzare i singoli batch, potrebbe essere necessario abilitare i file nascosti nell\'app File.</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_openFolderExplanation">Tocca una cartella per aprirla nell\'app File</string>
     <string name="ui_videoRecorder_action_start_settings_cameraLens_unknown_label">Sconosciuto</string>
     <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">Per proteggere la tua privacy, Alibi memorizza i suoi batch nella propria archiviazione privata e cifrata. Questo archivio è accessibile solo da Alibi e non può essere accessibile da altre app o da un possibile intruso. Una volta salvata la registrazione, ti verrà chiesto dove vuoi salvare la registrazione.</string>
@@ -200,7 +200,7 @@
     <string name="ui_welcome_saveFolder_customFolder_message">Ora ti verrà chiesto di selezionare una cartella in cui Alibi dovrebbe memorizzare i batch. Seleziona una cartella in cui hai accesso in scrittura.</string>
     <string name="ui_welcome_timeSettings_values_custom">Durata Personalizzata</string>
     <string name="ui_welcome_timeSettings_values_customFormat_mm">%s minuti</string>
-    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%s ore %s minuti</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%1$s ore %2$s minuti</string>
     <string name="ui_welcome_timeSettings_values_customFormat_h_mm">1 ora, %s minuti</string>
     <string name="ui_welcome_ready_title">Sei pronto!</string>
     <string name="ui_welcome_ready_message">Sei pronto per iniziare a usare Alibi! Vai avanti e prova!</string>

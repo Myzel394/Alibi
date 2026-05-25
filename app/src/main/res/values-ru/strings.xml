@@ -6,7 +6,7 @@
     <string name="continue_label">Продолжить</string>
     <string name="format_kbps"><xliff:g name="value">%s</xliff:g> КБ/с</string>
     <string name="form_error_type_notNumber">Пожалуйста, введите правильное число</string>
-    <string name="form_error_value_notInRange">Пожалуйста, введите число между <xliff:g name="min">%s</xliff:g> и <xliff:g name="max">%s</xliff:g></string>
+    <string name="form_error_value_notInRange">Пожалуйста, введите число между <xliff:g name="min">%1$s</xliff:g> и <xliff:g name="max">%2$s</xliff:g></string>
     <string name="form_error_value_mustBeGreaterThan">Пожалуйста, введите число, превышающее <xliff:g name="min">%s</xliff:g></string>
     <string name="form_value_selected"></string>
     <string name="a11y_selectValue">Select %s</string>
@@ -72,7 +72,7 @@
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Микрофон устройства</string>
     <string name="ui_audioRecorder_info_microphone_changeExplanation">Выбранный микрофон будет активирован немедленно</string>
     <string name="ui_audioRecorder_error_microphoneDisconnected_title">Микрофон отключен</string>
-    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%s</xliff:g> отключился. Alibi будет использовать вместо этого микрофон по умолчанию. Мы автоматически вернемся к <xliff:g name="nam">%s</xliff:g> после повторного подключения.</string>
+    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%1$s</xliff:g> отключился. Alibi будет использовать вместо этого микрофон по умолчанию. Мы автоматически вернемся к <xliff:g name="nam">%2$s</xliff:g> после повторного подключения.</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_title">Микрофон переподключен</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_message"><xliff:g name="name">%s</xliff:g> переподключен! Alibi автоматически изменил ввод микрофона.</string>
     <string name="ui_settings_option_showAllMicrophones_title">Показать скрытые микрофоны</string>
@@ -158,7 +158,7 @@
     <string name="identityVerificationRequired_title">Verification required</string>
     <string name="identityVerificationRequired_subtitle">You need to verify your identity to continue</string>
     <string name="ui_settings_option_saveFolder_videoUnsupported">Custom folders for Video Recordings aren\'t supported by your Android version. Alibi will fallback to the internal folder instead for Video Recordings.</string>
-    <string name="ui_minApiRequired">You will need an Android phone running at least Android %s (API-Level: %s) to use this feature</string>
+    <string name="ui_minApiRequired">You will need an Android phone running at least Android %1$s (API-Level: %2$s) to use this feature</string>
     <string name="ui_settings_option_saveFolder_action_custom_label">Select a custom location</string>
     <string name="ui_settings_option_saveFolder_action_dcim_label">Use the DCIM folder</string>
     <string name="ui_settings_option_saveFolder_dcimValue">DCIM Folder</string>
@@ -173,7 +173,7 @@
     <string name="ui_settings_option_saveFolder_openFolder_label">Open selected folder in file manager</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_label">Where are my batches stored?</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_generalExplanation">To view your batches, open the Files app, go to the internal storage and then you will find your batches in following folders:</string>
-    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">The final merged recordings will be saved in those folders. Each recording creates a subfolder to store the short batches in (\"%s\" for audio recordings, \"%s\" for video recordings). To view the individual batches, you may need to enable hidden files in the Files app.</string>
+    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">The final merged recordings will be saved in those folders. Each recording creates a subfolder to store the short batches in (\"%1$s\" for audio recordings, \"%2$s\" for video recordings). To view the individual batches, you may need to enable hidden files in the Files app.</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_openFolderExplanation">Tap on a folder to open it in the Files app</string>
     <string name="ui_videoRecorder_action_start_settings_cameraLens_unknown_label">Unknown</string>
     <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">To protect your privacy, Alibi stores its batches into its own private, encrypted storage. This storage is only accessible by Alibi and can\'t be accessed by other apps or by a possible intruder. Once you save the recording, you will be asked where you want to save the recording to.</string>
@@ -200,7 +200,7 @@
     <string name="ui_welcome_saveFolder_customFolder_message">You will now be asked to select a folder where Alibi should store the batches. Please select a folder where you have write access to.</string>
     <string name="ui_welcome_timeSettings_values_custom">Custom Duration</string>
     <string name="ui_welcome_timeSettings_values_customFormat_mm">%s minutes</string>
-    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%s hour, %s minutes</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%1$s hour, %2$s minutes</string>
     <string name="ui_welcome_timeSettings_values_customFormat_h_mm">1 hour, %s minutes</string>
     <string name="ui_welcome_ready_title">You are ready!</string>
     <string name="ui_welcome_ready_message">You are ready to start using Alibi! Go ahead and try it out!</string>

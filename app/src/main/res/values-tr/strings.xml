@@ -6,7 +6,7 @@
     <string name="continue_label">Devam</string>
     <string name="format_kbps">        <xliff:g name="value">%s</xliff:g> KB/sn</string>
     <string name="form_error_type_notNumber">Lütfen geçerli bir sayı girin</string>
-    <string name="form_error_value_notInRange">Lütfen arasında bir sayı girin <xliff:g name="min">%s</xliff:g> ve <xliff:g name="max">%s</xliff:g></string>
+    <string name="form_error_value_notInRange">Lütfen arasında bir sayı girin <xliff:g name="min">%1$s</xliff:g> ve <xliff:g name="max">%2$s</xliff:g></string>
     <string name="form_error_value_mustBeGreaterThan">Lütfen daha büyük bir sayı girin <xliff:g name="min">%s</xliff:g></string>
     <string name="form_value_selected">Seçilen: %s</string>
     <string name="a11y_selectValue">%s\'i seçin</string>
@@ -72,7 +72,7 @@
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Cihaz Mikrofonu</string>
     <string name="ui_audioRecorder_info_microphone_changeExplanation">Seçilen mikrofon hemen etkinleştirilecektir</string>
     <string name="ui_audioRecorder_error_microphoneDisconnected_title">Mikrofon bağlantısı kesildi</string>
-    <string name="ui_audioRecorder_error_microphoneDisconnected_message">        <xliff:g name="name">%s</xliff:g> bağlantısı kesildi. Alibi bunun yerine varsayılan mikrofonu kullanacak. Otomatik olarak şuna geri döneceğiz: <xliff:g name="nam">%s</xliff:g> yeniden bağlandığında.</string>
+    <string name="ui_audioRecorder_error_microphoneDisconnected_message">        <xliff:g name="name">%1$s</xliff:g> bağlantısı kesildi. Alibi bunun yerine varsayılan mikrofonu kullanacak. Otomatik olarak şuna geri döneceğiz: <xliff:g name="nam">%2$s</xliff:g> yeniden bağlandığında.</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_title">Mikrofon yeniden bağlandı</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_message">        <xliff:g name="name">%s</xliff:g> yeniden bağlandı! Alibi mikrofon girişini otomatik olarak değiştirdi.</string>
     <string name="ui_settings_option_showAllMicrophones_title">Gizli mikrofonları göster</string>
@@ -158,7 +158,7 @@
     <string name="identityVerificationRequired_title">Doğrulama gerekli</string>
     <string name="identityVerificationRequired_subtitle">Devam etmek için kimliğinizi doğrulamanız gerekiyor</string>
     <string name="ui_settings_option_saveFolder_videoUnsupported">Video Kayıtları için özel klasörler Android sürümünüz tarafından desteklenmiyor. Alibi, Video Kayıtları için dahili klasöre geri dönecektir.</string>
-    <string name="ui_minApiRequired">Bu özelliği kullanmak için en az Android %s (API Seviyesi: %s) çalıştıran bir Android telefona ihtiyacınız olacak</string>
+    <string name="ui_minApiRequired">Bu özelliği kullanmak için en az Android %1$s (API Seviyesi: %2$s) çalıştıran bir Android telefona ihtiyacınız olacak</string>
     <string name="ui_settings_option_saveFolder_action_custom_label">Özel bir konum seçin</string>
     <string name="ui_settings_option_saveFolder_action_dcim_label">DCIM klasörünü kullanın</string>
     <string name="ui_settings_option_saveFolder_dcimValue">DCIM Klasörü</string>
@@ -173,7 +173,7 @@
     <string name="ui_settings_option_saveFolder_openFolder_label">Seçilen klasörü dosya yöneticisinde aç</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_label">Partilerim nerede saklanıyor?</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_generalExplanation">Partilerinizi görüntülemek için Dosyalar uygulamasını açın, dahili depoya gidin ve ardından partilerinizi aşağıdaki klasörlerde bulacaksınız:</string>
-    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">Birleştirilen son kayıtlar bu klasörlere kaydedilecektir. Her kayıt, kısa yığınları depolamak için bir alt klasör oluşturur (ses kayıtları için \" %s \", video kayıtları için \" %s \"). Tek tek yığınları görüntülemek için Dosyalar uygulamasında gizli dosyaları etkinleştirmeniz gerekebilir.</string>
+    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">Birleştirilen son kayıtlar bu klasörlere kaydedilecektir. Her kayıt, kısa yığınları depolamak için bir alt klasör oluşturur (ses kayıtları için \" %1$s \", video kayıtları için \" %2$s \"). Tek tek yığınları görüntülemek için Dosyalar uygulamasında gizli dosyaları etkinleştirmeniz gerekebilir.</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_openFolderExplanation">Dosyalar uygulamasında açmak için bir klasöre dokunun</string>
     <string name="ui_videoRecorder_action_start_settings_cameraLens_unknown_label">Bilinmiyor</string>
     <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">Alibi, gizliliğinizi korumak için partilerini kendi özel, şifreli deposunda saklar. Bu depolama alanına yalnızca Alibi tarafından erişilebilir ve diğer uygulamalar veya olası bir davetsiz misafir tarafından erişilemez. Kaydı kaydettikten sonra, kaydı nereye kaydetmek istediğiniz sorulacaktır.</string>
@@ -200,7 +200,7 @@
     <string name="ui_welcome_saveFolder_customFolder_message">Şimdi Alibi\'nin partileri saklaması gereken bir klasör seçmeniz istenecektir. Lütfen yazma erişiminizin olduğu bir klasör seçin.</string>
     <string name="ui_welcome_timeSettings_values_custom">Özel Süre</string>
     <string name="ui_welcome_timeSettings_values_customFormat_mm">%s dakika</string>
-    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%s saat, %s dakika</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%1$s saat, %2$s dakika</string>
     <string name="ui_welcome_timeSettings_values_customFormat_h_mm">1 saat, %s dakika</string>
     <string name="ui_welcome_ready_title">Hazırsınız!</string>
     <string name="ui_welcome_ready_message">Alibi kullanmaya başlamaya hazırsınız! Devam et ve dene!</string>

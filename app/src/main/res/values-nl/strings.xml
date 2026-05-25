@@ -6,7 +6,7 @@
     <string name="continue_label">Verder</string>
     <string name="format_kbps"><xliff:g name="value">%s</xliff:g> KB/s</string>
     <string name="form_error_type_notNumber">Geef een geldig nummer op</string>
-    <string name="form_error_value_notInRange">Geef een nummer tussen <xliff:g name="min">%s</xliff:g> en <xliff:g name="max">%s</xliff:g> op</string>
+    <string name="form_error_value_notInRange">Geef een nummer tussen <xliff:g name="min">%1$s</xliff:g> en <xliff:g name="max">%2$s</xliff:g> op</string>
     <string name="form_error_value_mustBeGreaterThan">Geef een nummer groter dan <xliff:g name="min">%s</xliff:g> op</string>
     <string name="form_value_selected">Geselecteerd: %s</string>
     <string name="a11y_selectValue">Selecteer %s</string>
@@ -72,7 +72,7 @@
     <string name="ui_audioRecorder_info_microphone_deviceMicrophone">Apparaatsmircofoon</string>
     <string name="ui_audioRecorder_info_microphone_changeExplanation">De geselecteerde microfoon wordt gelijk ingeschakeld</string>
     <string name="ui_audioRecorder_error_microphoneDisconnected_title">Microfoon losgekoppeld</string>
-    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%s</xliff:g> losgekoppeld. Alibi zal de standaardmicrofoon gebruiken. We zullen automatisch terugschakelen naar <xliff:g name="nam">%s</xliff:g> zodra het herkoppelt.</string>
+    <string name="ui_audioRecorder_error_microphoneDisconnected_message"><xliff:g name="name">%1$s</xliff:g> losgekoppeld. Alibi zal de standaardmicrofoon gebruiken. We zullen automatisch terugschakelen naar <xliff:g name="nam">%2$s</xliff:g> zodra het herkoppelt.</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_title">Microfoon herkoppeld</string>
     <string name="ui_audioRecorder_error_microphoneReconnected_message"><xliff:g name="name">%s</xliff:g> herkoppeld! Alibi heeft er de microfooninvoer automatisch naar geschakeld.</string>
     <string name="ui_settings_option_showAllMicrophones_title">Verborgen microfoons weergeven</string>
@@ -158,7 +158,7 @@
     <string name="identityVerificationRequired_title">Verificatie vereist</string>
     <string name="identityVerificationRequired_subtitle">Verifieer uw identiteit om door te kunnen gaan</string>
     <string name="ui_settings_option_saveFolder_videoUnsupported">Aangepaste mappen voor video-opnames zijn niet ondersteund door uw Android-versie. Alibi zal in plaats daarvan de interne map gebruiken voor video-opnames.</string>
-    <string name="ui_minApiRequired">U heeft een Android telefoon met minstens Android %s (API-Level: %s) nodig om deze feature te gebruiken</string>
+    <string name="ui_minApiRequired">U heeft een Android telefoon met minstens Android %1$s (API-Level: %2$s) nodig om deze feature te gebruiken</string>
     <string name="ui_settings_option_saveFolder_action_custom_label">Een aangepaste locatie selecteren</string>
     <string name="ui_settings_option_saveFolder_action_dcim_label">De DCIM map gebruiken</string>
     <string name="ui_settings_option_saveFolder_dcimValue">DCIM map</string>
@@ -173,7 +173,7 @@
     <string name="ui_settings_option_saveFolder_openFolder_label">Open de geselecteerde map in bestandsbeheer</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_label">Waar zijn mijn batches opgeslagen?</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_generalExplanation">Om uw batches te bekijken, open de bestandsbeheerder, ga naar interne opslag en daar zult u uw batches vinden in de volgende mappen:</string>
-    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">De laatste samengevoegde opnames zullen in die mappen worden opslagen. Elke opname maakt een submap aan om erin de korte batches op te slaan (\"%s\" voor audio-opnames, \"%s\" voor video-opnames). Om individuele batches te bekijken, moet u mogelijk verborgen bestanden in de bestandsbeheerder in te schakelen.</string>
+    <string name="ui_settings_option_saveFolder_explainMediaFolder_subfoldersExplanation">De laatste samengevoegde opnames zullen in die mappen worden opslagen. Elke opname maakt een submap aan om erin de korte batches op te slaan (\"%1$s\" voor audio-opnames, \"%2$s\" voor video-opnames). Om individuele batches te bekijken, moet u mogelijk verborgen bestanden in de bestandsbeheerder in te schakelen.</string>
     <string name="ui_settings_option_saveFolder_explainMediaFolder_openFolderExplanation">Tik op een map om hem te openen in de Bestandsbeheerder</string>
     <string name="ui_videoRecorder_action_start_settings_cameraLens_unknown_label">Onbekend</string>
     <string name="ui_settings_option_saveFolder_explainInternalFolder_explanation">Om uw privacy te beschermen, slaat Alibi de batches in zijn eigen privé, versleutelde opslag. Deze opslag is alleen toegankelijk voor Alibi en niet voor andere apps of voor een mogelijke indringer. Zodra u de opname opslaat, wordt u gevraagd waarin u de opnames wilt opslaan.</string>
@@ -200,7 +200,7 @@
     <string name="ui_welcome_saveFolder_customFolder_message">U wordt nu gevraagd om een map te selecteren waarin Alibi de batches moet opslaan. Selecteer een map waar u toegang toe heeft.</string>
     <string name="ui_welcome_timeSettings_values_custom">Aangepaste Duur</string>
     <string name="ui_welcome_timeSettings_values_customFormat_mm">%s minuten</string>
-    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%s uur, %s minuten</string>
+    <string name="ui_welcome_timeSettings_values_customFormat_hh_mm">%1$s uur, %2$s minuten</string>
     <string name="ui_welcome_timeSettings_values_customFormat_h_mm">1 uur, %s minuten</string>
     <string name="ui_welcome_ready_title">U bent gereed!</string>
     <string name="ui_welcome_ready_message">U bent gereed om Alibi te gebruiken! Probeer het eens!</string>
