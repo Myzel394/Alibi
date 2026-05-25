@@ -73,6 +73,40 @@ data class AudioConcatenator(
 
 class MediaConverter {
     companion object {
+        private const val MAX_FFMPEG_FAILURE_LOG_CHARS = 8000
+        private const val FD_INPUT_PREFIX = "fd:"
+
+        private fun String.tailForLog(): String =
+            takeLast(MAX_FFMPEG_FAILURE_LOG_CHARS)
+
+        private fun String.asFileDescriptorNumber(): Int? {
+            if (!startsWith(FD_INPUT_PREFIX)) {
+                return null
+            }
+
+            return removePrefix(FD_INPUT_PREFIX).toIntOrNull()
+        }
+
+        private fun asConcatFileEntry(inputFile: String): String {
+            val fileDescriptor = inputFile.asFileDescriptorNumber()
+
+            return if (fileDescriptor == null) {
+                "file '$inputFile'"
+            } else {
+                "file 'fd:'\noption fd $fileDescriptor"
+            }
+        }
+
+        private fun asFFmpegOutputFile(outputFile: String): String {
+            val fileDescriptor = outputFile.asFileDescriptorNumber()
+
+            return if (fileDescriptor == null) {
+                outputFile
+            } else {
+                "-fd $fileDescriptor fd:"
+            }
+        }
+
         fun concatenateAudioFiles(
             inputFiles: Iterable<String>,
             outputFile: String,
@@ -111,7 +145,7 @@ class MediaConverter {
                 },
                 {},
                 { statistics ->
-                    onProgress(statistics.time)
+                    onProgress(statistics.time.toInt())
                 }
             )
 
@@ -134,17 +168,17 @@ class MediaConverter {
         ): CompletableDeferred<Unit> {
             val completer = CompletableDeferred<Unit>()
 
-            val listFile = createTempFile(inputFiles.joinToString("\n") { "file '$it'" })
+            val listFile = createTempFile(inputFiles.joinToString("\n") { asConcatFileEntry(it) })
 
             val command =
-                "-protocol_whitelist saf,concat,content,file,subfile" +
+                "-protocol_whitelist saf,concat,content,file,subfile,fd" +
                         " -safe 0" +
                         " -strict normal" +
                         " -f concat" +
                         " -i ${listFile.absolutePath}" +
                         extraCommand +
                         " -y" +
-                        " $outputFile"
+                        " ${asFFmpegOutputFile(outputFile)}"
 
             FFmpegKit.executeAsync(
                 command,
@@ -159,10 +193,11 @@ class MediaConverter {
                         Log.i(
                             "Video Concatenation",
                             String.format(
-                                "Command failed with state %s and rc %s.%s",
+                                "Command failed with state %s and rc %s.%s\n%s",
                                 session.state,
                                 session.returnCode,
                                 session.failStackTrace,
+                                session.allLogsAsString.tailForLog(),
                             )
                         )
 
@@ -171,7 +206,7 @@ class MediaConverter {
                 },
                 {},
                 { statistics ->
-                    onProgress(statistics.time)
+                    onProgress(statistics.time.toInt())
                 }
             )
 

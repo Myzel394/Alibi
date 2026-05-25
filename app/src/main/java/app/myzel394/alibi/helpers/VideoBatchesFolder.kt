@@ -9,6 +9,7 @@ import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
+import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.helpers.MediaConverter.Companion.concatenateVideoFiles
 import app.myzel394.alibi.ui.MEDIA_SUBFOLDER_NAME
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
@@ -17,6 +18,7 @@ import app.myzel394.alibi.ui.VIDEO_RECORDING_BATCHES_SUBFOLDER_NAME
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import java.io.File
 import java.time.LocalDateTime
+import java.util.UUID
 
 class VideoBatchesFolder(
     override val context: Context,
@@ -38,6 +40,144 @@ class VideoBatchesFolder(
     )
 
     private var customParcelFileDescriptor: ParcelFileDescriptor? = null
+
+    override fun getFFmpegParameters(
+        recording: RecordingInformation,
+        batchCounters: List<Long>,
+    ): Array<String> {
+        return ffmpegParameters.withOutputFormat(recording.fileExtension)
+    }
+
+    private fun Array<String>.withOutputFormat(extension: String): Array<String> =
+        map {
+            "$it -f $extension"
+        }.toTypedArray()
+
+    override fun prepareInputPathsForFFmpeg(extension: String): FFmpegInputPaths {
+        if (type == BatchType.MEDIA && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // We can't rely on the raw on-disk path here: MediaStore may rewrite leading
+            // dots in our relative path (e.g. `.video_recordings` becomes `_.video_recordings`),
+            // so the file we look up via `Environment.getExternalStoragePublicDirectory(...)`
+            // doesn't exist and `length() == 0` filters every batch out. Open each batch
+            // through its content URI instead and hand FFmpeg the resulting file descriptor.
+            val fileDescriptorPaths = getUriBatchesForFFmpeg().map {
+                openUriPathForFFmpeg(it.uri, "r")
+            }
+            return FFmpegInputPaths(
+                paths = fileDescriptorPaths.map { it.path },
+                closeables = fileDescriptorPaths,
+            )
+        }
+
+        if (type != BatchType.CUSTOM) {
+            return super.prepareInputPathsForFFmpeg(extension)
+        }
+
+        val fileDescriptorPaths = getUriBatchesForFFmpeg().map {
+            openUriPathForFFmpeg(it.uri, "r")
+        }
+
+        return FFmpegInputPaths(
+            paths = fileDescriptorPaths.map { it.path },
+            closeables = fileDescriptorPaths,
+        )
+    }
+
+    override fun prepareOutputTargetForFFmpeg(
+        date: LocalDateTime,
+        extension: String,
+        fileName: String,
+    ): FFmpegOutputTarget {
+        return when (type) {
+            BatchType.CUSTOM -> prepareCustomOutputTarget(
+                extension = extension,
+                fileName = fileName,
+            )
+
+            BatchType.MEDIA ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    prepareMediaOutputTarget(
+                        extension = extension,
+                        fileName = fileName,
+                    )
+                } else {
+                    super.prepareOutputTargetForFFmpeg(date, extension, fileName)
+                }
+
+            BatchType.INTERNAL -> super.prepareOutputTargetForFFmpeg(date, extension, fileName)
+        }
+    }
+
+    private fun prepareCustomOutputTarget(
+        extension: String,
+        fileName: String,
+    ): FFmpegOutputTarget {
+        val tempFileName = ".tmp-${UUID.randomUUID()}-$fileName"
+        val folder = customFolder!!
+        val outputFile = folder.createFile(
+            "video/$extension",
+            tempFileName,
+        ) ?: throw MediaConverter.FFmpegException("Unable to create export destination")
+        val outputPath = openUriPathForFFmpeg(outputFile.uri, "rwt")
+
+        return FFmpegOutputTarget(
+            ffmpegPath = outputPath.path,
+            closeable = outputPath,
+            onCommit = {
+                folder.findFile(fileName)?.delete()
+                if (!outputFile.renameTo(fileName)) {
+                    throw MediaConverter.FFmpegException("Unable to publish export destination")
+                }
+
+                (folder.findFile(fileName) ?: outputFile).uri.toString()
+            },
+            onAbort = {
+                outputFile.delete()
+            },
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun prepareMediaOutputTarget(
+        extension: String,
+        fileName: String,
+    ): FFmpegOutputTarget {
+        val tempFileName = "tmp-${UUID.randomUUID()}-$fileName"
+        val mediaUri = createMediaFile(
+            name = tempFileName,
+            mimeType = "video/$extension",
+            relativePath = BASE_SCOPED_STORAGE_RELATIVE_PATH + "/" + MEDIA_SUBFOLDER_NAME,
+            isPending = true,
+        )
+        // Hand FFmpeg an FD into the MediaStore entry instead of a raw filesystem
+        // path: MediaStore stores pending files with a `.pending-<id>-` prefix, so
+        // the path we'd reconstruct from `relativePath + name` doesn't actually
+        // exist on disk. Writing via FD also keeps the ContentResolver as the
+        // single source of truth for the underlying file, so `publishPendingMediaFile`
+        // is guaranteed to publish the bytes FFmpeg just wrote.
+        val outputPath = openUriPathForFFmpeg(mediaUri, "rwt")
+
+        return FFmpegOutputTarget(
+            ffmpegPath = outputPath.path,
+            closeable = outputPath,
+            onCommit = {
+                publishPendingMediaFile(mediaUri, fileName)
+                mediaUri.toString()
+            },
+            onAbort = {
+                context.contentResolver.delete(mediaUri, null, null)
+            },
+        )
+    }
+
+    override fun getBatchCountersForFFmpeg(): List<Long> {
+        if (type == BatchType.MEDIA && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Same MediaStore path-rewrite caveat as `prepareInputPathsForFFmpeg`:
+            // and read counters straight from the MediaStore query.
+            return getUriBatchesForFFmpeg().map { it.counter }
+        }
+        return super.getBatchCountersForFFmpeg()
+    }
 
     override fun getOutputFileForFFmpeg(
         date: LocalDateTime,

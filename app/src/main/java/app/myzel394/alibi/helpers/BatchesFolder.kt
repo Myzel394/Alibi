@@ -26,6 +26,7 @@ import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.utils.PermissionHelper
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import kotlinx.coroutines.CompletableDeferred
+import java.io.Closeable
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -42,6 +43,83 @@ abstract class BatchesFolder(
     abstract val ffmpegParameters: Array<String>
     abstract val scopedMediaContentUri: Uri
     abstract val legacyMediaFolder: File
+
+    data class BatchFile(
+        val counter: Long,
+        val ffmpegPath: String,
+    )
+
+    protected data class UriBatchFile(
+        val counter: Long,
+        val uri: Uri,
+        val rawName: String,
+    )
+
+    protected class FFmpegInputPaths(
+        val paths: List<String>,
+        private val closeables: List<Closeable> = emptyList(),
+    ) : Closeable {
+        override fun close() {
+            closeables.forEach {
+                runCatching {
+                    it.close()
+                }
+            }
+        }
+    }
+
+    protected class FFmpegOutputTarget(
+        val ffmpegPath: String,
+        private val closeable: Closeable? = null,
+        private val onCommit: () -> String = { ffmpegPath },
+        private val onAbort: () -> Unit = {},
+    ) : Closeable {
+        private var closed = false
+        private var finished = false
+
+        override fun close() {
+            if (closed) {
+                return
+            }
+
+            runCatching {
+                closeable?.close()
+            }
+            closed = true
+        }
+
+        fun commit(): String {
+            close()
+            return try {
+                onCommit().also {
+                    finished = true
+                }
+            } catch (error: Exception) {
+                onAbort()
+                finished = true
+                throw error
+            }
+        }
+
+        fun abort() {
+            if (finished) {
+                return
+            }
+
+            close()
+            onAbort()
+            finished = true
+        }
+    }
+
+    protected class FFmpegFileDescriptorPath(
+        val path: String,
+        private val parcelFileDescriptor: ParcelFileDescriptor,
+    ) : Closeable {
+        override fun close() {
+            parcelFileDescriptor.close()
+        }
+    }
 
     val mediaPrefix
         get() = MEDIA_RECORDINGS_PREFIX + subfolderName.substring(1) + "-"
@@ -117,46 +195,294 @@ abstract class BatchesFolder(
         }
     }
 
-    fun getBatchesForFFmpeg(): List<String> {
+    private fun Cursor.mediaSize(): Long? {
+        val sizeColumn = getColumnIndex(MediaStore.MediaColumns.SIZE)
+        if (sizeColumn == -1 || isNull(sizeColumn)) {
+            return null
+        }
+
+        return getLong(sizeColumn)
+    }
+
+    private fun isUsableMediaSize(size: Long?) = size == null || size > 0L
+
+    fun getBatchesForFFmpeg(): List<String> =
+        getBatchesForFFmpegBatches().map {
+            it.ffmpegPath
+        }
+
+    protected fun openUriPathForFFmpeg(
+        uri: Uri,
+        mode: String,
+    ): FFmpegFileDescriptorPath {
+        val parcelFileDescriptor = context.contentResolver.openFileDescriptor(uri, mode)
+            ?: throw MediaConverter.FFmpegException("Unable to open media file")
+
+        return FFmpegFileDescriptorPath(
+            path = "fd:${parcelFileDescriptor.fd}",
+            parcelFileDescriptor = parcelFileDescriptor,
+        )
+    }
+
+    protected fun getUriBatchesForFFmpeg(): List<UriBatchFile> {
+        return when (type) {
+            BatchType.CUSTOM -> getCustomDefinedFolder()
+                .listFiles()
+                .filter {
+                    it.name?.substringBeforeLast(".")?.toIntOrNull() != null && it.length() > 0L
+                }
+                .sortedBy {
+                    it.name!!.substringBeforeLast(".").toInt()
+                }
+                .map {
+                    UriBatchFile(
+                        counter = it.name!!.substringBeforeLast(".").toLong(),
+                        uri = it.uri,
+                        rawName = it.name!!,
+                    )
+                }
+
+            BatchType.MEDIA -> {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    throw IllegalStateException("Legacy media batches do not use content URIs")
+                }
+
+                val fileUris = mutableListOf<UriBatchFile>()
+
+                queryMediaContent { rawName, counter, uri, cursor ->
+                    if (isUsableMediaSize(cursor.mediaSize())) {
+                        fileUris.add(
+                            UriBatchFile(
+                                counter = counter.toLong(),
+                                uri = uri,
+                                rawName = rawName,
+                            )
+                        )
+                    }
+                }
+
+                fileUris
+                    .sortedBy {
+                        it.rawName
+                            .substring(mediaPrefix.length)
+                            .substringBeforeLast(".")
+                            .toInt()
+                    }
+            }
+
+            BatchType.INTERNAL -> throw IllegalStateException("Internal batches do not use content URIs")
+        }
+    }
+
+    protected open fun prepareInputPathsForFFmpeg(extension: String): FFmpegInputPaths =
+        FFmpegInputPaths(getBatchesForFFmpeg())
+
+    protected open fun prepareOutputTargetForFFmpeg(
+        date: LocalDateTime,
+        extension: String,
+        fileName: String,
+    ): FFmpegOutputTarget {
+        val outputFile = getOutputFileForFFmpeg(
+            date = date,
+            extension = extension,
+            fileName = fileName,
+        )
+
+        return FFmpegOutputTarget(
+            ffmpegPath = outputFile,
+            onCommit = { outputFile },
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    protected fun createMediaFile(
+        name: String,
+        mimeType: String,
+        relativePath: String,
+        isPending: Boolean = false,
+    ): Uri {
+        return context.contentResolver.insert(
+            scopedMediaContentUri,
+            ContentValues().apply {
+                put(
+                    MediaStore.MediaColumns.DISPLAY_NAME,
+                    name
+                )
+                put(
+                    MediaStore.MediaColumns.MIME_TYPE,
+                    mimeType
+                )
+
+                put(
+                    MediaStore.MediaColumns.RELATIVE_PATH,
+                    relativePath,
+                )
+                put(
+                    MediaStore.MediaColumns.IS_PENDING,
+                    if (isPending) 1 else 0,
+                )
+            }
+        ) ?: throw MediaConverter.FFmpegException("Unable to create export destination")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    protected fun deleteMediaFileByName(fileName: String) {
+        context.contentResolver.delete(
+            scopedMediaContentUri,
+            "${MediaStore.MediaColumns.DISPLAY_NAME} = ?",
+            arrayOf(fileName),
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    protected fun publishPendingMediaFile(
+        uri: Uri,
+        fileName: String,
+    ) {
+        deleteMediaFileByName(fileName)
+
+        val updated = context.contentResolver.update(
+            uri,
+            ContentValues().apply {
+                put(
+                    MediaStore.MediaColumns.DISPLAY_NAME,
+                    fileName,
+                )
+                put(
+                    MediaStore.MediaColumns.IS_PENDING,
+                    0,
+                )
+            },
+            null,
+            null,
+        )
+
+        if (updated != 1) {
+            throw MediaConverter.FFmpegException("Unable to publish export destination")
+        }
+    }
+
+    open fun getBatchCountersForFFmpeg(): List<Long> {
+        return when (type) {
+            BatchType.INTERNAL ->
+                getInternalFolder()
+                    .listFiles()
+                    ?.filter {
+                        it.nameWithoutExtension.toIntOrNull() != null && it.length() > 0L
+                    }
+                    ?.sortedBy {
+                        it.nameWithoutExtension.toInt()
+                    }
+                    ?.map {
+                        it.nameWithoutExtension.toLong()
+                    } ?: emptyList()
+
+            BatchType.CUSTOM -> getCustomDefinedFolder()
+                .listFiles()
+                .filter {
+                    it.name?.substringBeforeLast(".")?.toIntOrNull() != null && it.length() > 0L
+                }
+                .sortedBy {
+                    it.name!!.substringBeforeLast(".").toInt()
+                }
+                .map {
+                    it.name!!.substringBeforeLast(".").toLong()
+                }
+
+            BatchType.MEDIA -> {
+                val counters = mutableListOf<Pair<String, Long>>()
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    queryMediaContent { rawName, counter, _, cursor ->
+                        if (isUsableMediaSize(cursor.mediaSize())) {
+                            counters.add(Pair(rawName, counter.toLong()))
+                        }
+                    }
+                } else {
+                    legacyMediaFolder.listFiles()?.forEach {
+                        if (it.name.startsWith(mediaPrefix) && it.length() > 0L) {
+                            counters.add(
+                                Pair(
+                                    it.name,
+                                    it.name
+                                        .substring(mediaPrefix.length)
+                                        .substringBeforeLast(".")
+                                        .toLongOrNull() ?: return@forEach
+                                )
+                            )
+                        }
+                    }
+                }
+
+                counters
+                    .sortedBy { (name, _) ->
+                        name
+                            .substring(mediaPrefix.length)
+                            .substringBeforeLast(".")
+                            .toInt()
+                    }
+                    .map { (_, counter) -> counter }
+            }
+        }
+    }
+
+    fun getBatchesForFFmpegBatches(): List<BatchFile> {
         return when (type) {
             BatchType.INTERNAL ->
                 ((getInternalFolder()
                     .listFiles()
                     ?.filter {
-                        it.nameWithoutExtension.toIntOrNull() != null
+                        it.nameWithoutExtension.toIntOrNull() != null && it.length() > 0L
                     }
                     ?.toList()
                     ?: emptyList()) as List<File>)
                     .sortedBy {
                         it.nameWithoutExtension.toInt()
                     }
-                    .map { it.absolutePath }
+                    .map {
+                        BatchFile(
+                            counter = it.nameWithoutExtension.toLong(),
+                            ffmpegPath = it.absolutePath,
+                        )
+                    }
 
             BatchType.CUSTOM -> getCustomDefinedFolder()
                 .listFiles()
                 .filter {
-                    it.name?.substringBeforeLast(".")?.toIntOrNull() != null
+                    it.name?.substringBeforeLast(".")?.toIntOrNull() != null && it.length() > 0L
                 }
                 .sortedBy {
                     it.name!!.substringBeforeLast(".").toInt()
                 }
                 .map {
-                    FFmpegKitConfig.getSafParameterForRead(
-                        context,
-                        it.uri,
-                    )!!
+                    BatchFile(
+                        counter = it.name!!.substringBeforeLast(".").toLong(),
+                        ffmpegPath = FFmpegKitConfig.getSafParameterForRead(
+                            context,
+                            it.uri,
+                        )!!,
+                    )
                 }
 
             BatchType.MEDIA -> {
-                val fileUris = mutableListOf<Pair<String, Uri>>()
+                val fileUris = mutableListOf<Triple<String, Long, Uri>>()
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    queryMediaContent { rawName, _, uri, _ ->
-                        fileUris.add(Pair(rawName, uri))
+                    queryMediaContent { rawName, counter, uri, cursor ->
+                        if (isUsableMediaSize(cursor.mediaSize())) {
+                            fileUris.add(Triple(rawName, counter.toLong(), uri))
+                        }
                     }
                 } else {
                     legacyMediaFolder.listFiles()?.forEach {
-                        fileUris.add(Pair(it.name, it.toUri()))
+                        if (it.name.startsWith(mediaPrefix) && it.length() > 0L) {
+                            val counter = it.name
+                                .substring(mediaPrefix.length)
+                                .substringBeforeLast(".")
+                                .toLongOrNull() ?: return@forEach
+
+                            fileUris.add(Triple(it.name, counter, it.toUri()))
+                        }
                     }
                 }
 
@@ -169,17 +495,66 @@ abstract class BatchesFolder(
                             .substringBeforeLast(".")
                             .toInt()
                     }
-                    .map { pair ->
-                        val uri = pair.second
-
-                        FFmpegKitConfig.getSafParameterForRead(
-                            context,
-                            uri,
-                        )!!
+                    .map { (_, counter, uri) ->
+                        BatchFile(
+                            counter = counter,
+                            ffmpegPath = FFmpegKitConfig.getSafParameterForRead(
+                                context,
+                                uri,
+                            )!!,
+                        )
                     }
             }
         }
     }
+
+    fun getBatchesAmount(): Int {
+        return when (type) {
+            BatchType.INTERNAL ->
+                getInternalFolder()
+                    .listFiles()
+                    ?.count {
+                        it.nameWithoutExtension.toIntOrNull() != null && it.length() > 0L
+                    } ?: 0
+
+            BatchType.CUSTOM -> getCustomDefinedFolder()
+                .listFiles()
+                .count {
+                    it.name?.substringBeforeLast(".")?.toIntOrNull() != null && it.length() > 0L
+                }
+
+            BatchType.MEDIA -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    var count = 0
+                    queryMediaContent { _, _, _, cursor ->
+                        if (isUsableMediaSize(cursor.mediaSize())) {
+                            count += 1
+                        }
+                        true
+                    }
+                    return count
+                }
+
+                legacyMediaFolder
+                    .listFiles()
+                    ?.count {
+                        if (!it.name.startsWith(mediaPrefix)) {
+                            return@count false
+                        }
+
+                        it.name
+                            .substring(mediaPrefix.length)
+                            .substringBeforeLast(".")
+                            .toIntOrNull() != null && it.length() > 0L
+                    } ?: 0
+            }
+        }
+    }
+
+    open fun getFFmpegParameters(
+        recording: RecordingInformation,
+        batchCounters: List<Long>,
+    ): Array<String> = ffmpegParameters
 
     fun getName(date: LocalDateTime, extension: String): String {
         val name = date
@@ -262,33 +637,48 @@ abstract class BatchesFolder(
             )
         }
 
-        for (parameter in ffmpegParameters) {
+        for (parameter in getFFmpegParameters(recording, getBatchCountersForFFmpeg())) {
             Log.i("Concatenation", "Trying parameter $parameter")
             onNextParameterTry(parameter)
             onProgress(null)
 
+            var inputPaths: FFmpegInputPaths? = null
+            var outputTarget: FFmpegOutputTarget? = null
+            var completed = false
+
             try {
                 val fullTime = recording.getFullDuration().toFloat();
-                val filePaths = getBatchesForFFmpeg()
+                inputPaths = prepareInputPathsForFFmpeg(recording.fileExtension)
+                if (inputPaths.paths.isEmpty()) {
+                    throw MediaConverter.FFmpegException("No valid media batches available")
+                }
 
-                val outputFile = getOutputFileForFFmpeg(
+                outputTarget = prepareOutputTargetForFFmpeg(
                     date = date,
                     extension = recording.fileExtension,
                     fileName = fileName,
                 )
 
                 concatenationFunction(
-                    filePaths,
-                    outputFile,
+                    inputPaths.paths,
+                    outputTarget.ffmpegPath,
                     parameter
                 ) { time ->
                     // The progressbar for the conversion is calculated based on the
                     // current time of the conversion and the total time of the batches.
                     onProgress(time / fullTime)
                 }.await()
-                return outputFile
+
+                val result = outputTarget.commit()
+                completed = true
+                return result
             } catch (e: MediaConverter.FFmpegException) {
                 continue
+            } finally {
+                if (!completed) {
+                    outputTarget?.abort()
+                }
+                inputPaths?.close()
             }
         }
 
@@ -503,7 +893,7 @@ abstract class BatchesFolder(
                         )
 
                         put(
-                            Media.RELATIVE_PATH,
+                            MediaStore.MediaColumns.RELATIVE_PATH,
                             relativePath,
                         )
                     }
@@ -599,4 +989,3 @@ abstract class BatchesFolder(
         }
     }
 }
-
