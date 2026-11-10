@@ -1,8 +1,8 @@
 package app.myzel394.alibi.helpers
 
 import android.util.Log
-import com.arthenica.ffmpegkit.FFmpegKit
-import com.arthenica.ffmpegkit.ReturnCode
+import com.antonkarpenko.ffmpegkit.FFmpegKit
+import com.antonkarpenko.ffmpegkit.ReturnCode
 import kotlinx.coroutines.CompletableDeferred
 import java.io.File
 import java.util.UUID
@@ -111,7 +111,7 @@ class MediaConverter {
                 },
                 {},
                 { statistics ->
-                    onProgress(statistics.time)
+                    onProgress(statistics.time.toInt())
                 }
             )
 
@@ -171,7 +171,7 @@ class MediaConverter {
                 },
                 {},
                 { statistics ->
-                    onProgress(statistics.time)
+                    onProgress(statistics.time.toInt())
                 }
             )
 

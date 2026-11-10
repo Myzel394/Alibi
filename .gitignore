@@ -15,3 +15,6 @@
 .cxx
 local.properties
 key.properties
+
+# Local APKs and verification evidence
+/outputs/

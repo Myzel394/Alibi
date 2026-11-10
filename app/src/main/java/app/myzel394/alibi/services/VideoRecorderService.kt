@@ -21,6 +21,7 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import app.myzel394.alibi.NotificationHelper
+import app.myzel394.alibi.db.AppSettings
 import app.myzel394.alibi.db.RecordingInformation
 import app.myzel394.alibi.enums.RecorderState
 import app.myzel394.alibi.helpers.BatchesFolder
@@ -56,6 +57,10 @@ class VideoRecorderService :
     private var _cameraCloserListener = CompletableDeferred<Unit>()
 
     private lateinit var selectedCamera: CameraSelector
+    var lensFacing: Int = CameraSelector.LENS_FACING_BACK
+        private set
+    var cameraSelection: app.myzel394.alibi.db.CameraSelection? = null
+        private set
     private var enableAudio by Delegates.notNull<Boolean>()
 
     var onCameraControlAvailable = {}
@@ -64,13 +69,50 @@ class VideoRecorderService :
         private set
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action == "init") {
-            selectedCamera = CameraSelector.Builder().requireLensFacing(
-                intent.getIntExtra("cameraID", CameraSelector.LENS_FACING_BACK)
-            ).build()
-            enableAudio = intent.getBooleanExtra("enableAudio", true)
+        if (intent?.action == ACTION_START_VIDEO) {
+            if (!app.myzel394.alibi.recording.ShortcutRequest.matches(intent.getStringExtra("shortcutToken"))) {
+                if (state == RecorderState.IDLE) stopSelf(startId)
+                return android.app.Service.START_NOT_STICKY
+            }
+            shortcutRequested = true
+            app.myzel394.alibi.recording.ShortcutRequest.clear()
+        }
+        if (intent?.action == "init" || intent?.action == ACTION_START_VIDEO) {
+            try {
+                lensFacing = intent.getIntExtra("lensFacing", CameraSelector.LENS_FACING_BACK)
+                cameraSelection = intent.getStringExtra("logicalCameraId")?.let {
+                    app.myzel394.alibi.db.CameraSelection(it, intent.getStringExtra("physicalCameraId"))
+                }
+                cameraSelection?.let { selected ->
+                    require(app.myzel394.alibi.ui.utils.CameraInfo.queryAvailableCameras(this).any {
+                        it.selection == selected && it.lens.androidValue == lensFacing
+                    }) { "Selected camera is unavailable" }
+                }
+                selectedCamera = app.myzel394.alibi.ui.utils.CameraInfo.selector(lensFacing, cameraSelection)
+                enableAudio = intent.getBooleanExtra("enableAudio", true)
+            } catch (error: Exception) {
+                android.util.Log.e("AlibiShortcut", "Camera selection unavailable", error)
+                reportStartFailure()
+                return android.app.Service.START_NOT_STICKY
+            }
         }
 
+        if (intent?.action == ACTION_START_VIDEO && state == RecorderState.IDLE) {
+            shortcutRequested = true
+            try {
+                settings = kotlinx.serialization.json.Json.decodeFromString(
+                    AppSettings.serializer(), intent.getStringExtra("settings")!!)
+                batchesFolder = VideoBatchesFolder.importFromFolder(
+                    settings.saveFolder ?: app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE, this)
+                batchesFolder.initFolders()
+                app.myzel394.alibi.recording.RecordingLibrary.archiveFragments(batchesFolder)
+                startRecording()
+            } catch (error: Exception) {
+                android.util.Log.e("AlibiShortcut", "Foreground camera initialization rejected", error)
+                reportStartFailure()
+            }
+            return android.app.Service.START_NOT_STICKY
+        }
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -78,7 +120,9 @@ class VideoRecorderService :
         super.start()
 
         scope.launch {
-            openCamera()
+            try { openCamera() } catch (error: Exception) {
+                withContext(Dispatchers.Main) { reportStartFailure() }
+            }
         }
     }
 
@@ -89,7 +133,7 @@ class VideoRecorderService :
 
         // Camera can only be closed after the recording has been finalized
         withTimeoutOrNull(CAMERA_CLOSE_TIMEOUT) {
-            _videoFinalizerListener.await()
+            if (::_videoFinalizerListener.isInitialized) _videoFinalizerListener.await()
         }
 
         closeCamera()
@@ -126,15 +170,19 @@ class VideoRecorderService :
         super.startNewCycle()
 
         fun action() {
+            if (state != RecorderState.RECORDING) return
             stopActiveRecording()
             val newRecording = prepareVideoRecording()
 
-            _videoFinalizerListener = CompletableDeferred()
+            val segmentFinalizer = CompletableDeferred<Unit>()
+            _videoFinalizerListener = segmentFinalizer
 
             activeRecording = newRecording.start(ContextCompat.getMainExecutor(this)) { event ->
-                if (event is VideoRecordEvent.Finalize && (this@VideoRecorderService.state == RecorderState.STOPPED || this@VideoRecorderService.state == RecorderState.PAUSED)) {
-                    _videoFinalizerListener.complete(Unit)
+                if (event is VideoRecordEvent.Start) {
+                    confirmShortcutStart()
                 }
+                if (event is VideoRecordEvent.Finalize && event.hasError() && state == RecorderState.RECORDING) reportStartFailure()
+                if (event is VideoRecordEvent.Finalize) segmentFinalizer.complete(Unit)
             }
         }
 
@@ -151,6 +199,13 @@ class VideoRecorderService :
     }
 
 
+    override fun onDestroy() {
+        stopActiveRecording()
+        cameraProvider?.unbindAll()
+        job.cancel()
+        super.onDestroy()
+    }
+
     // Runs a function in the main thread
     private fun runOnMain(callback: () -> Unit) {
         val mainHandler = ContextCompat.getMainExecutor(this)
@@ -158,10 +213,31 @@ class VideoRecorderService :
         mainHandler.execute(callback)
     }
 
+    private fun qualitySelectorForCamera(): QualitySelector {
+        val requested = settings.videoRecorderSettings.getQuality() ?: Quality.HIGHEST
+        val physical = cameraSelection?.physicalId
+        if (physical != null && Build.VERSION.SDK_INT >= 28) {
+            val sizes = runCatching {
+                getSystemService(android.hardware.camera2.CameraManager::class.java).getCameraCharacteristics(physical)
+                    .get(android.hardware.camera2.CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                    ?.getOutputSizes(android.media.MediaRecorder::class.java)
+            }.getOrNull()
+            val maxHeight = sizes?.maxOfOrNull { minOf(it.width, it.height) } ?: 1080
+            val ordered = listOf(Quality.UHD to 2160, Quality.FHD to 1080, Quality.HD to 720, Quality.SD to 480)
+                .filter { it.second <= maxHeight }.map { it.first }.ifEmpty { listOf(Quality.SD) }
+            val choices = when (requested) {
+                Quality.LOWEST -> ordered.reversed()
+                Quality.HIGHEST -> ordered
+                else -> if (requested in ordered) listOf(requested) + ordered.filter { it != requested } else ordered
+            }
+            return QualitySelector.fromOrderedList(choices, androidx.camera.video.FallbackStrategy.lowerQualityOrHigherThan(Quality.SD))
+        }
+        return QualitySelector.from(requested, androidx.camera.video.FallbackStrategy.lowerQualityOrHigherThan(Quality.SD))
+    }
+
     private fun buildRecorder() = Recorder.Builder()
         .setQualitySelector(
-            settings.videoRecorderSettings.getQualitySelector()
-                ?: QualitySelector.from(Quality.HIGHEST)
+            qualitySelectorForCamera()
         )
         .apply {
             if (settings.videoRecorderSettings.targetedVideoBitRate != null) {
@@ -170,8 +246,12 @@ class VideoRecorderService :
         }
         .build()
 
+    @androidx.annotation.OptIn(androidx.camera.camera2.interop.ExperimentalCamera2Interop::class)
     private fun buildVideoCapture(recorder: Recorder) = VideoCapture.Builder(recorder)
         .apply {
+            cameraSelection?.physicalId?.let { physical ->
+                if (Build.VERSION.SDK_INT >= 28) androidx.camera.camera2.interop.Camera2Interop.Extender(this).setPhysicalCameraId(physical)
+            }
             val frameRate = settings.videoRecorderSettings.targetFrameRate
             if (frameRate != null) {
                 setTargetFrameRate(Range(frameRate, frameRate))
@@ -204,8 +284,8 @@ class VideoRecorderService :
                 onCameraControlAvailable()
 
                 _cameraAvailableListener.complete(Unit)
-            } catch (error: IllegalArgumentException) {
-                onError()
+            } catch (error: RuntimeException) {
+                reportStartFailure()
             }
         }
     }
@@ -225,6 +305,7 @@ class VideoRecorderService :
             // before it's unbound
             cameraProvider = null
             videoCapture = null
+            cameraControl = null
             camera = null
         }
     }

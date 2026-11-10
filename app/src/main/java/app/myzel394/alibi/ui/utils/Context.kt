@@ -4,12 +4,16 @@ import android.content.Context
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resumeWithException
 
-suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine { continuation ->
+suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCancellableCoroutine { continuation ->
     ProcessCameraProvider.getInstance(this).also { future ->
         future.addListener({
-            continuation.resume(future.get())
+            if (continuation.isActive) {
+                try { continuation.resume(future.get()) }
+                catch (error: Exception) { continuation.resumeWithException(error) }
+            }
         }, ContextCompat.getMainExecutor(this))
     }
 }

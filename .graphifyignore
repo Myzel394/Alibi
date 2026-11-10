@@ -1,0 +1,7 @@
+# Focus the architecture index on source, docs, and build workflows.
+fastlane/
+readme_content/
+**/*.png
+**/*.webp
+**/*.gif
+**/*.svg

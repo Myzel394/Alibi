@@ -58,6 +58,12 @@ abstract class IntervalRecorderService<I, B : BatchesFolder> :
         }
     }
 
+    override fun onDestroy() {
+        if (::cycleTimer.isInitialized) cycleTimer.shutdownNow()
+        if (::settings.isInitialized) runCatching { batchesFolder.cleanup() }
+        super.onDestroy()
+    }
+
     override fun start() {
         super.start()
 
@@ -83,13 +89,14 @@ abstract class IntervalRecorderService<I, B : BatchesFolder> :
     }
 
     override suspend fun stop() {
-        cycleTimer.shutdown()
+        if (::cycleTimer.isInitialized) cycleTimer.shutdown()
         batchesFolder.cleanup()
         super.stop()
     }
 
-    fun clearAllRecordings() {
-        batchesFolder.deleteRecordings()
+    fun prepareForNewRecording() {
+        batchesFolder.initFolders()
+        app.myzel394.alibi.recording.RecordingLibrary.archiveFragments(batchesFolder)
     }
 
     private fun deleteOldRecordings() {

@@ -13,7 +13,7 @@ import app.myzel394.alibi.ui.AUDIO_RECORDING_BATCHES_SUBFOLDER_NAME
 import app.myzel394.alibi.ui.MEDIA_SUBFOLDER_NAME
 import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
-import com.arthenica.ffmpegkit.FFmpegKitConfig
+import com.antonkarpenko.ffmpegkit.FFmpegKitConfig
 import java.io.File
 import java.io.FileDescriptor
 import java.time.LocalDateTime

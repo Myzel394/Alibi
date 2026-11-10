@@ -1,6 +1,16 @@
 package app.myzel394.alibi.services
 
 import android.annotation.SuppressLint
+import app.myzel394.alibi.recording.RecordingRuntime
+import app.myzel394.alibi.recording.RecordingIndicator
+import app.myzel394.alibi.recording.RecordingHaptics
+import app.myzel394.alibi.dataStore
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.flow.collect
+import android.widget.Toast
+import app.myzel394.alibi.R
 import android.app.Notification
 import android.content.Intent
 import android.os.Binder
@@ -19,6 +29,67 @@ import java.util.concurrent.TimeUnit
 
 abstract class RecorderService : LifecycleService() {
     private val binder = RecorderBinder()
+    private val indicator by lazy { RecordingIndicator(this) }
+    private var stopping = false
+    private val stopMutex = kotlinx.coroutines.sync.Mutex()
+    private var didStop = false
+    protected var shortcutRequested = false
+    private var shortcutConfirmed = false
+
+    companion object {
+        const val ACTION_START_VIDEO = "app.myzel394.alibi.START_VIDEO"
+        const val ACTION_STOP = "app.myzel394.alibi.STOP_RECORDING"
+    }
+
+    private var indicatorEnabled = false
+    protected open fun showRecordingIndicator(): Boolean = indicatorEnabled
+    override fun onCreate() {
+        super.onCreate()
+        lifecycleScope.launch {
+            dataStore.data.collect { settings ->
+                indicatorEnabled = settings.recordingIndicatorEnabled
+                if (state == RecorderState.RECORDING && indicatorEnabled) indicator.show() else indicator.hide()
+            }
+        }
+    }
+
+    protected fun confirmShortcutStart() {
+        if (shortcutRequested && !shortcutConfirmed) {
+            shortcutConfirmed = true
+            RecordingHaptics.signal(this, true)
+        }
+    }
+
+    protected fun reportStartFailure() {
+        if (shortcutRequested) RecordingHaptics.signal(this)
+        Toast.makeText(this, R.string.shortcut_start_failed, Toast.LENGTH_LONG).show()
+        requestStopFromShortcut(false)
+    }
+
+    fun requestStopFromShortcut(vibrate: Boolean = true) {
+        if (stopping) return
+        stopping = true
+        lifecycleScope.launch {
+            try {
+                stopRecording()
+                val recording = (this@RecorderService as? IntervalRecorderService<*, *>)?.getRecordingInformation()
+                if (recording is app.myzel394.alibi.db.RecordingInformation)
+                    dataStore.updateData { it.setLastRecording(recording) }
+                if (vibrate) RecordingHaptics.signal(this@RecorderService, false)
+            } catch (error: Exception) {
+                error.printStackTrace()
+                RecordingHaptics.signal(this@RecorderService)
+            } finally { destroy() }
+        }
+    }
+
+    override fun onDestroy() {
+        indicator.hide()
+        RecordingRuntime.remove(this)
+        if (::recordingTimeTimer.isInitialized) recordingTimeTimer.shutdownNow()
+        onStateChange?.invoke(RecorderState.IDLE)
+        super.onDestroy()
+    }
 
     private var isPaused: Boolean = false
     lateinit var recordingStart: LocalDateTime
@@ -51,7 +122,7 @@ abstract class RecorderService : LifecycleService() {
     }
 
     protected open suspend fun stop() {
-        recordingTimeTimer.shutdown()
+        if (::recordingTimeTimer.isInitialized) recordingTimeTimer.shutdown()
     }
 
     protected abstract fun startForegroundService()
@@ -59,23 +130,23 @@ abstract class RecorderService : LifecycleService() {
     fun startRecording() {
         recordingStart = LocalDateTime.now()
 
-        startForegroundService()
-        changeState(RecorderState.RECORDING)
-
         try {
+            startForegroundService()
+            changeState(RecorderState.RECORDING)
             start()
         } catch (error: RuntimeException) {
             error.printStackTrace()
 
-            if (error !is AvoidErrorDialogError) {
-                onError()
-            }
+            reportStartFailure()
         }
     }
 
-    suspend fun stopRecording() {
-        changeState(RecorderState.STOPPED)
-        stop()
+    suspend fun stopRecording() = stopMutex.withLock {
+        if (!didStop) {
+            changeState(RecorderState.STOPPED)
+            stop()
+            didStop = true
+        }
     }
 
     fun pauseRecording() {
@@ -87,6 +158,9 @@ abstract class RecorderService : LifecycleService() {
     }
 
     fun destroy() {
+        indicator.hide()
+        RecordingRuntime.remove(this)
+        onStateChange?.invoke(RecorderState.IDLE)
         NotificationManagerCompat.from(this)
             .cancel(NotificationHelper.RECORDER_CHANNEL_NOTIFICATION_ID)
         stopForeground(STOP_FOREGROUND_REMOVE)
@@ -99,6 +173,10 @@ abstract class RecorderService : LifecycleService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_STOP) {
+            requestStopFromShortcut()
+            return android.app.Service.START_NOT_STICKY
+        }
         when (intent?.action) {
             "init" -> {
                 notificationDetails = intent.getStringExtra("notificationDetails")?.let {
@@ -117,7 +195,8 @@ abstract class RecorderService : LifecycleService() {
             }
         }
 
-        return super.onStartCommand(intent, flags, startId)
+        super.onStartCommand(intent, flags, startId)
+        return android.app.Service.START_NOT_STICKY
     }
 
     inner class RecorderBinder : Binder() {
@@ -148,6 +227,8 @@ abstract class RecorderService : LifecycleService() {
         }
 
         state = newState
+        RecordingRuntime.update(this, newState)
+        if (newState == RecorderState.RECORDING && showRecordingIndicator()) indicator.show() else indicator.hide()
         when (newState) {
             RecorderState.RECORDING -> {
                 if (isPaused) {

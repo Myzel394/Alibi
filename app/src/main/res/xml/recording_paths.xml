@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <files-path name="audio_recordings" path=".audio_recordings/" />
+    <files-path name="video_recordings" path=".video_recordings/" />
+    <external-path name="legacy_audio" path="Podcasts/alibi/" />
+    <external-path name="legacy_video" path="DCIM/alibi/" />
+</paths>

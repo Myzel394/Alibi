@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,6 +39,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun RecorderScreen(
     onNavigateToSettingsScreen: () -> Unit,
+    onNavigateToLibrary: () -> Unit,
     audioRecorder: AudioRecorderModel,
     videoRecorder: VideoRecorderModel,
     settings: AppSettings,
@@ -81,6 +83,9 @@ fun RecorderScreen(
                         Text(stringResource(R.string.app_name))
                     },
                     actions = {
+                        IconButton(onClick = onNavigateToLibrary) {
+                            Icon(Icons.Default.Folder, stringResource(R.string.library_title))
+                        }
                         IconButton(
                             onClick = {
                                 onNavigateToSettingsScreen()

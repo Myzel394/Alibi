@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# FFmpegKit's native libraries resolve Java callbacks and SAF hooks by class/method name.
+# The maintained AAR does not ship consumer keep rules for its renamed package.
+-keep class com.antonkarpenko.ffmpegkit.** { *; }

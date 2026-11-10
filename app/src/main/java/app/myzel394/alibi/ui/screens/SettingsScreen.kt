@@ -140,6 +140,8 @@ fun SettingsScreen(
             if (!SUPPORTS_DARK_MODE_NATIVELY) {
                 ThemeSelector()
             }
+            app.myzel394.alibi.ui.components.SettingsScreen.RecordingControlsSettings(settings)
+            app.myzel394.alibi.ui.components.SettingsScreen.Tiles.BackCameraSettingsTile(settings)
             MaxDurationTile(settings = settings)
             IntervalDurationTile(settings = settings)
             InAppLanguagePicker()
