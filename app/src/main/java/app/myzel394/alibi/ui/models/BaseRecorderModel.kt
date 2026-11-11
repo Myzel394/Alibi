@@ -71,6 +71,7 @@ abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderServi
                     // Init variables from us to the service
                     recorder.onStateChange = { state ->
                         recorderState = state
+                        if (state == RecorderState.IDLE) reset()
                     }
                     recorder.onRecordingTimeChange = { time ->
                         recordingTime = time
@@ -82,17 +83,13 @@ abstract class BaseRecorderModel<I, B : BatchesFolder, T : IntervalRecorderServi
                         onBatchesFolderNotAccessible()
                     }
 
-                    if (batchesFolder != null) {
-                        recorder.batchesFolder = batchesFolder!!
+                    if (recorder.state == RecorderState.IDLE) {
+                        // A UI-initiated recording supplies its configuration before start.
+                        batchesFolder?.let { recorder.batchesFolder = it }
+                        settings?.let { recorder.settings = it }
                     } else {
+                        // A shortcut-started or reconnected service owns its configuration.
                         batchesFolder = recorder.batchesFolder
-                    }
-
-                    if (settings != null) {
-                        // If `settings` is set, it means we started the recording, so it should be
-                        // properly set on the service
-                        recorder.settings = settings!!
-                    } else {
                         settings = recorder.settings
                     }
 

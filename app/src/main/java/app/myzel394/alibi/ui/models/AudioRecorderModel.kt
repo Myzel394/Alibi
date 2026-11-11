@@ -54,7 +54,7 @@ class AudioRecorderModel :
         // so we only want to actually start the recording if the service is idle and thus
         // not already recording
         if (service.state == RecorderState.IDLE) {
-            service.clearAllRecordings()
+            service.prepareForNewRecording()
             service.startRecording()
             onRecordingStart()
         }

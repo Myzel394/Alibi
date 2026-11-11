@@ -26,7 +26,11 @@ class VideoRecorderModel :
     override val intentClass = VideoRecorderService::class.java
 
     var enableAudio by mutableStateOf(true)
-    var cameraID by mutableIntStateOf(CameraInfo.Lens.BACK.androidValue)
+    var lensFacing by mutableIntStateOf(CameraSelector.LENS_FACING_BACK)
+        private set
+    var cameraSelection by mutableStateOf<app.myzel394.alibi.db.CameraSelection?>(null)
+        private set
+    private var explicitCameraSelection = false
 
     override val isInRecording: Boolean
         get() = super.isInRecording
@@ -35,14 +39,26 @@ class VideoRecorderModel :
         private set
 
     val cameraSelector: CameraSelector
-        get() = CameraSelector.Builder().requireLensFacing(cameraID).build()
+        get() = CameraInfo.selector(lensFacing, cameraSelection)
 
-    fun init(context: Context) {
+    fun init(context: Context, settings: AppSettings) {
         enableAudio = PermissionHelper.hasGranted(context, Manifest.permission.RECORD_AUDIO)
-        cameraID = CameraInfo.Lens.BACK.androidValue
+        lensFacing = CameraSelector.LENS_FACING_BACK
+        cameraSelection = settings.videoRecorderSettings.backCamera
+        explicitCameraSelection = false
+    }
+
+    fun selectCamera(camera: CameraInfo) {
+        lensFacing = camera.lens.androidValue
+        cameraSelection = camera.selection
+        explicitCameraSelection = true
     }
 
     override fun startRecording(context: Context, settings: AppSettings) {
+        if (!explicitCameraSelection) {
+            lensFacing = CameraSelector.LENS_FACING_BACK
+            cameraSelection = settings.videoRecorderSettings.backCamera
+        }
         batchesFolder = when (settings.saveFolder) {
             null -> VideoBatchesFolder.viaInternalFolder(context)
             RECORDER_MEDIA_SELECTED_VALUE -> VideoBatchesFolder.viaMediaFolder(context)
@@ -59,21 +75,18 @@ class VideoRecorderModel :
     }
 
     override fun onServiceConnected(service: VideoRecorderService) {
-        // `onServiceConnected` may be called when reconnecting to the service,
-        // so we only want to actually start the recording if the service is idle and thus
-        // not already recording
+        lensFacing = service.lensFacing
+        cameraSelection = service.cameraSelection
+        // A shortcut can start the service before this UI binds. RECORDING is a request
+        // state; CameraX may still be opening, so derive readiness from the actual control.
+        isStartingRecording = service.cameraControl == null
+        service.onCameraControlAvailable = {
+            isStartingRecording = service.cameraControl == null
+        }
         if (service.state == RecorderState.IDLE) {
-            isStartingRecording = true
-
-            service.clearAllRecordings()
+            service.prepareForNewRecording()
             service.startRecording()
             onRecordingStart()
-        } else {
-            isStartingRecording = false
-        }
-
-        service.onCameraControlAvailable = {
-            isStartingRecording = false
         }
 
         recorderState = service.state
@@ -82,7 +95,9 @@ class VideoRecorderModel :
 
     override fun handleIntent(intent: Intent) =
         intent.apply {
-            putExtra("cameraID", cameraID)
+            putExtra("lensFacing", lensFacing)
+            putExtra("logicalCameraId", cameraSelection?.logicalId)
+            putExtra("physicalCameraId", cameraSelection?.physicalId)
             putExtra("enableAudio", enableAudio)
         }
 }

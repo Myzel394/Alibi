@@ -127,7 +127,7 @@ fun VideoRecordingStatus(
 @Composable
 fun _VideoGeneralInfo(videoRecorder: VideoRecorderModel) {
     val context = LocalContext.current
-    val availableCameras = CameraInfo.queryAvailableCameras(context)
+    val availableCameras = androidx.compose.runtime.remember(context) { CameraInfo.queryAvailableCameras(context) }
     val orientation = LocalConfiguration.current.orientation
 
     Column(
@@ -158,22 +158,10 @@ fun _VideoGeneralInfo(videoRecorder: VideoRecorderModel) {
             )
         } else {
             Text(
-                stringResource(
-                    R.string.form_value_selected,
-                    if (CameraInfo.checkHasNormalCameras(availableCameras)) {
-                        videoRecorder.cameraID.let {
-                            if (it == CameraInfo.Lens.BACK.androidValue)
-                                stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_back_label)
-                            else
-                                stringResource(R.string.ui_videoRecorder_action_start_settings_cameraLens_front_label)
-                        }
-                    } else {
-                        stringResource(
-                            R.string.ui_videoRecorder_action_start_settings_cameraLens_label,
-                            videoRecorder.cameraID
-                        )
-                    }
-                ),
+                availableCameras.find { it.selection == videoRecorder.cameraSelection }?.label(context)
+                    ?: stringResource(if (videoRecorder.lensFacing == CameraInfo.Lens.FRONT.androidValue)
+                        R.string.ui_videoRecorder_action_start_settings_cameraLens_front_label
+                        else R.string.ui_videoRecorder_action_start_settings_cameraLens_back_label),
                 style = MaterialTheme.typography.labelMedium,
             )
         }
@@ -273,10 +261,10 @@ fun _PrimitiveControls(videoRecorder: VideoRecorderModel) {
 
 @Composable
 fun _VideoControls(videoRecorder: VideoRecorderModel) {
+    val cameraControl = videoRecorder.recorderService?.cameraControl ?: return
     if (!videoRecorder.isStartingRecording) {
-        val cameraControl = videoRecorder.recorderService!!.cameraControl!!
         if (cameraControl.hasTorchAvailable()) {
-            var torchEnabled by rememberSaveable { mutableStateOf(cameraControl.torchEnabled) }
+            var torchEnabled by rememberSaveable(cameraControl) { mutableStateOf(cameraControl.torchEnabled) }
 
             TorchStatus(
                 enabled = torchEnabled,

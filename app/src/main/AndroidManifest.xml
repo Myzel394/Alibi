@@ -10,6 +10,8 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -48,6 +50,21 @@
         android:theme="@style/Theme.Alibi"
         android:hardwareAccelerated="true"
         tools:targetApi="31">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/recording_paths" />
+        </provider>
+        <service
+            android:name=".recording.RecordingKeyService"
+            android:label="@string/shortcut_service_name"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:exported="true">
+            <intent-filter><action android:name="android.accessibilityservice.AccessibilityService" /></intent-filter>
+            <meta-data android:name="android.accessibilityservice" android:resource="@xml/recording_shortcut" />
+        </service>
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -75,7 +75,8 @@ data class RecorderNotificationHelper(
         )
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .setSmallIcon(getIconID())
+            .setSmallIcon(R.drawable.ic_recording_dot)
+            .setColor(android.graphics.Color.RED)
             .setContentIntent(
                 PendingIntent.getActivity(
                     context,
@@ -135,6 +136,13 @@ data class RecorderNotificationHelper(
                         R.string.ui_videoRecorder_state_recording_title,
                     )
             )
+            .addAction(
+                R.drawable.ic_cancel,
+                context.getString(R.string.shortcut_stop),
+                PendingIntent.getService(context, 7,
+                    Intent(context, context::class.java).setAction(RecorderService.ACTION_STOP),
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE),
+            )
             .setContentText(
                 details?.description
                     ?: context.getString(R.string.ui_recorder_state_recording_description)
@@ -144,6 +152,8 @@ data class RecorderNotificationHelper(
 
     fun buildPausedNotification(start: LocalDateTime): Notification {
         return createBaseNotification()
+            .setSmallIcon(R.drawable.ic_pause)
+            .setColor(android.graphics.Color.GRAY)
             .setContentTitle(context.getString(R.string.ui_recorder_state_paused_title))
             .setContentText(context.getString(R.string.ui_recorder_state_paused_description))
             .setOngoing(false)

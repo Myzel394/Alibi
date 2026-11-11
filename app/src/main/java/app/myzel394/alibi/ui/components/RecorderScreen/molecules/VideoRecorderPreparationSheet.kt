@@ -71,6 +71,7 @@ import kotlin.math.abs
 fun VideoRecorderPreparationSheet(
     showPreview: Boolean,
     videoSettings: VideoRecorderModel,
+    appSettings: app.myzel394.alibi.db.AppSettings,
     onDismiss: () -> Unit,
     onPreviewVisible: () -> Unit,
     onPreviewHidden: () -> Unit,
@@ -79,10 +80,10 @@ fun VideoRecorderPreparationSheet(
     val sheetState = rememberModalBottomSheetState(true)
 
     val context = LocalContext.current
-    val cameras = CameraInfo.queryAvailableCameras(context)
-
+    var cameras by androidx.compose.runtime.remember { mutableStateOf(emptyList<CameraInfo>()) }
     LaunchedEffect(Unit) {
-        videoSettings.init(context)
+        videoSettings.init(context, appSettings)
+        cameras = runCatching { CameraInfo.querySelectableCameras(context) }.getOrDefault(emptyList())
     }
 
     ModalBottomSheet(
@@ -114,6 +115,7 @@ fun VideoRecorderPreparationSheet(
                     modifier = Modifier
                         .fillMaxSize(),
                     cameraSelector = videoSettings.cameraSelector,
+                    physicalCameraId = videoSettings.cameraSelection?.physicalId,
                 )
             } else {
                 BoxWithConstraints {

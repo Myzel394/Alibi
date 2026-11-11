@@ -149,6 +149,7 @@ fun RecorderEventsHandler(
             isProcessing = true
         }
 
+        app.myzel394.alibi.recording.RecordingRuntime.beginSave()
         thread {
             runBlocking {
                 try {
@@ -231,6 +232,7 @@ fun RecorderEventsHandler(
                     if (recorder.isCurrentlyActivelyRecording) {
                         recorder.recorderService?.unlockFiles(cleanupOldFiles)
                     }
+                    app.myzel394.alibi.recording.RecordingRuntime.endSave()
                     timer.cancel()
                     isProcessing = false
                     processingProgress = null

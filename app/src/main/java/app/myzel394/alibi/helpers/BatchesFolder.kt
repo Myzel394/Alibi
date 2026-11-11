@@ -24,7 +24,7 @@ import app.myzel394.alibi.ui.RECORDER_INTERNAL_SELECTED_VALUE
 import app.myzel394.alibi.ui.RECORDER_MEDIA_SELECTED_VALUE
 import app.myzel394.alibi.ui.SUPPORTS_SCOPED_STORAGE
 import app.myzel394.alibi.ui.utils.PermissionHelper
-import com.arthenica.ffmpegkit.FFmpegKitConfig
+import com.antonkarpenko.ffmpegkit.FFmpegKitConfig
 import kotlinx.coroutines.CompletableDeferred
 import java.io.File
 import java.time.LocalDateTime
@@ -304,39 +304,15 @@ abstract class BatchesFolder(
     }
 
     fun deleteRecordings() {
-        // Currently deletes all recordings.
-        // This is fine, because we are saving the recordings
-        // in a dedicated subfolder
-        when (type) {
-            BatchType.INTERNAL -> getInternalFolder().deleteRecursively()
-
-            BatchType.CUSTOM -> customFolder?.findFile(subfolderName)?.delete()
-                ?: customFolder?.findFile(subfolderName)?.listFiles()?.forEach {
-                    it.delete()
-                }
-
-            BatchType.MEDIA -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    // TODO: Also delete pending recordings
-                    // --> Doesn't seem to be possible :/
-                    context.contentResolver.delete(
-                        scopedMediaContentUri,
-                        "${MediaStore.MediaColumns.DISPLAY_NAME} LIKE '$mediaPrefix%'",
-                        null,
-                    )
-
-                } else {
-                    legacyMediaFolder.deleteRecursively()
-                }
-            }
-        }
+        // Delete only the current session's numbered fragments; preserve exports and archives.
+        deleteRecordings(0L..Long.MAX_VALUE)
     }
 
     fun hasRecordingsAvailable(): Boolean {
         return when (type) {
-            BatchType.INTERNAL -> getInternalFolder().listFiles()?.isNotEmpty() ?: false
+            BatchType.INTERNAL -> getInternalFolder().listFiles()?.any { it.nameWithoutExtension.toLongOrNull() != null } ?: false
 
-            BatchType.CUSTOM -> customFolder?.findFile(subfolderName)?.listFiles()?.isNotEmpty()
+            BatchType.CUSTOM -> customFolder?.findFile(subfolderName)?.listFiles()?.any { it.name?.substringBeforeLast(".")?.toLongOrNull() != null }
                 ?: false
 
             BatchType.MEDIA -> {
@@ -357,7 +333,7 @@ abstract class BatchesFolder(
 
                     return hasRecordings
                 } else {
-                    return legacyMediaFolder.listFiles()?.isNotEmpty() ?: false
+                    return legacyMediaFolder.listFiles()?.any { it.name.startsWith(mediaPrefix) } ?: false
                 }
             }
         }

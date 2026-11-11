@@ -1,0 +1,68 @@
+[versions]
+agp = "8.13.2"
+kotlin = "2.3.21"
+compose-bom = "2026.06.00"
+core = "1.17.0"
+activity = "1.12.4"
+lifecycle = "2.10.0"
+navigation = "2.9.7"
+camera = "1.6.2"
+appcompat = "1.7.1"
+documentfile = "1.1.0"
+datastore = "1.2.1"
+serialization = "1.10.0"
+coroutines = "1.10.2"
+ffmpeg = "2.2.3"
+sheets = "1.3.0"
+shimmer = "1.5.0"
+desugar = "2.1.5"
+junit = "4.13.2"
+androidx-junit = "1.3.0"
+espresso = "3.7.0"
+biometric = "1.1.0"
+
+[libraries]
+androidx-core = { module = "androidx.core:core-ktx", version.ref = "core" }
+androidx-activity = { module = "androidx.activity:activity-compose", version.ref = "activity" }
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-documentfile = { module = "androidx.documentfile:documentfile", version.ref = "documentfile" }
+androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+androidx-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
+androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-graphics = { module = "androidx.compose.ui:ui-graphics" }
+compose-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-icons = { module = "androidx.compose.material:material-icons-extended" }
+compose-test = { module = "androidx.compose.ui:ui-test-junit4" }
+compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+ffmpeg = { module = "com.antonkarpenko:ffmpeg-kit-full-gpl", version.ref = "ffmpeg" }
+camera-core = { module = "androidx.camera:camera-core", version.ref = "camera" }
+camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camera" }
+camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camera" }
+camera-video = { module = "androidx.camera:camera-video", version.ref = "camera" }
+camera-view = { module = "androidx.camera:camera-view", version.ref = "camera" }
+camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "camera" }
+sheets-core = { module = "com.maxkeppeler.sheets-compose-dialogs:core", version.ref = "sheets" }
+sheets-duration = { module = "com.maxkeppeler.sheets-compose-dialogs:duration", version.ref = "sheets" }
+sheets-list = { module = "com.maxkeppeler.sheets-compose-dialogs:list", version.ref = "sheets" }
+sheets-input = { module = "com.maxkeppeler.sheets-compose-dialogs:input", version.ref = "sheets" }
+shimmer = { module = "com.valentinilk.shimmer:compose-shimmer", version.ref = "shimmer" }
+desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
+junit = { module = "junit:junit", version.ref = "junit" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-junit" }
+espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

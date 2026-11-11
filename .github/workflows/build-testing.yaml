@@ -20,7 +20,7 @@ jobs:
 
       - name: Compile
         run: |
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug testDebugUnitTest
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

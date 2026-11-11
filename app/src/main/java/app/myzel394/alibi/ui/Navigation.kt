@@ -10,6 +10,11 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import app.myzel394.alibi.recording.RecordingRuntime
+import app.myzel394.alibi.services.VideoRecorderService
+import app.myzel394.alibi.services.AudioRecorderService
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -44,6 +49,14 @@ fun Navigation(
         .data
         .collectAsState(initial = null)
         .value ?: return
+
+    val runtime by RecordingRuntime.states.collectAsState()
+    LaunchedEffect(runtime) {
+        if (runtime.containsKey(VideoRecorderService::class.java.name) && videoRecorder.recorderService == null)
+            videoRecorder.bindToService(context)
+        if (runtime.containsKey(AudioRecorderService::class.java.name) && audioRecorder.recorderService == null)
+            audioRecorder.bindToService(context)
+    }
 
     DisposableEffect(Unit) {
         audioRecorder.bindToService(context)
@@ -88,10 +101,14 @@ fun Navigation(
                 onNavigateToSettingsScreen = {
                     navController.navigate(Screen.Settings.route)
                 },
+                onNavigateToLibrary = { navController.navigate(Screen.RecordingLibrary.route) },
                 audioRecorder = audioRecorder,
                 videoRecorder = videoRecorder,
                 settings = settings,
             )
+        }
+        composable(Screen.RecordingLibrary.route) {
+            app.myzel394.alibi.ui.screens.RecordingLibraryScreen(settings, navController::popBackStack)
         }
         composable(
             Screen.Settings.route,

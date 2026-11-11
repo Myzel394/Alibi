@@ -40,6 +40,9 @@ data class AppSettings(
     val notificationSettings: NotificationSettings? = null,
     val deleteRecordingsImmediately: Boolean = false,
     val saveFolder: String? = null,
+    val hardwareShortcutEnabled: Boolean = false,
+    val recordingIndicatorEnabled: Boolean = false,
+
 ) {
     fun setShowAdvancedSettings(showAdvancedSettings: Boolean): AppSettings {
         return copy(showAdvancedSettings = showAdvancedSettings)
@@ -447,6 +450,7 @@ data class AudioRecorderSettings(
 
 @Serializable
 data class VideoRecorderSettings(
+    val backCamera: CameraSelection? = null,
     val targetedVideoBitRate: Int? = null,
     val quality: String? = null,
     val targetFrameRate: Int? = null,
