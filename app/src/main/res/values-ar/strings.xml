@@ -180,7 +180,8 @@
     <string name="ui_rotateDevice_portrait_label">يرجى تدوير الجهاز إلى الوضع الرأسي</string>
     <string name="goBack">رجوع</string>
     <string name="ui_recorder_action_saveCurrent">هل تريد الحفظ الآن؟</string>
-    <string name="ui_recorder_action_saveCurrent_explanation">يمكنك حفظ التسجيل الجاري حاليا بالضغط المطول على زر الحفظ. سيستمر التسجيل في الخلفية.</string>
+    <string name="ui_recorder_action_saveCurrent_explanation">يمكنك حفظ التسجيل الجاري حاليا بالضغط المطول على زر الحفظ. سيستمر التسجيل في الخلفية.
+</string>
     <string name="ui_recorder_lowOnStorage_hint">المساحة التخزينية منخفضة. قد لا يعمل Alibi بشكل صحيح. يرجى تحرير بعض المساحة.</string>
     <string name="ui_recorder_lowOnStorage_hintANDswitchSaveFolder">المساحة التخزينية منخفضة. قد لا يعمل Alibi بشكل صحيح. يرجى تحرير بعض المساحة، أو تغيير مجلد الدفعات إلى موقع مختلف من الإعدادات.</string>
     <string name="ui_welcome_timeSettings_title">إلى متى يجب على Alibi حفظ السجلات؟</string>
