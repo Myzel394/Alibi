@@ -14,20 +14,21 @@
 Alibi keeps recording audio/video in the background and saves the last 30 minutes at your request.
 Everything is completely configurable. No internet connection required.
 
-## 本 fork 新增功能
+## Recording controls and file management
 
-- 在设置中开启“音量键快捷录像（上前摄 / 下后摄）”，授予相机、通知权限，并在系统辅助功能中启用 **Alibi 录像快捷键**。长按音量上 0.8 秒开始前摄录像，再长按音量上停止；长按音量下使用选定后摄开始/停止。短按仍调节音量。开始为一次震动、停止为两次震动、失败为三次震动。录制期间使用另一个快捷键会提示忙碌，不切换镜头。
-- 设置中的“后置摄像头”支持自动选择、系统开放的后摄逻辑摄像头和物理镜头，显示近似等效焦距及摄像头 ID。选择保存后用于下一次后摄录像，也用于应用内默认后摄；前摄快捷键独立使用前摄。仅列出 CameraX 可用摄像头；厂商未向第三方开放的镜头不会出现。物理镜头路由依据 [Camera2Interop](https://developer.android.com/reference/androidx/camera/camera2/interop/Camera2Interop.Extender)，需要 Android 9 及以上，具体录像分辨率仍受设备限制。
-- 辅助功能服务直接启动/停止前台录像服务，不切换到应用界面。已在小米 14 Ultra / Android 16 验证音量下桌面长按开始、停止、震动和顶部红点；新增前摄快捷键及多后摄待真机验收；其他厂商机型及锁屏场景仍需分别验收。
-- 小米 / HyperOS 若限制后台启动，可在 Alibi 的系统权限页检查“后台弹出界面”，应用设置提供入口。系统未在 6 秒内允许启动时，请求会取消并提示失败，之后打开应用不会补执行录像。
-- 在设置中开启顶部悬浮红点并授予悬浮窗权限；录音/录像时显示红点，暂停或停止后移除。系统状态栏另显示单色圆点图标。
-- 主页面右上角的文件夹入口管理录音/录像、片段/已合并文件，支持播放、分享和确认删除。覆盖应用内部目录、应用媒体目录及仍有访问权限的自定义目录。
-- 新录制会归档上一轮片段；合并文件予以保留。录制或合并期间禁止删除文件，录制中的片段暂停播放和分享。
+- Enable **Volume-key video shortcuts (Up: front / Down: rear)** in Settings, grant camera and notification permissions, and enable **Alibi recording shortcut** in Android Accessibility settings. Hold Volume Up for 0.8 seconds to start front-camera video; hold Volume Up again to stop. Volume Down starts/stops video with the configured rear camera. Short presses adjust volume. A different shortcut during an active recording reports that the recorder is busy.
+- Recording starts directly from the accessibility service without opening the app. One vibration confirms recording has started, two confirm stopping, and three indicate failure. The service filters key events without requesting screen contents. Additional vendor background-start permissions may be required; Settings provides an entry point for Xiaomi/HyperOS. Unaccepted start requests expire after six seconds.
+- **Rear camera** in Settings selects the system default, an available logical camera, or an exposed physical lens for the next rear-camera recording. Camera labels include approximate 35 mm equivalent focal length and camera ID where available. Only CameraX-accessible cameras are listed. Physical routing uses [Camera2Interop](https://developer.android.com/reference/androidx/camera/camera2/interop/Camera2Interop.Extender) on Android 9+, and recording configurations remain device-dependent.
+- Enable the floating recording dot and grant display-over-other-apps permission to show a red dot near the top edge while recording audio/video. Pausing or stopping removes it. The system status-bar notification uses a monochrome icon.
+- The folder button opens a recording library for audio/video fragments and merged exports, with playback, sharing, refresh, and confirmed deletion. It includes internal storage, app media storage, and custom folders with retained access permissions. Deletion is blocked during recording or merging, and active fragments are protected from playback/sharing. Previous fragments are archived before a new session, preserving merged exports.
 
-构建环境更新为 Gradle 8.13、AGP 8.13.2、Kotlin 2.3.21、Java 17 字节码及 compile/target SDK 36（最低 Android 7.0 保持不变）。依赖集中在 `gradle/libs.versions.toml`。Compose 改用 Kotlin Compose Compiler 插件与统一 BOM；CameraX 更新至 1.6.2；媒体合并使用 Maven Central 发布的 `com.antonkarpenko:ffmpeg-kit-full-gpl:2.2.3` 社区维护版本，替换退役的 FFmpegKit 5.1。
+Background Volume Down recording, start/stop haptics, and the recording dot were tested on a Xiaomi 14 Ultra running Android 16. Front-camera shortcuts and multiple rear-camera selection also passed owner-reported physical-device acceptance. Other vendors and lock-screen behavior need separate validation.
+
+## Building
+
+Use JDK 17 or 21 and Android SDK 36. The build uses Gradle 8.13, AGP 8.13.2, Kotlin 2.3.21, Java 17 bytecode, and compile/target SDK 36; minimum SDK remains 24. Dependencies are centralized in `gradle/libs.versions.toml`, with the Kotlin Compose Compiler plugin, Compose BOM, and CameraX 1.6.2. The retired FFmpegKit 5.1 dependency is replaced by the community-maintained Maven Central artifact `com.antonkarpenko:ffmpeg-kit-full-gpl:2.2.3`.
 
 ```bash
-# 使用 JDK 17 或 21，配置 Android SDK 36
 ./gradlew assembleDebug testDebugUnitTest
 ```
 
